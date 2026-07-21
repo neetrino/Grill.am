@@ -1,0 +1,191 @@
+"use client";
+
+import { ChevronDown } from "lucide-react";
+import { useId, useState, useTransition } from "react";
+
+import {
+  ADMIN_INPUT,
+  ADMIN_LABEL,
+} from "@/features/admin/ui/admin-form-classes";
+import { createCategoryAction } from "@/features/categories/actions";
+import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
+import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
+
+type ProductDrawerCategoriesProps = {
+  locale: string;
+  categories: AdminCategoryOption[];
+  selectedIds: string[];
+  disabled: boolean;
+  onCategoriesChange: (categories: AdminCategoryOption[]) => void;
+  onSelectedChange: (ids: string[]) => void;
+};
+
+export function ProductDrawerCategories({
+  locale,
+  categories,
+  selectedIds,
+  disabled,
+  onCategoriesChange,
+  onSelectedChange,
+}: ProductDrawerCategoriesProps) {
+  const listId = useId();
+  const [open, setOpen] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const selectedTitles = categories
+    .filter((category) => selectedIds.includes(category.id))
+    .map((category) => category.title);
+  const triggerLabel =
+    selectedTitles.length === 0
+      ? "Select categories"
+      : selectedTitles.join(", ");
+
+  function toggleCategory(id: string): void {
+    if (selectedIds.includes(id)) {
+      onSelectedChange(selectedIds.filter((value) => value !== id));
+      return;
+    }
+    onSelectedChange([...selectedIds, id]);
+  }
+
+  function createCategory(): void {
+    const title = newTitle.trim();
+    if (!title) {
+      setError("Category title is required.");
+      return;
+    }
+
+    startTransition(async () => {
+      setError(null);
+      const result = await createCategoryAction(locale, {
+        title,
+        slug: slugifyCategoryTitle(title),
+        parentId: null,
+        status: "ACTIVE",
+      });
+
+      if (!result.ok) {
+        setError(result.error.message);
+        return;
+      }
+
+      const created = { id: result.value.id, title };
+      onCategoriesChange([...categories, created]);
+      onSelectedChange([...selectedIds, created.id]);
+      setNewTitle("");
+      setShowAdd(false);
+      setOpen(true);
+    });
+  }
+
+  return (
+    <div>
+      <span className={ADMIN_LABEL}>Categories</span>
+      <div className="mt-1">
+        <button
+          type="button"
+          disabled={disabled || isPending}
+          aria-expanded={open}
+          aria-controls={listId}
+          onClick={() => setOpen((value) => !value)}
+          className={`${ADMIN_INPUT} flex items-center justify-between gap-2 text-left disabled:opacity-50`}
+        >
+          <span
+            className={`min-w-0 flex-1 truncate ${
+              selectedTitles.length === 0 ? "text-gray-400" : "text-gray-900"
+            }`}
+          >
+            {triggerLabel}
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 text-gray-400 transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+            aria-hidden
+          />
+        </button>
+
+        {open ? (
+          <div
+            id={listId}
+            className="mt-1 max-h-40 space-y-2 overflow-y-auto rounded-xl border border-gray-200 px-3 py-2"
+          >
+            {categories.length === 0 ? (
+              <p className="text-sm text-gray-500">No categories yet.</p>
+            ) : (
+              categories.map((category) => (
+                <label
+                  key={category.id}
+                  className="flex items-center gap-2 text-sm text-gray-800"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(category.id)}
+                    disabled={disabled || isPending}
+                    onChange={() => toggleCategory(category.id)}
+                    className="h-4 w-4 rounded border-gray-300"
+                  />
+                  <span>{category.title}</span>
+                </label>
+              ))
+            )}
+          </div>
+        ) : null}
+      </div>
+
+      <div className="mt-2">
+        <button
+          type="button"
+          disabled={disabled || isPending}
+          onClick={() => setShowAdd((value) => !value)}
+          className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+        >
+          + Add category
+        </button>
+      </div>
+
+      {showAdd ? (
+        <div className="mt-3 space-y-2 rounded-xl border border-gray-200 bg-gray-50 p-3">
+          <label className="block">
+            <span className={ADMIN_LABEL}>
+              Category title <span className="text-red-600">*</span>
+            </span>
+            <input
+              value={newTitle}
+              onChange={(event) => setNewTitle(event.target.value)}
+              placeholder="Enter category title"
+              className={ADMIN_INPUT}
+              disabled={disabled || isPending}
+            />
+          </label>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              disabled={disabled || isPending || !newTitle.trim()}
+              onClick={createCategory}
+              className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
+            >
+              {isPending ? "Adding…" : "Add"}
+            </button>
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => {
+                setShowAdd(false);
+                setNewTitle("");
+                setError(null);
+              }}
+              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            >
+              Cancel
+            </button>
+          </div>
+          {error ? <p className="text-sm text-red-700">{error}</p> : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}

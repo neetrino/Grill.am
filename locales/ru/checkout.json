@@ -1,0 +1,72 @@
+{
+  "title": "Оформление",
+  "productsInOrder": "Товары в заказе",
+  "itemsOne": "1 товар",
+  "itemsMany": "{count} товаров",
+  "removeItem": "Удалить товар",
+  "contactInformation": "Контактные данные",
+  "shippingMethod": "Способ доставки",
+  "shippingAddress": "Адрес доставки",
+  "paymentMethod": "Способ оплаты",
+  "orderSummary": "Итог заказа",
+  "form": {
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "email": "Email",
+    "phone": "Телефон",
+    "address": "Адрес",
+    "city": "Город",
+    "deliveryLocation": "Место доставки",
+    "selectLocation": "Выберите место"
+  },
+  "placeholders": {
+    "phone": "+374XXXXXXXX",
+    "address": "Улица, квартира, офис и т.д.",
+    "city": "Город"
+  },
+  "shipping": {
+    "storePickup": "Самовывоз",
+    "storePickupDescription": "Заберите заказ в магазине (Бесплатно)",
+    "delivery": "Доставка",
+    "deliveryDescription": "Доставим заказ по вашему адресу",
+    "freePickup": "Бесплатно (Самовывоз)",
+    "enterCity": "Укажите город",
+    "selectDeliveryLocation": "Выберите место доставки"
+  },
+  "payment": {
+    "cashOnDelivery": "Наличными при получении",
+    "cashOnDeliveryDescription": "Оплатите наличными при получении заказа",
+    "idram": "Idram",
+    "idramDescription": "Оплата через Idram или картой",
+    "arca": "ArCa",
+    "arcaDescription": "Оплата картой ArCa"
+  },
+  "coupon": {
+    "title": "Есть промокод?",
+    "placeholder": "Введите промокод",
+    "apply": "Применить",
+    "applying": "Применение…"
+  },
+  "summary": {
+    "subtotal": "Подытог",
+    "discount": "Скидка",
+    "shipping": "Доставка",
+    "tax": "Налог",
+    "total": "Итого"
+  },
+  "buttons": {
+    "placeOrder": "Оформить заказ",
+    "processing": "Обработка…",
+    "continueShopping": "Продолжить покупки"
+  },
+  "errors": {
+    "cartEmpty": "Корзина пуста"
+  },
+  "success": {
+    "title": "Заказ подтверждён",
+    "body": "Заказ {orderNumber} успешно оформлен. Корзина очищена.",
+    "total": "Итого: {amount}",
+    "continueShopping": "Продолжить покупки",
+    "viewOrders": "Мои заказы"
+  }
+}
