@@ -258,6 +258,7 @@
 | APROD-006 | Stock manual adjustment-ը ստեղծում է stock movement, ոչ ուղղակի անբացատրելի overwrite։ |
 | APROD-007 | Variant model-ի extension point կա, բայց launch UI-ը `OPEN-007`-ով է որոշվում։ |
 | APROD-008 | Publish-ին պարտադիր է առնվազն մեկ լրիվ locale translation; բացակա locale-ում product-ը public catalog-ում չի երևում։ |
+| APROD-009 | Paid addons և free exclusions-ը `modifier_catalog` shared library են. Admin-ը կցում է եղածները կամ ստեղծում նորերը. Product save-ը upsert է անում catalog և նույն ID ունեցող peer product-ների denormalized label/price-ը sync է պահում։ |
 
 ## 14. Admin categories
 

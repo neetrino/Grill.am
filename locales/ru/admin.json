@@ -56,21 +56,14 @@
       "newAdditionPlaceholder": "Новое добавление…",
       "pricePlaceholder": "AMD",
       "addButton": "Добавить",
+      "libraryTitle": "Из библиотеки",
+      "attachFromLibrary": "Добавить из библиотеки",
       "exclusionsTitle": "Исключение",
       "exclusionsHint": "Бесплатные исключения",
       "emptyExclusions": "Исключений пока нет",
       "exclusionLabel": "Название исключения",
       "removeExclusion": "Удалить исключение",
-      "newExclusionPlaceholder": "Новое исключение…",
-      "variantsTitle": "Варианты товара",
-      "addGroup": "Добавить группу",
-      "removeGroup": "Удалить группу",
-      "groupLabelPlaceholder": "Название группы",
-      "choiceLabelPlaceholder": "Название варианта",
-      "removeChoice": "Удалить вариант",
-      "addChoice": "Добавить вариант",
-      "defaultGroupLabel": "Размер",
-      "defaultChoiceLabel": "Стандарт"
+      "newExclusionPlaceholder": "Новое исключение…"
     }
   }
 }

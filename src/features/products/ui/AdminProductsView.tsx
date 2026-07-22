@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import type { ModifierCatalogItem } from "@/features/products/domain/modifier-catalog";
 import type {
   AdminCategoryOption,
   AdminProductListItem,
@@ -23,6 +24,7 @@ type AdminProductsViewProps = {
   products: AdminProductListItem[];
   sortLinks: AdminProductsSortLinks;
   categories: AdminCategoryOption[];
+  modifierCatalog: ModifierCatalogItem[];
 };
 
 export function AdminProductsView({
@@ -30,6 +32,7 @@ export function AdminProductsView({
   products,
   sortLinks,
   categories,
+  modifierCatalog,
 }: AdminProductsViewProps) {
   const dictionary = useAdminDictionary();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -42,13 +45,12 @@ export function AdminProductsView({
   }
 
   function openEdit(product: AdminProductListItem): void {
-    setEditingProduct(product);
     setDrawerOpen(true);
+    setEditingProduct(product);
   }
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setEditingProduct(null);
   }
 
   return (
@@ -75,6 +77,7 @@ export function AdminProductsView({
         onClose={closeDrawer}
         product={editingProduct}
         categories={categories}
+        modifierCatalog={modifierCatalog}
       />
     </>
   );

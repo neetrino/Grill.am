@@ -56,21 +56,14 @@
       "newAdditionPlaceholder": "Նոր ավելացում…",
       "pricePlaceholder": "AMD",
       "addButton": "Ավելացնել",
+      "libraryTitle": "Գրադարանից",
+      "attachFromLibrary": "Կցել գրադարանից",
       "exclusionsTitle": "Բացառություն",
       "exclusionsHint": "Անվճար հեռացումներ",
       "emptyExclusions": "Բացառություններ չկան",
       "exclusionLabel": "Բացառության անուն",
       "removeExclusion": "Հեռացնել բացառությունը",
-      "newExclusionPlaceholder": "Նոր բացառություն…",
-      "variantsTitle": "Ապրանքի տարբերակներ",
-      "addGroup": "Ավելացնել խումբ",
-      "removeGroup": "Հեռացնել խումբը",
-      "groupLabelPlaceholder": "Խմբի անուն",
-      "choiceLabelPlaceholder": "Տարբերակի անուն",
-      "removeChoice": "Հեռացնել տարբերակը",
-      "addChoice": "Ավելացնել տարբերակ",
-      "defaultGroupLabel": "Չափ",
-      "defaultChoiceLabel": "Ստանդարտ"
+      "newExclusionPlaceholder": "Նոր բացառություն…"
     }
   }
 }

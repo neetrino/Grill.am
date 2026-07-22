@@ -13,6 +13,8 @@ export type AdminOrderDetailItemView = {
   title: string;
   sku: string;
   imageUrl: string | null;
+  /** Locale-resolved addon/option/exclusion labels from purchase snapshot. */
+  modifierLines: string[];
   quantity: number;
   unitPriceAmount: number;
   lineTotalAmount: number;
@@ -128,6 +130,7 @@ export function toAdminOrderDetailView(
       imageUrl: item.productImageKeySnapshot
         ? mediaPublicUrl(item.productImageKeySnapshot)
         : null,
+      modifierLines: item.modifiersSnapshot?.labels ?? [],
       quantity: item.quantity,
       unitPriceAmount: item.unitBaseAmount,
       lineTotalAmount: item.lineTotalAmount,

@@ -14,24 +14,45 @@ import {
   type TranslationsJson,
 } from "@/db/schema";
 import { persistProductMedia } from "@/features/products/application/persist-product-media";
+import { syncCustomizationToModifierCatalog } from "@/features/products/application/modifier-catalog";
 import {
   productCustomizationSchema,
   type ProductCustomization,
 } from "@/features/products/domain/customization";
+import {
+  isValidProductSlug,
+  normalizeProductSlug,
+  withSharedProductSlug,
+} from "@/features/products/domain/product-slug";
 import { requireAdmin } from "@/lib/auth/policies";
 import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
-const productUpsertSchema = z.object({
-  editingLocale: z.enum(locales),
-  sku: z.string().trim().min(1).max(120),
+const localeCopySchema = z.object({
   title: z.string().trim().min(1).max(200),
-  slug: z.string().trim().min(1).max(200),
   description: z.string().trim().max(5000).optional(),
   shortDescription: z.string().trim().max(500).optional(),
   composition: z.string().trim().max(2000).optional(),
+});
+
+const productUpsertSchema = z.object({
+  editingLocale: z.enum(locales),
+  sku: z.string().trim().min(1).max(120),
+  slug: z.string().trim().min(1).max(200),
+  /** All locale drafts filled in the drawer (shared slug applied server-side). */
+  localeCopies: z
+    .object({
+      hy: localeCopySchema.optional(),
+      en: localeCopySchema.optional(),
+      ru: localeCopySchema.optional(),
+    })
+    .refine(
+      (value) =>
+        Boolean(value.hy?.title || value.en?.title || value.ru?.title),
+      { message: "At least one locale title is required." },
+    ),
   customization: productCustomizationSchema.optional(),
   priceAmount: z.number().int().nonnegative(),
   compareAtAmount: z.number().int().nonnegative().nullable(),
@@ -45,24 +66,30 @@ const productUpsertSchema = z.object({
 
 export type ProductUpsertInput = z.infer<typeof productUpsertSchema>;
 
-function buildLocaleEntry(data: ProductUpsertInput): LocaleTranslation {
-  return {
-    title: data.title,
-    slug: data.slug,
-    description: data.description || undefined,
-    shortDescription: data.shortDescription || undefined,
-    composition: data.composition || undefined,
-  };
-}
-
+/** Merges every filled locale draft, then syncs one shared slug across all locales. */
 function mergeTranslations(
   existing: TranslationsJson | null | undefined,
   data: ProductUpsertInput,
-): TranslationsJson {
-  return {
-    ...(existing ?? {}),
-    [data.editingLocale]: buildLocaleEntry(data),
-  };
+): TranslationsJson | null {
+  const slug = normalizeProductSlug(data.slug);
+  if (!slug || !isValidProductSlug(slug)) {
+    return null;
+  }
+
+  const merged: TranslationsJson = { ...(existing ?? {}) };
+  for (const loc of locales) {
+    const copy = data.localeCopies[loc];
+    if (!copy) continue;
+    merged[loc] = {
+      title: copy.title,
+      slug,
+      description: copy.description || undefined,
+      shortDescription: copy.shortDescription || undefined,
+      composition: copy.composition || undefined,
+    } satisfies LocaleTranslation;
+  }
+
+  return withSharedProductSlug(merged, slug);
 }
 
 function normalizeCustomization(
@@ -179,6 +206,14 @@ export async function createProductFromDrawerAction(
   const actor = await requireAdmin(locale as Locale);
   const id = createId();
   const files = collectImageFiles(formData);
+  const translations = mergeTranslations(null, data);
+  if (!translations) {
+    return err(
+      "VALIDATION_ERROR",
+      "Slug must use lowercase letters, numbers, and hyphens.",
+    );
+  }
+  const slug = normalizeProductSlug(data.slug);
 
   await getDb().insert(products).values({
     id,
@@ -187,9 +222,13 @@ export async function createProductFromDrawerAction(
     compareAtAmount: data.compareAtAmount,
     stockOnHand: data.stockOnHand,
     status: data.status,
-    translations: mergeTranslations(null, data),
+    translations,
     customization: normalizeCustomization(data.customization),
   });
+
+  await syncCustomizationToModifierCatalog(
+    normalizeCustomization(data.customization),
+  );
 
   const categoryError = await syncProductCategories(id, data.categoryIds);
   if (categoryError) {
@@ -218,7 +257,7 @@ export async function createProductFromDrawerAction(
     return err("VALIDATION_ERROR", mediaResult.error);
   }
 
-  revalidateProducts(locale, { id, slug: data.slug });
+  revalidateProducts(locale, { id, slug });
   return ok({ id });
 }
 
@@ -265,6 +304,15 @@ export async function updateProductFromDrawerAction(
     return err("NOT_FOUND", "Product not found.");
   }
 
+  const translations = mergeTranslations(existing.translations, data);
+  if (!translations) {
+    return err(
+      "VALIDATION_ERROR",
+      "Slug must use lowercase letters, numbers, and hyphens.",
+    );
+  }
+  const slug = normalizeProductSlug(data.slug);
+
   await getDb()
     .update(products)
     .set({
@@ -273,11 +321,15 @@ export async function updateProductFromDrawerAction(
       compareAtAmount: data.compareAtAmount,
       stockOnHand: data.stockOnHand,
       status: data.status || existing.status,
-      translations: mergeTranslations(existing.translations, data),
+      translations,
       customization: normalizeCustomization(data.customization),
       updatedAt: new Date(),
     })
     .where(eq(products.id, existing.id));
+
+  await syncCustomizationToModifierCatalog(
+    normalizeCustomization(data.customization),
+  );
 
   const categoryError = await syncProductCategories(
     existing.id,
@@ -317,7 +369,7 @@ export async function updateProductFromDrawerAction(
 
   revalidateProducts(locale, {
     id: existing.id,
-    slug: data.slug,
+    slug,
     previousSlug,
   });
   return ok({ id: existing.id });

@@ -9,6 +9,7 @@ import {
   productCategories,
   products,
 } from "@/db/schema";
+import { resolveProductTranslation } from "@/features/products/domain/resolve-translation";
 import type { CatalogProduct } from "@/features/products/types";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type { Locale } from "@/lib/i18n/config";
@@ -23,7 +24,7 @@ function toCatalogProduct(
   CatalogProduct,
   "priceAmount" | "compareAtAmount" | "discountPercent" | "listPriceAmount"
 > | null {
-  const translation = product.translations[locale] ?? product.translations.hy;
+  const translation = resolveProductTranslation(product.translations, locale);
   if (!translation) {
     return null;
   }
@@ -96,7 +97,7 @@ async function loadPrimaryCategoryTitles(
 
   for (const row of rows) {
     if (map.has(row.productId)) continue;
-    const translation = row.translations[locale] ?? row.translations.hy;
+    const translation = resolveProductTranslation(row.translations, locale);
     if (!translation?.title) continue;
     map.set(row.productId, translation.title);
   }

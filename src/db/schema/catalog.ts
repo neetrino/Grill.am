@@ -18,7 +18,11 @@ import {
   idColumn,
   updatedAtColumn,
 } from "@/db/schema/columns";
-import { categoryStatusEnum, productStatusEnum } from "@/db/schema/enums";
+import {
+  categoryStatusEnum,
+  modifierKindEnum,
+  productStatusEnum,
+} from "@/db/schema/enums";
 
 export type LocaleTranslation = {
   title: string;
@@ -162,5 +166,33 @@ export const productCategories = pgTable(
     uniqueIndex("product_categories_primary_uidx")
       .on(table.productId)
       .where(sql`${table.isPrimary} = true`),
+  ],
+);
+
+export type ModifierCatalogLabel = Partial<Record<"hy" | "en" | "ru", string>>;
+
+/**
+ * Shared library of paid addons and free exclusions.
+ * Product `customization` JSON embeds catalog IDs + denormalized label/price;
+ * saves upsert here and propagate to peer products so storefront stays consistent.
+ */
+export const modifierCatalog = pgTable(
+  "modifier_catalog",
+  {
+    id: idColumn(),
+    kind: modifierKindEnum("kind").notNull(),
+    label: jsonb("label").$type<ModifierCatalogLabel>().notNull(),
+    /** AMD minor units; always 0 for EXCLUSION. */
+    priceAmount: integer("price_amount").notNull().default(0),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+  },
+  (table) => [
+    index("modifier_catalog_kind_idx").on(table.kind),
+    check("modifier_catalog_price_nonneg_chk", sql`${table.priceAmount} >= 0`),
+    check(
+      "modifier_catalog_exclusion_price_chk",
+      sql`${table.kind} = 'ADDON' OR ${table.priceAmount} = 0`,
+    ),
   ],
 );

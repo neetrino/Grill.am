@@ -23,6 +23,7 @@ import {
   amdToDisplayMajor,
   displayMajorToAmd,
 } from "@/features/products/application/catalog-price-bounds";
+import { resolveProductTranslation } from "@/features/products/domain/resolve-translation";
 import type { CatalogFilter } from "@/features/products/schemas/catalog-list";
 import type { CatalogProduct } from "@/features/products/types";
 import {
@@ -73,7 +74,7 @@ async function resolveCategoryIdsBySlugs(
   const wanted = new Set(slugs);
   return rows
     .filter((row) => {
-      const translation = row.translations[locale] ?? row.translations.hy;
+      const translation = resolveProductTranslation(row.translations, locale);
       return translation?.slug != null && wanted.has(translation.slug);
     })
     .map((row) => row.id);
@@ -193,7 +194,7 @@ async function loadFilterCategories(
   );
 
   return categoryRows.flatMap((row) => {
-    const translation = row.translations[locale] ?? row.translations.hy;
+    const translation = resolveProductTranslation(row.translations, locale);
     if (!translation?.slug) return [];
     return [
       {

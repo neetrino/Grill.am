@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { X } from "lucide-react";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
+import { OrderDetailsDrawerCustomizations } from "@/features/orders/ui/OrderDetailsDrawerCustomizations";
 import { OrderDetailsDrawerItems } from "@/features/orders/ui/OrderDetailsDrawerItems";
 import { OrderDetailsDrawerShipping } from "@/features/orders/ui/OrderDetailsDrawerShipping";
 import { OrderDetailsDrawerSummary } from "@/features/orders/ui/OrderDetailsDrawerSummary";
@@ -87,6 +88,7 @@ export function OrderDetailsDrawer({
               <OrderDetailsDrawerShipping detail={detail} />
               <OrderDetailsDrawerTotals detail={detail} />
               <OrderDetailsDrawerItems detail={detail} />
+              <OrderDetailsDrawerCustomizations detail={detail} />
             </>
           ) : null}
         </div>

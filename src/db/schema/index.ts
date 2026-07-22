@@ -1,9 +1,11 @@
 export { appMeta } from "@/db/schema/app-meta";
 export {
   categories,
+  modifierCatalog,
   productCategories,
   products,
   type LocaleTranslation,
+  type ModifierCatalogLabel,
   type ProductCustomizationJson,
   type TranslationsJson,
 } from "@/db/schema/catalog";

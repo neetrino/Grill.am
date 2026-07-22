@@ -19,6 +19,12 @@ export const categoryStatusEnum = pgEnum("category_status", [
   "ARCHIVED",
 ]);
 
+/** Shared paid additions and free removals reusable across products. */
+export const modifierKindEnum = pgEnum("modifier_kind", [
+  "ADDON",
+  "EXCLUSION",
+]);
+
 export const mediaUploadStatusEnum = pgEnum("media_upload_status", [
   "PENDING",
   "READY",

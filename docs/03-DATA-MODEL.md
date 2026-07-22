@@ -2,9 +2,9 @@
 
 **Database.** PostgreSQL (Neon)
 **ORM/migrations.** Drizzle ORM / Drizzle Kit
-**Կարգավիճակ.** Canonical 25-table schema migrated; idempotent seed available (`pnpm db:seed`)
-**Canonical table count.** 25
-**Վերջին թարմացում.** 2026-07-18
+**Կարգավիճակ.** Canonical 27-table schema migrated; idempotent seed available (`pnpm db:seed`)
+**Canonical table count.** 27
+**Վերջին թարմացում.** 2026-07-22
 
 ## 1. Սխեմայի նպատակը
 
@@ -29,7 +29,7 @@
 - Financial, stock և audit records-ը hard delete չեն ընդունում։
 - Flexible JSONB-ը միշտ Zod schema/version ունի և business-critical relational կապերը չի փոխարինում։
 
-## 3. Canonical 26-table inventory
+## 3. Canonical 27-table inventory
 
 | # | Table | Domain | Նշանակություն |
 |---:|---|---|---|
@@ -41,24 +41,25 @@
 | 6 | `products` | Catalog | Product, translations, price, current stock |
 | 7 | `categories` | Catalog | Hierarchy և translations |
 | 8 | `product_categories` | Catalog | Product/category many-to-many կապ |
-| 9 | `stock_movements` | Inventory | Immutable stock ledger |
-| 10 | `hero_slides` | Content | Hero configuration և translations |
-| 11 | `blog_posts` | Content | Blog content, translations և tags |
-| 12 | `job_postings` | Content | Open positions, translations, salary, employment type |
-| 13 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
-| 14 | `cart_items` | Commerce | Cart product quantities |
-| 15 | `wishlist_items` | Commerce | Customer wishlist entries |
-| 16 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
-| 17 | `promotion_users` | Pricing | User-restricted promotion allowlist |
-| 18 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
-| 19 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
-| 20 | `order_items` | Orders | Immutable purchased-item snapshots |
-| 21 | `order_events` | Orders | Status, notes և payment provider events |
-| 22 | `payments` | Payments | Payment attempts/current provider state |
-| 23 | `reviews` | Engagement | Verified-purchase reviews/moderation |
-| 24 | `contact_messages` | Support | Contact inbox |
-| 25 | `audit_logs` | Security | Immutable admin/security audit |
-| 26 | `outbox_events` | Reliability | Transactional outbox for async side effects |
+| 9 | `modifier_catalog` | Catalog | Shared paid addons և free exclusions library |
+| 10 | `stock_movements` | Inventory | Immutable stock ledger |
+| 11 | `hero_slides` | Content | Hero configuration և translations |
+| 12 | `blog_posts` | Content | Blog content, translations և tags |
+| 13 | `job_postings` | Content | Open positions, translations, salary, employment type |
+| 14 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
+| 15 | `cart_items` | Commerce | Cart product quantities |
+| 16 | `wishlist_items` | Commerce | Customer wishlist entries |
+| 17 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
+| 18 | `promotion_users` | Pricing | User-restricted promotion allowlist |
+| 19 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
+| 20 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
+| 21 | `order_items` | Orders | Immutable purchased-item snapshots |
+| 22 | `order_events` | Orders | Status, notes և payment provider events |
+| 23 | `payments` | Payments | Payment attempts/current provider state |
+| 24 | `reviews` | Engagement | Verified-purchase reviews/moderation |
+| 25 | `contact_messages` | Support | Contact inbox |
+| 26 | `audit_logs` | Security | Immutable admin/security audit |
+| 27 | `outbox_events` | Reliability | Transactional outbox for async side effects |
 
 ### Count assumptions
 
@@ -142,14 +143,14 @@ Typed key/value model՝ store identity, public contacts/address, locales/currenc
 | Group | Fields/invariants |
 |---|---|
 | Identity | ID, normalized SKU UNIQUE |
-| Translations | `translations JSONB` — optional per-locale objects (`hy`/`en`/`ru`) with title, slug, description, shortDescription, composition, SEO |
+| Translations | `translations JSONB` — optional per-locale objects (`hy`/`en`/`ru`) with title, description, shortDescription, composition, SEO; **slug is one shared value** synced across present locales |
 | Pricing | base/compare-at AMD integer amounts, non-negative checks |
 | Inventory | `stock_on_hand`, low-stock threshold, optional optimistic version; non-negative առանց backorder approval-ի |
 | Lifecycle | draft/active/archived, featured/upcoming, timestamps/deleted_at |
 | Presentation | badge label translations/style/position |
-| Customization | optional `customization JSONB` — size/type option groups (price deltas), paid addons, free exclusions (lean alternative to variant tables until OPEN-007) |
+| Customization | optional `customization JSONB` — size/type option groups (price deltas), paid addons, free exclusions (IDs shared via `modifier_catalog`; lean alternative to variant tables until OPEN-007) |
 
-Translation JSON schema-ն թույլ է տալիս partial locales (`DEC-017`)։ Publish-ին պարտադիր է առնվազն մեկ լրիվ locale object; բացակա locale-ը այդ storefront լեզվում չի ցուցադրվում։ Fixed locale slug uniqueness-ը enforce է արվում expression unique indexes-ով միայն առկա locale keys-ի համար, օրինակ `translations->'hy'->>'slug'`։
+Translation JSON schema-ն թույլ է տալիս partial locales (`DEC-017`)։ Publish-ին պարտադիր է առնվազն մեկ լրիվ locale object; բացակա locale-ը այդ storefront լեզվում չի ցուցադրվում։ Product slug-ը **մեկ shared արժեք** է բոլոր լրացված locale object-ներում (application-layer sync)։ Fixed locale slug uniqueness-ը enforce է արվում expression unique indexes-ով միայն առկա locale keys-ի համար, օրինակ `translations->'hy'->>'slug'`։
 
 Current stock-ը `products`-ում է արագ և atomic availability check-ի համար։ Ամեն manual/order stock mutation-ը նույն transaction-ում `stock_movements` row է ստեղծում։
 
@@ -165,7 +166,11 @@ Self-referencing `parent_id`, `translations JSONB`, sort order, active/archive s
 
 Composite unique `(product_id, category_id)`, optional `is_primary`, sort metadata և reverse lookup indexes։ Պահվում է, որովհետև product-ը կարող է ունենալ մի քանի category։
 
-### 6.4 `stock_movements`
+### 6.4 `modifier_catalog`
+
+Shared library of reusable paid addons և free exclusions։ Fields՝ `kind` (`ADDON`/`EXCLUSION`), multilingual `label` JSONB, `price_amount` (always 0 for exclusions)։ Product `customization` embeds catalog IDs + denormalized label/price for storefront/cart reads; product save upserts catalog rows և propagates label/price changes to peer products that share the same IDs։
+
+### 6.5 `stock_movements`
 
 Immutable ledger՝ product, signed delta, reason (`ORDER`,`CANCEL`,`RETURN`,`ADMIN_ADJUSTMENT`,`IMPORT`...), optional order/actor, resulting balance, correlation ID և timestamp։
 
@@ -253,7 +258,7 @@ Order JSON snapshots-ը versioned Zod schema ունեն։ Client total/stock/pro
 
 ### 10.2 `order_items`
 
-Order, nullable product reference, product title/SKU/image/attributes snapshots, quantity, unit base/display amounts, compare-at, discount/tax/line totals և currency context։ Product update/archive-ից հետո պատմական order-ը նույնն է մնում։
+Order, nullable product reference, product title/SKU/image/attributes snapshots, quantity, unit base/display amounts, compare-at, discount/tax/line totals, currency context և optional `modifiers_snapshot` (option/addon/exclusion IDs + locale-resolved labels at purchase)։ Admin և profile order detail-ը ցուցադրում է այդ labels-ը։ Product update/archive-ից հետո պատմական order-ը նույնն է մնում։
 
 ### 10.3 `order_events`
 

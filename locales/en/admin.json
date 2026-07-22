@@ -56,21 +56,14 @@
       "newAdditionPlaceholder": "New addition…",
       "pricePlaceholder": "AMD",
       "addButton": "Add",
+      "libraryTitle": "From library",
+      "attachFromLibrary": "Attach from library",
       "exclusionsTitle": "Exclusion",
       "exclusionsHint": "Free removals",
       "emptyExclusions": "No exclusions yet",
       "exclusionLabel": "Exclusion name",
       "removeExclusion": "Remove exclusion",
-      "newExclusionPlaceholder": "New exclusion…",
-      "variantsTitle": "Product variants",
-      "addGroup": "Add group",
-      "removeGroup": "Remove option group",
-      "groupLabelPlaceholder": "Group label",
-      "choiceLabelPlaceholder": "Choice label",
-      "removeChoice": "Remove choice",
-      "addChoice": "Add choice",
-      "defaultGroupLabel": "Size",
-      "defaultChoiceLabel": "Standard"
+      "newExclusionPlaceholder": "New exclusion…"
     }
   }
 }

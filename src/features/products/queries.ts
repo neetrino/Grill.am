@@ -12,6 +12,7 @@ import {
   products,
 } from "@/db/schema";
 import { parseProductCustomization } from "@/features/products/domain/customization";
+import { resolveProductTranslation } from "@/features/products/domain/resolve-translation";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type {
   CatalogProduct,
@@ -24,6 +25,7 @@ import {
   PUBLIC_CACHE_REVALIDATE_SECONDS,
 } from "@/lib/cache/tags";
 import type { Locale } from "@/lib/i18n/config";
+import { locales } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
 export type {
@@ -32,6 +34,14 @@ export type {
   ProductDetail,
   ProductGalleryImage,
 } from "@/features/products/types";
+
+function productSlugMatchesAnyLocale(slug: string) {
+  return or(
+    ...locales.map(
+      (loc) => sql`${products.translations}->${loc}->>'slug' = ${slug}`,
+    ),
+  );
+}
 
 const RELATED_PRODUCTS_LIMIT = 4;
 export const CATALOG_PAGE_SIZE = 24;
@@ -44,7 +54,7 @@ function toCatalogProduct(
   CatalogProduct,
   "priceAmount" | "compareAtAmount" | "discountPercent" | "listPriceAmount"
 > | null {
-  const translation = product.translations[locale] ?? product.translations.hy;
+  const translation = resolveProductTranslation(product.translations, locale);
   if (!translation) {
     return null;
   }
@@ -384,7 +394,7 @@ export async function getProductBySlug(
       and(
         eq(products.status, "ACTIVE"),
         isNull(products.deletedAt),
-        sql`${products.translations}->${locale}->>'slug' = ${slug}`,
+        productSlugMatchesAnyLocale(slug),
       ),
     )
     .limit(1);
@@ -453,7 +463,7 @@ async function loadProductCategories(
 
   return rows
     .map((row) => {
-      const translation = row.translations[locale] ?? row.translations.hy;
+      const translation = resolveProductTranslation(row.translations, locale);
       if (!translation) return null;
       return {
         id: row.id,
@@ -475,7 +485,7 @@ async function loadProductDetailBySlug(
       and(
         eq(products.status, "ACTIVE"),
         isNull(products.deletedAt),
-        sql`${products.translations}->${locale}->>'slug' = ${slug}`,
+        productSlugMatchesAnyLocale(slug),
       ),
     )
     .limit(1);

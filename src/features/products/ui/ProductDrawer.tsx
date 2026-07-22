@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 
@@ -13,6 +13,7 @@ import {
 } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
+import type { ModifierCatalogItem } from "@/features/products/domain/modifier-catalog";
 import type {
   AdminCategoryOption,
   AdminProductListItem,
@@ -22,13 +23,17 @@ import {
   updateProductFromDrawerAction,
 } from "@/features/products/application/upsert-product";
 import type { ProductCustomization } from "@/features/products/domain/customization";
+import {
+  normalizeProductSlug,
+  resolveSharedProductSlug,
+} from "@/features/products/domain/product-slug";
 import { ProductDrawerCategories } from "@/features/products/ui/ProductDrawerCategories";
 import { ProductDrawerCustomization } from "@/features/products/ui/ProductDrawerCustomization";
 import {
   ProductDrawerImages,
   type ProductDraftImage,
 } from "@/features/products/ui/ProductDrawerImages";
-import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+import { isLocale, localeLabels, locales, type Locale } from "@/lib/i18n/config";
 
 type ProductDrawerProduct = Pick<
   AdminProductListItem,
@@ -46,7 +51,6 @@ type ProductDrawerProduct = Pick<
 
 type LocaleDraft = {
   title: string;
-  slug: string;
   description: string;
   shortDescription: string;
   composition: string;
@@ -64,12 +68,12 @@ type ProductDrawerProps = {
   onClose: () => void;
   product?: ProductDrawerProduct | null;
   categories: AdminCategoryOption[];
+  modifierCatalog: ModifierCatalogItem[];
 };
 
 function emptyDraft(): LocaleDraft {
   return {
     title: "",
-    slug: "",
     description: "",
     shortDescription: "",
     composition: "",
@@ -90,7 +94,6 @@ function draftsFromTranslations(
     if (!copy) continue;
     next[loc] = {
       title: copy.title,
-      slug: copy.slug,
       description: copy.description ?? "",
       shortDescription: copy.shortDescription ?? "",
       composition: copy.composition ?? "",
@@ -104,16 +107,103 @@ function resolveInitialLocale(
   pageLocale: string,
   translations: TranslationsJson | undefined,
 ): Locale {
-  if (isLocale(pageLocale) && translations?.[pageLocale]) {
+  if (isLocale(pageLocale) && translations?.[pageLocale]?.title?.trim()) {
     return pageLocale;
   }
-  if (isLocale(pageLocale)) {
-    return pageLocale;
-  }
-  return (
-    (locales.find((loc) => translations?.[loc]?.title) as Locale | undefined) ??
-    "hy"
+  const withTitle = locales.find((loc) =>
+    Boolean(translations?.[loc]?.title?.trim()),
   );
+  if (withTitle) {
+    return withTitle;
+  }
+  return isLocale(pageLocale) ? pageLocale : "hy";
+}
+
+function buildLocaleCopies(
+  drafts: Record<Locale, LocaleDraft>,
+): Partial<
+  Record<
+    Locale,
+    {
+      title: string;
+      description?: string;
+      shortDescription?: string;
+      composition?: string;
+    }
+  >
+> {
+  const next: ReturnType<typeof buildLocaleCopies> = {};
+  for (const loc of locales) {
+    const draft = drafts[loc];
+    const title = draft.title.trim();
+    if (!title) continue;
+    next[loc] = {
+      title,
+      description: draft.description.trim() || undefined,
+      shortDescription: draft.shortDescription.trim() || undefined,
+      composition: draft.composition.trim() || undefined,
+    };
+  }
+  return next;
+}
+
+function filledLocalesFromDrafts(
+  drafts: Record<Locale, LocaleDraft>,
+): Set<Locale> {
+  const filled = new Set<Locale>();
+  for (const loc of locales) {
+    if (drafts[loc].title.trim()) {
+      filled.add(loc);
+    }
+  }
+  return filled;
+}
+
+type DrawerDraftSnapshot = {
+  sessionKey: string;
+  drafts: Record<Locale, LocaleDraft>;
+  slug: string;
+  slugTouched: boolean;
+  activeLocale: Locale;
+  priceAmount: string;
+  compareAtAmount: string;
+  sku: string;
+  stockOnHand: string;
+  categoryIds: string[];
+  customization: ProductCustomization;
+};
+
+const DRAWER_SNAPSHOT_KEY = "grill:admin-product-drawer-draft";
+
+function readDrawerSnapshot(sessionKey: string): DrawerDraftSnapshot | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(DRAWER_SNAPSHOT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as DrawerDraftSnapshot;
+    if (parsed.sessionKey !== sessionKey) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writeDrawerSnapshot(snapshot: DrawerDraftSnapshot): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(DRAWER_SNAPSHOT_KEY, JSON.stringify(snapshot));
+  } catch {
+    // Ignore quota / private-mode failures.
+  }
+}
+
+function clearDrawerSnapshot(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(DRAWER_SNAPSHOT_KEY);
+  } catch {
+    // Ignore.
+  }
 }
 
 function imagesFromProduct(
@@ -134,6 +224,7 @@ export function ProductDrawer({
   onClose,
   product = null,
   categories: initialCategories,
+  modifierCatalog,
 }: ProductDrawerProps) {
   const router = useRouter();
   const dictionary = useAdminDictionary();
@@ -143,6 +234,12 @@ export function ProductDrawer({
   );
   const [drafts, setDrafts] = useState<Record<Locale, LocaleDraft>>(() =>
     draftsFromTranslations(product?.translations),
+  );
+  const [slug, setSlug] = useState(() =>
+    resolveSharedProductSlug(product?.translations),
+  );
+  const [slugTouched, setSlugTouched] = useState(() =>
+    Boolean(resolveSharedProductSlug(product?.translations)),
   );
   const [customization, setCustomization] =
     useState<ProductCustomization>(EMPTY_CUSTOMIZATION);
@@ -157,6 +254,8 @@ export function ProductDrawer({
   const [stockOnHand, setStockOnHand] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  /** Prevents prop churn (e.g. categories refresh) from wiping in-progress locale drafts. */
+  const editorSessionKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -177,8 +276,12 @@ export function ProductDrawer({
 
   useEffect(() => {
     if (!open) {
+      editorSessionKeyRef.current = null;
+      clearDrawerSnapshot();
       setActiveLocale(resolveInitialLocale(locale, undefined));
       setDrafts(draftsFromTranslations(undefined));
+      setSlug("");
+      setSlugTouched(false);
       setCustomization(EMPTY_CUSTOMIZATION);
       setImages((current) => {
         for (const image of current) {
@@ -198,8 +301,38 @@ export function ProductDrawer({
     }
 
     setCategories(initialCategories);
+
+    const sessionKey = product?.id ?? "__new__";
+    if (editorSessionKeyRef.current === sessionKey) {
+      return;
+    }
+    editorSessionKeyRef.current = sessionKey;
+
+    const snapshot = readDrawerSnapshot(sessionKey);
+    if (snapshot) {
+      setActiveLocale(snapshot.activeLocale);
+      setDrafts(snapshot.drafts);
+      setSlug(snapshot.slug);
+      setSlugTouched(snapshot.slugTouched);
+      setCustomization(snapshot.customization);
+      setCategoryIds(snapshot.categoryIds);
+      setPriceAmount(snapshot.priceAmount);
+      setCompareAtAmount(snapshot.compareAtAmount);
+      setSku(snapshot.sku);
+      setStockOnHand(snapshot.stockOnHand);
+      if (product) {
+        setImages(imagesFromProduct(product));
+        setRemovedImageIds([]);
+      }
+      setError(null);
+      return;
+    }
+
     setActiveLocale(resolveInitialLocale(locale, product?.translations));
     setDrafts(draftsFromTranslations(product?.translations));
+    const sharedSlug = resolveSharedProductSlug(product?.translations);
+    setSlug(sharedSlug);
+    setSlugTouched(Boolean(sharedSlug));
     if (product) {
       setCustomization(product.customization ?? EMPTY_CUSTOMIZATION);
       setImages(imagesFromProduct(product));
@@ -225,6 +358,36 @@ export function ProductDrawer({
     }
   }, [open, product, initialCategories, locale]);
 
+  useEffect(() => {
+    if (!open) return;
+    writeDrawerSnapshot({
+      sessionKey: product?.id ?? "__new__",
+      drafts,
+      slug,
+      slugTouched,
+      activeLocale,
+      priceAmount,
+      compareAtAmount,
+      sku,
+      stockOnHand,
+      categoryIds,
+      customization,
+    });
+  }, [
+    open,
+    product?.id,
+    drafts,
+    slug,
+    slugTouched,
+    activeLocale,
+    priceAmount,
+    compareAtAmount,
+    sku,
+    stockOnHand,
+    categoryIds,
+    customization,
+  ]);
+
   function handleImagesChange(next: ProductDraftImage[]): void {
     const nextKeys = new Set(next.map((image) => image.key));
     const removedExisting = images
@@ -241,11 +404,17 @@ export function ProductDrawer({
     setImages(next);
   }
 
-  function updateDraft(patch: Partial<LocaleDraft>): void {
+  function updateDraft(
+    localeForDraft: Locale,
+    patch: Partial<LocaleDraft>,
+  ): void {
     setDrafts((current) => ({
       ...current,
-      [activeLocale]: { ...current[activeLocale], ...patch },
+      [localeForDraft]: { ...current[localeForDraft], ...patch },
     }));
+    if (patch.title != null && !slugTouched) {
+      setSlug(normalizeProductSlug(patch.title));
+    }
   }
 
   if (!open) return null;
@@ -283,21 +452,32 @@ export function ProductDrawer({
           className="flex min-h-0 flex-1 flex-col"
           onSubmit={(event) => {
             event.preventDefault();
-            const current = drafts[activeLocale];
+            const localeCopies = buildLocaleCopies(drafts);
+            const missingLocales = locales.filter((loc) => !localeCopies[loc]);
+            if (missingLocales.length > 0) {
+              setError(
+                `Fill title for all languages: ${missingLocales
+                  .map((loc) => localeLabels[loc])
+                  .join(", ")}.`,
+              );
+              return;
+            }
             const newImages = images.filter((image) => image.file);
             const primaryImage = images.find((image) => image.isPrimary);
             const primaryNewIndex = primaryImage?.file
               ? newImages.findIndex((image) => image.key === primaryImage.key)
               : null;
+            const nextSlug = normalizeProductSlug(slug);
+            if (!nextSlug) {
+              setError("Slug is required.");
+              return;
+            }
 
             const payload = {
               editingLocale: activeLocale,
               sku: sku.trim(),
-              title: current.title.trim(),
-              slug: current.slug.trim(),
-              description: current.description.trim() || undefined,
-              shortDescription: current.shortDescription.trim() || undefined,
-              composition: current.composition.trim() || undefined,
+              slug: nextSlug,
+              localeCopies,
               customization,
               priceAmount: Number(priceAmount),
               compareAtAmount: compareAtAmount.trim()
@@ -339,6 +519,7 @@ export function ProductDrawer({
                 return;
               }
 
+              clearDrawerSnapshot();
               onClose();
               router.refresh();
             });
@@ -349,6 +530,7 @@ export function ProductDrawer({
               activeLocale={activeLocale}
               onChange={setActiveLocale}
               disabled={isPending}
+              filledLocales={filledLocalesFromDrafts(drafts)}
             />
 
             <label className="block">
@@ -358,7 +540,9 @@ export function ProductDrawer({
               <input
                 required
                 value={draft.title}
-                onChange={(event) => updateDraft({ title: event.target.value })}
+                onChange={(event) =>
+                  updateDraft(activeLocale, { title: event.target.value })
+                }
                 placeholder="Product title"
                 className={ADMIN_INPUT}
                 disabled={isPending}
@@ -371,12 +555,18 @@ export function ProductDrawer({
               </span>
               <input
                 required
-                value={draft.slug}
-                onChange={(event) => updateDraft({ slug: event.target.value })}
+                value={slug}
+                onChange={(event) => {
+                  setSlugTouched(true);
+                  setSlug(event.target.value);
+                }}
                 placeholder="product-slug"
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
+              <span className="mt-1 block text-xs text-gray-500">
+                One slug for all languages (hy / en / ru).
+              </span>
             </label>
 
             <label className="block">
@@ -384,7 +574,9 @@ export function ProductDrawer({
               <textarea
                 value={draft.shortDescription}
                 onChange={(event) =>
-                  updateDraft({ shortDescription: event.target.value })
+                  updateDraft(activeLocale, {
+                    shortDescription: event.target.value,
+                  })
                 }
                 placeholder="Short blurb for the product page"
                 className={ADMIN_TEXTAREA}
@@ -397,7 +589,9 @@ export function ProductDrawer({
               <textarea
                 value={draft.description}
                 onChange={(event) =>
-                  updateDraft({ description: event.target.value })
+                  updateDraft(activeLocale, {
+                    description: event.target.value,
+                  })
                 }
                 placeholder="Product description"
                 className={ADMIN_TEXTAREA}
@@ -410,7 +604,9 @@ export function ProductDrawer({
               <textarea
                 value={draft.composition}
                 onChange={(event) =>
-                  updateDraft({ composition: event.target.value })
+                  updateDraft(activeLocale, {
+                    composition: event.target.value,
+                  })
                 }
                 placeholder="Ingredients / composition"
                 className={ADMIN_TEXTAREA}
@@ -420,6 +616,7 @@ export function ProductDrawer({
 
             <ProductDrawerCustomization
               value={customization}
+              catalog={modifierCatalog}
               onChange={setCustomization}
               disabled={isPending}
             />
