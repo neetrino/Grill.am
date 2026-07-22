@@ -5,6 +5,7 @@
     "products": "Товары",
     "shop": "Магазин",
     "blog": "Блог",
+    "careers": "Вакансии",
     "cart": "Корзина",
     "about": "О нас",
     "contact": "Контакты",
@@ -30,6 +31,7 @@
     "privacyPolicy": "Политика конфиденциальности",
     "terms": "Условия",
     "contactInfo": "Контактная информация",
+    "followUs": "Мы в соцсетях",
     "rights": "Все права защищены",
     "createdBy": "Создано NEETRINO IT COMPANY"
   }

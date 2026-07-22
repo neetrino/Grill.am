@@ -16,6 +16,8 @@ describe("getDictionary", () => {
 
   it("loads Armenian and Russian namespaces", () => {
     expect(getDictionary("hy").nav.home).toBe("Գլխավոր");
+    expect(getDictionary("hy").admin.menu.products).toBe("Ապրանքներ");
     expect(getDictionary("ru").nav.home).toBe("Главная");
+    expect(getDictionary("ru").admin.menu.products).toBe("Товары");
   });
 });

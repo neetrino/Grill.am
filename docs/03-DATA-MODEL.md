@@ -29,7 +29,7 @@
 - Financial, stock և audit records-ը hard delete չեն ընդունում։
 - Flexible JSONB-ը միշտ Zod schema/version ունի և business-critical relational կապերը չի փոխարինում։
 
-## 3. Canonical 25-table inventory
+## 3. Canonical 26-table inventory
 
 | # | Table | Domain | Նշանակություն |
 |---:|---|---|---|
@@ -44,20 +44,21 @@
 | 9 | `stock_movements` | Inventory | Immutable stock ledger |
 | 10 | `hero_slides` | Content | Hero configuration և translations |
 | 11 | `blog_posts` | Content | Blog content, translations և tags |
-| 12 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
-| 13 | `cart_items` | Commerce | Cart product quantities |
-| 14 | `wishlist_items` | Commerce | Customer wishlist entries |
-| 15 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
-| 16 | `promotion_users` | Pricing | User-restricted promotion allowlist |
-| 17 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
-| 18 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
-| 19 | `order_items` | Orders | Immutable purchased-item snapshots |
-| 20 | `order_events` | Orders | Status, notes և payment provider events |
-| 21 | `payments` | Payments | Payment attempts/current provider state |
-| 22 | `reviews` | Engagement | Verified-purchase reviews/moderation |
-| 23 | `contact_messages` | Support | Contact inbox |
-| 24 | `audit_logs` | Security | Immutable admin/security audit |
-| 25 | `outbox_events` | Reliability | Reliable post-commit email/provider/cache work |
+| 12 | `job_postings` | Content | Open positions, translations, salary, employment type |
+| 13 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
+| 14 | `cart_items` | Commerce | Cart product quantities |
+| 15 | `wishlist_items` | Commerce | Customer wishlist entries |
+| 16 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
+| 17 | `promotion_users` | Pricing | User-restricted promotion allowlist |
+| 18 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
+| 19 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
+| 20 | `order_items` | Orders | Immutable purchased-item snapshots |
+| 21 | `order_events` | Orders | Status, notes և payment provider events |
+| 22 | `payments` | Payments | Payment attempts/current provider state |
+| 23 | `reviews` | Engagement | Verified-purchase reviews/moderation |
+| 24 | `contact_messages` | Support | Contact inbox |
+| 25 | `audit_logs` | Security | Immutable admin/security audit |
+| 26 | `outbox_events` | Reliability | Transactional outbox for async side effects |
 
 ### Count assumptions
 
@@ -115,6 +116,7 @@ Entity ownership-ը պահվում է typed nullable FKs-ով՝
 - `category_id`
 - `hero_slide_id`
 - `blog_post_id`
+- `job_posting_id`
 
 `CHECK` constraint-ը պահանջում է՝ ready entity media-ի համար ճիշտ մեկ owner, pending upload-ի համար owner-ի ժամանակավոր բացակայություն, branding asset-ի համար explicit `purpose`։ Generic `owner_type + owner_id` polymorphic կապ չի օգտագործվում, որպեսզի foreign key protection-ը չկորչի։
 
@@ -122,7 +124,7 @@ Partial unique constraints՝
 
 - մեկ primary media per product,
 - մեկ desktop և մեկ mobile media role per hero slide,
-- մեկ cover media per blog post/category՝ ըստ role policy-ի։
+- մեկ cover media per blog post/job posting/category՝ ըստ role policy-ի։
 
 Full CDN URL չի պահվում. URL-ը կառուցվում է config-ից։
 
@@ -140,11 +142,12 @@ Typed key/value model՝ store identity, public contacts/address, locales/currenc
 | Group | Fields/invariants |
 |---|---|
 | Identity | ID, normalized SKU UNIQUE |
-| Translations | `translations JSONB` — optional per-locale objects (`hy`/`en`/`ru`) with title, slug, description, SEO |
+| Translations | `translations JSONB` — optional per-locale objects (`hy`/`en`/`ru`) with title, slug, description, shortDescription, composition, SEO |
 | Pricing | base/compare-at AMD integer amounts, non-negative checks |
 | Inventory | `stock_on_hand`, low-stock threshold, optional optimistic version; non-negative առանց backorder approval-ի |
 | Lifecycle | draft/active/archived, featured/upcoming, timestamps/deleted_at |
 | Presentation | badge label translations/style/position |
+| Customization | optional `customization JSONB` — size/type option groups (price deltas), paid addons, free exclusions (lean alternative to variant tables until OPEN-007) |
 
 Translation JSON schema-ն թույլ է տալիս partial locales (`DEC-017`)։ Publish-ին պարտադիր է առնվազն մեկ լրիվ locale object; բացակա locale-ը այդ storefront լեզվում չի ցուցադրվում։ Fixed locale slug uniqueness-ը enforce է արվում expression unique indexes-ով միայն առկա locale keys-ի համար, օրինակ `translations->'hy'->>'slug'`։
 
@@ -180,6 +183,10 @@ Author, status, publish timestamp, `translations JSONB` (title/slug/excerpt/sani
 
 Tags-ը standalone taxonomy չէ initial scope-ում, հետևաբար առանձին tag tables պետք չեն։
 
+### 7.3 `job_postings`
+
+Status (`DRAFT`/`ACTIVE`/`ARCHIVED`), employment type, optional salary amount + currency, sort order, publish timestamp, `translations JSONB` (title/slug/summary/sanitized description/location) և soft-delete։ Slug-ը **մեկ shared արժեք** է բոլոր լրացված locale object-ներում (application-layer sync); locale slug expression indexes-ը unique են։ Cover-ը `media_assets.job_posting_id + COVER` relation է։
+
 ## 8. Cart և wishlist
 
 ### 8.1 `carts`
@@ -188,7 +195,7 @@ Nullable user կամ guest token hash, status (`ACTIVE`,`MERGED`,`CONVERTED`,`AB
 
 ### 8.2 `cart_items`
 
-Cart/product, quantity > 0, timestamps և unique `(cart_id, product_id)`։ Cart-ի ցուցադրվող price-ը authoritative snapshot չէ. checkout-ը նորից հաշվարկում է։
+Cart/product, quantity > 0, `modifiers` JSONB (option/addon/exclusion selection), `selection_key` (canonical identity, empty when unmodified), timestamps և unique `(cart_id, product_id, selection_key)`։ Identical customization merges quantity։ Cart-ի ցուցադրվող price-ը authoritative snapshot չէ. checkout-ը նորից հաշվարկում է base + modifier deltas։
 
 ### 8.3 `wishlist_items`
 
@@ -258,7 +265,7 @@ Order, nullable product reference, product title/SKU/image/attributes snapshots,
 
 ### 10.4 `payments`
 
-Order, provider/method, provider reference, requested amount/currency, current status, attempt number, safe metadata և timestamps։ Մեկ order-ը կարող է ունենալ COD row կամ բազմաթիվ online attempts։ Card/secret/full sensitive payload չի պահվում։
+Order, provider/method, provider reference, requested amount/currency, current status, attempt number, safe metadata և timestamps։ Մեկ order-ը կարող է ունենալ COD row կամ բազմաթիվ online attempts։ Card/secret/full sensitive payload չի պահվում։ COD-ի համար optional `metadata.cashTenderedAmount`՝ customer-ի նշած թղթադրամը (AMD), որպեսզի courier-ը պատրաստի մանրը։
 
 ## 11. Reviews և support
 

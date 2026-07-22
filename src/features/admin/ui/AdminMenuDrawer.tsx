@@ -8,6 +8,7 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
 
 type AdminMenuDrawerProps = {
@@ -28,7 +29,8 @@ function isNestedVisible(
 
 export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
   const [open, setOpen] = useState(false);
-  const tabs = getAdminMenuItems(locale);
+  const dictionary = useAdminDictionary();
+  const tabs = getAdminMenuItems(locale, dictionary.menu);
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
 
@@ -61,7 +63,7 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
             d="M4 6H20M4 12H16M4 18H12"
           />
         </svg>
-        Menu
+        {dictionary.menu.openMenu}
       </button>
 
       {open ? (

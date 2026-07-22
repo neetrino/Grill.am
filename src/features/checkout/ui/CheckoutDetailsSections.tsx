@@ -1,5 +1,7 @@
 "use client";
 
+import { type ReactNode } from "react";
+
 import { Card } from "@/components/ui/Card";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
@@ -51,6 +53,7 @@ type CheckoutDetailsSectionsProps = {
   paymentMethod: CheckoutPaymentMethod;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
   paymentOptions: PaymentOption[];
+  cashOnDeliveryExtra?: ReactNode;
   defaultFirstName: string;
   defaultLastName: string;
   defaultEmail: string;
@@ -69,6 +72,7 @@ export function CheckoutDetailsSections({
   paymentMethod,
   onPaymentMethodChange,
   paymentOptions,
+  cashOnDeliveryExtra,
   defaultFirstName,
   defaultLastName,
   defaultEmail,
@@ -232,6 +236,7 @@ export function CheckoutDetailsSections({
         value={paymentMethod}
         onChange={onPaymentMethodChange}
         disabled={pending}
+        cashOnDeliveryExtra={cashOnDeliveryExtra}
       />
     </div>
   );

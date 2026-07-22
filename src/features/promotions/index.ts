@@ -31,6 +31,10 @@ export {
   listPromotionTargetOptions,
 } from "@/features/promotions/application/queries";
 export {
+  listCustomerCouponHistory,
+  type CustomerCouponRedemption,
+} from "@/features/promotions/application/list-customer-coupon-history";
+export {
   normalizePromotionCode,
   validatePromotionRules,
   PROMOTION_KINDS,

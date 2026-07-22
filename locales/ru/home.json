@@ -2,9 +2,16 @@
   "title": "White Shop",
   "subtitle": "Многоязычный магазин уже работает.",
   "cta": "Смотреть товары",
+  "categoriesTitle": "Категории",
+  "emptyCategories": "Категорий пока нет.",
   "featuredTitle": "Рекомендуемые товары",
   "viewAll": "Смотреть ещё",
   "emptyFeatured": "Пока нет рекомендуемых товаров.",
+  "promotionsTitle": "Акции и скидки",
+  "promotionsSubtitle": "Специальные предложения и текущие скидки.",
+  "promotionsBanner": "Скидка по магазину до {percent}%",
+  "emptyPromotions": "Сейчас нет активных акций.",
+  "whyChooseTitle": "Почему выбирают нас",
   "aboutEyebrow": "О нас",
   "aboutTitle": "Мы предлагаем качественные товары",
   "aboutDescription": "Откройте для себя тщательно отобранный ассортимент с надёжной доставкой и поддержкой.",
@@ -15,6 +22,8 @@
     "qualityTitle": "Лучшее качество",
     "qualityDescription": "Тщательно отобранные товары, которым можно доверять.",
     "returnTitle": "Бесплатный возврат",
-    "returnDescription": "Простой возврат, если что-то не так."
+    "returnDescription": "Простой возврат, если что-то не так.",
+    "supportTitle": "Поддержка клиентов",
+    "supportDescription": "Быстрые и понятные ответы на каждом этапе покупки."
   }
 }

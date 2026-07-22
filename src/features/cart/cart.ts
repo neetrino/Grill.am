@@ -10,6 +10,13 @@ import {
   hashGuestToken,
   peekGuestCartToken,
 } from "@/features/cart/guest-token";
+import {
+  parseCartModifiers,
+  parseProductCustomization,
+  selectionKeyFromModifiers,
+  validateModifiers,
+  type CartModifiers,
+} from "@/features/products/domain/customization";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createId } from "@/lib/id";
 
@@ -123,6 +130,11 @@ export async function getCartItemCount(): Promise<number> {
 export async function addToCart(
   productId: string,
   quantity = 1,
+  modifiersInput: CartModifiers = {
+    optionChoices: {},
+    addonIds: [],
+    exclusionIds: [],
+  },
 ): Promise<void> {
   if (!Number.isInteger(quantity) || quantity < 1) {
     throw new Error("Invalid quantity.");
@@ -134,6 +146,7 @@ export async function addToCart(
       id: products.id,
       stock: products.stockOnHand,
       status: products.status,
+      customization: products.customization,
     })
     .from(products)
     .where(eq(products.id, productId))
@@ -142,15 +155,61 @@ export async function addToCart(
     throw new Error("Product unavailable.");
   }
 
-  const addQty = Math.min(quantity, product.stock);
+  const customization = parseProductCustomization(product.customization);
+  const validated = validateModifiers(
+    customization,
+    parseCartModifiers(modifiersInput),
+  );
+  if (!validated.ok) {
+    throw new Error(validated.error);
+  }
+
+  const modifiers = validated.modifiers;
+  const selectionKey = selectionKeyFromModifiers(modifiers);
+
+  const existingLines = await getDb()
+    .select({
+      quantity: cartItems.quantity,
+      selectionKey: cartItems.selectionKey,
+    })
+    .from(cartItems)
+    .where(
+      and(eq(cartItems.cartId, cart.id), eq(cartItems.productId, productId)),
+    );
+
+  const quantityOnOtherLines = existingLines
+    .filter((line) => line.selectionKey !== selectionKey)
+    .reduce((sum, line) => sum + line.quantity, 0);
+  const matchingLine = existingLines.find(
+    (line) => line.selectionKey === selectionKey,
+  );
+  const matchingQty = matchingLine?.quantity ?? 0;
+
+  const remainingStock = product.stock - quantityOnOtherLines;
+  if (remainingStock < 1) {
+    throw new Error("Product unavailable.");
+  }
+
+  const addQty = Math.min(quantity, remainingStock - matchingQty);
+  if (addQty < 1) {
+    throw new Error("Product unavailable.");
+  }
 
   await getDb()
     .insert(cartItems)
-    .values({ id: createId(), cartId: cart.id, productId, quantity: addQty })
+    .values({
+      id: createId(),
+      cartId: cart.id,
+      productId,
+      quantity: addQty,
+      modifiers,
+      selectionKey,
+    })
     .onConflictDoUpdate({
-      target: [cartItems.cartId, cartItems.productId],
+      target: [cartItems.cartId, cartItems.productId, cartItems.selectionKey],
       set: {
-        quantity: sql`least(${cartItems.quantity} + ${addQty}, ${product.stock})`,
+        quantity: sql`least(${cartItems.quantity} + ${addQty}, ${remainingStock})`,
+        modifiers,
         updatedAt: new Date(),
       },
     });

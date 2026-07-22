@@ -27,6 +27,10 @@ import {
   checkoutSchema,
   type CheckoutInput,
 } from "@/features/checkout/schemas";
+import {
+  buildCodPaymentMetadata,
+  validateCodCashTenderedAmount,
+} from "@/features/checkout/domain/cod-cash-change";
 import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
 import {
   ORDER_NUMBER_LOCK_KEY,
@@ -39,6 +43,12 @@ import {
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  describeModifiers,
+  parseCartModifiers,
+  parseProductCustomization,
+  unitAmountWithModifiers,
+} from "@/features/products/domain/customization";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { createId } from "@/lib/id";
@@ -106,6 +116,7 @@ export async function createOrderAction(
       email: input.contactEmail.toLowerCase(),
       shippingMethod: input.shippingMethod,
       paymentMethod: input.paymentMethod,
+      cashTenderedAmount: input.cashTenderedAmount ?? null,
       deliveryRuleId: input.deliveryRuleId ?? null,
     }),
   );
@@ -182,49 +193,77 @@ export async function createOrderAction(
         lineDiscountAmount: number;
         lineTotal: number;
         nextStock: number;
+        modifiersSnapshot: {
+          optionChoices: Record<string, string>;
+          addonIds: string[];
+          exclusionIds: string[];
+          labels: string[];
+        } | null;
       }> = [];
 
-      const lockedProducts: Array<{
-        product: typeof products.$inferSelect;
-        quantity: number;
-      }> = [];
-
+      const quantityByProduct = new Map<string, number>();
       for (const { item, product } of items) {
         if (product.status !== "ACTIVE") {
           throw new Error("A product in the cart is unavailable.");
         }
+        quantityByProduct.set(
+          product.id,
+          (quantityByProduct.get(product.id) ?? 0) + item.quantity,
+        );
+      }
 
+      const lockedById = new Map<string, typeof products.$inferSelect>();
+      for (const productId of quantityByProduct.keys()) {
         const [locked] = await tx
           .select()
           .from(products)
-          .where(eq(products.id, product.id))
+          .where(eq(products.id, productId))
           .for("update")
           .limit(1);
 
-        if (!locked || locked.stockOnHand < item.quantity) {
+        const needed = quantityByProduct.get(productId) ?? 0;
+        if (!locked || locked.stockOnHand < needed) {
           throw new Error("Insufficient stock for one or more items.");
         }
-
-        lockedProducts.push({ product: locked, quantity: item.quantity });
+        lockedById.set(productId, locked);
       }
 
       const pricedUnits = await resolveProductPrices(
-        lockedProducts.map(({ product }) => ({
+        [...lockedById.values()].map((product) => ({
           id: product.id,
           priceAmount: product.priceAmount,
           compareAtAmount: product.compareAtAmount,
         })),
       );
 
-      for (const { product: locked, quantity } of lockedProducts) {
+      const remainingStock = new Map(
+        [...lockedById.entries()].map(([id, product]) => [
+          id,
+          product.stockOnHand,
+        ]),
+      );
+
+      for (const { item, product } of items) {
+        const locked = lockedById.get(product.id);
+        if (!locked) {
+          throw new Error("A product in the cart is unavailable.");
+        }
+
         const resolved = pricedUnits.get(locked.id);
-        const unitAmount = resolved?.unitAmount ?? locked.priceAmount;
+        const baseUnit = resolved?.unitAmount ?? locked.priceAmount;
+        const modifiers = parseCartModifiers(item.modifiers);
+        const customization = parseProductCustomization(locked.customization);
+        const unitAmount = unitAmountWithModifiers(
+          baseUnit,
+          customization,
+          modifiers,
+        );
         const compareAtAmount = resolved?.compareAtAmount ?? null;
         const lineDiscountAmount = Math.max(
           0,
-          (resolved?.listAmount ?? locked.priceAmount) - unitAmount,
+          (resolved?.listAmount ?? locked.priceAmount) - baseUnit,
         );
-        const lineTotal = unitAmount * quantity;
+        const lineTotal = unitAmount * item.quantity;
         const unitDisplayAmount = Number(
           convertAmount(
             unitAmount,
@@ -233,21 +272,37 @@ export async function createOrderAction(
             displayCurrency,
           ).amount,
         );
+        const nextStock = (remainingStock.get(locked.id) ?? 0) - item.quantity;
+        remainingStock.set(locked.id, nextStock);
         subtotal += lineTotal;
+
+        const locale = input.locale;
+        const labels = describeModifiers(customization, modifiers, locale);
+
         lineSnapshots.push({
           productId: locked.id,
           title:
-            locked.translations.en?.title ??
+            locked.translations[locale]?.title ??
             locked.translations.hy?.title ??
+            locked.translations.en?.title ??
             locked.sku,
           sku: locked.sku,
-          quantity,
+          quantity: item.quantity,
           unitAmount,
           unitDisplayAmount,
           compareAtAmount,
           lineDiscountAmount,
           lineTotal,
-          nextStock: locked.stockOnHand - quantity,
+          nextStock,
+          modifiersSnapshot:
+            labels.length > 0
+              ? {
+                  optionChoices: modifiers.optionChoices,
+                  addonIds: modifiers.addonIds,
+                  exclusionIds: modifiers.exclusionIds,
+                  labels,
+                }
+              : null,
         });
       }
 
@@ -296,6 +351,17 @@ export async function createOrderAction(
       }
 
       const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryAmount;
+
+      if (input.paymentMethod === "cash_on_delivery") {
+        const tender = validateCodCashTenderedAmount(
+          totalAmount,
+          input.cashTenderedAmount,
+        );
+        if (!tender.ok) {
+          throw new Error(tender.error);
+        }
+      }
+
       const orderId = createId();
       await tx.execute(
         sql`select pg_advisory_xact_lock(${ORDER_NUMBER_LOCK_KEY})`,
@@ -370,6 +436,7 @@ export async function createOrderAction(
           discountAmount: line.lineDiscountAmount * line.quantity,
           lineTotalAmount: line.lineTotal,
           currency: defaultCurrency,
+          modifiersSnapshot: line.modifiersSnapshot,
         });
 
         await tx
@@ -399,6 +466,11 @@ export async function createOrderAction(
         idempotencyKey: input.idempotencyKey,
       });
       const paymentRecord = toPaymentRecord(input.paymentMethod);
+      const paymentMetadata =
+        input.paymentMethod === "cash_on_delivery" &&
+        input.cashTenderedAmount != null
+          ? buildCodPaymentMetadata(input.cashTenderedAmount)
+          : null;
 
       await tx.insert(payments).values({
         id: createId(),
@@ -410,6 +482,7 @@ export async function createOrderAction(
         currency: defaultCurrency,
         status: "PENDING",
         attemptNumber: 1,
+        metadata: paymentMetadata,
       });
 
       await tx.insert(orderEvents).values({

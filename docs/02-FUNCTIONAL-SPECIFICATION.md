@@ -23,7 +23,7 @@
 
 | ID | Պահանջ / acceptance criteria |
 |---|---|
-| NAV-001 | Header-ը ցույց է տալիս Home, Products, About, Contact, Blog, locale, currency, wishlist, cart count և account control։ |
+| NAV-001 | Header-ը ցույց է տալիս Home, Products, About, Contact, Blog, Careers, locale, currency, wishlist, cart count և account control։ |
 | NAV-002 | Guest account click-ը տանում է login; Customer menu-ն ունի Profile/Logout; Admin menu-ն՝ Admin/Profile/Logout։ |
 | NAV-003 | Locale switch-ը պահպանում է համարժեք route-ը և թույլատրելի query params-ը; fallback-ը locale home-ն է։ |
 | NAV-004 | Currency switch-ը փոխում է display preference-ը, ոչ base price-ը։ |
@@ -32,7 +32,7 @@
 
 ### 2.2 Footer և static pages
 
-- Footer-ը ներառում է About, Contact, Blog, Terms, Privacy, Shipping, Return/Refund, Cookie, social links և copyright։
+- Footer-ը ներառում է About, Contact, Blog, Careers, Terms, Privacy, Shipping, Return/Refund, Cookie, social links և copyright։
 - Յուրաքանչյուր policy link ունի իրական locale route և publishable content։
 - Draft/unapproved legal text-ը production publish չի արվում (`OPEN-014`)։
 
@@ -40,7 +40,7 @@
 
 | ID | Պահանջ / acceptance criteria |
 |---|---|
-| HOME-001 | `/{locale}` page-ը պարունակում է Header, Hero, Featured Products, short About, CTA և Footer։ |
+| HOME-001 | `/{locale}` page-ը պարունակում է Header, Hero, Categories, Featured Products, Promotions, Why choose us, short About, CTA և Footer (contact + social)։ |
 | HOME-002 | Hero query-ն վերադարձնում է միայն active slide-երը sort order-ով և locale translation-ով։ |
 | HOME-003 | Slide-ը ունի desktop/mobile media; responsive `<picture>`/image behavior-ը ճիշտ asset-ն է ընտրում։ |
 | HOME-004 | Hero action URL-ը validation է անցնում; internal URL-ը render է լինում `Link`-ով։ |
@@ -67,12 +67,13 @@
 
 | ID | Պահանջ / acceptance criteria |
 |---|---|
-| PDP-001 | Gallery-ն ունի primary image, sorted thumbnails, responsive sizing և accessible selection; optional lightbox progressive enhancement է։ |
-| PDP-002 | Detail-ը ցույց է տալիս translated title/description, categories, price, compare-at, discount badge, SKU և stock status։ |
-| PDP-003 | Quantity control-ը min 1 է և չի անցնում server-confirmed purchasable stock-ը։ |
-| PDP-004 | Add to Cart-ը server-side վերահաստատում է product status/stock/price և վերադարձնում է actionable conflict error։ |
+| PDP-001 | Gallery-ն ունի primary image, sorted thumbnails, responsive sizing, accessible selection և zoom/lightbox progressive enhancement։ |
+| PDP-002 | Detail-ը ցույց է տալիս translated title, short description, composition, categories, price, compare-at, discount badge, SKU և stock status (Առկա / Սպառված)։ |
+| PDP-003 | Quantity control-ը min 1 է և չի անցնում server-confirmed purchasable stock-ը։ Size/type option groups, paid add-ons և free exclusions-ը product `customization` JSONB-ից են՝ server-side validation-ով։ |
+| PDP-004 | Add to Cart-ը server-side վերահաստատում է product status/stock/price/modifiers և վերադարձնում է actionable conflict error։ Նույն product + modifiers զույգը merge է լինում։ |
 | PDP-005 | Related products-ը նույն category-ից active products են, current product-ը բացառված է։ |
 | PDP-006 | Metadata/JSON-LD-ը համապատասխանում է locale-specific canonical product data-ին։ |
+| PDP-007 | Unit price-ը = discounted base + option deltas + addon prices; exclusions-ը գին չեն ավելացնում։ Checkout-ը modifiers snapshot է պահում order item-ում։ |
 
 ### 4.3 Reviews
 
@@ -143,13 +144,14 @@
 | CHK-008 | Order-ը պահում է base/display currency code, exchange-rate snapshot, subtotal, discount, tax, delivery և total։ |
 | CHK-009 | COD adapter-ը P0 է; online provider-ը միայն approved adapter/webhook contract-ից հետո է ակտիվանում։ |
 | CHK-010 | Success page-ը refresh/retry-safe է և order ownership check ունի։ |
+| CHK-011 | COD-ի դեպքում customer-ը կարող է նշել մանրի համար թղթադրամը (5000/10000/20000/50000/100000 AMD) կամ «առանց մանրի»․ արժեքը պահվում է `payments.metadata.cashTenderedAmount`-ում և երևում է admin order detail-ում։ |
 
 ## 8. Customer profile
 
 ### 8.1 Layout և dashboard
 
 - Sidebar header՝ name, email, phone։
-- Menu՝ Dashboard, Orders, Personal Information, Addresses, Change Password, Delete Account, Logout։
+- Menu՝ Dashboard, Orders, Promo Codes, Personal Information, Addresses, Change Password, Delete Account, Logout։
 - Dashboard metrics՝ total orders, pending, completed, total spent և recent orders՝ միայն current customer-ի համար։
 
 ### 8.2 Orders
@@ -157,6 +159,12 @@
 - List columns՝ order number, date, status, payment status, total, View Details։
 - Detail accessible modal/drawer է՝ URL/deep-link strategy-ն կարող է progressive enhancement լինել։
 - Customer-ը չի կարող դիտել ուրիշի order-ը ID/number manipulation-ով։
+
+### 8.2a Promo Codes
+
+- Profile surface-ը ցուցադրում է coupon redemption history՝ derived from `orders.promotion_*` snapshots (ոչ public active-code catalog)։
+- Columns՝ code, offer, saved amount, order number, order status, applied date։
+- Public/unrestricted coupon codes-ը browseable list չեն. դառնում՝ security/abuse policy։
 
 ### 8.3 Personal information և password
 
@@ -183,7 +191,7 @@
 
 ### 9.1 Shell
 
-- Responsive left sidebar՝ Home, Dashboard, Home Hero, Orders, Products, Categories, Coupons, Discounts, Users, Messages, Analytics, Delivery, Blog, Settings։
+- Responsive left sidebar՝ Home, Dashboard, Home Hero, Orders, Products, Categories, Coupons, Discounts, Users, Messages, Analytics, Delivery, Blog, Careers, Settings։
 - Home-ը locale-aware storefront home link է։
 - Desktop sidebar-ը collapsible է, mobile-ը focus-managed drawer։
 
@@ -308,6 +316,14 @@
 - Միայն published և publish-date-ով հասանելի posts են public։
 - Rich text-ը server-side sanitized է; stored/rendered canonical format-ը `OPEN-010`-ով է։
 - BlogPosting JSON-LD, canonical, hreflang և OG metadata կան։
+
+## 19.1 Careers / open positions
+
+- Admin create/edit/archive՝ multilingual title/summary/description/location, **մեկ shared slug բոլոր լեզուների համար**, cover image, salary + currency, employment type, sort order, status (`DRAFT`/`ACTIVE`/`ARCHIVED`)։
+- Admin UX՝ list page + “Add position”՝ right drawer (`~50%` width) create/edit; slug-ը Common դաշտ է (locale tabs-ից անկախ)։
+- Public routes՝ `/{locale}/careers` և `/{locale}/careers/{slug}`՝ նույն slug-ով բոլոր locale-ներում։
+- Storefront-ում ցուցադրվում են միայն `ACTIVE` և `publishedAt`-ով հաստիքներ։
+- Description HTML-ը server-side sanitized է; JobPosting JSON-LD և canonical metadata կան։
 
 ## 20. Settings
 

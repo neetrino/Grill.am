@@ -11,6 +11,7 @@ import {
   ADMIN_SELECT,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import {
   createBlogPostAction,
   updateBlogPostAction,
@@ -21,7 +22,7 @@ import {
   type BlogPostStatus,
   type BlogTranslations,
 } from "@/features/blog/domain/blog-rules";
-import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
+import { locales, type Locale } from "@/lib/i18n/config";
 
 type LocaleDraft = {
   title: string;
@@ -220,30 +221,11 @@ export function BlogPostDrawer({
           }}
         >
           <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5">
-            <div>
-              <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                Translations
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {locales.map((loc) => {
-                  const selected = loc === activeLocale;
-                  return (
-                    <button
-                      key={loc}
-                      type="button"
-                      onClick={() => setActiveLocale(loc)}
-                      className={`rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
-                        selected
-                          ? "bg-gray-900 text-white"
-                          : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      {localeLabels[loc]}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            <AdminLocaleTabs
+              activeLocale={activeLocale}
+              onChange={setActiveLocale}
+              disabled={isPending}
+            />
 
             <label className="block">
               <span className={ADMIN_LABEL}>

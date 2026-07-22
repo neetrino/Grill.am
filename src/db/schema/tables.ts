@@ -14,6 +14,7 @@ export const CANONICAL_TABLES = [
   "stock_movements",
   "hero_slides",
   "blog_posts",
+  "job_postings",
   "carts",
   "cart_items",
   "wishlist_items",

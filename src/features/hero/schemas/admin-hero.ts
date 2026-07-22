@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { locales } from "@/lib/i18n/config";
+
 const localeCopySchema = z.object({
   title: z.string().trim().min(1).max(120),
   subtitle: z.string().trim().max(240).optional(),
@@ -9,6 +11,7 @@ const localeCopySchema = z.object({
 
 /** Modal create/edit payload — title, subtitle, and optional image handled separately. */
 export const upsertHeroSlideSchema = z.object({
+  editingLocale: z.enum(locales),
   title: z.string().trim().min(1).max(120),
   subtitle: z.string().trim().max(240).optional(),
 });

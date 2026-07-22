@@ -118,6 +118,14 @@ export const orders = pgTable(
   ],
 );
 
+export type OrderItemModifiersSnapshot = {
+  optionChoices: Record<string, string>;
+  addonIds: string[];
+  exclusionIds: string[];
+  /** Locale-resolved labels captured at purchase time. */
+  labels: string[];
+};
+
 export const orderItems = pgTable(
   "order_items",
   {
@@ -139,6 +147,9 @@ export const orderItems = pgTable(
     taxAmount: integer("tax_amount").notNull().default(0),
     lineTotalAmount: integer("line_total_amount").notNull(),
     currency: text("currency").notNull().default("AMD"),
+    modifiersSnapshot: jsonb(
+      "modifiers_snapshot",
+    ).$type<OrderItemModifiersSnapshot>(),
     createdAt: createdAtColumn(),
   },
   (table) => [

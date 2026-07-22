@@ -48,6 +48,19 @@ export const blogPostStatusEnum = pgEnum("blog_post_status", [
   "ARCHIVED",
 ]);
 
+export const jobPostingStatusEnum = pgEnum("job_posting_status", [
+  "DRAFT",
+  "ACTIVE",
+  "ARCHIVED",
+]);
+
+export const jobEmploymentTypeEnum = pgEnum("job_employment_type", [
+  "FULL_TIME",
+  "PART_TIME",
+  "CONTRACT",
+  "INTERNSHIP",
+]);
+
 export const cartStatusEnum = pgEnum("cart_status", [
   "ACTIVE",
   "MERGED",

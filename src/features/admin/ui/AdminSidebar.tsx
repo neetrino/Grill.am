@@ -8,6 +8,7 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminMenuDrawer } from "@/features/admin/ui/AdminMenuDrawer";
 import { AdminSidebarBrand } from "@/features/admin/ui/AdminSidebarBrand";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
@@ -37,7 +38,8 @@ function isNestedVisible(
 
 export function AdminSidebar({ locale }: AdminSidebarProps) {
   const pathname = usePathname() ?? `/${locale}/admin`;
-  const tabs = getAdminMenuItems(locale);
+  const dictionary = useAdminDictionary();
+  const tabs = getAdminMenuItems(locale, dictionary.menu);
   const { collapsed } = useAdminSidebarCollapse();
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);

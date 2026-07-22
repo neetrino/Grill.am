@@ -6,6 +6,7 @@ import {
   getAdminOrderByNumber,
   type AdminOrderDetail,
 } from "@/features/orders/application/queries";
+import { readCodCashTenderedAmount } from "@/features/checkout/domain/cod-cash-change";
 
 export type AdminOrderDetailItemView = {
   id: string;
@@ -39,6 +40,10 @@ export type AdminOrderDetailView = {
   addressHint: string | null;
   paymentMethod: string;
   paymentAmount: number;
+  /** COD banknote the customer will tender; null when exact or non-COD. */
+  cashTenderedAmount: number | null;
+  /** Change the courier should prepare (`tendered − total`). */
+  cashChangeAmount: number | null;
   items: AdminOrderDetailItemView[];
 };
 
@@ -79,6 +84,13 @@ export function toAdminOrderDetailView(
   const { order, items, payments } = detail;
   const isPickup = order.deliveryLabelSnapshot === "Store pickup";
   const latestPayment = payments[0] ?? null;
+  const cashTenderedAmount = latestPayment
+    ? readCodCashTenderedAmount(latestPayment.metadata)
+    : null;
+  const cashChangeAmount =
+    cashTenderedAmount != null
+      ? Math.max(0, cashTenderedAmount - order.totalAmount)
+      : null;
 
   return {
     orderNumber: order.orderNumber,
@@ -107,6 +119,8 @@ export function toAdminOrderDetailView(
       ? paymentMethodLabel(latestPayment.method)
       : "—",
     paymentAmount: latestPayment?.amount ?? order.totalAmount,
+    cashTenderedAmount,
+    cashChangeAmount,
     items: items.map((item) => ({
       id: item.id,
       title: item.productTitleSnapshot,

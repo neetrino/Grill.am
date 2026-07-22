@@ -10,9 +10,14 @@ import {
   productCategories,
   products,
   stockMovements,
+  type LocaleTranslation,
   type TranslationsJson,
 } from "@/db/schema";
 import { persistProductMedia } from "@/features/products/application/persist-product-media";
+import {
+  productCustomizationSchema,
+  type ProductCustomization,
+} from "@/features/products/domain/customization";
 import { requireAdmin } from "@/lib/auth/policies";
 import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
@@ -20,10 +25,14 @@ import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
 const productUpsertSchema = z.object({
+  editingLocale: z.enum(locales),
   sku: z.string().trim().min(1).max(120),
   title: z.string().trim().min(1).max(200),
   slug: z.string().trim().min(1).max(200),
   description: z.string().trim().max(5000).optional(),
+  shortDescription: z.string().trim().max(500).optional(),
+  composition: z.string().trim().max(2000).optional(),
+  customization: productCustomizationSchema.optional(),
   priceAmount: z.number().int().nonnegative(),
   compareAtAmount: z.number().int().nonnegative().nullable(),
   stockOnHand: z.number().int().nonnegative(),
@@ -36,13 +45,38 @@ const productUpsertSchema = z.object({
 
 export type ProductUpsertInput = z.infer<typeof productUpsertSchema>;
 
-function buildTranslations(data: ProductUpsertInput): TranslationsJson {
-  const entry = {
+function buildLocaleEntry(data: ProductUpsertInput): LocaleTranslation {
+  return {
     title: data.title,
     slug: data.slug,
     description: data.description || undefined,
+    shortDescription: data.shortDescription || undefined,
+    composition: data.composition || undefined,
   };
-  return { hy: entry, en: entry, ru: entry };
+}
+
+function mergeTranslations(
+  existing: TranslationsJson | null | undefined,
+  data: ProductUpsertInput,
+): TranslationsJson {
+  return {
+    ...(existing ?? {}),
+    [data.editingLocale]: buildLocaleEntry(data),
+  };
+}
+
+function normalizeCustomization(
+  value: ProductCustomization | undefined,
+): ProductCustomization | null {
+  if (!value) return null;
+  if (
+    value.optionGroups.length === 0 &&
+    value.addons.length === 0 &&
+    value.exclusions.length === 0
+  ) {
+    return null;
+  }
+  return value;
 }
 
 function revalidateProducts(
@@ -153,7 +187,8 @@ export async function createProductFromDrawerAction(
     compareAtAmount: data.compareAtAmount,
     stockOnHand: data.stockOnHand,
     status: data.status,
-    translations: buildTranslations(data),
+    translations: mergeTranslations(null, data),
+    customization: normalizeCustomization(data.customization),
   });
 
   const categoryError = await syncProductCategories(id, data.categoryIds);
@@ -238,7 +273,8 @@ export async function updateProductFromDrawerAction(
       compareAtAmount: data.compareAtAmount,
       stockOnHand: data.stockOnHand,
       status: data.status || existing.status,
-      translations: buildTranslations(data),
+      translations: mergeTranslations(existing.translations, data),
+      customization: normalizeCustomization(data.customization),
       updatedAt: new Date(),
     })
     .where(eq(products.id, existing.id));

@@ -23,8 +23,13 @@ import {
   productCategories,
   products,
   type LocaleTranslation,
+  type TranslationsJson,
 } from "@/db/schema";
 import { loadProductImagesForAdmin } from "@/features/products/application/persist-product-media";
+import {
+  parseProductCustomization,
+  type ProductCustomization,
+} from "@/features/products/domain/customization";
 import type { AdminProductsFilter } from "@/features/products/schemas/admin-list";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
@@ -49,6 +54,11 @@ export type AdminProductListItem = {
   title: string;
   slug: string;
   description: string;
+  shortDescription: string;
+  composition: string;
+  /** Full locale key → copy map for admin translation editing. */
+  translations: TranslationsJson;
+  customization: ProductCustomization | null;
   imageUrl: string | null;
   categoryIds: string[];
   categoryLabels: string[];
@@ -235,6 +245,10 @@ export async function listAdminProducts(
         title: translation?.title ?? product.sku,
         slug: translation?.slug ?? "",
         description: translation?.description ?? "",
+        shortDescription: translation?.shortDescription ?? "",
+        composition: translation?.composition ?? "",
+        translations: product.translations,
+        customization: parseProductCustomization(product.customization),
         imageUrl: primaryImages.get(product.id) ?? null,
         categoryIds: categoryMeta?.ids ?? [],
         categoryLabels: categoryMeta?.labels ?? [],

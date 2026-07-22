@@ -24,6 +24,10 @@ export type LocaleTranslation = {
   title: string;
   slug: string;
   description?: string;
+  /** Short storefront blurb shown above the full description. */
+  shortDescription?: string;
+  /** Ingredients / composition text for the PDP. */
+  composition?: string;
   seoTitle?: string;
   seoDescription?: string;
 };
@@ -31,6 +35,34 @@ export type LocaleTranslation = {
 export type TranslationsJson = Partial<
   Record<"hy" | "en" | "ru", LocaleTranslation>
 >;
+
+/**
+ * Product-level size/type choices, paid addons, and free exclusions.
+ * Stored as JSONB to avoid a variants table until OPEN-007 is closed.
+ */
+export type ProductCustomizationJson = {
+  optionGroups: Array<{
+    id: string;
+    kind: "SIZE" | "TYPE" | "PORTION";
+    required: boolean;
+    label: Partial<Record<"hy" | "en" | "ru", string>>;
+    choices: Array<{
+      id: string;
+      label: Partial<Record<"hy" | "en" | "ru", string>>;
+      priceDeltaAmount: number;
+      isDefault?: boolean;
+    }>;
+  }>;
+  addons: Array<{
+    id: string;
+    label: Partial<Record<"hy" | "en" | "ru", string>>;
+    priceAmount: number;
+  }>;
+  exclusions: Array<{
+    id: string;
+    label: Partial<Record<"hy" | "en" | "ru", string>>;
+  }>;
+};
 
 export const products = pgTable(
   "products",
@@ -51,6 +83,7 @@ export const products = pgTable(
     >(),
     badgeStyle: text("badge_style"),
     badgePosition: text("badge_position"),
+    customization: jsonb("customization").$type<ProductCustomizationJson>(),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
     deletedAt: deletedAtColumn(),

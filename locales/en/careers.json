@@ -1,0 +1,16 @@
+{
+  "title": "Careers",
+  "subtitle": "Open positions at our company.",
+  "empty": "No open positions right now.",
+  "salary": "Salary",
+  "location": "Location",
+  "employmentType": "Employment type",
+  "employment": {
+    "FULL_TIME": "Full-time",
+    "PART_TIME": "Part-time",
+    "CONTRACT": "Contract",
+    "INTERNSHIP": "Internship"
+  },
+  "backToList": "Back to careers",
+  "applyHint": "Interested? Contact us and mention the position title."
+}

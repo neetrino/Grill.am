@@ -5,11 +5,14 @@ import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
+import type { TranslationsJson } from "@/db/schema";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import type {
   AdminCategoryOption,
   AdminProductListItem,
@@ -18,26 +21,42 @@ import {
   createProductFromDrawerAction,
   updateProductFromDrawerAction,
 } from "@/features/products/application/upsert-product";
+import type { ProductCustomization } from "@/features/products/domain/customization";
 import { ProductDrawerCategories } from "@/features/products/ui/ProductDrawerCategories";
+import { ProductDrawerCustomization } from "@/features/products/ui/ProductDrawerCustomization";
 import {
   ProductDrawerImages,
   type ProductDraftImage,
 } from "@/features/products/ui/ProductDrawerImages";
+import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 
 type ProductDrawerProduct = Pick<
   AdminProductListItem,
   | "id"
   | "sku"
-  | "title"
-  | "slug"
-  | "description"
+  | "customization"
   | "priceAmount"
   | "compareAtAmount"
   | "stockOnHand"
   | "status"
   | "categoryIds"
   | "images"
+  | "translations"
 >;
+
+type LocaleDraft = {
+  title: string;
+  slug: string;
+  description: string;
+  shortDescription: string;
+  composition: string;
+};
+
+const EMPTY_CUSTOMIZATION: ProductCustomization = {
+  optionGroups: [],
+  addons: [],
+  exclusions: [],
+};
 
 type ProductDrawerProps = {
   locale: string;
@@ -46,6 +65,56 @@ type ProductDrawerProps = {
   product?: ProductDrawerProduct | null;
   categories: AdminCategoryOption[];
 };
+
+function emptyDraft(): LocaleDraft {
+  return {
+    title: "",
+    slug: "",
+    description: "",
+    shortDescription: "",
+    composition: "",
+  };
+}
+
+function draftsFromTranslations(
+  translations: TranslationsJson | undefined,
+): Record<Locale, LocaleDraft> {
+  const next = {
+    hy: emptyDraft(),
+    en: emptyDraft(),
+    ru: emptyDraft(),
+  } satisfies Record<Locale, LocaleDraft>;
+
+  for (const loc of locales) {
+    const copy = translations?.[loc];
+    if (!copy) continue;
+    next[loc] = {
+      title: copy.title,
+      slug: copy.slug,
+      description: copy.description ?? "",
+      shortDescription: copy.shortDescription ?? "",
+      composition: copy.composition ?? "",
+    };
+  }
+
+  return next;
+}
+
+function resolveInitialLocale(
+  pageLocale: string,
+  translations: TranslationsJson | undefined,
+): Locale {
+  if (isLocale(pageLocale) && translations?.[pageLocale]) {
+    return pageLocale;
+  }
+  if (isLocale(pageLocale)) {
+    return pageLocale;
+  }
+  return (
+    (locales.find((loc) => translations?.[loc]?.title) as Locale | undefined) ??
+    "hy"
+  );
+}
 
 function imagesFromProduct(
   product: ProductDrawerProduct | null,
@@ -67,10 +136,16 @@ export function ProductDrawer({
   categories: initialCategories,
 }: ProductDrawerProps) {
   const router = useRouter();
+  const dictionary = useAdminDictionary();
   const isEdit = product != null;
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
+  const [activeLocale, setActiveLocale] = useState<Locale>(() =>
+    resolveInitialLocale(locale, product?.translations),
+  );
+  const [drafts, setDrafts] = useState<Record<Locale, LocaleDraft>>(() =>
+    draftsFromTranslations(product?.translations),
+  );
+  const [customization, setCustomization] =
+    useState<ProductCustomization>(EMPTY_CUSTOMIZATION);
   const [images, setImages] = useState<ProductDraftImage[]>([]);
   const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
   const [categories, setCategories] =
@@ -102,9 +177,9 @@ export function ProductDrawer({
 
   useEffect(() => {
     if (!open) {
-      setTitle("");
-      setSlug("");
-      setDescription("");
+      setActiveLocale(resolveInitialLocale(locale, undefined));
+      setDrafts(draftsFromTranslations(undefined));
+      setCustomization(EMPTY_CUSTOMIZATION);
       setImages((current) => {
         for (const image of current) {
           if (image.file) URL.revokeObjectURL(image.previewUrl);
@@ -123,10 +198,10 @@ export function ProductDrawer({
     }
 
     setCategories(initialCategories);
+    setActiveLocale(resolveInitialLocale(locale, product?.translations));
+    setDrafts(draftsFromTranslations(product?.translations));
     if (product) {
-      setTitle(product.title);
-      setSlug(product.slug);
-      setDescription(product.description);
+      setCustomization(product.customization ?? EMPTY_CUSTOMIZATION);
       setImages(imagesFromProduct(product));
       setRemovedImageIds([]);
       setCategoryIds(product.categoryIds);
@@ -138,9 +213,7 @@ export function ProductDrawer({
       setStockOnHand(String(product.stockOnHand));
       setError(null);
     } else {
-      setTitle("");
-      setSlug("");
-      setDescription("");
+      setCustomization(EMPTY_CUSTOMIZATION);
       setImages([]);
       setRemovedImageIds([]);
       setCategoryIds([]);
@@ -150,7 +223,7 @@ export function ProductDrawer({
       setStockOnHand("");
       setError(null);
     }
-  }, [open, product, initialCategories]);
+  }, [open, product, initialCategories, locale]);
 
   function handleImagesChange(next: ProductDraftImage[]): void {
     const nextKeys = new Set(next.map((image) => image.key));
@@ -168,14 +241,26 @@ export function ProductDrawer({
     setImages(next);
   }
 
+  function updateDraft(patch: Partial<LocaleDraft>): void {
+    setDrafts((current) => ({
+      ...current,
+      [activeLocale]: { ...current[activeLocale], ...patch },
+    }));
+  }
+
   if (!open) return null;
+
+  const draft = drafts[activeLocale];
+  const drawerTitle = isEdit
+    ? dictionary.products.editProduct
+    : dictionary.products.addProduct;
 
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-black/40"
       role="dialog"
       aria-modal="true"
-      aria-label={isEdit ? "Edit product" : "Add new product"}
+      aria-label={drawerTitle}
       onClick={onClose}
     >
       <div
@@ -183,14 +268,12 @@ export function ProductDrawer({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit product" : "Add new product"}
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">{drawerTitle}</h2>
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close"
+            aria-label={dictionary.common.close}
           >
             <X className="h-5 w-5" />
           </button>
@@ -200,6 +283,7 @@ export function ProductDrawer({
           className="flex min-h-0 flex-1 flex-col"
           onSubmit={(event) => {
             event.preventDefault();
+            const current = drafts[activeLocale];
             const newImages = images.filter((image) => image.file);
             const primaryImage = images.find((image) => image.isPrimary);
             const primaryNewIndex = primaryImage?.file
@@ -207,10 +291,14 @@ export function ProductDrawer({
               : null;
 
             const payload = {
+              editingLocale: activeLocale,
               sku: sku.trim(),
-              title: title.trim(),
-              slug: slug.trim(),
-              description: description.trim() || undefined,
+              title: current.title.trim(),
+              slug: current.slug.trim(),
+              description: current.description.trim() || undefined,
+              shortDescription: current.shortDescription.trim() || undefined,
+              composition: current.composition.trim() || undefined,
+              customization,
               priceAmount: Number(priceAmount),
               compareAtAmount: compareAtAmount.trim()
                 ? Number(compareAtAmount)
@@ -257,14 +345,20 @@ export function ProductDrawer({
           }}
         >
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+            <AdminLocaleTabs
+              activeLocale={activeLocale}
+              onChange={setActiveLocale}
+              disabled={isPending}
+            />
+
             <label className="block">
               <span className={ADMIN_LABEL}>
                 Title <span className="text-red-600">*</span>
               </span>
               <input
                 required
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
+                value={draft.title}
+                onChange={(event) => updateDraft({ title: event.target.value })}
                 placeholder="Product title"
                 className={ADMIN_INPUT}
                 disabled={isPending}
@@ -277,8 +371,8 @@ export function ProductDrawer({
               </span>
               <input
                 required
-                value={slug}
-                onChange={(event) => setSlug(event.target.value)}
+                value={draft.slug}
+                onChange={(event) => updateDraft({ slug: event.target.value })}
                 placeholder="product-slug"
                 className={ADMIN_INPUT}
                 disabled={isPending}
@@ -286,15 +380,49 @@ export function ProductDrawer({
             </label>
 
             <label className="block">
+              <span className={ADMIN_LABEL}>Short description</span>
+              <textarea
+                value={draft.shortDescription}
+                onChange={(event) =>
+                  updateDraft({ shortDescription: event.target.value })
+                }
+                placeholder="Short blurb for the product page"
+                className={ADMIN_TEXTAREA}
+                disabled={isPending}
+              />
+            </label>
+
+            <label className="block">
               <span className={ADMIN_LABEL}>Description</span>
               <textarea
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
+                value={draft.description}
+                onChange={(event) =>
+                  updateDraft({ description: event.target.value })
+                }
                 placeholder="Product description"
                 className={ADMIN_TEXTAREA}
                 disabled={isPending}
               />
             </label>
+
+            <label className="block">
+              <span className={ADMIN_LABEL}>Composition</span>
+              <textarea
+                value={draft.composition}
+                onChange={(event) =>
+                  updateDraft({ composition: event.target.value })
+                }
+                placeholder="Ingredients / composition"
+                className={ADMIN_TEXTAREA}
+                disabled={isPending}
+              />
+            </label>
+
+            <ProductDrawerCustomization
+              value={customization}
+              onChange={setCustomization}
+              disabled={isPending}
+            />
 
             <ProductDrawerImages
               images={images}
@@ -379,18 +507,18 @@ export function ProductDrawer({
             <Button type="submit" disabled={isPending}>
               {isPending
                 ? isEdit
-                  ? "Saving…"
-                  : "Creating…"
+                  ? dictionary.common.saving
+                  : dictionary.common.creating
                 : isEdit
-                  ? "Save"
-                  : "Create"}
+                  ? dictionary.common.save
+                  : dictionary.common.create}
             </Button>
             <button
               type="button"
               onClick={onClose}
               className="text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {dictionary.common.cancel}
             </button>
           </div>
         </form>

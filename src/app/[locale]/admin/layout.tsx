@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AdminShell } from "@/features/admin/ui/AdminShell";
 import { requireAdmin } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminLayoutProps = {
   children: React.ReactNode;
@@ -17,5 +18,11 @@ export default async function AdminLayout({
   if (!isLocale(locale)) notFound();
   await requireAdmin(locale);
 
-  return <AdminShell locale={locale}>{children}</AdminShell>;
+  const dictionary = getDictionary(locale);
+
+  return (
+    <AdminShell locale={locale} dictionary={dictionary.admin}>
+      {children}
+    </AdminShell>
+  );
 }

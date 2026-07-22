@@ -36,6 +36,11 @@
   "payment": {
     "cashOnDelivery": "Наличными при получении",
     "cashOnDeliveryDescription": "Оплатите наличными при получении заказа",
+    "cashChangeTitle": "Сдача",
+    "cashChangeDescription": "Укажите купюру, которой будете платить, чтобы курьер подготовил сдачу",
+    "cashChangeExact": "Без сдачи",
+    "cashChangeHint": "Курьеру нужно приготовить сдачу {amount}",
+    "cashChangeNoEligible": "Сумма заказа больше доступных купюр — оплатите без сдачи",
     "idram": "Idram",
     "idramDescription": "Оплата через Idram или картой",
     "arca": "ArCa",

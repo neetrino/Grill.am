@@ -1,8 +1,10 @@
 import type { Locale } from "@/lib/i18n/config";
 
 import enAbout from "@/locales/en/about.json";
+import enAdmin from "@/locales/en/admin.json";
 import enAuth from "@/locales/en/auth.json";
 import enBlog from "@/locales/en/blog.json";
+import enCareers from "@/locales/en/careers.json";
 import enCart from "@/locales/en/cart.json";
 import enCatalog from "@/locales/en/catalog.json";
 import enCheckout from "@/locales/en/checkout.json";
@@ -14,8 +16,10 @@ import enProfile from "@/locales/en/profile.json";
 import enWishlist from "@/locales/en/wishlist.json";
 
 import hyAbout from "@/locales/hy/about.json";
+import hyAdmin from "@/locales/hy/admin.json";
 import hyAuth from "@/locales/hy/auth.json";
 import hyBlog from "@/locales/hy/blog.json";
+import hyCareers from "@/locales/hy/careers.json";
 import hyCart from "@/locales/hy/cart.json";
 import hyCatalog from "@/locales/hy/catalog.json";
 import hyCheckout from "@/locales/hy/checkout.json";
@@ -27,8 +31,10 @@ import hyProfile from "@/locales/hy/profile.json";
 import hyWishlist from "@/locales/hy/wishlist.json";
 
 import ruAbout from "@/locales/ru/about.json";
+import ruAdmin from "@/locales/ru/admin.json";
 import ruAuth from "@/locales/ru/auth.json";
 import ruBlog from "@/locales/ru/blog.json";
+import ruCareers from "@/locales/ru/careers.json";
 import ruCart from "@/locales/ru/cart.json";
 import ruCatalog from "@/locales/ru/catalog.json";
 import ruCheckout from "@/locales/ru/checkout.json";
@@ -41,6 +47,7 @@ import ruWishlist from "@/locales/ru/wishlist.json";
 
 type LocaleNamespaces = {
   common: typeof hyCommon;
+  admin: typeof hyAdmin;
   home: typeof hyHome;
   contact: typeof hyContact;
   about: typeof hyAbout;
@@ -50,6 +57,7 @@ type LocaleNamespaces = {
   cart: typeof hyCart;
   product: typeof hyProduct;
   blog: typeof hyBlog;
+  careers: typeof hyCareers;
   catalog: typeof hyCatalog;
   wishlist: typeof hyWishlist;
 };
@@ -60,6 +68,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     nav: namespaces.common.nav,
     header: namespaces.common.header,
     footer: namespaces.common.footer,
+    admin: namespaces.admin,
     home: namespaces.home,
     contact: namespaces.contact,
     about: namespaces.about,
@@ -69,6 +78,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     cartDrawer: namespaces.cart,
     product: namespaces.product,
     blog: namespaces.blog,
+    careers: namespaces.careers,
     catalog: namespaces.catalog,
     wishlist: namespaces.wishlist,
   } as const;
@@ -77,6 +87,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
 const dictionaries = {
   hy: buildDictionary({
     common: hyCommon,
+    admin: hyAdmin,
     home: hyHome,
     contact: hyContact,
     about: hyAbout,
@@ -86,11 +97,13 @@ const dictionaries = {
     cart: hyCart,
     product: hyProduct,
     blog: hyBlog,
+    careers: hyCareers,
     catalog: hyCatalog,
     wishlist: hyWishlist,
   }),
   en: buildDictionary({
     common: enCommon,
+    admin: enAdmin,
     home: enHome,
     contact: enContact,
     about: enAbout,
@@ -100,11 +113,13 @@ const dictionaries = {
     cart: enCart,
     product: enProduct,
     blog: enBlog,
+    careers: enCareers,
     catalog: enCatalog,
     wishlist: enWishlist,
   }),
   ru: buildDictionary({
     common: ruCommon,
+    admin: ruAdmin,
     home: ruHome,
     contact: ruContact,
     about: ruAbout,
@@ -114,12 +129,14 @@ const dictionaries = {
     cart: ruCart,
     product: ruProduct,
     blog: ruBlog,
+    careers: ruCareers,
     catalog: ruCatalog,
     wishlist: ruWishlist,
   }),
 } as const;
 
 export type Dictionary = (typeof dictionaries)[Locale];
+export type AdminDictionary = Dictionary["admin"];
 
 export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale];

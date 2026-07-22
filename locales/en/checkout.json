@@ -36,6 +36,11 @@
   "payment": {
     "cashOnDelivery": "Cash on Delivery",
     "cashOnDeliveryDescription": "Pay cash when you receive your order",
+    "cashChangeTitle": "Need change?",
+    "cashChangeDescription": "Select the banknote you will pay with so the courier can prepare change",
+    "cashChangeExact": "Exact amount",
+    "cashChangeHint": "Courier should bring {amount} in change",
+    "cashChangeNoEligible": "Order total exceeds available banknotes — pay the exact amount",
     "idram": "Idram",
     "idramDescription": "Pay with Idram wallet or card",
     "arca": "ArCa",

@@ -3,6 +3,7 @@ import {
   check,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -18,6 +19,13 @@ import {
 } from "@/db/schema/columns";
 import { cartStatusEnum } from "@/db/schema/enums";
 import { users } from "@/db/schema/identity";
+
+/** Selected option/addon/exclusion ids for a cart line. */
+export type CartItemModifiersJson = {
+  optionChoices: Record<string, string>;
+  addonIds: string[];
+  exclusionIds: string[];
+};
 
 export const carts = pgTable(
   "carts",
@@ -66,13 +74,28 @@ export const cartItems = pgTable(
       .notNull()
       .references(() => products.id, { onDelete: "restrict" }),
     quantity: integer("quantity").notNull(),
+    /** Canonical JSON of selected options/addons/exclusions. */
+    modifiers: jsonb("modifiers")
+      .$type<CartItemModifiersJson>()
+      .notNull()
+      .default({
+        optionChoices: {},
+        addonIds: [],
+        exclusionIds: [],
+      }),
+    /**
+     * Stable identity for merge — empty string means no customization.
+     * Unique with (cart_id, product_id) so identical configs merge quantity.
+     */
+    selectionKey: text("selection_key").notNull().default(""),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    uniqueIndex("cart_items_cart_product_uidx").on(
+    uniqueIndex("cart_items_cart_product_selection_uidx").on(
       table.cartId,
       table.productId,
+      table.selectionKey,
     ),
     check("cart_items_qty_chk", sql`${table.quantity} > 0`),
   ],

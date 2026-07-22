@@ -3,4 +3,5 @@ export type CheckoutOrderProduct = {
   title: string;
   quantity: number;
   imageUrl: string | null;
+  modifierLines: string[];
 };

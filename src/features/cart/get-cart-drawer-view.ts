@@ -5,6 +5,12 @@ import { and, asc, eq, inArray, or } from "drizzle-orm";
 import { getCartWithItems } from "@/features/cart/cart";
 import { getDb } from "@/db/client";
 import { mediaAssets } from "@/db/schema";
+import {
+  describeModifiers,
+  parseCartModifiers,
+  parseProductCustomization,
+  unitAmountWithModifiers,
+} from "@/features/products/domain/customization";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type { Locale } from "@/lib/i18n/config";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
@@ -20,6 +26,7 @@ export type CartDrawerItemView = {
   quantity: number;
   imageUrl: string | null;
   unitPriceFormatted: string;
+  modifierLines: string[];
 };
 
 export type CartDrawerView = {
@@ -102,8 +109,15 @@ export async function getCartDrawerView(
   for (const { item, product } of rows) {
     const translation =
       product.translations[locale] ?? product.translations.hy;
-    const unitAmount =
+    const modifiers = parseCartModifiers(item.modifiers);
+    const customization = parseProductCustomization(product.customization);
+    const baseUnit =
       prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const unitAmount = unitAmountWithModifiers(
+      baseUnit,
+      customization,
+      modifiers,
+    );
 
     items.push({
       id: item.id,
@@ -116,6 +130,7 @@ export async function getCartDrawerView(
         currency,
         locale,
       ),
+      modifierLines: describeModifiers(customization, modifiers, locale),
     });
     subtotalBase += item.quantity * unitAmount;
   }

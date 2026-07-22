@@ -103,7 +103,10 @@ export function CheckoutProductsInOrder({
                 <X className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
             </div>
-            <p className="mt-2 truncate text-sm text-gray-900" title={product.title}>
+            <p
+              className="mt-2 truncate text-sm text-gray-900"
+              title={[product.title, ...product.modifierLines].join(" · ")}
+            >
               {product.title}
             </p>
           </li>

@@ -11,6 +11,7 @@ import {
   productCategories,
   products,
 } from "@/db/schema";
+import { parseProductCustomization } from "@/features/products/domain/customization";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type {
   CatalogProduct,
@@ -54,6 +55,7 @@ function toCatalogProduct(
     stockOnHand: product.stockOnHand,
     translation,
     imageUrl,
+    categoryTitle: null,
   };
 }
 
@@ -152,30 +154,91 @@ export async function getActiveProductsByIds(
   return withProductImages(rows, locale);
 }
 
+export type ActiveProductsPageOptions = {
+  categorySlug?: string;
+};
+
+function normalizeCategorySlug(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim().slice(0, 120);
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+async function resolveCategoryIdBySlug(
+  locale: Locale,
+  categorySlug: string,
+): Promise<string | null> {
+  const [row] = await getDb()
+    .select({ id: categories.id })
+    .from(categories)
+    .where(
+      and(
+        eq(categories.status, "ACTIVE"),
+        isNull(categories.deletedAt),
+        sql`${categories.translations}->${locale}->>'slug' = ${categorySlug}`,
+      ),
+    )
+    .limit(1);
+
+  return row?.id ?? null;
+}
+
 async function loadActiveProductsPage(
   locale: Locale,
   page: number,
+  options: ActiveProductsPageOptions = {},
 ): Promise<{ products: CatalogProduct[]; total: number; pageSize: number }> {
   const offset = (page - 1) * CATALOG_PAGE_SIZE;
+  const categorySlug = normalizeCategorySlug(options.categorySlug);
+  const categoryId = categorySlug
+    ? await resolveCategoryIdBySlug(locale, categorySlug)
+    : null;
+
+  if (categorySlug && !categoryId) {
+    return {
+      products: [],
+      total: 0,
+      pageSize: CATALOG_PAGE_SIZE,
+    };
+  }
+
+  let productIdFilter: string[] | null = null;
+  if (categoryId) {
+    const links = await getDb()
+      .select({ productId: productCategories.productId })
+      .from(productCategories)
+      .where(eq(productCategories.categoryId, categoryId));
+    productIdFilter = links.map((link) => link.productId);
+    if (productIdFilter.length === 0) {
+      return {
+        products: [],
+        total: 0,
+        pageSize: CATALOG_PAGE_SIZE,
+      };
+    }
+  }
+
+  const whereClause =
+    productIdFilter != null
+      ? and(activeCatalogWhere, inArray(products.id, productIdFilter))
+      : activeCatalogWhere;
 
   const [[countRow], rows] = await Promise.all([
     getDb()
       .select({ count: sql<number>`count(*)::int` })
       .from(products)
-      .where(activeCatalogWhere),
+      .where(whereClause),
     getDb()
       .select()
       .from(products)
-      .where(activeCatalogWhere)
+      .where(whereClause)
       .orderBy(desc(products.createdAt))
       .limit(CATALOG_PAGE_SIZE)
       .offset(offset),
   ]);
 
-  const enriched = await withProductImages(rows, locale);
-
   return {
-    products: enriched,
+    products: await withProductImages(rows, locale),
     total: countRow?.count ?? 0,
     pageSize: CATALOG_PAGE_SIZE,
   };
@@ -185,12 +248,14 @@ async function loadActiveProductsPage(
 export async function getActiveProductsPage(
   locale: Locale,
   page: number,
+  options: ActiveProductsPageOptions = {},
 ): Promise<{ products: CatalogProduct[]; total: number; pageSize: number }> {
   const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+  const categorySlug = normalizeCategorySlug(options.categorySlug) ?? "";
 
   return unstable_cache(
-    async () => loadActiveProductsPage(locale, safePage),
-    ["active-products-page", locale, String(safePage)],
+    async () => loadActiveProductsPage(locale, safePage, options),
+    ["active-products-page", locale, String(safePage), categorySlug],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
@@ -235,6 +300,72 @@ export async function getFeaturedProducts(
   return unstable_cache(
     async () => loadFeaturedProducts(locale),
     ["featured-products", locale],
+    {
+      tags: [CACHE_TAGS.products],
+      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+    },
+  )();
+}
+
+const DISCOUNTED_PRODUCTS_SCAN_LIMIT = 48;
+const DISCOUNTED_PRODUCTS_LIMIT = 8;
+
+async function loadDiscountedProducts(
+  locale: Locale,
+): Promise<CatalogProduct[]> {
+  const rows = await getDb()
+    .select()
+    .from(products)
+    .where(activeCatalogWhere)
+    .orderBy(desc(products.updatedAt))
+    .limit(DISCOUNTED_PRODUCTS_SCAN_LIMIT);
+
+  const enriched = await withProductImages(rows, locale);
+  return enriched
+    .flatMap((product) => {
+      const hasAutoDiscount =
+        product.discountPercent != null && product.discountPercent > 0;
+      const hasManualSale =
+        product.compareAtAmount != null &&
+        product.compareAtAmount > product.priceAmount;
+
+      if (!hasAutoDiscount && !hasManualSale) {
+        return [];
+      }
+
+      if (hasAutoDiscount || product.discountPercent != null) {
+        return [product];
+      }
+
+      const compareAt = product.compareAtAmount;
+      if (compareAt == null || compareAt <= 0) {
+        return [product];
+      }
+
+      const computedPercent = Math.round(
+        ((compareAt - product.priceAmount) / compareAt) * 100,
+      );
+
+      return [
+        {
+          ...product,
+          discountPercent:
+            computedPercent >= 1 && computedPercent <= 100
+              ? computedPercent
+              : null,
+        },
+      ];
+    })
+    .slice(0, DISCOUNTED_PRODUCTS_LIMIT);
+}
+
+/** Active products with a resolved discount for the home promotions strip. */
+export async function getDiscountedProducts(
+  locale: Locale,
+): Promise<CatalogProduct[]> {
+  return unstable_cache(
+    async () => loadDiscountedProducts(locale),
+    ["discounted-products", locale],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
@@ -337,34 +468,51 @@ async function loadProductDetailBySlug(
   locale: Locale,
   slug: string,
 ): Promise<ProductDetail | null> {
-  const product = await getProductBySlug(locale, slug);
-  if (!product) {
+  const [row] = await getDb()
+    .select()
+    .from(products)
+    .where(
+      and(
+        eq(products.status, "ACTIVE"),
+        isNull(products.deletedAt),
+        sql`${products.translations}->${locale}->>'slug' = ${slug}`,
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    return null;
+  }
+
+  const [enriched] = await withProductImages([row], locale);
+  if (!enriched) {
     return null;
   }
 
   const [images, productCats] = await Promise.all([
-    loadProductGallery(product.id, locale, product.translation.title),
-    loadProductCategories(product.id, locale),
+    loadProductGallery(row.id, locale, enriched.translation.title),
+    loadProductCategories(row.id, locale),
   ]);
 
   const gallery =
     images.length > 0
       ? images
-      : product.imageUrl
+      : enriched.imageUrl
         ? [
             {
-              id: product.id,
-              url: product.imageUrl,
-              alt: product.translation.title,
+              id: row.id,
+              url: enriched.imageUrl,
+              alt: enriched.translation.title,
               isPrimary: true,
             },
           ]
         : [];
 
   return {
-    ...product,
+    ...enriched,
     images: gallery,
     categories: productCats,
+    customization: parseProductCustomization(row.customization),
   };
 }
 

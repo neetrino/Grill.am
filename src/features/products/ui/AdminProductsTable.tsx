@@ -17,6 +17,7 @@ import {
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   duplicateProductAction,
   softDeleteProductsAction,
@@ -47,6 +48,7 @@ export function AdminProductsTable({
   onEdit,
 }: AdminProductsTableProps) {
   const router = useRouter();
+  const dictionary = useAdminDictionary();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -75,7 +77,11 @@ export function AdminProductsTable({
         await action();
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Action failed.");
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : dictionary.common.actionsFailed,
+        );
       }
     });
   }
@@ -126,7 +132,7 @@ export function AdminProductsTable({
                       checked={allSelected}
                       onChange={toggleAll}
                       disabled={isPending}
-                      aria-label="Select all products"
+                      aria-label={dictionary.products.selectAll}
                     />
                   </th>
                   <th className={ADMIN_TABLE_TH}>

@@ -1,5 +1,10 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedInIcon,
+} from "@/components/layout/SocialIcons";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -11,6 +16,23 @@ type SiteFooterProps = {
 
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   const year = new Date().getFullYear();
+  const socialLinks = [
+    {
+      href: dictionary.contact.social.instagram,
+      label: "Instagram",
+      Icon: InstagramIcon,
+    },
+    {
+      href: dictionary.contact.social.facebook,
+      label: "Facebook",
+      Icon: FacebookIcon,
+    },
+    {
+      href: dictionary.contact.social.linkedin,
+      label: "LinkedIn",
+      Icon: LinkedInIcon,
+    },
+  ] as const;
 
   return (
     <footer className="mt-auto hidden border-t border-gray-800 bg-black md:block">
@@ -21,6 +43,25 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               {dictionary.footer.shop}
             </h3>
             <p className="text-sm text-gray-300">{dictionary.footer.description}</p>
+            <div className="mt-5">
+              <p className="mb-3 text-sm font-semibold text-white">
+                {dictionary.footer.followUs}
+              </p>
+              <div className="flex items-center gap-3">
+                {socialLinks.map(({ href, label, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-md text-gray-400 transition-colors hover:text-white"
+                    aria-label={label}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div>
@@ -44,6 +85,15 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   className="text-sm text-gray-300 transition-colors hover:text-white"
                 >
                   {dictionary.nav.blog}
+                </AppLink>
+              </li>
+              <li>
+                <AppLink
+                  href={`/${locale}/careers`}
+                  prefetchPolicy="intent"
+                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                >
+                  {dictionary.nav.careers}
                 </AppLink>
               </li>
               <li>

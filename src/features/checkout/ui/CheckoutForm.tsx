@@ -8,7 +8,12 @@ import { Card } from "@/components/ui/Card";
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
 import { createOrderAction } from "@/features/checkout/create-order";
+import {
+  eligibleCodCashDenominations,
+  type CodCashDenomination,
+} from "@/features/checkout/domain/cod-cash-change";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import { CheckoutCodCashChange } from "@/features/checkout/ui/CheckoutCodCashChange";
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
@@ -47,6 +52,11 @@ type CheckoutLabels = {
   selectDeliveryLocation: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
+  cashChangeTitle: string;
+  cashChangeDescription: string;
+  cashChangeExact: string;
+  cashChangeHint: string;
+  cashChangeNoEligible: string;
   idram: string;
   idramDescription: string;
   arca: string;
@@ -118,6 +128,8 @@ export function CheckoutForm({
   const [deliveryRuleId, setDeliveryRuleId] = useState(defaultRuleId);
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
+  const [cashTenderedAmount, setCashTenderedAmount] =
+    useState<CodCashDenomination | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [couponDraft, setCouponDraft] = useState("");
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(
@@ -163,6 +175,13 @@ export function CheckoutForm({
     ],
   );
 
+  function onPaymentMethodChange(method: CheckoutPaymentMethod): void {
+    setPaymentMethod(method);
+    if (method !== "cash_on_delivery") {
+      setCashTenderedAmount(null);
+    }
+  }
+
   function formatMoney(amount: number): string {
     return formatMoneyAmount(amount, "AMD", locale);
   }
@@ -171,6 +190,12 @@ export function CheckoutForm({
   const shippingAmount = shippingMethod === "pickup" ? 0 : quotedDelivery;
   const totalAmount =
     Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
+
+  const resolvedCashTendered: CodCashDenomination | null =
+    cashTenderedAmount != null &&
+    eligibleCodCashDenominations(totalAmount).includes(cashTenderedAmount)
+      ? cashTenderedAmount
+      : null;
 
   const shippingFormatted =
     shippingMethod === "pickup"
@@ -246,6 +271,10 @@ export function CheckoutForm({
         contactPhone: String(data.get("contactPhone") ?? ""),
         shippingMethod,
         paymentMethod,
+        cashTenderedAmount:
+          paymentMethod === "cash_on_delivery"
+            ? (resolvedCashTendered ?? undefined)
+            : undefined,
         deliveryRuleId:
           shippingMethod === "delivery" ? deliveryRuleId || undefined : undefined,
         city:
@@ -293,8 +322,22 @@ export function CheckoutForm({
             deliveryRuleId={deliveryRuleId}
             onDeliveryRuleChange={setDeliveryRuleId}
             paymentMethod={paymentMethod}
-            onPaymentMethodChange={setPaymentMethod}
+            onPaymentMethodChange={onPaymentMethodChange}
             paymentOptions={paymentOptions}
+            cashOnDeliveryExtra={
+              <CheckoutCodCashChange
+                title={labels.cashChangeTitle}
+                description={labels.cashChangeDescription}
+                exactLabel={labels.cashChangeExact}
+                changeHintLabel={labels.cashChangeHint}
+                noEligibleLabel={labels.cashChangeNoEligible}
+                orderTotalAmount={totalAmount}
+                formatMoney={formatMoney}
+                value={resolvedCashTendered}
+                onChange={setCashTenderedAmount}
+                disabled={pending}
+              />
+            }
             defaultFirstName={defaultFirstName}
             defaultLastName={defaultLastName}
             defaultEmail={defaultEmail}

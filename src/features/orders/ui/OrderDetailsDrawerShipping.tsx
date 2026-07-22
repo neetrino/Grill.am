@@ -63,6 +63,31 @@ export function OrderDetailsDrawerShipping({
               )}
             </dd>
           </div>
+          {detail.cashTenderedAmount != null ? (
+            <>
+              <div className="flex flex-wrap items-center gap-x-2">
+                <dt className="text-gray-500">Customer pays with:</dt>
+                <dd className="font-medium text-gray-900">
+                  {formatOrderDrawerMoney(
+                    detail.cashTenderedAmount,
+                    detail.baseCurrency,
+                  )}
+                </dd>
+              </div>
+              {detail.cashChangeAmount != null &&
+              detail.cashChangeAmount > 0 ? (
+                <div className="flex flex-wrap items-center gap-x-2">
+                  <dt className="text-gray-500">Prepare change:</dt>
+                  <dd className="font-semibold text-amber-800">
+                    {formatOrderDrawerMoney(
+                      detail.cashChangeAmount,
+                      detail.baseCurrency,
+                    )}
+                  </dd>
+                </div>
+              ) : null}
+            </>
+          ) : null}
           <div className="flex flex-wrap items-center gap-x-2">
             <dt className="text-gray-500">Status:</dt>
             <dd>

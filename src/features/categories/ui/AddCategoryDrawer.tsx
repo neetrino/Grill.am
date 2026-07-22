@@ -5,16 +5,25 @@ import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
+import type { TranslationsJson } from "@/db/schema";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import {
   createCategoryFromDrawerAction,
   updateCategoryFromDrawerAction,
 } from "@/features/categories/actions";
-import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
+import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
+import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+
+type LocaleDraft = {
+  title: string;
+  slug: string;
+  slugTouched: boolean;
+};
 
 type AddCategoryDrawerProps = {
   locale: string;
@@ -23,6 +32,45 @@ type AddCategoryDrawerProps = {
   categories: AdminCategoryListItem[];
   category?: AdminCategoryListItem | null;
 };
+
+function emptyDraft(): LocaleDraft {
+  return { title: "", slug: "", slugTouched: false };
+}
+
+function draftsFromTranslations(
+  translations: TranslationsJson | undefined,
+): Record<Locale, LocaleDraft> {
+  const next = {
+    hy: emptyDraft(),
+    en: emptyDraft(),
+    ru: emptyDraft(),
+  } satisfies Record<Locale, LocaleDraft>;
+
+  for (const loc of locales) {
+    const copy = translations?.[loc];
+    if (!copy) continue;
+    next[loc] = {
+      title: copy.title,
+      slug: copy.slug,
+      slugTouched: true,
+    };
+  }
+
+  return next;
+}
+
+function resolveInitialLocale(
+  pageLocale: string,
+  translations: TranslationsJson | undefined,
+): Locale {
+  if (isLocale(pageLocale)) {
+    return pageLocale;
+  }
+  return (
+    (locales.find((loc) => translations?.[loc]?.title) as Locale | undefined) ??
+    "hy"
+  );
+}
 
 export function AddCategoryDrawer({
   locale,
@@ -34,9 +82,12 @@ export function AddCategoryDrawer({
   const router = useRouter();
   const isEdit = category != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [slugTouched, setSlugTouched] = useState(false);
+  const [activeLocale, setActiveLocale] = useState<Locale>(() =>
+    resolveInitialLocale(locale, category?.translations),
+  );
+  const [drafts, setDrafts] = useState<Record<Locale, LocaleDraft>>(() =>
+    draftsFromTranslations(category?.translations),
+  );
   const [parentId, setParentId] = useState("");
   const [status, setStatus] = useState<"ACTIVE" | "ARCHIVED">("ACTIVE");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -64,9 +115,8 @@ export function AddCategoryDrawer({
 
   useEffect(() => {
     if (!open) {
-      setTitle("");
-      setSlug("");
-      setSlugTouched(false);
+      setActiveLocale(resolveInitialLocale(locale, undefined));
+      setDrafts(draftsFromTranslations(undefined));
       setParentId("");
       setStatus("ACTIVE");
       setImageFile(null);
@@ -79,10 +129,9 @@ export function AddCategoryDrawer({
       return;
     }
 
+    setActiveLocale(resolveInitialLocale(locale, category?.translations));
+    setDrafts(draftsFromTranslations(category?.translations));
     if (category) {
-      setTitle(category.title);
-      setSlug(category.slug);
-      setSlugTouched(true);
       setParentId(category.parentId ?? "");
       setStatus(category.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE");
       setImageFile(null);
@@ -90,9 +139,6 @@ export function AddCategoryDrawer({
       setRemoveExistingImage(false);
       setError(null);
     } else {
-      setTitle("");
-      setSlug("");
-      setSlugTouched(false);
       setParentId("");
       setStatus("ACTIVE");
       setImageFile(null);
@@ -100,12 +146,22 @@ export function AddCategoryDrawer({
       setRemoveExistingImage(false);
       setError(null);
     }
-  }, [open, category]);
+  }, [open, category, locale]);
 
   if (!open) return null;
 
-  const displaySlug = slugTouched ? slug : slugifyCategoryTitle(title) || "---";
+  const draft = drafts[activeLocale];
+  const displaySlug = draft.slugTouched
+    ? draft.slug
+    : slugifyCategoryTitle(draft.title) || "---";
   const parentOptions = categories.filter((item) => item.id !== category?.id);
+
+  function updateDraft(patch: Partial<LocaleDraft>): void {
+    setDrafts((current) => ({
+      ...current,
+      [activeLocale]: { ...current[activeLocale], ...patch },
+    }));
+  }
 
   return (
     <div
@@ -137,13 +193,15 @@ export function AddCategoryDrawer({
           className="flex min-h-0 flex-1 flex-col"
           onSubmit={(event) => {
             event.preventDefault();
+            const current = drafts[activeLocale];
             const nextSlug =
-              slugTouched && slug.trim()
-                ? slug.trim()
-                : slugifyCategoryTitle(title);
+              current.slugTouched && current.slug.trim()
+                ? current.slug.trim()
+                : slugifyCategoryTitle(current.title);
 
             const formData = new FormData();
-            formData.set("title", title.trim());
+            formData.set("editingLocale", activeLocale);
+            formData.set("title", current.title.trim());
             formData.set("slug", nextSlug);
             formData.set("parentId", parentId);
             formData.set("status", status);
@@ -176,14 +234,20 @@ export function AddCategoryDrawer({
           }}
         >
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+            <AdminLocaleTabs
+              activeLocale={activeLocale}
+              onChange={setActiveLocale}
+              disabled={isPending}
+            />
+
             <label className="block">
               <span className={ADMIN_LABEL}>
                 Category Title <span className="text-red-600">*</span>
               </span>
               <input
                 required
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
+                value={draft.title}
+                onChange={(event) => updateDraft({ title: event.target.value })}
                 placeholder="Enter category title"
                 className={ADMIN_INPUT}
                 disabled={isPending}
@@ -195,8 +259,10 @@ export function AddCategoryDrawer({
               <input
                 value={displaySlug === "---" ? "" : displaySlug}
                 onChange={(event) => {
-                  setSlugTouched(true);
-                  setSlug(event.target.value);
+                  updateDraft({
+                    slugTouched: true,
+                    slug: event.target.value,
+                  });
                 }}
                 placeholder="---"
                 className={ADMIN_INPUT}
@@ -292,6 +358,7 @@ export function AddCategoryDrawer({
                 ) : null}
               </div>
               {imagePreview ? (
+                // eslint-disable-next-line @next/next/no-img-element -- local blob/admin preview
                 <img
                   src={imagePreview}
                   alt=""
@@ -304,7 +371,10 @@ export function AddCategoryDrawer({
           </div>
 
           <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
-            <Button type="submit" disabled={isPending || !title.trim()}>
+            <Button
+              type="submit"
+              disabled={isPending || !draft.title.trim()}
+            >
               {isPending
                 ? isEdit
                   ? "Saving…"

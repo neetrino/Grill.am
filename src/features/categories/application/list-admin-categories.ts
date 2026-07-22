@@ -3,7 +3,12 @@ import "server-only";
 import { and, asc, eq, isNotNull, isNull, or } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { categories, mediaAssets, type LocaleTranslation } from "@/db/schema";
+import {
+  categories,
+  mediaAssets,
+  type LocaleTranslation,
+  type TranslationsJson,
+} from "@/db/schema";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
@@ -17,6 +22,8 @@ export type AdminCategoryListItem = {
   sortOrder: number;
   imageUrl: string | null;
   childCount: number;
+  /** Full locale key → copy map for admin translation editing. */
+  translations: TranslationsJson;
 };
 
 function translationFor(
@@ -87,6 +94,7 @@ export async function listAdminCategories(
       sortOrder: row.sortOrder,
       imageUrl: images.get(row.id) ?? null,
       childCount: childCount.get(row.id) ?? 0,
+      translations: row.translations,
     };
   });
 }

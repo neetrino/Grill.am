@@ -10,6 +10,7 @@ import {
 import { createCategoryAction } from "@/features/categories/actions";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
+import { isLocale } from "@/lib/i18n/config";
 
 type ProductDrawerCategoriesProps = {
   locale: string;
@@ -61,6 +62,7 @@ export function ProductDrawerCategories({
     startTransition(async () => {
       setError(null);
       const result = await createCategoryAction(locale, {
+        editingLocale: isLocale(locale) ? locale : "hy",
         title,
         slug: slugifyCategoryTitle(title),
         parentId: null,

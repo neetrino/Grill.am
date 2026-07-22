@@ -5,6 +5,7 @@
     "products": "Products",
     "shop": "Shop",
     "blog": "Blog",
+    "careers": "Careers",
     "cart": "Cart",
     "about": "About",
     "contact": "Contact",
@@ -30,6 +31,7 @@
     "privacyPolicy": "Privacy Policy",
     "terms": "Terms",
     "contactInfo": "Contact Information",
+    "followUs": "Follow us",
     "rights": "All Rights Reserved",
     "createdBy": "Created by NEETRINO IT COMPANY"
   }
