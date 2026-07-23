@@ -14,6 +14,7 @@ export const STORE_SETTING_KEYS = [
   "store.revenue",
   "store.globalDiscount",
   "store.fxRates",
+  "store.minimumOrder",
 ] as const;
 
 export type StoreSettingKey = (typeof STORE_SETTING_KEYS)[number];
@@ -58,6 +59,11 @@ export type StoreGlobalDiscount = {
 export type StoreFxRates = {
   usd: string;
   rub: string;
+};
+
+/** Store-wide cart subtotal floor; null disables the rule. */
+export type StoreMinimumOrder = {
+  amount: number | null;
 };
 
 export const DEFAULT_FX_RATES: StoreFxRates = {
@@ -191,4 +197,33 @@ export function parseFxRates(value: unknown): StoreFxRates {
       ? normalizeRateDecimalString(record.rub)
       : DEFAULT_FX_RATES.rub,
   };
+}
+
+export function parseMinimumOrder(value: unknown): StoreMinimumOrder {
+  if (!value || typeof value !== "object") {
+    return { amount: null };
+  }
+
+  const raw = (value as { amount?: unknown }).amount;
+  if (raw === null || raw === undefined || raw === "") {
+    return { amount: null };
+  }
+
+  const amount = typeof raw === "number" ? raw : Number(raw);
+  if (!Number.isInteger(amount) || amount <= 0 || amount > 100_000_000) {
+    return { amount: null };
+  }
+
+  return { amount };
+}
+
+/** Returns true when cart subtotal meets (or exceeds) the configured minimum. */
+export function meetsMinimumOrder(
+  subtotalAmount: number,
+  minimumAmount: number | null,
+): boolean {
+  if (minimumAmount == null || minimumAmount <= 0) {
+    return true;
+  }
+  return subtotalAmount >= minimumAmount;
 }

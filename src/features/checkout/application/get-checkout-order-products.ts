@@ -5,6 +5,11 @@ import { and, asc, eq, inArray, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { cartItems, mediaAssets, products } from "@/db/schema";
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
+import {
+  describeModifiers,
+  parseCartModifiers,
+  parseProductCustomization,
+} from "@/features/products/domain/customization";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
@@ -60,11 +65,14 @@ export async function getCheckoutOrderProducts(
   return rows.map(({ item, product }) => {
     const translation =
       product.translations[locale] ?? product.translations.hy;
+    const modifiers = parseCartModifiers(item.modifiers);
+    const customization = parseProductCustomization(product.customization);
     return {
       id: item.id,
       title: translation?.title ?? product.sku,
       quantity: item.quantity,
       imageUrl: images.get(product.id) ?? null,
+      modifierLines: describeModifiers(customization, modifiers, locale),
     };
   });
 }

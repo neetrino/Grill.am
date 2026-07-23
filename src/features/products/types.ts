@@ -1,7 +1,11 @@
+import type { ProductCustomization } from "@/features/products/domain/customization";
+
 type LocaleTranslation = {
   title: string;
   slug: string;
   description?: string;
+  shortDescription?: string;
+  composition?: string;
   seoTitle?: string;
   seoDescription?: string;
 };
@@ -18,6 +22,8 @@ export type CatalogProduct = {
   stockOnHand: number;
   translation: LocaleTranslation;
   imageUrl: string | null;
+  /** Primary (or first) category title for catalog cards. */
+  categoryTitle: string | null;
 };
 
 export type ProductGalleryImage = {
@@ -36,4 +42,6 @@ export type ProductCategoryRef = {
 export type ProductDetail = CatalogProduct & {
   images: ProductGalleryImage[];
   categories: ProductCategoryRef[];
+  /** Raw customization catalog from the product row (null when unset). */
+  customization: ProductCustomization | null;
 };

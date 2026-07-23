@@ -2,6 +2,7 @@
 
 import { eq, max } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { getDb } from "@/db/client";
 import { deliveryRules } from "@/db/schema";
@@ -9,6 +10,7 @@ import {
   deliveryLocationSchema,
   type DeliveryLocationInput,
 } from "@/features/delivery/schemas";
+import { upsertStoreSettingAction } from "@/features/settings/application/upsert-settings";
 import { requireAdmin } from "@/lib/auth/policies";
 import { createId } from "@/lib/id";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -138,4 +140,41 @@ export async function deleteDeliveryLocationAction(
 
   revalidateDelivery(locale);
   return ok({ id });
+}
+
+/** Persists the store-wide minimum cart subtotal (null clears it). */
+export async function setMinimumOrderAmountAction(
+  locale: string,
+  amount: number | null,
+): Promise<Result<{ amount: number | null }>> {
+  if (!isLocale(locale)) {
+    return err("INVALID_LOCALE", "Invalid locale.");
+  }
+
+  const parsed = z
+    .number()
+    .int()
+    .min(1)
+    .max(100_000_000)
+    .nullable()
+    .safeParse(amount);
+  if (!parsed.success) {
+    return err(
+      "VALIDATION_ERROR",
+      "Minimum order must be a positive amount or empty.",
+    );
+  }
+
+  const result = await upsertStoreSettingAction(locale, {
+    key: "store.minimumOrder",
+    value: { amount: parsed.data },
+  });
+
+  if (!result.ok) {
+    return result;
+  }
+
+  revalidateDelivery(locale);
+  revalidatePath(`/${locale}/admin/settings`);
+  return ok({ amount: parsed.data });
 }

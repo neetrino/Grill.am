@@ -23,9 +23,13 @@ import {
 } from "@/features/admin/ui/admin-table-classes";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { listAdminContactMessages } from "@/features/contact/application/queries";
-import { CONTACT_STATUSES } from "@/features/contact/domain/contact-rules";
+import {
+  CONTACT_STATUSES,
+  type ContactStatus,
+} from "@/features/contact/domain/contact-rules";
 import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminMessagesPageProps = {
   params: Promise<{ locale: string }>;
@@ -41,6 +45,15 @@ function firstParam(
   return value;
 }
 
+function fillTemplate(
+  template: string,
+  values: Record<string, string>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    return values[key] ?? "";
+  });
+}
+
 function contactStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
   if (normalized === "UNREAD") return "bg-blue-100 text-blue-800";
@@ -48,6 +61,23 @@ function contactStatusBadgeClass(status: string): string {
   if (normalized === "REPLIED") return "bg-green-100 text-green-800";
   if (normalized === "ARCHIVED") return "bg-gray-100 text-gray-800";
   return "bg-gray-100 text-gray-800";
+}
+
+function contactStatusLabel(
+  status: string,
+  labels: {
+    unread: string;
+    read: string;
+    replied: string;
+    archived: string;
+  },
+): string {
+  const normalized = status.toUpperCase() as ContactStatus;
+  if (normalized === "UNREAD") return labels.unread;
+  if (normalized === "READ") return labels.read;
+  if (normalized === "REPLIED") return labels.replied;
+  if (normalized === "ARCHIVED") return labels.archived;
+  return status;
 }
 
 export default async function AdminMessagesPage({
@@ -58,6 +88,10 @@ export default async function AdminMessagesPage({
   if (!isLocale(locale)) {
     notFound();
   }
+
+  const dictionary = getDictionary(locale).admin;
+  const copy = dictionary.messages;
+  const common = dictionary.common;
 
   const raw = await searchParams;
   const parsed = adminContactFilterSchema.safeParse({
@@ -73,44 +107,49 @@ export default async function AdminMessagesPage({
   const { rows, total, pageSize } = await listAdminContactMessages(filters);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
+  const countLabel = fillTemplate(copy.count, { count: String(total) });
+  const statusFilterLabel = filters.status
+    ? contactStatusLabel(filters.status, copy.status)
+    : null;
+
   return (
     <section>
       <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>Messages</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          {total} message{total === 1 ? "" : "s"}
-          {filters.status ? ` · ${filters.status}` : ""}
+          {countLabel}
+          {statusFilterLabel ? ` · ${statusFilterLabel}` : ""}
         </p>
       </div>
 
       <Card className="mb-6 p-4">
         <form method="get" className="flex flex-wrap items-end gap-3">
           <label className="min-w-[180px] flex-1">
-            <span className={ADMIN_LABEL}>Search</span>
+            <span className={ADMIN_LABEL}>{common.search}</span>
             <input
               name="q"
               defaultValue={filters.q ?? ""}
-              placeholder="Name, email, subject…"
+              placeholder={copy.searchPlaceholder}
               className={ADMIN_INPUT}
             />
           </label>
           <label className="min-w-[140px]">
-            <span className={ADMIN_LABEL}>Status</span>
+            <span className={ADMIN_LABEL}>{common.status}</span>
             <select
               name="status"
               defaultValue={filters.status ?? ""}
               className={ADMIN_SELECT}
             >
-              <option value="">All</option>
+              <option value="">{common.all}</option>
               {CONTACT_STATUSES.map((status) => (
                 <option key={status} value={status}>
-                  {status}
+                  {contactStatusLabel(status, copy.status)}
                 </option>
               ))}
             </select>
           </label>
           <Button type="submit" size="sm">
-            Filter
+            {common.filter}
           </Button>
         </form>
       </Card>
@@ -118,17 +157,17 @@ export default async function AdminMessagesPage({
       <Card className={ADMIN_TABLE_CARD}>
         {rows.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No messages match these filters.
+            {copy.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
-                  <th className={ADMIN_TABLE_TH}>Subject</th>
-                  <th className={ADMIN_TABLE_TH}>From</th>
-                  <th className={ADMIN_TABLE_TH}>Status</th>
-                  <th className={ADMIN_TABLE_TH}>Received</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.subject}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.from}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.status}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.received}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -150,11 +189,13 @@ export default async function AdminMessagesPage({
                       <span
                         className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
                       >
-                        {message.status}
+                        {contactStatusLabel(message.status, copy.status)}
                       </span>
                       {message.spamScore !== null ? (
                         <p className="mt-1 text-xs text-gray-500">
-                          spam {message.spamScore}
+                          {fillTemplate(copy.spamScore, {
+                            score: String(message.spamScore),
+                          })}
                         </p>
                       ) : null}
                     </td>
@@ -164,7 +205,7 @@ export default async function AdminMessagesPage({
                           .toISOString()
                           .slice(0, 16)
                           .replace("T", " ")}{" "}
-                        UTC
+                        {common.utc}
                       </span>
                     </td>
                   </tr>
@@ -178,7 +219,10 @@ export default async function AdminMessagesPage({
       {totalPages > 1 ? (
         <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
           <span>
-            Page {filters.page} / {totalPages}
+            {fillTemplate(common.pageOf, {
+              page: String(filters.page),
+              totalPages: String(totalPages),
+            })}
           </span>
         </nav>
       ) : null}

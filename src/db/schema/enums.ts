@@ -19,6 +19,12 @@ export const categoryStatusEnum = pgEnum("category_status", [
   "ARCHIVED",
 ]);
 
+/** Shared paid additions and free removals reusable across products. */
+export const modifierKindEnum = pgEnum("modifier_kind", [
+  "ADDON",
+  "EXCLUSION",
+]);
+
 export const mediaUploadStatusEnum = pgEnum("media_upload_status", [
   "PENDING",
   "READY",
@@ -46,6 +52,19 @@ export const blogPostStatusEnum = pgEnum("blog_post_status", [
   "DRAFT",
   "PUBLISHED",
   "ARCHIVED",
+]);
+
+export const jobPostingStatusEnum = pgEnum("job_posting_status", [
+  "DRAFT",
+  "ACTIVE",
+  "ARCHIVED",
+]);
+
+export const jobEmploymentTypeEnum = pgEnum("job_employment_type", [
+  "FULL_TIME",
+  "PART_TIME",
+  "CONTRACT",
+  "INTERNSHIP",
 ]);
 
 export const cartStatusEnum = pgEnum("cart_status", [

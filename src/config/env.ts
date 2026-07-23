@@ -2,6 +2,25 @@ import "server-only";
 
 import { z } from "zod";
 
+/** Dotenv empty placeholders (`KEY=`) must not fail optional validators. */
+function emptyToUndefined(value: unknown): unknown {
+  return value === "" || value === null || value === undefined
+    ? undefined
+    : value;
+}
+
+function optionalNonEmptyString() {
+  return z.preprocess(emptyToUndefined, z.string().min(1).optional());
+}
+
+function optionalUrl() {
+  return z.preprocess(emptyToUndefined, z.string().url().optional());
+}
+
+function optionalEmail() {
+  return z.preprocess(emptyToUndefined, z.string().email().optional());
+}
+
 /**
  * Foundation env contract. Provider secrets become required when the
  * corresponding feature is wired (auth, DB, Redis, R2, email).
@@ -11,19 +30,19 @@ const envSchema = z.object({
     .enum(["development", "test", "production"])
     .default("development"),
   NEXT_PUBLIC_APP_URL: z.string().url(),
-  AUTH_SECRET: z.string().min(1).optional(),
-  DATABASE_URL: z.string().min(1).optional(),
-  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
-  UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
-  R2_ACCOUNT_ID: z.string().min(1).optional(),
-  R2_ACCESS_KEY_ID: z.string().min(1).optional(),
-  R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
-  R2_BUCKET_NAME: z.string().min(1).optional(),
-  R2_PUBLIC_BASE_URL: z.string().url().optional(),
+  AUTH_SECRET: optionalNonEmptyString(),
+  DATABASE_URL: optionalNonEmptyString(),
+  UPSTASH_REDIS_REST_URL: optionalUrl(),
+  UPSTASH_REDIS_REST_TOKEN: optionalNonEmptyString(),
+  R2_ACCOUNT_ID: optionalNonEmptyString(),
+  R2_ACCESS_KEY_ID: optionalNonEmptyString(),
+  R2_SECRET_ACCESS_KEY: optionalNonEmptyString(),
+  R2_BUCKET_NAME: optionalNonEmptyString(),
+  R2_PUBLIC_BASE_URL: optionalUrl(),
   /** Optional custom S3 API endpoint; defaults to account R2 endpoint. */
-  R2_ENDPOINT: z.string().url().optional(),
-  EMAIL_FROM: z.string().email().optional(),
-  RESEND_API_KEY: z.string().min(1).optional(),
+  R2_ENDPOINT: optionalUrl(),
+  EMAIL_FROM: optionalEmail(),
+  RESEND_API_KEY: optionalNonEmptyString(),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;

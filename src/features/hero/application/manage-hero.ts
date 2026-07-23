@@ -29,12 +29,17 @@ import { createId } from "@/lib/id";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
-function buildTranslations(
+function mergeTranslations(
+  existing: HeroTranslationsJson | null | undefined,
+  editingLocale: Locale,
   data: UpsertHeroSlideInput,
-  existing?: HeroTranslationsJson,
 ): HeroTranslationsJson {
   const previous =
-    existing?.en ?? existing?.hy ?? existing?.ru ?? undefined;
+    existing?.[editingLocale] ??
+    existing?.en ??
+    existing?.hy ??
+    existing?.ru ??
+    undefined;
 
   const copy = {
     title: data.title,
@@ -43,11 +48,24 @@ function buildTranslations(
     buttonUrl: previous?.buttonUrl,
   };
 
-  return { hy: copy, en: copy, ru: copy };
+  return {
+    ...(existing ?? {}),
+    [editingLocale]: copy,
+  };
 }
 
-function parseModalFormData(formData: FormData): UpsertHeroSlideInput | null {
+function parseModalFormData(
+  formData: FormData,
+  fallbackLocale: Locale,
+): UpsertHeroSlideInput | null {
+  const rawEditingLocale = formData.get("editingLocale");
+  const editingLocale =
+    typeof rawEditingLocale === "string" && isLocale(rawEditingLocale)
+      ? rawEditingLocale
+      : fallbackLocale;
+
   const parsed = upsertHeroSlideSchema.safeParse({
+    editingLocale,
     title: formData.get("title"),
     subtitle: String(formData.get("subtitle") ?? "") || undefined,
   });
@@ -74,12 +92,12 @@ export async function createHeroSlideAction(
     return err("INVALID_LOCALE", "Invalid locale.");
   }
 
-  const data = parseModalFormData(formData);
+  const data = parseModalFormData(formData, locale as Locale);
   if (!data) {
     return err("VALIDATION_ERROR", "Invalid hero slide payload.");
   }
 
-  const translations = buildTranslations(data);
+  const translations = mergeTranslations(null, data.editingLocale, data);
   const ruleError = validateHeroTranslations(translations);
   if (ruleError) {
     return err(ruleError, heroRuleErrorMessage(ruleError));
@@ -105,6 +123,7 @@ export async function createHeroSlideAction(
         targetId: id,
         afterDiff: {
           title: data.title,
+          editingLocale: data.editingLocale,
           isActive: true,
           sortOrder: 0,
         },
@@ -137,7 +156,7 @@ export async function updateHeroSlideAction(
     return err("INVALID_LOCALE", "Invalid locale.");
   }
 
-  const data = parseModalFormData(formData);
+  const data = parseModalFormData(formData, locale as Locale);
   if (!data) {
     return err("VALIDATION_ERROR", "Invalid hero slide payload.");
   }
@@ -157,7 +176,11 @@ export async function updateHeroSlideAction(
         throw new Error("NOT_FOUND");
       }
 
-      const translations = buildTranslations(data, row.translations);
+      const translations = mergeTranslations(
+        row.translations,
+        data.editingLocale,
+        data,
+      );
       const ruleError = validateHeroTranslations(translations);
       if (ruleError) {
         throw new Error(`RULE:${ruleError}`);
@@ -183,6 +206,7 @@ export async function updateHeroSlideAction(
         },
         afterDiff: {
           title: data.title,
+          editingLocale: data.editingLocale,
           isActive: row.isActive,
           sortOrder: row.sortOrder,
         },

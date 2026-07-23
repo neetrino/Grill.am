@@ -1,6 +1,10 @@
 "use client";
 
 import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
 
 type AdminProductsFiltersProps = {
@@ -24,9 +28,14 @@ export function AdminProductsFilters({
   sort,
   dir,
 }: AdminProductsFiltersProps) {
+  const dictionary = useAdminDictionary();
+  const filters = dictionary.products.filters;
+
   return (
     <div className="mb-4">
-      <p className="mb-3 text-sm text-gray-600">Total products: {total}</p>
+      <p className="mb-3 text-sm text-gray-600">
+        {formatAdminMessage(filters.totalProducts, { total: String(total) })}
+      </p>
       <form
         method="get"
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
@@ -39,34 +48,34 @@ export function AdminProductsFilters({
         <input type="hidden" name="sort" value={sort} />
         <input type="hidden" name="dir" value={dir} />
         <label>
-          <span className={ADMIN_LABEL}>Search by title or slug</span>
+          <span className={ADMIN_LABEL}>{filters.searchTitleSlug}</span>
           <input
             name="q"
             defaultValue={q ?? ""}
-            placeholder="Search by title or slug..."
+            placeholder={filters.searchTitleSlugPlaceholder}
             className={ADMIN_INPUT}
-            aria-label="Search by title or slug"
+            aria-label={filters.searchTitleSlug}
           />
         </label>
         <label>
-          <span className={ADMIN_LABEL}>Search by SKU</span>
+          <span className={ADMIN_LABEL}>{filters.searchSku}</span>
           <input
             name="sku"
             defaultValue={sku ?? ""}
-            placeholder="Enter SKU code"
+            placeholder={filters.skuPlaceholder}
             className={ADMIN_INPUT}
-            aria-label="Search by SKU"
+            aria-label={filters.searchSku}
           />
         </label>
         <label>
-          <span className={ADMIN_LABEL}>Filter by Category</span>
+          <span className={ADMIN_LABEL}>{filters.filterCategory}</span>
           <select
             name="categoryId"
             defaultValue={categoryId ?? ""}
             className={ADMIN_INPUT}
-            aria-label="Filter by category"
+            aria-label={filters.filterCategory}
           >
-            <option value="">All Categories</option>
+            <option value="">{filters.allCategories}</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.title}
@@ -75,17 +84,17 @@ export function AdminProductsFilters({
           </select>
         </label>
         <label>
-          <span className={ADMIN_LABEL}>Filter by Stock</span>
+          <span className={ADMIN_LABEL}>{filters.filterStock}</span>
           <select
             name="stock"
             defaultValue={stock}
             className={ADMIN_INPUT}
-            aria-label="Filter by stock"
+            aria-label={filters.filterStock}
           >
-            <option value="all">All Products</option>
-            <option value="in_stock">In stock</option>
-            <option value="out_of_stock">Out of stock</option>
-            <option value="low_stock">Low stock</option>
+            <option value="all">{filters.allProducts}</option>
+            <option value="in_stock">{filters.inStock}</option>
+            <option value="out_of_stock">{filters.outOfStock}</option>
+            <option value="low_stock">{filters.lowStock}</option>
           </select>
         </label>
       </form>

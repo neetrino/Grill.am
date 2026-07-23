@@ -10,10 +10,11 @@ import { persistCategoryImage, removeCategoryImage } from "@/features/categories
 import { requireAdmin } from "@/lib/auth/policies";
 import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
+import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
 const createCategorySchema = z.object({
+  editingLocale: z.enum(locales),
   title: z.string().trim().min(1).max(120),
   slug: z.string().trim().min(1).max(120),
   parentId: z.string().uuid().nullable(),
@@ -22,9 +23,16 @@ const createCategorySchema = z.object({
 
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
 
-function buildTranslations(title: string, slug: string): TranslationsJson {
-  const translation = { title, slug };
-  return { hy: translation, en: translation, ru: translation };
+function mergeTranslations(
+  existing: TranslationsJson | null | undefined,
+  editingLocale: Locale,
+  title: string,
+  slug: string,
+): TranslationsJson {
+  return {
+    ...(existing ?? {}),
+    [editingLocale]: { title, slug },
+  };
 }
 
 function revalidateCategories(locale: string): void {
@@ -63,7 +71,12 @@ async function insertCategory(
   await getDb().insert(categories).values({
     id,
     parentId: data.parentId,
-    translations: buildTranslations(data.title, data.slug),
+    translations: mergeTranslations(
+      null,
+      data.editingLocale,
+      data.title,
+      data.slug,
+    ),
     sortOrder: (maxSort?.value ?? 0) + 1,
     status: data.status,
   });
@@ -101,6 +114,8 @@ export async function createCategoryFromDrawerAction(
 
   const rawParent = formData.get("parentId");
   const parsed = createCategorySchema.safeParse({
+    // Categories are English-only in admin.
+    editingLocale: "en",
     title: formData.get("title"),
     slug: formData.get("slug"),
     parentId:
@@ -142,6 +157,8 @@ export async function updateCategoryFromDrawerAction(
 
   const rawParent = formData.get("parentId");
   const parsed = createCategorySchema.safeParse({
+    // Categories are English-only in admin.
+    editingLocale: "en",
     title: formData.get("title"),
     slug: formData.get("slug"),
     parentId:
@@ -162,7 +179,7 @@ export async function updateCategoryFromDrawerAction(
   await requireAdmin(locale as Locale);
 
   const [existing] = await getDb()
-    .select({ id: categories.id })
+    .select({ id: categories.id, translations: categories.translations })
     .from(categories)
     .where(and(eq(categories.id, categoryId), isNull(categories.deletedAt)))
     .limit(1);
@@ -191,7 +208,12 @@ export async function updateCategoryFromDrawerAction(
     .update(categories)
     .set({
       parentId: parsed.data.parentId,
-      translations: buildTranslations(parsed.data.title, parsed.data.slug),
+      translations: mergeTranslations(
+        existing.translations,
+        parsed.data.editingLocale,
+        parsed.data.title,
+        parsed.data.slug,
+      ),
       status: parsed.data.status,
       updatedAt: new Date(),
     })

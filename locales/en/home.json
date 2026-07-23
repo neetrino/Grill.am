@@ -2,9 +2,16 @@
   "title": "White Shop",
   "subtitle": "Multilingual storefront is live.",
   "cta": "Browse products",
+  "categoriesTitle": "Categories",
+  "emptyCategories": "No categories yet.",
   "featuredTitle": "Featured Products",
   "viewAll": "View more",
   "emptyFeatured": "No featured products yet.",
+  "promotionsTitle": "Promotions & discounts",
+  "promotionsSubtitle": "Special offers and current deals.",
+  "promotionsBanner": "Store-wide discount up to {percent}%",
+  "emptyPromotions": "No active promotions right now.",
+  "whyChooseTitle": "Why choose us",
   "aboutEyebrow": "About us",
   "aboutTitle": "We provide high quality products",
   "aboutDescription": "Discover a curated selection of products with reliable delivery and customer-first support.",
@@ -15,6 +22,8 @@
     "qualityTitle": "Best Quality",
     "qualityDescription": "Carefully selected products you can trust.",
     "returnTitle": "Free Return",
-    "returnDescription": "Easy returns when something is not right."
+    "returnDescription": "Easy returns when something is not right.",
+    "supportTitle": "Customer Support",
+    "supportDescription": "Helpful answers throughout your shopping experience."
   }
 }

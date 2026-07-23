@@ -5,15 +5,24 @@ import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
+import type { HeroTranslationsJson } from "@/db/schema";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import {
   createHeroSlideAction,
   updateHeroSlideAction,
 } from "@/features/hero/application/manage-hero";
 import type { AdminHeroSlideListItem } from "@/features/hero/application/queries";
+import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+
+type LocaleDraft = {
+  title: string;
+  subtitle: string;
+};
 
 type HeroSlideModalProps = {
   locale: string;
@@ -21,6 +30,44 @@ type HeroSlideModalProps = {
   onClose: () => void;
   slide?: AdminHeroSlideListItem | null;
 };
+
+function emptyDraft(): LocaleDraft {
+  return { title: "", subtitle: "" };
+}
+
+function draftsFromTranslations(
+  translations: HeroTranslationsJson | undefined,
+): Record<Locale, LocaleDraft> {
+  const next = {
+    hy: emptyDraft(),
+    en: emptyDraft(),
+    ru: emptyDraft(),
+  } satisfies Record<Locale, LocaleDraft>;
+
+  for (const loc of locales) {
+    const copy = translations?.[loc];
+    if (!copy) continue;
+    next[loc] = {
+      title: copy.title,
+      subtitle: copy.subtitle ?? "",
+    };
+  }
+
+  return next;
+}
+
+function resolveInitialLocale(
+  pageLocale: string,
+  translations: HeroTranslationsJson | undefined,
+): Locale {
+  if (isLocale(pageLocale)) {
+    return pageLocale;
+  }
+  return (
+    (locales.find((loc) => translations?.[loc]?.title) as Locale | undefined) ??
+    "hy"
+  );
+}
 
 export function HeroSlideModal({
   locale,
@@ -68,13 +115,18 @@ function HeroSlideDrawerForm({
   onClose,
   slide,
 }: HeroSlideDrawerFormProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.hero.modal;
+  const common = dictionary.common;
   const router = useRouter();
   const isEdit = slide != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [title, setTitle] = useState(
-    slide && slide.title !== "Untitled" ? slide.title : "",
+  const [activeLocale, setActiveLocale] = useState<Locale>(() =>
+    resolveInitialLocale(locale, slide?.translations),
   );
-  const [subtitle, setSubtitle] = useState(slide?.subtitle ?? "");
+  const [drafts, setDrafts] = useState<Record<Locale, LocaleDraft>>(() =>
+    draftsFromTranslations(slide?.translations),
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(
     slide?.imageUrl ?? null,
@@ -83,12 +135,22 @@ function HeroSlideDrawerForm({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  const draft = drafts[activeLocale];
+  const modalTitle = isEdit ? copy.editTitle : copy.createTitle;
+
+  function updateDraft(patch: Partial<LocaleDraft>): void {
+    setDrafts((current) => ({
+      ...current,
+      [activeLocale]: { ...current[activeLocale], ...patch },
+    }));
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-black/40"
       role="dialog"
       aria-modal="true"
-      aria-label={isEdit ? "Edit hero slide" : "Create hero slide"}
+      aria-label={modalTitle}
       onClick={onClose}
     >
       <div
@@ -96,14 +158,12 @@ function HeroSlideDrawerForm({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit hero slide" : "Create hero slide"}
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">{modalTitle}</h2>
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close"
+            aria-label={common.close}
           >
             <X className="h-5 w-5" />
           </button>
@@ -113,9 +173,11 @@ function HeroSlideDrawerForm({
           className="flex min-h-0 flex-1 flex-col"
           onSubmit={(event) => {
             event.preventDefault();
+            const current = drafts[activeLocale];
             const formData = new FormData();
-            formData.set("title", title.trim());
-            formData.set("subtitle", subtitle.trim());
+            formData.set("editingLocale", activeLocale);
+            formData.set("title", current.title.trim());
+            formData.set("subtitle", current.subtitle.trim());
             if (imageFile) {
               formData.set("image", imageFile);
             }
@@ -141,29 +203,37 @@ function HeroSlideDrawerForm({
           }}
         >
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+            <AdminLocaleTabs
+              activeLocale={activeLocale}
+              onChange={setActiveLocale}
+              disabled={isPending}
+            />
+
             <label className="block">
-              <span className={ADMIN_LABEL}>Title</span>
+              <span className={ADMIN_LABEL}>{copy.title}</span>
               <input
                 required
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
+                value={draft.title}
+                onChange={(event) => updateDraft({ title: event.target.value })}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Subtitle</span>
+              <span className={ADMIN_LABEL}>{copy.subtitle}</span>
               <input
-                value={subtitle}
-                onChange={(event) => setSubtitle(event.target.value)}
+                value={draft.subtitle}
+                onChange={(event) =>
+                  updateDraft({ subtitle: event.target.value })
+                }
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
             </label>
 
             <div>
-              <span className={ADMIN_LABEL}>Upload image</span>
+              <span className={ADMIN_LABEL}>{copy.uploadImage}</span>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
@@ -171,7 +241,7 @@ function HeroSlideDrawerForm({
                   onClick={() => fileInputRef.current?.click()}
                   className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
                 >
-                  {imagePreview ? "Change image" : "+ Upload image"}
+                  {imagePreview ? copy.changeImage : copy.uploadButton}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -210,7 +280,7 @@ function HeroSlideDrawerForm({
                     }}
                     className="text-sm font-medium text-gray-600 hover:text-red-600"
                   >
-                    Remove
+                    {common.remove}
                   </button>
                 ) : null}
               </div>
@@ -228,21 +298,24 @@ function HeroSlideDrawerForm({
           </div>
 
           <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
-            <Button type="submit" disabled={isPending || !title.trim()}>
+            <Button
+              type="submit"
+              disabled={isPending || !draft.title.trim()}
+            >
               {isPending
                 ? isEdit
-                  ? "Saving…"
-                  : "Creating…"
+                  ? common.saving
+                  : common.creating
                 : isEdit
-                  ? "Edit"
-                  : "Create"}
+                  ? common.edit
+                  : common.create}
             </Button>
             <button
               type="button"
               onClick={onClose}
               className="whitespace-nowrap text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {common.cancel}
             </button>
           </div>
         </form>

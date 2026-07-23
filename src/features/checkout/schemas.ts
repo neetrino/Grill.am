@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+import {
+  COD_CASH_DENOMINATIONS,
+  isCodCashDenomination,
+} from "@/features/checkout/domain/cod-cash-change";
 import { CHECKOUT_PAYMENT_METHODS } from "@/features/checkout/domain/payment-methods";
 
 export const checkoutSchema = z
@@ -10,6 +14,14 @@ export const checkoutSchema = z
     contactPhone: z.string().trim().min(5).max(40),
     shippingMethod: z.enum(["pickup", "delivery"]),
     paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS),
+    /** COD only: banknote the customer will tender for change. */
+    cashTenderedAmount: z
+      .number()
+      .int()
+      .refine(isCodCashDenomination, {
+        message: `Must be one of: ${COD_CASH_DENOMINATIONS.join(", ")}`,
+      })
+      .optional(),
     deliveryRuleId: z.string().uuid().optional(),
     city: z.string().trim().max(80).optional(),
     line1: z.string().trim().max(160).optional(),
@@ -36,6 +48,17 @@ export const checkoutSchema = z
           message: "Address is required for delivery.",
         });
       }
+    }
+
+    if (
+      value.paymentMethod !== "cash_on_delivery" &&
+      value.cashTenderedAmount != null
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["cashTenderedAmount"],
+        message: "Cash tender amount applies only to cash on delivery.",
+      });
     }
   });
 

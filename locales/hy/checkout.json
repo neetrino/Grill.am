@@ -36,6 +36,11 @@
   "payment": {
     "cashOnDelivery": "Կանխիկ առաքման պահին",
     "cashOnDeliveryDescription": "Վճարեք կանխիկ՝ պատվերը ստանալիս",
+    "cashChangeTitle": "Մանրի համար",
+    "cashChangeDescription": "Նշեք, թե որ թղթադրամով եք վճարելու, որպեսզի առաքիչը պատրաստի մանրը",
+    "cashChangeExact": "Առանց մանրի",
+    "cashChangeHint": "Առաքիչը պետք է տա մանր՝ {amount}",
+    "cashChangeNoEligible": "Պատվերի գումարը գերազանցում է հասանելի թղթադրամները՝ վճարեք առանց մանրի",
     "idram": "Idram",
     "idramDescription": "Վճարեք Idram դրամապանակով կամ քարտով",
     "arca": "ArCa",
@@ -60,7 +65,8 @@
     "continueShopping": "Շարունակել գնումները"
   },
   "errors": {
-    "cartEmpty": "Զամբյուղը դատարկ է"
+    "cartEmpty": "Զամբյուղը դատարկ է",
+    "minimumOrder": "Նվազագույն պատվերը {amount} է։ Ավելացրեք ապրանքներ՝ շարունակելու համար։"
   },
   "success": {
     "title": "Պատվերը հաստատված է",

@@ -8,6 +8,7 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
 
 type AdminMenuDrawerProps = {
@@ -28,7 +29,8 @@ function isNestedVisible(
 
 export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
   const [open, setOpen] = useState(false);
-  const tabs = getAdminMenuItems(locale);
+  const dictionary = useAdminDictionary();
+  const tabs = getAdminMenuItems(locale, dictionary.menu);
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
 
@@ -61,7 +63,7 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
             d="M4 6H20M4 12H16M4 18H12"
           />
         </svg>
-        Menu
+        {dictionary.menu.openMenu}
       </button>
 
       {open ? (
@@ -82,13 +84,14 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
                 className="text-sm font-semibold text-gray-900"
                 onClick={() => setOpen(false)}
               >
+                {/* TODO: "White Shop" — no brand-name key in admin.json */}
                 White Shop
               </Link>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 className="h-10 w-10 rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-900"
-                aria-label="Close admin menu"
+                aria-label={dictionary.menu.closeMenu}
               >
                 <svg
                   className="mx-auto h-5 w-5"
@@ -142,7 +145,7 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
                       <button
                         type="button"
                         aria-expanded={productsNestedExpanded}
-                        aria-label="Toggle product subpages"
+                        aria-label={dictionary.menu.toggleProductSubpages}
                         onClick={toggleProductsNested}
                         className={`shrink-0 border-l px-3 py-3 ${
                           isActive

@@ -5,6 +5,10 @@ import { useState, useTransition } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
 import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
+import {
   deleteHeroSlideAction,
   toggleHeroSlideAction,
 } from "@/features/hero/application/manage-hero";
@@ -24,6 +28,9 @@ export function HeroSlideControls({
   isActive,
   onEdit,
 }: HeroSlideControlsProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.hero;
+  const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -35,7 +42,7 @@ export function HeroSlideControls({
       setError(null);
       const result = await action();
       if (!result.ok) {
-        setError(result.error?.message ?? "Action failed.");
+        setError(result.error?.message ?? common.actionsFailed);
         return;
       }
       router.refresh();
@@ -50,7 +57,9 @@ export function HeroSlideControls({
           disabled={isPending}
           onClick={onEdit}
           className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
-          aria-label={`Edit ${slideTitle}`}
+          aria-label={formatAdminMessage(copy.editNamed, {
+            title: slideTitle,
+          })}
         >
           <Pencil className="h-4 w-4" />
         </button>
@@ -61,7 +70,9 @@ export function HeroSlideControls({
             run(() => deleteHeroSlideAction(locale, { slideId }))
           }
           className="rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50"
-          aria-label={`Delete ${slideTitle}`}
+          aria-label={formatAdminMessage(copy.deleteNamed, {
+            title: slideTitle,
+          })}
         >
           <Trash2 className="h-4 w-4" />
         </button>
@@ -81,7 +92,7 @@ export function HeroSlideControls({
           className={`relative ml-1 h-5 w-9 rounded-full transition-colors disabled:opacity-50 ${
             isActive ? "bg-green-500" : "bg-gray-300"
           }`}
-          aria-label={isActive ? "Unpublish slide" : "Publish slide"}
+          aria-label={isActive ? copy.unpublish : copy.publish}
         >
           <span
             className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${

@@ -113,7 +113,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     isProductInWishlist(product.id),
   ]);
   const formatPrice = await createDisplayPriceFormatter(locale, currency);
-  const price = formatPrice(product.priceAmount);
+  const displayPrice = formatPrice(product.priceAmount);
   const compareAt =
     product.compareAtAmount != null
       ? formatPrice(product.compareAtAmount)
@@ -123,7 +123,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     locale,
     slug: product.translation.slug,
     title: product.translation.title,
-    description: product.translation.description,
+    description:
+      product.translation.shortDescription ?? product.translation.description,
     sku: product.sku,
     priceAmount: product.priceAmount,
     imageUrl: product.images[0]?.url ?? product.imageUrl,
@@ -135,8 +136,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <ProductDetailView
       locale={locale}
+      currency={currency}
+      fxRate={displayPrice.rate}
       product={product}
-      priceFormatted={price.formatted}
+      priceFormatted={displayPrice.formatted}
       compareAtFormatted={compareAt?.formatted ?? null}
       isSignedIn={isSignedIn}
       inWishlist={inWishlist}

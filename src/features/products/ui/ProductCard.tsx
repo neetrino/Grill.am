@@ -8,6 +8,7 @@ import type { Locale } from "@/lib/i18n/config";
 type ProductCardProps = {
   href: string;
   title: string;
+  categoryTitle?: string | null;
   priceFormatted: string;
   compareAtFormatted?: string | null;
   discountPercent?: number | null;
@@ -25,6 +26,7 @@ type ProductCardProps = {
 export function ProductCard({
   href,
   title,
+  categoryTitle = null,
   priceFormatted,
   compareAtFormatted = null,
   discountPercent = null,
@@ -103,6 +105,11 @@ export function ProductCard({
       </div>
 
       <div className="p-4">
+        {categoryTitle ? (
+          <p className="mb-1 text-xs font-medium tracking-wide text-gray-500 uppercase">
+            {categoryTitle}
+          </p>
+        ) : null}
         <h3 className="mb-1 line-clamp-2 text-base font-medium text-gray-900">
           <AppLink
             href={href}

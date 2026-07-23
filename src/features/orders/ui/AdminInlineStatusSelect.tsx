@@ -13,6 +13,10 @@ import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 
 import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
+import {
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
@@ -28,6 +32,10 @@ import {
   paymentStatusLabel,
   type PaymentStatus,
 } from "@/features/orders/domain/payment-status";
+import {
+  adminOrderStatusLabel,
+  adminPaymentStatusLabel,
+} from "@/features/orders/ui/admin-order-status-labels";
 
 type MenuPosition = {
   top: number;
@@ -50,6 +58,7 @@ export function AdminInlineStatusSelect({
   value,
   disabled = false,
 }: AdminInlineStatusSelectProps) {
+  const dictionary = useAdminDictionary();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,13 +80,19 @@ export function AdminInlineStatusSelect({
 
   const currentLabel =
     kind === "order"
-      ? orderStatusLabel(displayValue)
-      : paymentStatusLabel(displayValue);
+      ? adminOrderStatusLabel(displayValue, dictionary.orders.status)
+      : adminPaymentStatusLabel(displayValue, dictionary.orders.paymentStatus);
 
   const badgeClassName =
     kind === "order"
       ? orderStatusBadgeClass(displayValue)
       : paymentStatusBadgeClass(displayValue);
+
+  function optionDisplayLabel(optionValue: string): string {
+    return kind === "order"
+      ? adminOrderStatusLabel(optionValue, dictionary.orders.status)
+      : adminPaymentStatusLabel(optionValue, dictionary.orders.paymentStatus);
+  }
 
   function updateMenuPosition(): void {
     const trigger = rootRef.current;
@@ -199,7 +214,7 @@ export function AdminInlineStatusSelect({
                     }`}
                     onClick={() => selectStatus(option.value)}
                   >
-                    {option.label}
+                    {optionDisplayLabel(option.value)}
                   </button>
                 </li>
               );
@@ -215,7 +230,9 @@ export function AdminInlineStatusSelect({
         type="button"
         disabled={disabled || isPending}
         className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium disabled:opacity-50 ${badgeClassName}`}
-        aria-label={`Change ${kind} status`}
+        aria-label={formatAdminMessage(dictionary.orders.changeStatusAria, {
+          kind,
+        })}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={menuId}

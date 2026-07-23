@@ -63,3 +63,43 @@ export function invalidateBlogCache(input?: {
     }
   }
 }
+
+type SlugTranslations = Partial<
+  Record<(typeof locales)[number], { slug?: string }>
+>;
+
+function collectJobSlugs(
+  translations?: SlugTranslations,
+  slug?: string,
+): string[] {
+  const slugs = new Set<string>();
+  if (slug) {
+    slugs.add(slug);
+  }
+  if (translations) {
+    for (const locale of locales) {
+      const value = translations[locale]?.slug;
+      if (value) {
+        slugs.add(value);
+      }
+    }
+  }
+  return [...slugs];
+}
+
+/** Invalidates careers list caches and optional per-posting / per-slug caches. */
+export function invalidateCareersCache(input?: {
+  postingId?: string;
+  slug?: string;
+  translations?: SlugTranslations;
+}): void {
+  updateTag(CACHE_TAGS.careers);
+  if (input?.postingId) {
+    updateTag(CACHE_TAGS.jobPosting(input.postingId));
+  }
+  for (const slug of collectJobSlugs(input?.translations, input?.slug)) {
+    for (const locale of locales) {
+      updateTag(CACHE_TAGS.jobPostingSlug(locale, slug));
+    }
+  }
+}

@@ -1,15 +1,28 @@
+"use client";
+
 import { BarChart3 } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
 import { formatAnalyticsShortDate } from "@/features/analytics/domain/date-range";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type AnalyticsOrdersByDayProps = {
+  locale: string;
   rows: AnalyticsCsvRow[];
-  formatMoney: (amount: number) => string;
 };
 
-function OrdersTrendChart({ rows }: { rows: AnalyticsCsvRow[] }) {
+function OrdersTrendChart({
+  rows,
+  chartAria,
+}: {
+  rows: AnalyticsCsvRow[];
+  chartAria: string;
+}) {
   const width = 640;
   const height = 220;
   const padding = { top: 16, right: 16, bottom: 36, left: 36 };
@@ -42,7 +55,7 @@ function OrdersTrendChart({ rows }: { rows: AnalyticsCsvRow[] }) {
       viewBox={`0 0 ${width} ${height}`}
       className="h-56 w-full"
       role="img"
-      aria-label="Orders by day trend chart"
+      aria-label={chartAria}
     >
       <defs>
         <linearGradient id="ordersAreaFill" x1="0" y1="0" x2="0" y2="1">
@@ -110,19 +123,22 @@ function OrdersTrendChart({ rows }: { rows: AnalyticsCsvRow[] }) {
 }
 
 export function AnalyticsOrdersByDay({
+  locale,
   rows,
-  formatMoney,
 }: AnalyticsOrdersByDayProps) {
+  const copy = useAdminDictionary().analytics.ordersByDay;
   const maxOrders = Math.max(...rows.map((row) => row.orderCount), 1);
+
+  function formatMoney(amount: number): string {
+    return formatMoneyAmount(amount, "AMD", locale);
+  }
 
   return (
     <Card className="rounded-2xl p-5 sm:p-6">
       <div className="mb-2 flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Orders by Day</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Daily Order Trends and Revenue
-          </p>
+          <h2 className="text-lg font-semibold text-gray-900">{copy.title}</h2>
+          <p className="mt-1 text-sm text-gray-500">{copy.subtitle}</p>
         </div>
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
           <BarChart3 className="h-4 w-4" aria-hidden />
@@ -130,13 +146,11 @@ export function AnalyticsOrdersByDay({
       </div>
 
       {rows.length === 0 ? (
-        <p className="py-12 text-center text-sm text-gray-500">
-          No orders in this range.
-        </p>
+        <p className="py-12 text-center text-sm text-gray-500">{copy.empty}</p>
       ) : (
         <>
           <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/60 p-3">
-            <OrdersTrendChart rows={rows} />
+            <OrdersTrendChart rows={rows} chartAria={copy.chartAria} />
           </div>
 
           <div className="mt-6 space-y-3">
@@ -159,14 +173,16 @@ export function AnalyticsOrdersByDay({
                       style={{ width: `${widthPct}%` }}
                     />
                     <span className="relative z-10 ml-3 inline-flex h-full items-center text-xs font-semibold text-white">
-                      {row.orderCount} orders
+                      {formatAdminMessage(copy.ordersCount, {
+                        count: String(row.orderCount),
+                      })}
                     </span>
                   </div>
                   <p className="text-right text-sm text-gray-600">
                     <span className="font-medium text-gray-900">
                       {formatMoney(row.revenueAmount)}
                     </span>{" "}
-                    revenue
+                    {copy.revenue}
                   </p>
                 </div>
               );

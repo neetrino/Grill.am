@@ -3,6 +3,10 @@
 import { Copy, Pencil, Star, Trash2 } from "lucide-react";
 
 import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
+import {
   ADMIN_TABLE_ROW,
   ADMIN_TABLE_TD,
   ADMIN_TABLE_TD_CHECK,
@@ -36,6 +40,7 @@ export function AdminProductRow({
   onDelete,
   onVisibility,
 }: AdminProductRowProps) {
+  const dictionary = useAdminDictionary();
   const isActive = product.status === "ACTIVE";
   const created = new Date(product.createdAt);
   const createdLabel = `${created.getDate()}/${created.getMonth() + 1}/${created.getFullYear()}`;
@@ -49,13 +54,16 @@ export function AdminProductRow({
           checked={selected}
           onChange={onToggle}
           disabled={disabled}
-          aria-label={`Select ${product.title}`}
+          aria-label={formatAdminMessage(dictionary.products.selectProduct, {
+            title: product.title,
+          })}
         />
       </td>
       <td className={ADMIN_TABLE_TD}>
         <div className="flex min-w-[200px] items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded bg-gray-100">
             {product.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- admin table thumbnails
               <img
                 src={product.imageUrl}
                 alt=""
@@ -72,7 +80,9 @@ export function AdminProductRow({
         </div>
       </td>
       <td className={ADMIN_TABLE_TD}>
-        <span className="text-gray-900">{product.stockOnHand} pcs</span>
+        <span className="text-gray-900">
+          {product.stockOnHand} {dictionary.products.pcs}
+        </span>
       </td>
       <td className={ADMIN_TABLE_TD}>
         <div className="flex flex-col">
@@ -101,7 +111,9 @@ export function AdminProductRow({
           onClick={onFeatured}
           className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-amber-500"
           aria-label={
-            product.isFeatured ? "Unfeature product" : "Feature product"
+            product.isFeatured
+              ? dictionary.products.unfeature
+              : dictionary.products.feature
           }
         >
           <Star
@@ -115,7 +127,9 @@ export function AdminProductRow({
             type="button"
             onClick={onEdit}
             className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={`Edit ${product.title}`}
+            aria-label={formatAdminMessage(dictionary.products.editNamed, {
+              title: product.title,
+            })}
           >
             <Pencil className="h-4 w-4" />
           </button>
@@ -124,7 +138,9 @@ export function AdminProductRow({
             disabled={disabled}
             onClick={onDuplicate}
             className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={`Duplicate ${product.title}`}
+            aria-label={formatAdminMessage(dictionary.products.duplicateNamed, {
+              title: product.title,
+            })}
           >
             <Copy className="h-4 w-4" />
           </button>
@@ -133,7 +149,9 @@ export function AdminProductRow({
             disabled={disabled}
             onClick={onDelete}
             className="rounded p-1.5 text-red-500 hover:bg-red-50"
-            aria-label={`Delete ${product.title}`}
+            aria-label={formatAdminMessage(dictionary.products.deleteNamed, {
+              title: product.title,
+            })}
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -146,7 +164,11 @@ export function AdminProductRow({
             className={`relative ml-1 h-5 w-9 rounded-full transition-colors ${
               isActive ? "bg-green-500" : "bg-gray-300"
             }`}
-            aria-label={isActive ? "Deactivate product" : "Activate product"}
+            aria-label={
+              isActive
+                ? dictionary.products.deactivate
+                : dictionary.products.activate
+            }
           >
             <span
               className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${

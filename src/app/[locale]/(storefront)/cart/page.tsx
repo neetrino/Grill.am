@@ -6,6 +6,12 @@ import {
   removeItem,
   updateQuantity,
 } from "@/features/cart/cart";
+import {
+  describeModifiers,
+  parseCartModifiers,
+  parseProductCustomization,
+  unitAmountWithModifiers,
+} from "@/features/products/domain/customization";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import { isLocale } from "@/lib/i18n/config";
 
@@ -25,7 +31,12 @@ export default async function CartPage({ params }: CartPageProps) {
   );
 
   const total = items.reduce((sum, { item, product }) => {
-    const unit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const unit = unitAmountWithModifiers(
+      base,
+      parseProductCustomization(product.customization),
+      parseCartModifiers(item.modifiers),
+    );
     return sum + item.quantity * unit;
   }, 0);
 
@@ -33,8 +44,16 @@ export default async function CartPage({ params }: CartPageProps) {
     <section className="flex max-w-2xl flex-col gap-4">
       <h1 className="text-3xl font-semibold">Cart</h1>
       {items.map(({ item, product }) => {
-        const unit =
+        const modifiers = parseCartModifiers(item.modifiers);
+        const customization = parseProductCustomization(product.customization);
+        const base =
           prices.get(product.id)?.unitAmount ?? product.priceAmount;
+        const unit = unitAmountWithModifiers(base, customization, modifiers);
+        const modifierLines = describeModifiers(
+          customization,
+          modifiers,
+          locale,
+        );
         return (
           <div
             className="flex items-center justify-between border p-3"
@@ -42,6 +61,13 @@ export default async function CartPage({ params }: CartPageProps) {
           >
             <div>
               <p>{product.translations[locale]?.title ?? product.sku}</p>
+              {modifierLines.length > 0 ? (
+                <ul className="mt-1 text-xs text-gray-600">
+                  {modifierLines.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              ) : null}
               <p className="text-sm">
                 {unit} AMD × {item.quantity}
               </p>

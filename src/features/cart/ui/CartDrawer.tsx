@@ -221,6 +221,15 @@ export function CartDrawer({
                               <p className="truncate text-base text-gray-900">
                                 {item.title}
                               </p>
+                              {item.modifierLines.length > 0 ? (
+                                <ul className="mt-1 space-y-0.5 text-xs text-gray-500">
+                                  {item.modifierLines.map((line) => (
+                                    <li key={line} className="truncate">
+                                      {line}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
                               <p className="mt-1 text-base font-semibold text-gray-900">
                                 {item.unitPriceFormatted}
                               </p>

@@ -8,6 +8,7 @@ import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status
 import { AdminOrdersFilters } from "@/features/orders/ui/AdminOrdersFilters";
 import { AdminOrdersView } from "@/features/orders/ui/AdminOrdersView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminOrdersPageProps = {
   params: Promise<{ locale: string }>;
@@ -40,6 +41,15 @@ function buildOrdersQuery(
   return params.toString();
 }
 
+function fillTemplate(
+  template: string,
+  values: Record<string, string>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    return values[key] ?? "";
+  });
+}
+
 export default async function AdminOrdersPage({
   params,
   searchParams,
@@ -48,6 +58,10 @@ export default async function AdminOrdersPage({
   if (!isLocale(locale)) {
     notFound();
   }
+
+  const admin = getDictionary(locale).admin;
+  const copy = admin.orders;
+  const common = admin.common;
 
   const raw = await searchParams;
   const parsed = adminOrdersFilterSchema.safeParse({
@@ -76,7 +90,7 @@ export default async function AdminOrdersPage({
   return (
     <section>
       <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>Orders</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
       </div>
 
       <AdminOrdersFilters
@@ -95,18 +109,21 @@ export default async function AdminOrdersPage({
               href={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {fillTemplate(common.pageOf, {
+              page: String(filters.page),
+              totalPages: String(totalPages),
+            })}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
               className="font-medium hover:underline"
             >
-              Next
+              {common.next}
             </Link>
           ) : null}
         </nav>

@@ -18,12 +18,20 @@ import {
   idColumn,
   updatedAtColumn,
 } from "@/db/schema/columns";
-import { categoryStatusEnum, productStatusEnum } from "@/db/schema/enums";
+import {
+  categoryStatusEnum,
+  modifierKindEnum,
+  productStatusEnum,
+} from "@/db/schema/enums";
 
 export type LocaleTranslation = {
   title: string;
   slug: string;
   description?: string;
+  /** Short storefront blurb shown above the full description. */
+  shortDescription?: string;
+  /** Ingredients / composition text for the PDP. */
+  composition?: string;
   seoTitle?: string;
   seoDescription?: string;
 };
@@ -31,6 +39,34 @@ export type LocaleTranslation = {
 export type TranslationsJson = Partial<
   Record<"hy" | "en" | "ru", LocaleTranslation>
 >;
+
+/**
+ * Product-level size/type choices, paid addons, and free exclusions.
+ * Stored as JSONB to avoid a variants table until OPEN-007 is closed.
+ */
+export type ProductCustomizationJson = {
+  optionGroups: Array<{
+    id: string;
+    kind: "SIZE" | "TYPE" | "PORTION";
+    required: boolean;
+    label: Partial<Record<"hy" | "en" | "ru", string>>;
+    choices: Array<{
+      id: string;
+      label: Partial<Record<"hy" | "en" | "ru", string>>;
+      priceDeltaAmount: number;
+      isDefault?: boolean;
+    }>;
+  }>;
+  addons: Array<{
+    id: string;
+    label: Partial<Record<"hy" | "en" | "ru", string>>;
+    priceAmount: number;
+  }>;
+  exclusions: Array<{
+    id: string;
+    label: Partial<Record<"hy" | "en" | "ru", string>>;
+  }>;
+};
 
 export const products = pgTable(
   "products",
@@ -51,6 +87,7 @@ export const products = pgTable(
     >(),
     badgeStyle: text("badge_style"),
     badgePosition: text("badge_position"),
+    customization: jsonb("customization").$type<ProductCustomizationJson>(),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
     deletedAt: deletedAtColumn(),
@@ -129,5 +166,33 @@ export const productCategories = pgTable(
     uniqueIndex("product_categories_primary_uidx")
       .on(table.productId)
       .where(sql`${table.isPrimary} = true`),
+  ],
+);
+
+export type ModifierCatalogLabel = Partial<Record<"hy" | "en" | "ru", string>>;
+
+/**
+ * Shared library of paid addons and free exclusions.
+ * Product `customization` JSON embeds catalog IDs + denormalized label/price;
+ * saves upsert here and propagate to peer products so storefront stays consistent.
+ */
+export const modifierCatalog = pgTable(
+  "modifier_catalog",
+  {
+    id: idColumn(),
+    kind: modifierKindEnum("kind").notNull(),
+    label: jsonb("label").$type<ModifierCatalogLabel>().notNull(),
+    /** AMD minor units; always 0 for EXCLUSION. */
+    priceAmount: integer("price_amount").notNull().default(0),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+  },
+  (table) => [
+    index("modifier_catalog_kind_idx").on(table.kind),
+    check("modifier_catalog_price_nonneg_chk", sql`${table.priceAmount} >= 0`),
+    check(
+      "modifier_catalog_exclusion_price_chk",
+      sql`${table.kind} = 'ADDON' OR ${table.priceAmount} = 0`,
+    ),
   ],
 );

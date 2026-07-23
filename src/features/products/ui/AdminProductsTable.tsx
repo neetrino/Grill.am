@@ -18,6 +18,10 @@ import {
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
+import {
   duplicateProductAction,
   softDeleteProductsAction,
   toggleProductFeaturedAction,
@@ -47,6 +51,7 @@ export function AdminProductsTable({
   onEdit,
 }: AdminProductsTableProps) {
   const router = useRouter();
+  const dictionary = useAdminDictionary();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -75,7 +80,11 @@ export function AdminProductsTable({
         await action();
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Action failed.");
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : dictionary.common.actionsFailed,
+        );
       }
     });
   }
@@ -95,7 +104,9 @@ export function AdminProductsTable({
     <div className="flex flex-col gap-4">
       <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
         <p className="text-sm text-gray-700">
-          Selected {selected.size} product{selected.size === 1 ? "" : "s"}
+          {formatAdminMessage(dictionary.products.bulk.selectedCount, {
+            count: String(selected.size),
+          })}
         </p>
         <Button
           type="button"
@@ -103,7 +114,7 @@ export function AdminProductsTable({
           disabled={isPending || selected.size === 0}
           onClick={deleteSelected}
         >
-          Delete Selected
+          {dictionary.products.bulk.deleteSelected}
         </Button>
       </Card>
 
@@ -112,7 +123,7 @@ export function AdminProductsTable({
       <Card className={ADMIN_TABLE_CARD}>
         {products.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No products match these filters.
+            {dictionary.products.table.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
@@ -126,33 +137,37 @@ export function AdminProductsTable({
                       checked={allSelected}
                       onChange={toggleAll}
                       disabled={isPending}
-                      aria-label="Select all products"
+                      aria-label={dictionary.products.selectAll}
                     />
                   </th>
                   <th className={ADMIN_TABLE_TH}>
                     <Link href={sortLinks.title} className="hover:text-gray-900">
-                      Product
+                      {dictionary.products.table.product}
                     </Link>
                   </th>
                   <th className={ADMIN_TABLE_TH}>
                     <Link href={sortLinks.stock} className="hover:text-gray-900">
-                      Stock
+                      {dictionary.products.table.stock}
                     </Link>
                   </th>
                   <th className={ADMIN_TABLE_TH}>
                     <Link href={sortLinks.price} className="hover:text-gray-900">
-                      Price
+                      {dictionary.products.table.price}
                     </Link>
                   </th>
-                  <th className={ADMIN_TABLE_TH}>Category</th>
-                  <th className={ADMIN_TABLE_TH}>Featured</th>
-                  <th className={ADMIN_TABLE_TH}>Actions</th>
+                  <th className={ADMIN_TABLE_TH}>
+                    {dictionary.products.table.category}
+                  </th>
+                  <th className={ADMIN_TABLE_TH}>
+                    {dictionary.products.table.featured}
+                  </th>
+                  <th className={ADMIN_TABLE_TH}>{dictionary.common.actions}</th>
                   <th className={ADMIN_TABLE_TH}>
                     <Link
                       href={sortLinks.created}
                       className="hover:text-gray-900"
                     >
-                      Created
+                      {dictionary.common.created}
                     </Link>
                   </th>
                 </tr>

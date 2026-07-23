@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { archiveOrderAction } from "@/features/orders/application/archive-order";
 
@@ -19,6 +20,9 @@ export function ArchiveOrderButton({
   orderNumber,
   isArchived,
 }: ArchiveOrderButtonProps) {
+  const dictionary = useAdminDictionary();
+  const forms = dictionary.orders.forms;
+  const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -26,11 +30,9 @@ export function ArchiveOrderButton({
   return (
     <Card className="p-6">
       <div className="flex flex-col gap-3">
-        <h2 className={ADMIN_SECTION_TITLE}>Archive</h2>
+        <h2 className={ADMIN_SECTION_TITLE}>{forms.archive}</h2>
         <p className="text-sm text-gray-600">
-          {isArchived
-            ? "This order is archived. Restore it to show in default lists."
-            : "Archive hides the order from default admin lists without deleting data."}
+          {isArchived ? forms.archivedHint : forms.archiveHint}
         </p>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button
@@ -56,10 +58,10 @@ export function ArchiveOrderButton({
           }}
         >
           {isPending
-            ? "Saving…"
+            ? common.saving
             : isArchived
-              ? "Restore order"
-              : "Archive order"}
+              ? forms.restoreOrder
+              : forms.archiveOrder}
         </Button>
       </div>
     </Card>

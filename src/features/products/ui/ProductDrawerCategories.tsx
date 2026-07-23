@@ -7,6 +7,7 @@ import {
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { createCategoryAction } from "@/features/categories/actions";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
@@ -28,6 +29,8 @@ export function ProductDrawerCategories({
   onCategoriesChange,
   onSelectedChange,
 }: ProductDrawerCategoriesProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.products.categoriesForm;
   const listId = useId();
   const [open, setOpen] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -39,9 +42,7 @@ export function ProductDrawerCategories({
     .filter((category) => selectedIds.includes(category.id))
     .map((category) => category.title);
   const triggerLabel =
-    selectedTitles.length === 0
-      ? "Select categories"
-      : selectedTitles.join(", ");
+    selectedTitles.length === 0 ? copy.select : selectedTitles.join(", ");
 
   function toggleCategory(id: string): void {
     if (selectedIds.includes(id)) {
@@ -54,13 +55,15 @@ export function ProductDrawerCategories({
   function createCategory(): void {
     const title = newTitle.trim();
     if (!title) {
-      setError("Category title is required.");
+      setError(copy.titleRequired);
       return;
     }
 
     startTransition(async () => {
       setError(null);
       const result = await createCategoryAction(locale, {
+        // Categories are English-only in admin.
+        editingLocale: "en",
         title,
         slug: slugifyCategoryTitle(title),
         parentId: null,
@@ -83,7 +86,7 @@ export function ProductDrawerCategories({
 
   return (
     <div>
-      <span className={ADMIN_LABEL}>Categories</span>
+      <span className={ADMIN_LABEL}>{copy.title}</span>
       <div className="mt-1">
         <button
           type="button"
@@ -114,7 +117,7 @@ export function ProductDrawerCategories({
             className="mt-1 max-h-40 space-y-2 overflow-y-auto rounded-xl border border-gray-200 px-3 py-2"
           >
             {categories.length === 0 ? (
-              <p className="text-sm text-gray-500">No categories yet.</p>
+              <p className="text-sm text-gray-500">{copy.empty}</p>
             ) : (
               categories.map((category) => (
                 <label
@@ -143,7 +146,7 @@ export function ProductDrawerCategories({
           onClick={() => setShowAdd((value) => !value)}
           className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
         >
-          + Add category
+          {copy.addCategory}
         </button>
       </div>
 
@@ -151,12 +154,12 @@ export function ProductDrawerCategories({
         <div className="mt-3 space-y-2 rounded-xl border border-gray-200 bg-gray-50 p-3">
           <label className="block">
             <span className={ADMIN_LABEL}>
-              Category title <span className="text-red-600">*</span>
+              {copy.categoryTitle} <span className="text-red-600">*</span>
             </span>
             <input
               value={newTitle}
               onChange={(event) => setNewTitle(event.target.value)}
-              placeholder="Enter category title"
+              placeholder={copy.categoryTitlePlaceholder}
               className={ADMIN_INPUT}
               disabled={disabled || isPending}
             />
@@ -168,7 +171,7 @@ export function ProductDrawerCategories({
               onClick={createCategory}
               className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
             >
-              {isPending ? "Adding…" : "Add"}
+              {isPending ? copy.adding : copy.add}
             </button>
             <button
               type="button"
@@ -180,7 +183,7 @@ export function ProductDrawerCategories({
               }}
               className="text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {dictionary.common.cancel}
             </button>
           </div>
           {error ? <p className="text-sm text-red-700">{error}</p> : null}

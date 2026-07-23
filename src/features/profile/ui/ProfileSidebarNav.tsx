@@ -8,6 +8,7 @@ import {
   LogOut,
   MapPin,
   Package,
+  TicketPercent,
   Trash2,
   User,
 } from "lucide-react";
@@ -55,6 +56,11 @@ export function ProfileSidebarNav({
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package className="h-4 w-4" />,
+    },
+    {
+      href: `/${locale}/profile/promo-codes`,
+      label: dictionary.promoCodes.nav,
+      icon: <TicketPercent className="h-4 w-4" />,
     },
     {
       href: `/${locale}/profile/personal-information`,

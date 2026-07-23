@@ -11,6 +11,9 @@ import {
   productCategories,
   products,
 } from "@/db/schema";
+import { resolveCategorySubtreeIds } from "@/features/categories/application/resolve-category-subtree-ids";
+import { parseProductCustomization } from "@/features/products/domain/customization";
+import { resolveProductTranslation } from "@/features/products/domain/resolve-translation";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type {
   CatalogProduct,
@@ -23,6 +26,7 @@ import {
   PUBLIC_CACHE_REVALIDATE_SECONDS,
 } from "@/lib/cache/tags";
 import type { Locale } from "@/lib/i18n/config";
+import { locales } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
 export type {
@@ -31,6 +35,14 @@ export type {
   ProductDetail,
   ProductGalleryImage,
 } from "@/features/products/types";
+
+function productSlugMatchesAnyLocale(slug: string) {
+  return or(
+    ...locales.map(
+      (loc) => sql`${products.translations}->${loc}->>'slug' = ${slug}`,
+    ),
+  );
+}
 
 const RELATED_PRODUCTS_LIMIT = 4;
 export const CATALOG_PAGE_SIZE = 24;
@@ -43,7 +55,7 @@ function toCatalogProduct(
   CatalogProduct,
   "priceAmount" | "compareAtAmount" | "discountPercent" | "listPriceAmount"
 > | null {
-  const translation = product.translations[locale] ?? product.translations.hy;
+  const translation = resolveProductTranslation(product.translations, locale);
   if (!translation) {
     return null;
   }
@@ -54,6 +66,7 @@ function toCatalogProduct(
     stockOnHand: product.stockOnHand,
     translation,
     imageUrl,
+    categoryTitle: null,
   };
 }
 
@@ -152,30 +165,92 @@ export async function getActiveProductsByIds(
   return withProductImages(rows, locale);
 }
 
+export type ActiveProductsPageOptions = {
+  categorySlug?: string;
+};
+
+function normalizeCategorySlug(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim().slice(0, 120);
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+async function resolveCategoryIdBySlug(
+  locale: Locale,
+  categorySlug: string,
+): Promise<string | null> {
+  const [row] = await getDb()
+    .select({ id: categories.id })
+    .from(categories)
+    .where(
+      and(
+        eq(categories.status, "ACTIVE"),
+        isNull(categories.deletedAt),
+        sql`${categories.translations}->${locale}->>'slug' = ${categorySlug}`,
+      ),
+    )
+    .limit(1);
+
+  return row?.id ?? null;
+}
+
 async function loadActiveProductsPage(
   locale: Locale,
   page: number,
+  options: ActiveProductsPageOptions = {},
 ): Promise<{ products: CatalogProduct[]; total: number; pageSize: number }> {
   const offset = (page - 1) * CATALOG_PAGE_SIZE;
+  const categorySlug = normalizeCategorySlug(options.categorySlug);
+  const categoryId = categorySlug
+    ? await resolveCategoryIdBySlug(locale, categorySlug)
+    : null;
+
+  if (categorySlug && !categoryId) {
+    return {
+      products: [],
+      total: 0,
+      pageSize: CATALOG_PAGE_SIZE,
+    };
+  }
+
+  let productIdFilter: string[] | null = null;
+  if (categoryId) {
+    const categoryIds = await resolveCategorySubtreeIds([categoryId]);
+    const links = await getDb()
+      .select({ productId: productCategories.productId })
+      .from(productCategories)
+      .where(inArray(productCategories.categoryId, categoryIds));
+    productIdFilter = [...new Set(links.map((link) => link.productId))];
+    if (productIdFilter.length === 0) {
+      return {
+        products: [],
+        total: 0,
+        pageSize: CATALOG_PAGE_SIZE,
+      };
+    }
+  }
+
+  const whereClause =
+    productIdFilter != null
+      ? and(activeCatalogWhere, inArray(products.id, productIdFilter))
+      : activeCatalogWhere;
 
   const [[countRow], rows] = await Promise.all([
     getDb()
       .select({ count: sql<number>`count(*)::int` })
       .from(products)
-      .where(activeCatalogWhere),
+      .where(whereClause),
     getDb()
       .select()
       .from(products)
-      .where(activeCatalogWhere)
+      .where(whereClause)
       .orderBy(desc(products.createdAt))
       .limit(CATALOG_PAGE_SIZE)
       .offset(offset),
   ]);
 
-  const enriched = await withProductImages(rows, locale);
-
   return {
-    products: enriched,
+    products: await withProductImages(rows, locale),
     total: countRow?.count ?? 0,
     pageSize: CATALOG_PAGE_SIZE,
   };
@@ -185,12 +260,14 @@ async function loadActiveProductsPage(
 export async function getActiveProductsPage(
   locale: Locale,
   page: number,
+  options: ActiveProductsPageOptions = {},
 ): Promise<{ products: CatalogProduct[]; total: number; pageSize: number }> {
   const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+  const categorySlug = normalizeCategorySlug(options.categorySlug) ?? "";
 
   return unstable_cache(
-    async () => loadActiveProductsPage(locale, safePage),
-    ["active-products-page", locale, String(safePage)],
+    async () => loadActiveProductsPage(locale, safePage, options),
+    ["active-products-page", locale, String(safePage), categorySlug],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
@@ -242,6 +319,72 @@ export async function getFeaturedProducts(
   )();
 }
 
+const DISCOUNTED_PRODUCTS_SCAN_LIMIT = 48;
+const DISCOUNTED_PRODUCTS_LIMIT = 8;
+
+async function loadDiscountedProducts(
+  locale: Locale,
+): Promise<CatalogProduct[]> {
+  const rows = await getDb()
+    .select()
+    .from(products)
+    .where(activeCatalogWhere)
+    .orderBy(desc(products.updatedAt))
+    .limit(DISCOUNTED_PRODUCTS_SCAN_LIMIT);
+
+  const enriched = await withProductImages(rows, locale);
+  return enriched
+    .flatMap((product) => {
+      const hasAutoDiscount =
+        product.discountPercent != null && product.discountPercent > 0;
+      const hasManualSale =
+        product.compareAtAmount != null &&
+        product.compareAtAmount > product.priceAmount;
+
+      if (!hasAutoDiscount && !hasManualSale) {
+        return [];
+      }
+
+      if (hasAutoDiscount || product.discountPercent != null) {
+        return [product];
+      }
+
+      const compareAt = product.compareAtAmount;
+      if (compareAt == null || compareAt <= 0) {
+        return [product];
+      }
+
+      const computedPercent = Math.round(
+        ((compareAt - product.priceAmount) / compareAt) * 100,
+      );
+
+      return [
+        {
+          ...product,
+          discountPercent:
+            computedPercent >= 1 && computedPercent <= 100
+              ? computedPercent
+              : null,
+        },
+      ];
+    })
+    .slice(0, DISCOUNTED_PRODUCTS_LIMIT);
+}
+
+/** Active products with a resolved discount for the home promotions strip. */
+export async function getDiscountedProducts(
+  locale: Locale,
+): Promise<CatalogProduct[]> {
+  return unstable_cache(
+    async () => loadDiscountedProducts(locale),
+    ["discounted-products", locale],
+    {
+      tags: [CACHE_TAGS.products],
+      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+    },
+  )();
+}
+
 export async function getProductBySlug(
   locale: Locale,
   slug: string,
@@ -253,7 +396,7 @@ export async function getProductBySlug(
       and(
         eq(products.status, "ACTIVE"),
         isNull(products.deletedAt),
-        sql`${products.translations}->${locale}->>'slug' = ${slug}`,
+        productSlugMatchesAnyLocale(slug),
       ),
     )
     .limit(1);
@@ -322,7 +465,7 @@ async function loadProductCategories(
 
   return rows
     .map((row) => {
-      const translation = row.translations[locale] ?? row.translations.hy;
+      const translation = resolveProductTranslation(row.translations, locale);
       if (!translation) return null;
       return {
         id: row.id,
@@ -337,34 +480,51 @@ async function loadProductDetailBySlug(
   locale: Locale,
   slug: string,
 ): Promise<ProductDetail | null> {
-  const product = await getProductBySlug(locale, slug);
-  if (!product) {
+  const [row] = await getDb()
+    .select()
+    .from(products)
+    .where(
+      and(
+        eq(products.status, "ACTIVE"),
+        isNull(products.deletedAt),
+        productSlugMatchesAnyLocale(slug),
+      ),
+    )
+    .limit(1);
+
+  if (!row) {
+    return null;
+  }
+
+  const [enriched] = await withProductImages([row], locale);
+  if (!enriched) {
     return null;
   }
 
   const [images, productCats] = await Promise.all([
-    loadProductGallery(product.id, locale, product.translation.title),
-    loadProductCategories(product.id, locale),
+    loadProductGallery(row.id, locale, enriched.translation.title),
+    loadProductCategories(row.id, locale),
   ]);
 
   const gallery =
     images.length > 0
       ? images
-      : product.imageUrl
+      : enriched.imageUrl
         ? [
             {
-              id: product.id,
-              url: product.imageUrl,
-              alt: product.translation.title,
+              id: row.id,
+              url: enriched.imageUrl,
+              alt: enriched.translation.title,
               isPrimary: true,
             },
           ]
         : [];
 
   return {
-    ...product,
+    ...enriched,
     images: gallery,
     categories: productCats,
+    customization: parseProductCustomization(row.customization),
   };
 }
 

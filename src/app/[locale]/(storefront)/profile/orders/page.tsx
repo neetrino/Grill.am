@@ -90,7 +90,16 @@ export default async function OrdersPage({
         q={filters.q}
       />
 
-      <CustomerOrdersView locale={locale} orders={rows} />
+      <CustomerOrdersView
+        locale={locale}
+        orders={rows}
+        dictionary={dictionary.admin}
+        profileCopy={{
+          reorder: dictionary.profile.reorder,
+          reordering: dictionary.profile.reordering,
+          reorderUnavailable: dictionary.profile.reorderUnavailable,
+        }}
+      />
 
       {totalPages > 1 ? (
         <nav className="flex items-center gap-3 text-sm text-gray-700">

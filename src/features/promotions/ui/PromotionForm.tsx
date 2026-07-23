@@ -11,6 +11,7 @@ import {
   ADMIN_SECTION_TITLE,
   ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   createPromotionAction,
   updatePromotionAction,
@@ -69,6 +70,9 @@ export function PromotionForm({
   targets,
   redirectTo,
 }: PromotionFormProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.promotions.form;
+  const common = dictionary.common;
   const router = useRouter();
   const [kind, setKind] = useState<PromotionKind>(initialKind);
   const [error, setError] = useState<string | null>(null);
@@ -76,10 +80,10 @@ export function PromotionForm({
 
   const title = useMemo(() => {
     if (mode === "edit") {
-      return "Edit promotion";
+      return copy.editTitle;
     }
-    return kind === "COUPON" ? "Create coupon" : "Create automatic discount";
-  }, [kind, mode]);
+    return kind === "COUPON" ? copy.createCoupon : copy.createAutomatic;
+  }, [copy.createAutomatic, copy.createCoupon, copy.editTitle, kind, mode]);
 
   return (
     <Card className="max-w-xl p-6">
@@ -138,7 +142,7 @@ export function PromotionForm({
         <h2 className={ADMIN_SECTION_TITLE}>{title}</h2>
 
         <label>
-          <span className={ADMIN_LABEL}>Kind</span>
+          <span className={ADMIN_LABEL}>{copy.kind}</span>
           <select
             name="kind"
             className={ADMIN_SELECT}
@@ -146,34 +150,34 @@ export function PromotionForm({
             disabled={lockKind || isPending}
             onChange={(event) => setKind(event.target.value as PromotionKind)}
           >
-            <option value="COUPON">COUPON</option>
-            <option value="AUTOMATIC">AUTOMATIC</option>
+            <option value="COUPON">{copy.kindCoupon}</option>
+            <option value="AUTOMATIC">{copy.kindAutomatic}</option>
           </select>
         </label>
 
         {kind === "COUPON" ? (
           <label>
-            <span className={ADMIN_LABEL}>Code</span>
+            <span className={ADMIN_LABEL}>{copy.code}</span>
             <input
               name="code"
               required
               defaultValue={defaults?.code ?? ""}
               className={`${ADMIN_INPUT} uppercase`}
-              placeholder="WELCOME10"
+              placeholder={copy.codePlaceholder}
               disabled={isPending}
             />
           </label>
         ) : (
           <>
             <label>
-              <span className={ADMIN_LABEL}>Product target</span>
+              <span className={ADMIN_LABEL}>{copy.productTarget}</span>
               <select
                 name="productId"
                 className={ADMIN_SELECT}
                 defaultValue={defaults?.productId ?? ""}
                 disabled={isPending}
               >
-                <option value="">— none —</option>
+                <option value="">{common.none}</option>
                 {targets.products.map((product) => (
                   <option key={product.id} value={product.id}>
                     {product.sku} · {product.title}
@@ -182,14 +186,14 @@ export function PromotionForm({
               </select>
             </label>
             <label>
-              <span className={ADMIN_LABEL}>Category target</span>
+              <span className={ADMIN_LABEL}>{copy.categoryTarget}</span>
               <select
                 name="categoryId"
                 className={ADMIN_SELECT}
                 defaultValue={defaults?.categoryId ?? ""}
                 disabled={isPending}
               >
-                <option value="">— none —</option>
+                <option value="">{common.none}</option>
                 {targets.categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.title}
@@ -197,27 +201,25 @@ export function PromotionForm({
                 ))}
               </select>
             </label>
-            <p className="text-xs text-gray-500">
-              Choose exactly one target: product or category.
-            </p>
+            <p className="text-xs text-gray-500">{copy.targetHint}</p>
           </>
         )}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Discount type</span>
+            <span className={ADMIN_LABEL}>{copy.discountType}</span>
             <select
               name="discountType"
               className={ADMIN_SELECT}
               defaultValue={defaults?.discountType ?? "PERCENTAGE"}
               disabled={isPending}
             >
-              <option value="PERCENTAGE">PERCENTAGE</option>
-              <option value="FIXED">FIXED (AMD minor units)</option>
+              <option value="PERCENTAGE">{copy.typePercentage}</option>
+              <option value="FIXED">{copy.typeFixed}</option>
             </select>
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Discount value</span>
+            <span className={ADMIN_LABEL}>{copy.discountValue}</span>
             <input
               name="discountValue"
               type="number"
@@ -232,7 +234,7 @@ export function PromotionForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Max discount (optional)</span>
+            <span className={ADMIN_LABEL}>{copy.maxDiscount}</span>
             <input
               name="maxDiscountAmount"
               type="number"
@@ -243,7 +245,7 @@ export function PromotionForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Min order (optional)</span>
+            <span className={ADMIN_LABEL}>{copy.minOrder}</span>
             <input
               name="minimumOrderAmount"
               type="number"
@@ -257,7 +259,7 @@ export function PromotionForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Total usage limit</span>
+            <span className={ADMIN_LABEL}>{copy.totalUsageLimit}</span>
             <input
               name="totalUsageLimit"
               type="number"
@@ -268,7 +270,7 @@ export function PromotionForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Per-user limit</span>
+            <span className={ADMIN_LABEL}>{copy.perUserLimit}</span>
             <input
               name="perUserUsageLimit"
               type="number"
@@ -282,7 +284,7 @@ export function PromotionForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Starts at</span>
+            <span className={ADMIN_LABEL}>{copy.startsAt}</span>
             <input
               name="startsAt"
               type="datetime-local"
@@ -292,7 +294,7 @@ export function PromotionForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Ends at</span>
+            <span className={ADMIN_LABEL}>{copy.endsAt}</span>
             <input
               name="endsAt"
               type="datetime-local"
@@ -304,7 +306,7 @@ export function PromotionForm({
         </div>
 
         <label>
-          <span className={ADMIN_LABEL}>Priority</span>
+          <span className={ADMIN_LABEL}>{copy.priority}</span>
           <input
             name="priority"
             type="number"
@@ -323,7 +325,7 @@ export function PromotionForm({
             disabled={isPending}
             className="h-4 w-4 rounded border-gray-300"
           />
-          Allow stacking
+          {copy.allowStacking}
         </label>
         <label className="flex items-center gap-2 text-sm text-gray-700">
           <input
@@ -333,12 +335,16 @@ export function PromotionForm({
             disabled={isPending}
             className="h-4 w-4 rounded border-gray-300"
           />
-          Active
+          {copy.active}
         </label>
 
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Saving…" : mode === "edit" ? "Save changes" : "Create"}
+          {isPending
+            ? common.saving
+            : mode === "edit"
+              ? copy.saveChanges
+              : common.create}
         </Button>
       </form>
     </Card>

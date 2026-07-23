@@ -1,4 +1,5 @@
 import { AccountControls } from "@/components/layout/AccountControls";
+import { HeaderSearch } from "@/components/layout/HeaderSearch";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import { AppLink } from "@/components/ui/AppLink";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
@@ -27,6 +28,17 @@ function navLinkClassName(): string {
   return "rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:text-gray-900";
 }
 
+function headerSearchLabels(dictionary: Dictionary) {
+  return {
+    search: dictionary.header.search,
+    searchPlaceholder: dictionary.header.searchPlaceholder,
+    searchNoResults: dictionary.header.searchNoResults,
+    searchViewAll: dictionary.header.searchViewAll,
+    searchHint: dictionary.header.searchHint,
+    close: dictionary.close,
+  };
+}
+
 export function SiteHeaderMainNav({
   locale,
   currency,
@@ -36,6 +48,8 @@ export function SiteHeaderMainNav({
   cartItemCount,
   wishlistCount,
 }: SiteHeaderMainNavProps) {
+  const searchLabels = headerSearchLabels(dictionary);
+
   return (
     <header className="relative z-10 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-2 sm:px-4 md:px-6 lg:px-8">
@@ -49,13 +63,20 @@ export function SiteHeaderMainNav({
               {dictionary.brand}
             </AppLink>
 
-            <MobileNavDrawer
-              locale={locale}
-              currency={currency}
-              dictionary={dictionary}
-              user={user}
-              navItems={navItems}
-            />
+            <div className="flex items-center gap-1 md:hidden">
+              <HeaderSearch
+                locale={locale}
+                currency={currency}
+                labels={searchLabels}
+              />
+              <MobileNavDrawer
+                locale={locale}
+                currency={currency}
+                dictionary={dictionary}
+                user={user}
+                navItems={navItems}
+              />
+            </div>
           </div>
 
           <nav
@@ -75,6 +96,11 @@ export function SiteHeaderMainNav({
           </nav>
 
           <div className="ml-auto hidden items-center gap-2 md:flex">
+            <HeaderSearch
+              locale={locale}
+              currency={currency}
+              labels={searchLabels}
+            />
             <AccountControls
               locale={locale}
               loginLabel={dictionary.header.login}

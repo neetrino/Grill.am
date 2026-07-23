@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { togglePromotionAction } from "@/features/promotions/application/upsert-promotion";
 
 type TogglePromotionButtonProps = {
@@ -17,6 +18,9 @@ export function TogglePromotionButton({
   promotionId,
   isActive,
 }: TogglePromotionButtonProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.promotions.toggle;
+  const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -43,7 +47,11 @@ export function TogglePromotionButton({
           });
         }}
       >
-        {isPending ? "Updating…" : isActive ? "Deactivate" : "Activate"}
+        {isPending
+          ? common.updating
+          : isActive
+            ? copy.deactivate
+            : copy.activate}
       </Button>
       {error ? <p className="text-xs text-red-700">{error}</p> : null}
     </div>

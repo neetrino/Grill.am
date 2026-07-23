@@ -5,6 +5,7 @@ import { listAdminPromotions } from "@/features/promotions/application/queries";
 import { adminPromotionsFilterSchema } from "@/features/promotions/schemas/admin-promotions";
 import { AdminCouponsView } from "@/features/promotions/ui/AdminCouponsView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminCouponsPageProps = {
   params: Promise<{ locale: string }>;
@@ -20,6 +21,15 @@ function firstParam(
   return value;
 }
 
+function fillTemplate(
+  template: string,
+  values: Record<string, string>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    return values[key] ?? "";
+  });
+}
+
 export default async function AdminCouponsPage({
   params,
   searchParams,
@@ -29,6 +39,7 @@ export default async function AdminCouponsPage({
     notFound();
   }
 
+  const common = getDictionary(locale).admin.common;
   const raw = await searchParams;
   const parsed = adminPromotionsFilterSchema.safeParse({
     kind: "COUPON",
@@ -59,18 +70,21 @@ export default async function AdminCouponsPage({
               href={`/${locale}/admin/coupons?page=${filters.page - 1}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {fillTemplate(common.pageOf, {
+              page: String(filters.page),
+              totalPages: String(totalPages),
+            })}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/coupons?page=${filters.page + 1}`}
               className="font-medium hover:underline"
             >
-              Next
+              {common.next}
             </Link>
           ) : null}
         </nav>

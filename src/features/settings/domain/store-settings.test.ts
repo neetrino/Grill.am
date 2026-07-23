@@ -3,8 +3,10 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_FX_RATES,
   DEFAULT_REVENUE_STATUSES,
+  meetsMinimumOrder,
   parseFxRates,
   parseMaintenance,
+  parseMinimumOrder,
   parseRevenueStatuses,
   parseStacking,
 } from "@/features/settings/domain/store-settings";
@@ -38,5 +40,20 @@ describe("store settings parsers", () => {
       rub: "1.5",
     });
     expect(parseFxRates({ usd: "0", rub: "abc" })).toEqual(DEFAULT_FX_RATES);
+  });
+
+  it("parses minimum order amount", () => {
+    expect(parseMinimumOrder(null)).toEqual({ amount: null });
+    expect(parseMinimumOrder({ amount: 5000 })).toEqual({ amount: 5000 });
+    expect(parseMinimumOrder({ amount: 0 })).toEqual({ amount: null });
+    expect(parseMinimumOrder({ amount: -1 })).toEqual({ amount: null });
+    expect(parseMinimumOrder({ amount: 1.5 })).toEqual({ amount: null });
+  });
+
+  it("evaluates minimum order against subtotal", () => {
+    expect(meetsMinimumOrder(1000, null)).toBe(true);
+    expect(meetsMinimumOrder(1000, 0)).toBe(true);
+    expect(meetsMinimumOrder(5000, 5000)).toBe(true);
+    expect(meetsMinimumOrder(4999, 5000)).toBe(false);
   });
 });

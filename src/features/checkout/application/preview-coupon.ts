@@ -7,6 +7,11 @@ import { getDb } from "@/db/client";
 import { promotions } from "@/db/schema";
 import { getCartWithItems } from "@/features/cart/cart";
 import {
+  parseCartModifiers,
+  parseProductCustomization,
+  unitAmountWithModifiers,
+} from "@/features/products/domain/customization";
+import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
 } from "@/features/promotions/domain/evaluate-coupon";
@@ -48,7 +53,12 @@ export async function previewCouponAction(
     })),
   );
   const subtotal = items.reduce((sum, { item, product }) => {
-    const unit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const unit = unitAmountWithModifiers(
+      base,
+      parseProductCustomization(product.customization),
+      parseCartModifiers(item.modifiers),
+    );
     return sum + item.quantity * unit;
   }, 0);
 

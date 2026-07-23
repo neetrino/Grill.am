@@ -12,9 +12,11 @@ import { getAdminContactMessageById } from "@/features/contact/application/queri
 import {
   getEligibleContactStatuses,
   isContactStatus,
+  type ContactStatus,
 } from "@/features/contact/domain/contact-rules";
 import { UpdateContactStatusForm } from "@/features/contact/ui/UpdateContactStatusForm";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminMessageDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
@@ -29,6 +31,23 @@ function contactStatusBadgeClass(status: string): string {
   return "bg-gray-100 text-gray-800";
 }
 
+function contactStatusLabel(
+  status: string,
+  labels: {
+    unread: string;
+    read: string;
+    replied: string;
+    archived: string;
+  },
+): string {
+  const normalized = status.toUpperCase() as ContactStatus;
+  if (normalized === "UNREAD") return labels.unread;
+  if (normalized === "READ") return labels.read;
+  if (normalized === "REPLIED") return labels.replied;
+  if (normalized === "ARCHIVED") return labels.archived;
+  return status;
+}
+
 export default async function AdminMessageDetailPage({
   params,
 }: AdminMessageDetailPageProps) {
@@ -36,6 +55,10 @@ export default async function AdminMessageDetailPage({
   if (!isLocale(locale)) {
     notFound();
   }
+
+  const dictionary = getDictionary(locale).admin;
+  const copy = dictionary.messages;
+  const common = dictionary.common;
 
   const message = await getAdminContactMessageById(id);
   if (!message) {
@@ -53,7 +76,7 @@ export default async function AdminMessageDetailPage({
             href={`/${locale}/admin/messages`}
             className="font-medium text-gray-700 hover:underline"
           >
-            Messages
+            {copy.title}
           </Link>
         </p>
         <h1 className={ADMIN_PAGE_TITLE}>{message.subject}</h1>
@@ -62,32 +85,37 @@ export default async function AdminMessageDetailPage({
       <Card className="mb-6 p-6">
         <div className="grid gap-3 text-sm md:grid-cols-2">
           <p className="text-gray-700">
-            From: <strong className="text-gray-900">{message.name}</strong>
+            {copy.detail.from}:{" "}
+            <strong className="text-gray-900">{message.name}</strong>
           </p>
-          <p className="text-gray-700">Email: {message.email}</p>
-          <p className="text-gray-700">Phone: {message.phone ?? "—"}</p>
           <p className="text-gray-700">
-            Status:{" "}
+            {copy.detail.email}: {message.email}
+          </p>
+          <p className="text-gray-700">
+            {copy.detail.phone}: {message.phone ?? common.dash}
+          </p>
+          <p className="text-gray-700">
+            {copy.detail.status}:{" "}
             <span
               className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
             >
-              {message.status}
+              {contactStatusLabel(message.status, copy.status)}
             </span>
           </p>
           <p className="text-gray-700">
-            Spam score:{" "}
-            {message.spamScore === null ? "—" : message.spamScore}
+            {copy.detail.spamScore}:{" "}
+            {message.spamScore === null ? common.dash : message.spamScore}
           </p>
           <p className="text-gray-700">
-            Received:{" "}
+            {copy.detail.received}:{" "}
             {message.createdAt.toISOString().slice(0, 19).replace("T", " ")}{" "}
-            UTC
+            {common.utc}
           </p>
         </div>
       </Card>
 
       <Card className="mb-6 p-6">
-        <h2 className={`mb-3 ${ADMIN_SECTION_TITLE}`}>Message</h2>
+        <h2 className={`mb-3 ${ADMIN_SECTION_TITLE}`}>{copy.detail.message}</h2>
         <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
           {message.message}
         </p>
@@ -101,7 +129,7 @@ export default async function AdminMessageDetailPage({
           eligibleStatuses={eligible}
         />
       ) : (
-        <p className="text-sm text-red-700">Unknown status.</p>
+        <p className="text-sm text-red-700">{common.unknownStatus}</p>
       )}
     </section>
   );

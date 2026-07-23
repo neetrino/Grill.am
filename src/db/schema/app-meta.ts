@@ -4,7 +4,7 @@ import { updatedAtColumn } from "@/db/schema/columns";
 
 /**
  * Bootstrap table for Phase 1 migration workflow validation.
- * Canonical 25-table catalog schema lands in Phase 2.
+ * Canonical 26-table catalog schema lands in Phase 2.
  */
 export const appMeta = pgTable("app_meta", {
   key: text("key").primaryKey().notNull(),

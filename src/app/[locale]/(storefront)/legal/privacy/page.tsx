@@ -1,21 +1,14 @@
-import { notFound } from "next/navigation";
+import {
+  generateLegalMetadata,
+  LegalPolicyPage,
+} from "@/features/legal/ui/LegalPolicyPage";
 
-import { isLocale } from "@/lib/i18n/config";
+type PageProps = { params: Promise<{ locale: string }> };
 
-type PrivacyPageProps = { params: Promise<{ locale: string }> };
+export async function generateMetadata({ params }: PageProps) {
+  return generateLegalMetadata(params, "privacy");
+}
 
-/** Placeholder privacy page — publish blocked until approved copy (OPEN-014). */
-export default async function PrivacyPage({ params }: PrivacyPageProps) {
-  const { locale } = await params;
-  if (!isLocale(locale)) notFound();
-
-  return (
-    <article className="prose flex max-w-2xl flex-col gap-3">
-      <h1 className="text-3xl font-semibold">Privacy Policy</h1>
-      <p className="text-[var(--muted)]">
-        Draft placeholder. Approved privacy/retention copy must replace this
-        before production launch (OPEN-014).
-      </p>
-    </article>
-  );
+export default async function PrivacyPage({ params }: PageProps) {
+  return <LegalPolicyPage params={params} policy="privacy" />;
 }

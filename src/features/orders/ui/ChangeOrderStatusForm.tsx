@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_LABEL,
   ADMIN_SELECT,
@@ -12,6 +13,7 @@ import {
 } from "@/features/admin/ui/admin-form-classes";
 import { changeOrderStatusAction } from "@/features/orders/application/change-order-status";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
+import { adminOrderStatusLabel } from "@/features/orders/ui/admin-order-status-labels";
 
 type ChangeOrderStatusFormProps = {
   locale: string;
@@ -26,15 +28,16 @@ export function ChangeOrderStatusForm({
   currentStatus,
   eligibleStatuses,
 }: ChangeOrderStatusFormProps) {
+  const dictionary = useAdminDictionary();
+  const forms = dictionary.orders.forms;
+  const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   if (eligibleStatuses.length === 0) {
     return (
-      <p className="text-sm text-gray-600">
-        Terminal status — no further transitions.
-      </p>
+      <p className="text-sm text-gray-600">{forms.terminalStatus}</p>
     );
   }
 
@@ -66,10 +69,13 @@ export function ChangeOrderStatusForm({
         }}
       >
         <p className="text-sm text-gray-700">
-          Current: <strong className="text-gray-900">{currentStatus}</strong>
+          {forms.current}:{" "}
+          <strong className="text-gray-900">
+            {adminOrderStatusLabel(currentStatus, dictionary.orders.status)}
+          </strong>
         </p>
         <label>
-          <span className={ADMIN_LABEL}>New status</span>
+          <span className={ADMIN_LABEL}>{forms.newStatus}</span>
           <select
             name="toStatus"
             required
@@ -79,13 +85,13 @@ export function ChangeOrderStatusForm({
           >
             {eligibleStatuses.map((status) => (
               <option key={status} value={status}>
-                {status}
+                {adminOrderStatusLabel(status, dictionary.orders.status)}
               </option>
             ))}
           </select>
         </label>
         <label>
-          <span className={ADMIN_LABEL}>Note (optional)</span>
+          <span className={ADMIN_LABEL}>{forms.noteOptional}</span>
           <textarea
             name="note"
             rows={2}
@@ -96,7 +102,7 @@ export function ChangeOrderStatusForm({
         </label>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? "Updating…" : "Update status"}
+          {isPending ? common.updating : forms.updateStatus}
         </Button>
       </form>
     </Card>

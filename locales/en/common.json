@@ -1,10 +1,12 @@
 {
   "brand": "White-Shop",
+  "close": "Close",
   "nav": {
     "home": "Home",
     "products": "Products",
     "shop": "Shop",
     "blog": "Blog",
+    "careers": "Careers",
     "cart": "Cart",
     "about": "About",
     "contact": "Contact",
@@ -20,7 +22,12 @@
     "logout": "Logout",
     "profile": "Profile",
     "admin": "Admin",
-    "createAccount": "Create account"
+    "createAccount": "Create account",
+    "search": "Search",
+    "searchPlaceholder": "Search products…",
+    "searchHint": "Start typing a product name",
+    "searchNoResults": "No products found",
+    "searchViewAll": "View all results"
   },
   "footer": {
     "shop": "Shop",
@@ -28,9 +35,15 @@
     "quickLinks": "Quick Links",
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",
-    "terms": "Terms",
+    "terms": "Terms & Conditions",
+    "refundPolicy": "Refund Policy",
+    "deliveryPolicy": "Delivery Policy",
     "contactInfo": "Contact Information",
+    "followUs": "Follow us",
     "rights": "All Rights Reserved",
     "createdBy": "Created by NEETRINO IT COMPANY"
+  },
+  "popup": {
+    "close": "Close popup"
   }
 }

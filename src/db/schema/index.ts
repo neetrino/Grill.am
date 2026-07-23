@@ -1,9 +1,12 @@
 export { appMeta } from "@/db/schema/app-meta";
 export {
   categories,
+  modifierCatalog,
   productCategories,
   products,
   type LocaleTranslation,
+  type ModifierCatalogLabel,
+  type ProductCustomizationJson,
   type TranslationsJson,
 } from "@/db/schema/catalog";
 export { stockMovements } from "@/db/schema/inventory";
@@ -15,15 +18,20 @@ export {
 export {
   blogPosts,
   heroSlides,
+  jobPostings,
+  popups,
   type BlogTranslation,
   type BlogTranslationsJson,
   type HeroTranslation,
   type HeroTranslationsJson,
+  type JobTranslation,
+  type JobTranslationsJson,
 } from "@/db/schema/content";
 export {
   cartItems,
   carts,
   wishlistItems,
+  type CartItemModifiersJson,
 } from "@/db/schema/commerce";
 export {
   createdAtColumn,
@@ -46,6 +54,7 @@ export {
   orders,
   payments,
   type AddressSnapshot,
+  type OrderItemModifiersSnapshot,
 } from "@/db/schema/orders";
 export {
   deliveryRules,

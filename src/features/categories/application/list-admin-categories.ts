@@ -3,7 +3,12 @@ import "server-only";
 import { and, asc, eq, isNotNull, isNull, or } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { categories, mediaAssets, type LocaleTranslation } from "@/db/schema";
+import {
+  categories,
+  mediaAssets,
+  type LocaleTranslation,
+  type TranslationsJson,
+} from "@/db/schema";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
@@ -17,18 +22,23 @@ export type AdminCategoryListItem = {
   sortOrder: number;
   imageUrl: string | null;
   childCount: number;
+  /** Full locale key → copy map (admin edits English only). */
+  translations: TranslationsJson;
 };
 
-function translationFor(
+/**
+ * Admin categories are English-only; fall back to hy for legacy rows
+ * that were saved before English-only admin.
+ */
+function translationForAdmin(
   translations: (typeof categories.$inferSelect)["translations"],
-  locale: Locale,
 ): LocaleTranslation | null {
-  return translations[locale] ?? translations.hy ?? translations.en ?? null;
+  return translations.en ?? translations.hy ?? translations.ru ?? null;
 }
 
 /** Lists non-deleted categories for the admin categories table. */
 export async function listAdminCategories(
-  locale: Locale,
+  _locale: Locale,
 ): Promise<AdminCategoryListItem[]> {
   const rows = await getDb()
     .select()
@@ -71,10 +81,10 @@ export async function listAdminCategories(
   }
 
   return rows.map((row) => {
-    const translation = translationFor(row.translations, locale);
+    const translation = translationForAdmin(row.translations);
     const parent = row.parentId ? byId.get(row.parentId) : undefined;
     const parentTitle = parent
-      ? (translationFor(parent.translations, locale)?.title ?? null)
+      ? (translationForAdmin(parent.translations)?.title ?? null)
       : null;
 
     return {
@@ -87,6 +97,7 @@ export async function listAdminCategories(
       sortOrder: row.sortOrder,
       imageUrl: images.get(row.id) ?? null,
       childCount: childCount.get(row.id) ?? 0,
+      translations: row.translations,
     };
   });
 }

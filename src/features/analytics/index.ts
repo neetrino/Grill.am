@@ -10,7 +10,6 @@ export {
 export {
   ANALYTICS_PERIOD_PRESETS,
   analyticsDateRangeSchema,
-  analyticsPeriodLabel,
   defaultAnalyticsDateRange,
   formatAnalyticsDisplayDate,
   formatAnalyticsShortDate,

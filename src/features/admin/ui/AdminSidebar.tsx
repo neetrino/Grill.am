@@ -8,6 +8,7 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminMenuDrawer } from "@/features/admin/ui/AdminMenuDrawer";
 import { AdminSidebarBrand } from "@/features/admin/ui/AdminSidebarBrand";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
@@ -37,7 +38,8 @@ function isNestedVisible(
 
 export function AdminSidebar({ locale }: AdminSidebarProps) {
   const pathname = usePathname() ?? `/${locale}/admin`;
-  const tabs = getAdminMenuItems(locale);
+  const dictionary = useAdminDictionary();
+  const tabs = getAdminMenuItems(locale, dictionary.menu);
   const { collapsed } = useAdminSidebarCollapse();
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
@@ -52,6 +54,7 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
             href={`/${locale}`}
             className="min-w-0 shrink text-sm font-semibold text-gray-900"
           >
+            {/* TODO: "White Shop" — no brand-name key in admin.json */}
             White Shop
           </Link>
           <AdminMenuDrawer locale={locale} pathname={pathname} />
@@ -111,8 +114,8 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
                   <button
                     type="button"
                     aria-expanded={productsNestedExpanded}
-                    aria-label="Toggle product subpages"
-                    title="Toggle product subpages"
+                    aria-label={dictionary.menu.toggleProductSubpages}
+                    title={dictionary.menu.toggleProductSubpages}
                     onClick={(event) => {
                       event.preventDefault();
                       toggleProductsNested();

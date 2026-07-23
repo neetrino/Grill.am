@@ -97,3 +97,46 @@ export function convertAmount(
 
   return money(divRoundHalfUp(numerator, denominator), to);
 }
+
+/**
+ * Converts quote-currency minor units back to base-currency minor units.
+ * `rate` is quote major units per 1 base major unit (same contract as `convertAmount`).
+ */
+export function convertQuoteToBase(
+  quoteAmount: bigint | number,
+  rate: string,
+  from: Currency,
+  to: Currency,
+): MoneyAmount {
+  const amount =
+    typeof quoteAmount === "number" ? BigInt(quoteAmount) : quoteAmount;
+
+  if (amount < 0n) {
+    throw new Error("Cannot convert negative money amount");
+  }
+
+  if (from === to) {
+    return money(amount, to);
+  }
+
+  const fromMeta = getCurrencyMeta(from);
+  const toMeta = getCurrencyMeta(to);
+  const rateFixed = parseRateToFixed(rate);
+  const scaleDiff = BigInt(fromMeta.scale - toMeta.scale);
+
+  // Inverse of convertAmount(base → quote):
+  // quote = base * rate * 10^(quoteScale - baseScale)
+  // base  = quote / rate / 10^(quoteScale - baseScale)
+  //       = quote * 10^RATE_SCALE / rateFixed / 10^scaleDiffForward
+  // where scaleDiffForward = quoteScale - baseScale = fromScale - toScale
+  let numerator = amount * RATE_FACTOR;
+  let denominator = rateFixed;
+
+  if (scaleDiff >= 0n) {
+    denominator *= 10n ** scaleDiff;
+  } else {
+    numerator *= 10n ** -scaleDiff;
+  }
+
+  return money(divRoundHalfUp(numerator, denominator), to);
+}

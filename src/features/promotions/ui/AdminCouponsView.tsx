@@ -11,6 +11,10 @@ import {
   ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
 import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
+import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
   ADMIN_TABLE_OUTER_SCROLL,
@@ -33,10 +37,6 @@ type AdminCouponsViewProps = {
   coupons: AdminPromotionListItem[];
 };
 
-function typeLabel(discountType: string): string {
-  return discountType === "PERCENTAGE" ? "Percent off" : "Fixed amount (AMD)";
-}
-
 function valueLabel(discountType: string, discountValue: number): string {
   return discountType === "PERCENTAGE"
     ? `${discountValue}%`
@@ -46,12 +46,16 @@ function valueLabel(discountType: string, discountValue: number): string {
 function formatValidUntil(
   endsAt: Date | string | null,
   locale: string,
+  dash: string,
 ): string {
-  if (!endsAt) return "—";
+  if (!endsAt) return dash;
   return new Date(endsAt).toLocaleString(locale);
 }
 
 export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.coupons;
+  const common = dictionary.common;
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] =
@@ -81,22 +85,26 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
         await action();
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Action failed.");
+        setError(
+          caught instanceof Error ? caught.message : common.actionsFailed,
+        );
       }
     });
+  }
+
+  function typeLabel(discountType: string): string {
+    return discountType === "PERCENTAGE" ? copy.typePercent : copy.typeFixed;
   }
 
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className={ADMIN_PAGE_TITLE}>Promo codes</h1>
-          <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-            Create, edit, or remove discount codes for checkout.
-          </p>
+          <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
+          <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{copy.subtitle}</p>
         </div>
         <Button type="button" size="sm" onClick={openCreate}>
-          Add promo code
+          {copy.add}
         </Button>
       </div>
 
@@ -105,21 +113,21 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
       <Card className={ADMIN_TABLE_CARD}>
         {coupons.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No promo codes yet.
+            {copy.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
-                  <th className={ADMIN_TABLE_TH}>Code</th>
-                  <th className={ADMIN_TABLE_TH}>Type</th>
-                  <th className={ADMIN_TABLE_TH}>Value</th>
-                  <th className={ADMIN_TABLE_TH}>Usage limit</th>
-                  <th className={ADMIN_TABLE_TH}>Used</th>
-                  <th className={ADMIN_TABLE_TH}>Active</th>
-                  <th className={ADMIN_TABLE_TH}>Valid until</th>
-                  <th className={ADMIN_TABLE_TH}>Actions</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.code}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.type}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.value}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.usageLimit}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.used}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.active}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.validUntil}</th>
+                  <th className={ADMIN_TABLE_TH}>{common.actions}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -137,22 +145,22 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
                       {valueLabel(promo.discountType, promo.discountValue)}
                     </td>
                     <td className={ADMIN_TABLE_TD}>
-                      {promo.totalUsageLimit ?? "—"}
+                      {promo.totalUsageLimit ?? common.dash}
                     </td>
                     <td className={ADMIN_TABLE_TD}>{promo.usedCount}</td>
                     <td className={ADMIN_TABLE_TD}>
                       {promo.isActive ? (
                         <Check
                           className="h-4 w-4 text-gray-900"
-                          aria-label="Active"
+                          aria-label={common.active}
                         />
                       ) : (
-                        <span className="text-gray-400">—</span>
+                        <span className="text-gray-400">{common.dash}</span>
                       )}
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <span className="text-sm text-gray-700">
-                        {formatValidUntil(promo.endsAt, locale)}
+                        {formatValidUntil(promo.endsAt, locale, common.dash)}
                       </span>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
@@ -160,7 +168,9 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
                         <button
                           type="button"
                           className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                          aria-label={`Edit ${promo.code}`}
+                          aria-label={formatAdminMessage(copy.editNamed, {
+                            code: promo.code ?? "",
+                          })}
                           onClick={() => openEdit(promo)}
                         >
                           <Pencil className="h-4 w-4" />
@@ -169,7 +179,9 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
                           type="button"
                           disabled={isPending}
                           className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                          aria-label={`Duplicate ${promo.code}`}
+                          aria-label={formatAdminMessage(copy.duplicateNamed, {
+                            code: promo.code ?? "",
+                          })}
                           onClick={() =>
                             runAction(async () => {
                               const result = await duplicatePromotionAction(
@@ -188,7 +200,9 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
                           type="button"
                           disabled={isPending}
                           className="rounded p-1.5 text-red-500 hover:bg-red-50"
-                          aria-label={`Delete ${promo.code}`}
+                          aria-label={formatAdminMessage(copy.deleteNamed, {
+                            code: promo.code ?? "",
+                          })}
                           onClick={() =>
                             runAction(async () => {
                               const result = await deletePromotionAction(

@@ -5,6 +5,7 @@ import {
   integer,
   jsonb,
   pgTable,
+  text,
   timestamp,
   uniqueIndex,
   uuid,
@@ -16,7 +17,11 @@ import {
   idColumn,
   updatedAtColumn,
 } from "@/db/schema/columns";
-import { blogPostStatusEnum } from "@/db/schema/enums";
+import {
+  blogPostStatusEnum,
+  jobEmploymentTypeEnum,
+  jobPostingStatusEnum,
+} from "@/db/schema/enums";
 import { users } from "@/db/schema/identity";
 
 export type HeroTranslation = {
@@ -41,6 +46,18 @@ export type BlogTranslation = {
 
 export type BlogTranslationsJson = Partial<
   Record<"hy" | "en" | "ru", BlogTranslation>
+>;
+
+export type JobTranslation = {
+  title: string;
+  slug: string;
+  summary?: string;
+  description: string;
+  location?: string;
+};
+
+export type JobTranslationsJson = Partial<
+  Record<"hy" | "en" | "ru", JobTranslation>
 >;
 
 export const heroSlides = pgTable(
@@ -90,5 +107,59 @@ export const blogPosts = pgTable(
     uniqueIndex("blog_posts_slug_ru_uidx")
       .on(sql`(${table.translations}->'ru'->>'slug')`)
       .where(sql`${table.translations}->'ru'->>'slug' IS NOT NULL`),
+  ],
+);
+
+export const jobPostings = pgTable(
+  "job_postings",
+  {
+    id: idColumn(),
+    status: jobPostingStatusEnum("status").notNull().default("DRAFT"),
+    employmentType: jobEmploymentTypeEnum("employment_type")
+      .notNull()
+      .default("FULL_TIME"),
+    salaryAmount: integer("salary_amount"),
+    salaryCurrency: text("salary_currency").notNull().default("AMD"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    publishedAt: timestamp("published_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    translations: jsonb("translations").$type<JobTranslationsJson>().notNull(),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+    deletedAt: deletedAtColumn(),
+  },
+  (table) => [
+    index("job_postings_status_sort_idx").on(table.status, table.sortOrder),
+    uniqueIndex("job_postings_slug_hy_uidx")
+      .on(sql`(${table.translations}->'hy'->>'slug')`)
+      .where(sql`${table.translations}->'hy'->>'slug' IS NOT NULL`),
+    uniqueIndex("job_postings_slug_en_uidx")
+      .on(sql`(${table.translations}->'en'->>'slug')`)
+      .where(sql`${table.translations}->'en'->>'slug' IS NOT NULL`),
+    uniqueIndex("job_postings_slug_ru_uidx")
+      .on(sql`(${table.translations}->'ru'->>'slug')`)
+      .where(sql`${table.translations}->'ru'->>'slug' IS NOT NULL`),
+  ],
+);
+
+/**
+ * Full-image storefront popups. At most one row may be active
+ * (partial unique index). Application layer also caps total rows at 4.
+ */
+export const popups = pgTable(
+  "popups",
+  {
+    id: idColumn(),
+    isActive: boolean("is_active").notNull().default(false),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+  },
+  (table) => [
+    index("popups_active_created_idx").on(table.isActive, table.createdAt),
+    uniqueIndex("popups_one_active_uidx")
+      .on(table.isActive)
+      .where(sql`${table.isActive} = true`),
   ],
 );

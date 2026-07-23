@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Card } from "@/components/ui/Card";
+import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
 
 type DashboardStatsGridProps = {
   locale: string;
@@ -9,6 +10,7 @@ type DashboardStatsGridProps = {
   orders: number;
   revenueLabel: string;
   revenueDelta?: string;
+  labels: AdminDictionary["dashboard"];
 };
 
 function StatCard({
@@ -67,6 +69,7 @@ export function DashboardStatsGrid({
   orders,
   revenueLabel,
   revenueDelta,
+  labels,
 }: DashboardStatsGridProps) {
   const base = `/${locale}/admin`;
 
@@ -74,7 +77,7 @@ export function DashboardStatsGrid({
     <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
       <StatCard
         href={`${base}/users`}
-        label="Users"
+        label={labels.users}
         value={String(users)}
         iconBg="bg-blue-100"
         iconColor="text-blue-600"
@@ -82,7 +85,7 @@ export function DashboardStatsGrid({
       />
       <StatCard
         href={`${base}/products`}
-        label="Active products"
+        label={labels.activeProducts}
         value={String(products)}
         iconBg="bg-green-100"
         iconColor="text-green-600"
@@ -90,7 +93,7 @@ export function DashboardStatsGrid({
       />
       <StatCard
         href={`${base}/orders`}
-        label="Orders (range)"
+        label={labels.ordersRange}
         value={String(orders)}
         iconBg="bg-yellow-100"
         iconColor="text-yellow-600"
@@ -98,7 +101,7 @@ export function DashboardStatsGrid({
       />
       <StatCard
         href={`${base}/analytics`}
-        label="Revenue (range)"
+        label={labels.revenueRange}
         value={revenueLabel}
         hint={revenueDelta}
         iconBg="bg-purple-100"

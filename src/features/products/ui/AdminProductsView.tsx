@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import type { ModifierCatalogItem } from "@/features/products/domain/modifier-catalog";
 import type {
   AdminCategoryOption,
   AdminProductListItem,
@@ -22,6 +24,7 @@ type AdminProductsViewProps = {
   products: AdminProductListItem[];
   sortLinks: AdminProductsSortLinks;
   categories: AdminCategoryOption[];
+  modifierCatalog: ModifierCatalogItem[];
 };
 
 export function AdminProductsView({
@@ -29,7 +32,9 @@ export function AdminProductsView({
   products,
   sortLinks,
   categories,
+  modifierCatalog,
 }: AdminProductsViewProps) {
+  const dictionary = useAdminDictionary();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingProduct, setEditingProduct] =
     useState<AdminProductListItem | null>(null);
@@ -40,13 +45,12 @@ export function AdminProductsView({
   }
 
   function openEdit(product: AdminProductListItem): void {
-    setEditingProduct(product);
     setDrawerOpen(true);
+    setEditingProduct(product);
   }
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setEditingProduct(null);
   }
 
   return (
@@ -57,7 +61,7 @@ export function AdminProductsView({
         className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
       >
         <Plus className="h-4 w-4" aria-hidden />
-        Add New Product
+        {dictionary.products.addNew}
       </button>
 
       <AdminProductsTable
@@ -73,6 +77,7 @@ export function AdminProductsView({
         onClose={closeDrawer}
         product={editingProduct}
         categories={categories}
+        modifierCatalog={modifierCatalog}
       />
     </>
   );

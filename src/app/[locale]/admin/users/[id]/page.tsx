@@ -12,15 +12,24 @@ import {
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
+import {
+  adminOrderStatusLabel,
+  adminPaymentStatusLabel,
+} from "@/features/orders/ui/admin-order-status-labels";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
   getEligibleUserStatuses,
   isUserRole,
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
+import {
+  adminUserRoleLabel,
+  adminUserStatusLabel,
+} from "@/features/users/ui/admin-user-labels";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminUserDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
@@ -56,6 +65,13 @@ export default async function AdminUserDetailPage({
     notFound();
   }
 
+  const admin = getDictionary(locale).admin;
+  const copy = admin.users;
+  const detailCopy = copy.detail;
+  const common = admin.common;
+  const orderStatusLabels = admin.orders.status;
+  const paymentStatusLabels = admin.orders.paymentStatus;
+
   const detail = await getAdminUserById(id);
   if (!detail) {
     notFound();
@@ -75,7 +91,7 @@ export default async function AdminUserDetailPage({
             href={`/${locale}/admin/users`}
             className="font-medium text-gray-700 hover:underline"
           >
-            Users
+            {copy.title}
           </Link>
         </p>
         <h1 className={ADMIN_PAGE_TITLE}>
@@ -87,37 +103,39 @@ export default async function AdminUserDetailPage({
       <Card className="mb-6 p-6">
         <div className="grid gap-3 text-sm md:grid-cols-2">
           <p className="text-gray-700">
-            Role:{" "}
+            {detailCopy.role}:{" "}
             <span
               className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}
             >
-              {user.role}
+              {adminUserRoleLabel(user.role, copy.roles)}
             </span>
           </p>
           <p className="text-gray-700">
-            Status:{" "}
+            {detailCopy.status}:{" "}
             <span
               className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
             >
-              {user.status}
+              {adminUserStatusLabel(user.status, copy.statuses)}
             </span>
           </p>
-          <p className="text-gray-700">Phone: {user.phone ?? "—"}</p>
           <p className="text-gray-700">
-            Email verified:{" "}
+            {detailCopy.phone}: {user.phone ?? common.dash}
+          </p>
+          <p className="text-gray-700">
+            {detailCopy.emailVerified}:{" "}
             {user.emailVerifiedAt
               ? user.emailVerifiedAt.toISOString().slice(0, 10)
-              : "no"}
+              : common.no}
           </p>
           <p className="text-gray-700">
-            Last login:{" "}
+            {detailCopy.lastLogin}:{" "}
             {user.lastLoginAt
               ? user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")
-              : "never"}{" "}
-            UTC
+              : common.never}{" "}
+            {common.utc}
           </p>
           <p className="text-gray-700">
-            Created: {user.createdAt.toISOString().slice(0, 10)}
+            {detailCopy.created}: {user.createdAt.toISOString().slice(0, 10)}
           </p>
         </div>
       </Card>
@@ -131,7 +149,7 @@ export default async function AdminUserDetailPage({
             disabled={isAnonymized}
           />
         ) : (
-          <p className="text-sm text-red-700">Unknown role.</p>
+          <p className="text-sm text-red-700">{common.unknownRole}</p>
         )}
         {status ? (
           <UpdateUserStatusForm
@@ -141,12 +159,14 @@ export default async function AdminUserDetailPage({
             eligibleStatuses={eligibleStatuses}
           />
         ) : (
-          <p className="text-sm text-red-700">Unknown status.</p>
+          <p className="text-sm text-red-700">{common.unknownStatus}</p>
         )}
       </div>
 
       <Card className="p-6">
-        <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>Recent orders</h2>
+        <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>
+          {detailCopy.recentOrders}
+        </h2>
         <div className="space-y-3">
           {recentOrders.map((order) => (
             <Link
@@ -161,12 +181,15 @@ export default async function AdminUserDetailPage({
                 <span
                   className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
                 >
-                  {order.status}
+                  {adminOrderStatusLabel(order.status, orderStatusLabels)}
                 </span>
                 <span
                   className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
                 >
-                  {order.paymentStatus}
+                  {adminPaymentStatusLabel(
+                    order.paymentStatus,
+                    paymentStatusLabels,
+                  )}
                 </span>
               </div>
               <p className="mt-1 text-sm text-gray-600">
@@ -175,7 +198,7 @@ export default async function AdminUserDetailPage({
             </Link>
           ))}
           {recentOrders.length === 0 ? (
-            <p className="text-sm text-gray-600">No orders.</p>
+            <p className="text-sm text-gray-600">{detailCopy.noOrders}</p>
           ) : null}
         </div>
       </Card>

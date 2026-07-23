@@ -10,6 +10,7 @@ import {
   ADMIN_LABEL,
   ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   createPromotionAction,
   updatePromotionAction,
@@ -48,6 +49,10 @@ export function CouponDrawer({
   onClose,
   coupon = null,
 }: CouponDrawerProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.coupons.drawer;
+  const coupons = dictionary.coupons;
+  const common = dictionary.common;
   const router = useRouter();
   const isEdit = coupon != null;
   const [name, setName] = useState("");
@@ -106,12 +111,14 @@ export function CouponDrawer({
 
   if (!open) return null;
 
+  const title = isEdit ? copy.editTitle : copy.newTitle;
+
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-black/40"
       role="dialog"
       aria-modal="true"
-      aria-label={isEdit ? "Edit coupon" : "New coupon"}
+      aria-label={title}
       onClick={onClose}
     >
       <div
@@ -119,14 +126,12 @@ export function CouponDrawer({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit coupon" : "New coupon"}
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close"
+            aria-label={common.close}
           >
             <X className="h-5 w-5" />
           </button>
@@ -138,7 +143,7 @@ export function CouponDrawer({
             event.preventDefault();
             const nextCode = (code.trim() || name.trim()).toUpperCase();
             if (!nextCode) {
-              setError("Code is required.");
+              setError(copy.codeRequired);
               return;
             }
 
@@ -180,23 +185,23 @@ export function CouponDrawer({
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
-                <span className={ADMIN_LABEL}>Name</span>
+                <span className={ADMIN_LABEL}>{copy.name}</span>
                 <input
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Name"
+                  placeholder={copy.name}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
               </label>
               <label>
-                <span className={ADMIN_LABEL}>Code</span>
+                <span className={ADMIN_LABEL}>{copy.code}</span>
                 <input
                   value={code}
                   onChange={(event) =>
                     setCode(event.target.value.toUpperCase())
                   }
-                  placeholder="Code"
+                  placeholder={copy.code}
                   className={`${ADMIN_INPUT} uppercase`}
                   disabled={isPending}
                 />
@@ -205,7 +210,7 @@ export function CouponDrawer({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
-                <span className={ADMIN_LABEL}>Discount type</span>
+                <span className={ADMIN_LABEL}>{copy.discountType}</span>
                 <select
                   value={discountType}
                   onChange={(event) =>
@@ -214,12 +219,12 @@ export function CouponDrawer({
                   className={ADMIN_SELECT}
                   disabled={isPending}
                 >
-                  <option value="PERCENTAGE">Percent off</option>
-                  <option value="FIXED">Fixed amount (AMD)</option>
+                  <option value="PERCENTAGE">{coupons.typePercent}</option>
+                  <option value="FIXED">{coupons.typeFixed}</option>
                 </select>
               </label>
               <label>
-                <span className={ADMIN_LABEL}>Value</span>
+                <span className={ADMIN_LABEL}>{copy.value}</span>
                 <input
                   type="number"
                   min={1}
@@ -234,7 +239,7 @@ export function CouponDrawer({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
-                <span className={ADMIN_LABEL}>Quantity</span>
+                <span className={ADMIN_LABEL}>{copy.quantity}</span>
                 <input
                   type="number"
                   min={1}
@@ -245,7 +250,7 @@ export function CouponDrawer({
                 />
               </label>
               <label>
-                <span className={ADMIN_LABEL}>Expires (optional)</span>
+                <span className={ADMIN_LABEL}>{copy.expires}</span>
                 <input
                   type="datetime-local"
                   value={expiresAt}
@@ -260,10 +265,10 @@ export function CouponDrawer({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    Select users
+                    {copy.selectUsers}
                   </p>
                   <p className="mt-0.5 text-sm text-gray-500">
-                    All users can use this coupon
+                    {copy.allUsersHint}
                   </p>
                 </div>
                 <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-gray-400" />
@@ -277,18 +282,18 @@ export function CouponDrawer({
             <Button type="submit" disabled={isPending}>
               {isPending
                 ? isEdit
-                  ? "Saving…"
-                  : "Creating…"
+                  ? common.saving
+                  : common.creating
                 : isEdit
-                  ? "Save"
-                  : "Create"}
+                  ? common.save
+                  : common.create}
             </Button>
             <button
               type="button"
               onClick={onClose}
               className="text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {common.cancel}
             </button>
           </div>
         </form>

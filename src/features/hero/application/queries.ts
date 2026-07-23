@@ -4,7 +4,11 @@ import { and, asc, eq, inArray, or } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 
 import { getDb } from "@/db/client";
-import { heroSlides, mediaAssets } from "@/db/schema";
+import {
+  heroSlides,
+  mediaAssets,
+  type HeroTranslationsJson,
+} from "@/db/schema";
 import {
   resolveHeroTranslation,
   type HeroLocaleCopy,
@@ -25,6 +29,8 @@ export type AdminHeroSlideListItem = {
   title: string;
   subtitle: string | undefined;
   imageUrl: string | null;
+  /** Full locale key → copy map for admin translation editing. */
+  translations: HeroTranslationsJson;
 };
 
 export type StorefrontHeroSlide = {
@@ -87,7 +93,9 @@ async function loadHeroMediaBySlideIds(
 }
 
 /** Lists all hero slides for the admin CMS, ordered by sort then created. */
-export async function listAdminHeroSlides(): Promise<AdminHeroSlideListItem[]> {
+export async function listAdminHeroSlides(
+  locale: Locale,
+): Promise<AdminHeroSlideListItem[]> {
   const rows = await getDb()
     .select()
     .from(heroSlides)
@@ -96,11 +104,9 @@ export async function listAdminHeroSlides(): Promise<AdminHeroSlideListItem[]> {
   const mediaBySlide = await loadHeroMediaBySlideIds(rows.map((row) => row.id));
 
   return rows.map((row) => {
-    const copy =
-      row.translations.en ??
-      row.translations.hy ??
-      row.translations.ru ??
-      { title: "" };
+    const copy = resolveHeroTranslation(row.translations, locale) ?? {
+      title: "",
+    };
     const media = mediaBySlide.get(row.id);
 
     return {
@@ -110,6 +116,7 @@ export async function listAdminHeroSlides(): Promise<AdminHeroSlideListItem[]> {
       title: copy.title || "Untitled",
       subtitle: copy.subtitle,
       imageUrl: media?.desktop ?? media?.mobile ?? null,
+      translations: row.translations,
     };
   });
 }

@@ -6,6 +6,11 @@ import { revalidatePath } from "next/cache";
 import { getDb } from "@/db/client";
 import { products, type TranslationsJson } from "@/db/schema";
 import {
+  normalizeProductSlug,
+  resolveSharedProductSlug,
+  withSharedProductSlug,
+} from "@/features/products/domain/product-slug";
+import {
   productIdsSchema,
   type ProductIdsInput,
 } from "@/features/products/schemas/admin-list";
@@ -147,17 +152,22 @@ export async function toggleProductVisibilityAction(
 }
 
 function withCopySuffix(translations: TranslationsJson): TranslationsJson {
+  const shared = resolveSharedProductSlug(translations);
+  const suffix = createId().slice(0, 8);
+  const nextSlug = normalizeProductSlug(
+    shared ? `${shared}-copy-${suffix}` : `copy-${suffix}`,
+  );
   const next: TranslationsJson = {};
-  for (const locale of ["hy", "en", "ru"] as const) {
+  for (const locale of locales) {
     const entry = translations[locale];
     if (!entry) continue;
     next[locale] = {
       ...entry,
       title: `${entry.title} (copy)`,
-      slug: `${entry.slug}-copy-${createId().slice(0, 8)}`,
+      slug: nextSlug,
     };
   }
-  return next;
+  return withSharedProductSlug(next, nextSlug);
 }
 
 /** Duplicates a product as a DRAFT with a unique SKU/slug. */

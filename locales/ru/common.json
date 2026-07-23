@@ -1,10 +1,12 @@
 {
   "brand": "White-Shop",
+  "close": "Закрыть",
   "nav": {
     "home": "Главная",
     "products": "Товары",
     "shop": "Магазин",
     "blog": "Блог",
+    "careers": "Вакансии",
     "cart": "Корзина",
     "about": "О нас",
     "contact": "Контакты",
@@ -20,7 +22,12 @@
     "logout": "Выход",
     "profile": "Профиль",
     "admin": "Админ",
-    "createAccount": "Создать аккаунт"
+    "createAccount": "Создать аккаунт",
+    "search": "Поиск",
+    "searchPlaceholder": "Поиск товаров…",
+    "searchHint": "Начните вводить название товара",
+    "searchNoResults": "Товары не найдены",
+    "searchViewAll": "Смотреть все результаты"
   },
   "footer": {
     "shop": "Магазин",
@@ -28,9 +35,15 @@
     "quickLinks": "Быстрые ссылки",
     "legal": "Правовая информация",
     "privacyPolicy": "Политика конфиденциальности",
-    "terms": "Условия",
+    "terms": "Условия и положения",
+    "refundPolicy": "Политика возврата",
+    "deliveryPolicy": "Политика доставки",
     "contactInfo": "Контактная информация",
+    "followUs": "Мы в соцсетях",
     "rights": "Все права защищены",
     "createdBy": "Создано NEETRINO IT COMPANY"
+  },
+  "popup": {
+    "close": "Закрыть попап"
   }
 }

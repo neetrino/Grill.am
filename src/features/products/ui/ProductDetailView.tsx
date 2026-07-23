@@ -1,13 +1,17 @@
 import Link from "next/link";
 
+import { toStorefrontCustomization } from "@/features/products/domain/customization";
+import { ProductBuyBox } from "@/features/products/ui/ProductBuyBox";
 import { ProductGallery } from "@/features/products/ui/ProductGallery";
-import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseControls";
 import type { ProductDetail } from "@/features/products/types";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import type { Currency } from "@/lib/money/currency";
 
 type ProductDetailViewProps = {
   locale: Locale;
+  currency: Currency;
+  fxRate: string;
   product: ProductDetail;
   priceFormatted: string;
   compareAtFormatted: string | null;
@@ -21,6 +25,8 @@ type ProductDetailViewProps = {
 
 export function ProductDetailView({
   locale,
+  currency,
+  fxRate,
   product,
   priceFormatted,
   compareAtFormatted,
@@ -33,6 +39,10 @@ export function ProductDetailView({
 }: ProductDetailViewProps) {
   const labels = dictionary.product;
   const inStock = product.stockOnHand > 0;
+  const storefrontCustomization = toStorefrontCustomization(
+    product.customization,
+    locale,
+  );
 
   return (
     <article className="flex flex-col gap-16 md:gap-20">
@@ -52,6 +62,8 @@ export function ProductDetailView({
           discountPercent={product.discountPercent}
           inStock={inStock}
           outOfStockLabel={labels.outOfStock}
+          zoomLabel={labels.zoom}
+          closeZoomLabel={labels.closeZoom}
         />
 
         <div className="flex flex-col gap-6 lg:min-h-full">
@@ -65,42 +77,23 @@ export function ProductDetailView({
             {product.translation.title}
           </h1>
 
-          <div className="flex flex-wrap items-baseline gap-3">
-            <p className="text-2xl font-semibold text-gray-900">
-              {priceFormatted}
-            </p>
-            {compareAtFormatted ? (
-              <p className="text-base text-gray-500 line-through">
-                {compareAtFormatted}
-              </p>
-            ) : null}
-            {product.discountPercent != null ? (
-              <span className="rounded bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
-                -{product.discountPercent}%
-              </span>
-            ) : null}
-          </div>
-
-          <div className="flex flex-wrap gap-3 text-sm text-gray-600">
-            <span>
-              {labels.sku}: {product.sku}
-            </span>
-            <span aria-hidden>·</span>
-            <span className={inStock ? "text-green-700" : "text-red-700"}>
-              {inStock ? labels.inStock : labels.outOfStock}
-            </span>
-          </div>
-
-          {product.translation.description ? (
-            <p className="whitespace-pre-wrap text-base leading-relaxed text-gray-600">
-              {product.translation.description}
-            </p>
-          ) : null}
-
-          <ProductPurchaseControls
+          <ProductBuyBox
             locale={locale}
+            currency={currency}
+            fxRate={fxRate}
             productId={product.id}
+            sku={product.sku}
             stockOnHand={product.stockOnHand}
+            baseUnitAmount={product.priceAmount}
+            compareAtAmount={product.compareAtAmount}
+            discountPercent={product.discountPercent}
+            initialPriceFormatted={priceFormatted}
+            initialCompareAtFormatted={compareAtFormatted}
+            shortDescription={product.translation.shortDescription}
+            composition={product.translation.composition}
+            description={product.translation.description}
+            customization={storefrontCustomization}
+            rawCustomization={product.customization}
             inWishlist={inWishlist}
             isSignedIn={isSignedIn}
             wishlistLabel={dictionary.nav.wishlist}
@@ -113,6 +106,16 @@ export function ProductDetailView({
               outOfStock: labels.outOfStock,
               added: labels.added,
               error: labels.addError,
+              shortDescription: labels.shortDescription,
+              composition: labels.composition,
+              options: labels.options,
+              addons: labels.addons,
+              exclusions: labels.exclusions,
+              selectAddon: labels.selectAddon,
+              selectExclusion: labels.selectExclusion,
+              removeModifier: labels.removeModifier,
+              inStock: labels.inStock,
+              sku: labels.sku,
             }}
           />
         </div>

@@ -19,7 +19,7 @@ export default async function AdminHeroPage({
   }
 
   const { edit } = await searchParams;
-  const slides = await listAdminHeroSlides();
+  const slides = await listAdminHeroSlides(locale);
 
   return (
     <AdminHeroView locale={locale} slides={slides} initialEditId={edit} />
