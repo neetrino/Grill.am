@@ -18,6 +18,7 @@ import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsS
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
+import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -74,6 +75,7 @@ type CheckoutLabels = {
   processing: string;
   continueShopping: string;
   cartEmpty: string;
+  minimumOrder: string;
 };
 
 type CheckoutFormProps = {
@@ -87,6 +89,7 @@ type CheckoutFormProps = {
   defaultPhone: string;
   defaultLine1: string;
   subtotalAmount: number;
+  minimumOrderAmount: number | null;
   deliveryOptions: CheckoutDeliveryOption[];
   hasItems: boolean;
 };
@@ -116,6 +119,7 @@ export function CheckoutForm({
   defaultPhone,
   defaultLine1,
   subtotalAmount,
+  minimumOrderAmount,
   deliveryOptions,
   hasItems,
 }: CheckoutFormProps) {
@@ -190,6 +194,14 @@ export function CheckoutForm({
   const shippingAmount = shippingMethod === "pickup" ? 0 : quotedDelivery;
   const totalAmount =
     Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
+  const meetsMinimum = meetsMinimumOrder(subtotalAmount, minimumOrderAmount);
+  const minimumOrderMessage =
+    !meetsMinimum && minimumOrderAmount != null
+      ? labels.minimumOrder.replace(
+          "{amount}",
+          formatMoney(minimumOrderAmount),
+        )
+      : null;
 
   const resolvedCashTendered: CodCashDenomination | null =
     cashTenderedAmount != null &&
@@ -258,6 +270,10 @@ export function CheckoutForm({
 
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
+    if (!meetsMinimum) {
+      setError(minimumOrderMessage);
+      return;
+    }
     const data = new FormData(event.currentTarget);
     setError(null);
 
@@ -368,8 +384,9 @@ export function CheckoutForm({
             onApplyCoupon={onApplyCoupon}
             couponError={couponError}
             isApplyingCoupon={applyingCoupon}
-            error={error}
+            error={error ?? minimumOrderMessage}
             isSubmitting={pending}
+            canPlaceOrder={meetsMinimum}
             placeOrderLabel={labels.placeOrder}
             processingLabel={labels.processing}
           />

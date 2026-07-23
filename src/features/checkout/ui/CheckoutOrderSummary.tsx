@@ -26,6 +26,7 @@ type CheckoutOrderSummaryProps = {
   isApplyingCoupon: boolean;
   error: string | null;
   isSubmitting: boolean;
+  canPlaceOrder: boolean;
   placeOrderLabel: string;
   processingLabel: string;
 };
@@ -53,6 +54,7 @@ export function CheckoutOrderSummary({
   isApplyingCoupon,
   error,
   isSubmitting,
+  canPlaceOrder,
   placeOrderLabel,
   processingLabel,
 }: CheckoutOrderSummaryProps) {
@@ -136,7 +138,7 @@ export function CheckoutOrderSummary({
           variant="primary"
           size="lg"
           className="h-12 w-full"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !canPlaceOrder}
         >
           {isSubmitting ? processingLabel : placeOrderLabel}
         </Button>

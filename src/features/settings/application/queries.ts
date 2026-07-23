@@ -10,12 +10,14 @@ import {
   parseGlobalDiscount,
   parseIdentity,
   parseMaintenance,
+  parseMinimumOrder,
   parseRevenueStatuses,
   parseStacking,
   type StoreFxRates,
   type StoreGlobalDiscount,
   type StoreIdentity,
   type StoreMaintenance,
+  type StoreMinimumOrder,
   type StoreRevenue,
   type StoreStacking,
   type StoreSettingKey,
@@ -63,25 +65,41 @@ export const getStoreFxRates = cache(async (): Promise<StoreFxRates> => {
   return parseFxRates(await getSettingValue("store.fxRates"));
 });
 
+export const getStoreMinimumOrder = cache(
+  async (): Promise<StoreMinimumOrder> => {
+    return parseMinimumOrder(await getSettingValue("store.minimumOrder"));
+  },
+);
+
 export async function getAllStoreSettings(): Promise<{
   identity: StoreIdentity;
   maintenance: StoreMaintenance;
   stacking: StoreStacking;
   revenue: StoreRevenue;
   fxRates: StoreFxRates;
+  minimumOrder: StoreMinimumOrder;
   branding: Record<string, unknown>;
   social: Record<string, unknown>;
 }> {
-  const [identity, maintenance, stacking, revenue, fxRates, branding, social] =
-    await Promise.all([
-      getStoreIdentity(),
-      getStoreMaintenance(),
-      getStoreStacking(),
-      getStoreRevenue(),
-      getStoreFxRates(),
-      getSettingValue("store.branding"),
-      getSettingValue("store.social"),
-    ]);
+  const [
+    identity,
+    maintenance,
+    stacking,
+    revenue,
+    fxRates,
+    minimumOrder,
+    branding,
+    social,
+  ] = await Promise.all([
+    getStoreIdentity(),
+    getStoreMaintenance(),
+    getStoreStacking(),
+    getStoreRevenue(),
+    getStoreFxRates(),
+    getStoreMinimumOrder(),
+    getSettingValue("store.branding"),
+    getSettingValue("store.social"),
+  ]);
 
   return {
     identity,
@@ -89,6 +107,7 @@ export async function getAllStoreSettings(): Promise<{
     stacking,
     revenue,
     fxRates,
+    minimumOrder,
     branding: branding ?? {},
     social: social ?? {},
   };

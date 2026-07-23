@@ -11,6 +11,7 @@ import {
 } from "@/features/products/domain/customization";
 import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { getStoreMinimumOrder } from "@/features/settings/application/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -27,10 +28,11 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliveryOptions] = await Promise.all([
+  const [user, { items }, deliveryOptions, minimumOrder] = await Promise.all([
     getCurrentUser(),
     getCartWithItems(),
     getCheckoutDeliveryOptions(),
+    getStoreMinimumOrder(),
   ]);
   const [defaultAddress, prices, orderProducts] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
@@ -69,6 +71,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       defaultPhone={defaultAddress?.phone ?? user?.phone ?? ""}
       defaultLine1={defaultAddress?.line1 ?? ""}
       subtotalAmount={subtotal}
+      minimumOrderAmount={minimumOrder.amount}
       deliveryOptions={deliveryOptions}
       labels={{
         title: copy.title,
@@ -123,6 +126,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         processing: copy.buttons.processing,
         continueShopping: copy.buttons.continueShopping,
         cartEmpty: copy.errors.cartEmpty,
+        minimumOrder: copy.errors.minimumOrder,
       }}
     />
   );

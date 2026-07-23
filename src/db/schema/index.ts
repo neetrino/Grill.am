@@ -19,6 +19,7 @@ export {
   blogPosts,
   heroSlides,
   jobPostings,
+  popups,
   type BlogTranslation,
   type BlogTranslationsJson,
   type HeroTranslation,

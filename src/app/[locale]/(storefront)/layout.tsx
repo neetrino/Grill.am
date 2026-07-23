@@ -5,6 +5,8 @@ import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
+import { getActiveStorefrontPopup } from "@/features/popups/application/queries";
+import { SitePopupOverlay } from "@/features/popups/ui/SitePopupOverlay";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
@@ -33,6 +35,7 @@ export default async function StorefrontLayout({
   const currency = parseCurrencyCookie(
     cookieStore.get(CURRENCY_COOKIE_NAME)?.value,
   );
+  const activePopup = await getActiveStorefrontPopup();
 
   return (
     <div className="flex min-h-dvh flex-1 flex-col bg-gray-50">
@@ -50,6 +53,12 @@ export default async function StorefrontLayout({
         currency={currency}
         dictionary={dictionary}
       />
+      {activePopup ? (
+        <SitePopupOverlay
+          imageUrl={activePopup.imageUrl}
+          closeLabel={dictionary.popup.close}
+        />
+      ) : null}
     </div>
   );
 }

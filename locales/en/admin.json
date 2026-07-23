@@ -10,6 +10,7 @@
     "users": "Users",
     "analytics": "Analytics",
     "hero": "Hero",
+    "popups": "Popups",
     "blog": "Blog",
     "careers": "Careers",
     "messages": "Messages",
@@ -446,6 +447,16 @@
     "confirmDelete": "Remove delivery for {city}?",
     "editNamed": "Edit {city}",
     "deleteNamed": "Delete {city}",
+    "minimumOrder": {
+      "title": "Minimum order",
+      "subtitle": "Customers cannot place an order below this cart subtotal",
+      "amountAria": "Minimum order amount in AMD",
+      "empty": "No minimum. Leave empty or clear to allow any order size.",
+      "active": "Active minimum: {amount}.",
+      "cleared": "Minimum order cleared.",
+      "setTo": "Minimum order set to {amount}.",
+      "invalid": "Enter a whole number of at least 1 AMD, or leave empty."
+    },
     "table": {
       "country": "Country",
       "city": "City",
@@ -595,6 +606,30 @@
       "uploadImage": "Upload image",
       "changeImage": "Change image",
       "uploadButton": "+ Upload"
+    }
+  },
+  "popups": {
+    "title": "Popups",
+    "count": "{count} / {max} popup(s)",
+    "create": "Create new popup",
+    "listHeading": "Popups ({count})",
+    "empty": "No popups yet.",
+    "noImage": "No image",
+    "itemLabel": "Image popup",
+    "active": "ACTIVE",
+    "inactive": "INACTIVE",
+    "edit": "Edit popup",
+    "deleteNamed": "Delete popup {id}",
+    "activate": "Activate popup",
+    "deactivate": "Deactivate popup",
+    "limitReached": "Maximum of {max} popups reached. Delete one to create another.",
+    "drawer": {
+      "createTitle": "Create new popup",
+      "editTitle": "Edit popup",
+      "uploadImage": "Upload image",
+      "changeImage": "Change image",
+      "uploadButton": "+ Upload",
+      "imageHint": "The popup is shown as a full image on the storefront."
     }
   },
   "blog": {

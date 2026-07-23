@@ -129,6 +129,14 @@ export function getAdminMenuItems(
       ),
     },
     {
+      id: "popups",
+      label: labels.popups,
+      href: `${base}/popups`,
+      icon: (
+        <MenuIcon d="M4 5a1 1 0 011-1h14a1 1 0 011 1v10a1 1 0 01-1 1h-5l-3 3-3-3H5a1 1 0 01-1-1V5z" />
+      ),
+    },
+    {
       id: "blog",
       label: labels.blog,
       href: `${base}/blog`,

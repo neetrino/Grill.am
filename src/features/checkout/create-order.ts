@@ -43,6 +43,8 @@ import {
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { getStoreMinimumOrder } from "@/features/settings/application/queries";
+import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
 import {
   describeModifiers,
   parseCartModifiers,
@@ -52,12 +54,14 @@ import {
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { createId } from "@/lib/id";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { convertAmount } from "@/lib/money/convert";
 import { defaultCurrency } from "@/lib/money/currency";
 import {
   CURRENCY_COOKIE_NAME,
   parseCurrencyCookie,
 } from "@/lib/money/currency-cookie";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 function hashValue(value: string): string {
   return createHash("sha256").update(value).digest("hex");
@@ -304,6 +308,18 @@ export async function createOrderAction(
                 }
               : null,
         });
+      }
+
+      const { amount: minimumOrderAmount } = await getStoreMinimumOrder();
+      if (!meetsMinimumOrder(subtotal, minimumOrderAmount)) {
+        const amountLabel = formatMoneyAmount(
+          minimumOrderAmount ?? 0,
+          "AMD",
+          input.locale,
+        );
+        const template =
+          getDictionary(input.locale).checkout.errors.minimumOrder;
+        throw new Error(template.replace("{amount}", amountLabel));
       }
 
       const deliveryAmount =

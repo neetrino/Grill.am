@@ -65,7 +65,8 @@
     "continueShopping": "Continue Shopping"
   },
   "errors": {
-    "cartEmpty": "Cart is empty"
+    "cartEmpty": "Cart is empty",
+    "minimumOrder": "Minimum order is {amount}. Add more items to continue."
   },
   "success": {
     "title": "Order confirmed",

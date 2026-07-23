@@ -11,6 +11,7 @@ import enCheckout from "@/locales/en/checkout.json";
 import enCommon from "@/locales/en/common.json";
 import enContact from "@/locales/en/contact.json";
 import enHome from "@/locales/en/home.json";
+import enLegal from "@/locales/en/legal.json";
 import enProduct from "@/locales/en/product.json";
 import enProfile from "@/locales/en/profile.json";
 import enWishlist from "@/locales/en/wishlist.json";
@@ -26,6 +27,7 @@ import hyCheckout from "@/locales/hy/checkout.json";
 import hyCommon from "@/locales/hy/common.json";
 import hyContact from "@/locales/hy/contact.json";
 import hyHome from "@/locales/hy/home.json";
+import hyLegal from "@/locales/hy/legal.json";
 import hyProduct from "@/locales/hy/product.json";
 import hyProfile from "@/locales/hy/profile.json";
 import hyWishlist from "@/locales/hy/wishlist.json";
@@ -41,6 +43,7 @@ import ruCheckout from "@/locales/ru/checkout.json";
 import ruCommon from "@/locales/ru/common.json";
 import ruContact from "@/locales/ru/contact.json";
 import ruHome from "@/locales/ru/home.json";
+import ruLegal from "@/locales/ru/legal.json";
 import ruProduct from "@/locales/ru/product.json";
 import ruProfile from "@/locales/ru/profile.json";
 import ruWishlist from "@/locales/ru/wishlist.json";
@@ -60,14 +63,17 @@ type LocaleNamespaces = {
   careers: typeof hyCareers;
   catalog: typeof hyCatalog;
   wishlist: typeof hyWishlist;
+  legal: typeof hyLegal;
 };
 
 function buildDictionary(namespaces: LocaleNamespaces) {
   return {
     brand: namespaces.common.brand,
+    close: namespaces.common.close,
     nav: namespaces.common.nav,
     header: namespaces.common.header,
     footer: namespaces.common.footer,
+    popup: namespaces.common.popup,
     admin: namespaces.admin,
     home: namespaces.home,
     contact: namespaces.contact,
@@ -81,6 +87,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     careers: namespaces.careers,
     catalog: namespaces.catalog,
     wishlist: namespaces.wishlist,
+    legal: namespaces.legal,
   } as const;
 }
 
@@ -100,6 +107,7 @@ const dictionaries = {
     careers: hyCareers,
     catalog: hyCatalog,
     wishlist: hyWishlist,
+    legal: hyLegal,
   }),
   en: buildDictionary({
     common: enCommon,
@@ -116,6 +124,7 @@ const dictionaries = {
     careers: enCareers,
     catalog: enCatalog,
     wishlist: enWishlist,
+    legal: enLegal,
   }),
   ru: buildDictionary({
     common: ruCommon,
@@ -132,11 +141,13 @@ const dictionaries = {
     careers: ruCareers,
     catalog: ruCatalog,
     wishlist: ruWishlist,
+    legal: ruLegal,
   }),
 } as const;
 
 export type Dictionary = (typeof dictionaries)[Locale];
 export type AdminDictionary = Dictionary["admin"];
+export type ProfileDictionary = Dictionary["profile"];
 
 export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale];

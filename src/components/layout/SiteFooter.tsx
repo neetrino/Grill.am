@@ -140,6 +140,24 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   {dictionary.footer.terms}
                 </AppLink>
               </li>
+              <li>
+                <AppLink
+                  href={`/${locale}/legal/refund`}
+                  prefetchPolicy="intent"
+                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                >
+                  {dictionary.footer.refundPolicy}
+                </AppLink>
+              </li>
+              <li>
+                <AppLink
+                  href={`/${locale}/legal/delivery`}
+                  prefetchPolicy="intent"
+                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                >
+                  {dictionary.footer.deliveryPolicy}
+                </AppLink>
+              </li>
             </ul>
           </div>
 

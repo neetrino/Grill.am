@@ -1,5 +1,6 @@
 {
   "brand": "White-Shop",
+  "close": "Փակել",
   "nav": {
     "home": "Գլխավոր",
     "products": "Ապրանքներ",
@@ -21,7 +22,12 @@
     "logout": "Ելք",
     "profile": "Պրոֆիլ",
     "admin": "Ադմին",
-    "createAccount": "Գրանցվել"
+    "createAccount": "Գրանցվել",
+    "search": "Որոնել",
+    "searchPlaceholder": "Որոնել ապրանքներ…",
+    "searchHint": "Սկսեք գրել ապրանքի անունը",
+    "searchNoResults": "Ապրանքներ չեն գտնվել",
+    "searchViewAll": "Տեսնել բոլոր արդյունքները"
   },
   "footer": {
     "shop": "Խանութ",
@@ -29,10 +35,15 @@
     "quickLinks": "Արագ հղումներ",
     "legal": "Իրավական",
     "privacyPolicy": "Գաղտնիության քաղաքականություն",
-    "terms": "Պայմաններ",
+    "terms": "Պայմաններ և դրույթներ",
+    "refundPolicy": "Վերադարձի քաղաքականություն",
+    "deliveryPolicy": "Առաքման քաղաքականություն",
     "contactInfo": "Կապի տվյալներ",
     "followUs": "Հետևեք մեզ",
     "rights": "Բոլոր իրավունքները պաշտպանված են",
     "createdBy": "Ստեղծված է NEETRINO IT COMPANY-ի կողմից"
+  },
+  "popup": {
+    "close": "Փակել popup-ը"
   }
 }

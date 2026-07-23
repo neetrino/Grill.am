@@ -143,3 +143,23 @@ export const jobPostings = pgTable(
       .where(sql`${table.translations}->'ru'->>'slug' IS NOT NULL`),
   ],
 );
+
+/**
+ * Full-image storefront popups. At most one row may be active
+ * (partial unique index). Application layer also caps total rows at 4.
+ */
+export const popups = pgTable(
+  "popups",
+  {
+    id: idColumn(),
+    isActive: boolean("is_active").notNull().default(false),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+  },
+  (table) => [
+    index("popups_active_created_idx").on(table.isActive, table.createdAt),
+    uniqueIndex("popups_one_active_uidx")
+      .on(table.isActive)
+      .where(sql`${table.isActive} = true`),
+  ],
+);

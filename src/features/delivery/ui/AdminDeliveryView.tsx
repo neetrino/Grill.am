@@ -28,16 +28,19 @@ import {
 import { deleteDeliveryLocationAction } from "@/features/delivery/application/manage-delivery";
 import type { AdminDeliveryLocation } from "@/features/delivery/application/queries";
 import { DeliveryLocationDrawer } from "@/features/delivery/ui/DeliveryLocationDrawer";
+import { MinimumOrderCard } from "@/features/delivery/ui/MinimumOrderCard";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type AdminDeliveryViewProps = {
   locale: string;
   locations: AdminDeliveryLocation[];
+  minimumOrderAmount: number | null;
 };
 
 export function AdminDeliveryView({
   locale,
   locations,
+  minimumOrderAmount,
 }: AdminDeliveryViewProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.delivery;
@@ -98,6 +101,8 @@ export function AdminDeliveryView({
       </div>
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
+
+      <MinimumOrderCard locale={locale} initialAmount={minimumOrderAmount} />
 
       <Card className={ADMIN_TABLE_CARD}>
         {locations.length === 0 ? (

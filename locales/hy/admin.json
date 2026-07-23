@@ -10,6 +10,7 @@
     "users": "Օգտատերեր",
     "analytics": "Վերլուծություն",
     "hero": "Hero",
+    "popups": "Popup-ներ",
     "blog": "Բլոգ",
     "careers": "Աշխատանք",
     "messages": "Հաղորդագրություններ",
@@ -446,6 +447,16 @@
     "confirmDelete": "Հեռացնե՞լ առաքումը {city}-ի համար։",
     "editNamed": "Խմբագրել {city}",
     "deleteNamed": "Ջնջել {city}",
+    "minimumOrder": {
+      "title": "Նվազագույն պատվեր",
+      "subtitle": "Ավելի ցածր զամբյուղի գումարով պատվեր չի թույլատրվի",
+      "amountAria": "Նվազագույն պատվերի գումար AMD",
+      "empty": "Նվազագույն չկա։ Թողեք դատարկ՝ ցանկացած գումարով պատվեր թույլ տալու համար։",
+      "active": "Ակտիվ նվազագույն՝ {amount}։",
+      "cleared": "Նվազագույն պատվերը հանված է։",
+      "setTo": "Նվազագույն պատվերը սահմանված է {amount}։",
+      "invalid": "Մուտքագրեք ամբողջ թիվ՝ առնվազն 1 AMD, կամ թողեք դատարկ։"
+    },
     "table": {
       "country": "Երկիր",
       "city": "Քաղաք",
@@ -595,6 +606,30 @@
       "uploadImage": "Վերբեռնել նկար",
       "changeImage": "Փոխել նկարը",
       "uploadButton": "+ Վերբեռնել"
+    }
+  },
+  "popups": {
+    "title": "Popup-ներ",
+    "count": "{count} / {max} popup",
+    "create": "Ստեղծել նոր popup",
+    "listHeading": "Popup-ներ ({count})",
+    "empty": "Popup-ներ դեռ չկան։",
+    "noImage": "Նկար չկա",
+    "itemLabel": "Նկարային popup",
+    "active": "ԱԿՏԻՎ",
+    "inactive": "ՈՉ ԱԿՏԻՎ",
+    "edit": "Խմբագրել popup-ը",
+    "deleteNamed": "Ջնջել popup {id}",
+    "activate": "Ակտիվացնել popup-ը",
+    "deactivate": "Ապաակտիվացնել popup-ը",
+    "limitReached": "Առավելագույնը {max} popup։ Նոր ստեղծելու համար ջնջեք մեկը։",
+    "drawer": {
+      "createTitle": "Ստեղծել նոր popup",
+      "editTitle": "Խմբագրել popup-ը",
+      "uploadImage": "Վերբեռնել նկար",
+      "changeImage": "Փոխել նկարը",
+      "uploadButton": "+ Վերբեռնել",
+      "imageHint": "Popup-ը կայքում ցուցադրվում է որպես ամբողջական նկար։"
     }
   },
   "blog": {

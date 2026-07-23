@@ -6,6 +6,7 @@ export { changeOrderStatusAction } from "@/features/orders/application/change-or
 export { changePaymentStatusAction } from "@/features/orders/application/change-payment-status";
 export { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
 export { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
+export { reorderCustomerOrderAction } from "@/features/orders/application/reorder-order";
 export {
   getAdminOrderDetailView,
   toAdminOrderDetailView,

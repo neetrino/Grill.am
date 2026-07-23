@@ -94,6 +94,11 @@ export default async function OrdersPage({
         locale={locale}
         orders={rows}
         dictionary={dictionary.admin}
+        profileCopy={{
+          reorder: dictionary.profile.reorder,
+          reordering: dictionary.profile.reordering,
+          reorderUnavailable: dictionary.profile.reorderUnavailable,
+        }}
       />
 
       {totalPages > 1 ? (
