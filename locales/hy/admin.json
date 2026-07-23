@@ -3,7 +3,7 @@
     "dashboard": "Վահանակ",
     "orders": "Պատվերներ",
     "products": "Ապրանքներ",
-    "categories": "Կատեգորիաներ",
+    "categories": "Categories",
     "delivery": "Առաքում",
     "discounts": "Զեղչեր",
     "coupons": "Կուպոններ",
@@ -17,7 +17,9 @@
     "openMenu": "Մենյու",
     "expandSidebar": "Ընդարձակել մենյուն",
     "collapseSidebar": "Ծալել մենյուն",
-    "storeHome": "White Shop գլխավոր"
+    "storeHome": "White Shop գլխավոր",
+    "closeMenu": "Փակել ադմին մենյուն",
+    "toggleProductSubpages": "Ապրանքների ենթաէջերը"
   },
   "common": {
     "save": "Պահպանել",
@@ -29,7 +31,68 @@
     "creating": "Ստեղծում…",
     "close": "Փակել",
     "translations": "Թարգմանություններ",
-    "actionsFailed": "Գործողությունը ձախողվեց։"
+    "actionsFailed": "Գործողությունը ձախողվեց։",
+    "previous": "Նախորդ",
+    "next": "Հաջորդ",
+    "pageOf": "Էջ {page} / {totalPages}",
+    "search": "Որոնել",
+    "filter": "Զտել",
+    "yes": "այո",
+    "no": "ոչ",
+    "never": "երբեք",
+    "na": "Չկա",
+    "loading": "Բեռնում…",
+    "uploading": "Վերբեռնում…",
+    "updating": "Թարմացում…",
+    "deleting": "Ջնջում…",
+    "selectedCount": "Ընտրված է {count}",
+    "deleteSelected": "Ջնջել ընտրվածները",
+    "noResults": "Արդյունքներ չկան։",
+    "actions": "Գործողություններ",
+    "image": "Նկար",
+    "status": "Կարգավիճակ",
+    "created": "Ստեղծված",
+    "unknownStatus": "Անհայտ կարգավիճակ։",
+    "unknownRole": "Անհայտ դեր։",
+    "back": "Հետ",
+    "all": "Բոլորը",
+    "required": "Պարտադիր",
+    "optional": "Կամընտիր",
+    "utc": "UTC",
+    "clear": "Մաքրել",
+    "duplicate": "Կրկնօրինակել",
+    "remove": "Հեռացնել",
+    "change": "Փոխել",
+    "upload": "Վերբեռնել",
+    "active": "Ակտիվ",
+    "draft": "Սևագիր",
+    "published": "Հրապարակված",
+    "archived": "Արխիվացված",
+    "none": "— ոչ մեկը —",
+    "dash": "—"
+  },
+  "dashboard": {
+    "welcome": "Բարի գալուստ ադմին վահանակ",
+    "users": "Օգտատերեր",
+    "activeProducts": "Ակտիվ ապրանքներ",
+    "ordersRange": "Պատվերներ (ժամանակահատված)",
+    "revenueRange": "Եկամուտ (ժամանակահատված)",
+    "vsPrev": "{delta} նախորդի համեմատ",
+    "recentOrders": "Վերջին պատվերներ",
+    "topProducts": "Թոփ ապրանքներ",
+    "viewAll": "Տեսնել բոլորը",
+    "noRecentOrders": "Վերջին պատվերներ չկան։",
+    "noProductSales": "Այս ժամանակահատվածում վաճառքներ չկան։",
+    "soldCount": "Վաճառվել է {quantity}",
+    "quickActions": "Արագ գործողություններ",
+    "addProduct": "Ավելացնել ապրանք",
+    "addProductHint": "Ստեղծել նոր ապրանք",
+    "manageOrders": "Կառավարել պատվերները",
+    "manageOrdersHint": "Տեսնել բոլոր պատվերները",
+    "manageUsers": "Կառավարել օգտատերերին",
+    "manageUsersHint": "Տեսնել բոլոր օգտատերերին",
+    "settings": "Կարգավորումներ",
+    "settingsHint": "Կարգավորել խանութը"
   },
   "products": {
     "addNew": "Ավելացնել ապրանք",
@@ -64,6 +127,633 @@
       "exclusionLabel": "Բացառության անուն",
       "removeExclusion": "Հեռացնել բացառությունը",
       "newExclusionPlaceholder": "Նոր բացառություն…"
+    },
+    "filters": {
+      "totalProducts": "Ընդամենը ապրանքներ՝ {total}",
+      "searchTitleSlug": "Որոնել անունով կամ slug-ով",
+      "searchTitleSlugPlaceholder": "Որոնել անունով կամ slug-ով...",
+      "searchSku": "Որոնել SKU-ով",
+      "skuPlaceholder": "Մուտքագրեք SKU կոդը",
+      "filterCategory": "Զտել ըստ կատեգորիայի",
+      "filterStock": "Զտել ըստ պաշարի",
+      "allCategories": "Բոլոր կատեգորիաները",
+      "allProducts": "Բոլոր ապրանքները",
+      "inStock": "Առկա է",
+      "outOfStock": "Առկա չէ",
+      "lowStock": "Քիչ պաշար"
+    },
+    "table": {
+      "product": "Ապրանք",
+      "stock": "Պաշար",
+      "price": "Գին",
+      "category": "Կատեգորիա",
+      "featured": "Ընտրված",
+      "empty": "Այս զտիչներին համապատասխանող ապրանքներ չկան։"
+    },
+    "bulk": {
+      "selectedCount": "Ընտրված է {count} ապրանք",
+      "deleteSelected": "Ջնջել ընտրվածները"
+    },
+    "form": {
+      "title": "Անուն",
+      "slug": "Slug",
+      "shortDescription": "Կարճ նկարագրություն",
+      "description": "Նկարագրություն",
+      "composition": "Կազմ",
+      "price": "Գին",
+      "compareAtPrice": "Համեմատման գին",
+      "sku": "SKU",
+      "quantity": "Քանակ",
+      "titlePlaceholder": "Ապրանքի անուն",
+      "slugPlaceholder": "product-slug",
+      "shortDescriptionPlaceholder": "Կարճ նկարագրություն ապրանքի էջի համար",
+      "descriptionPlaceholder": "Ապրանքի նկարագրություն",
+      "compositionPlaceholder": "Բաղադրիչներ / կազմ",
+      "pricePlaceholder": "Գին AMD",
+      "compareAtPlaceholder": "Կամընտիր",
+      "skuPlaceholder": "SKU",
+      "stockPlaceholder": "Պաշար",
+      "slugHint": "Մեկ slug բոլոր լեզուների համար (hy / en / ru)."
+    },
+    "errors": {
+      "titleRequired": "Լրացրեք անունը առնվազն մեկ լեզվով։",
+      "slugRequired": "Slug-ը պարտադիր է։"
+    },
+    "images": {
+      "mainTitle": "Հիմնական նկար",
+      "upload": "+ Վերբեռնել նկար",
+      "hint": "Վերբեռնեք մեկ կամ մի քանի նկար, ապա նշեք հիմնականը նշման վանդակով։",
+      "main": "Հիմնական",
+      "remove": "Հեռացնել նկարը"
+    },
+    "categoriesForm": {
+      "title": "Կատեգորիաներ",
+      "select": "Ընտրել կատեգորիաներ",
+      "empty": "Կատեգորիաներ դեռ չկան։",
+      "addCategory": "+ Ավելացնել կատեգորիա",
+      "categoryTitle": "Կատեգորիայի անուն",
+      "categoryTitlePlaceholder": "Մուտքագրեք կատեգորիայի անունը",
+      "adding": "Ավելացում…",
+      "add": "Ավելացնել",
+      "titleRequired": "Կատեգորիայի անունը պարտադիր է։"
+    }
+  },
+  "orders": {
+    "title": "Պատվերներ",
+    "filters": {
+      "totalOrders": "Ընդամենը պատվերներ՝ {total}",
+      "allStatuses": "Բոլոր կարգավիճակները",
+      "allPaymentStatuses": "Բոլոր վճարման կարգավիճակները",
+      "orderStatus": "Պատվերի կարգավիճակ",
+      "paymentStatus": "Վճարման կարգավիճակ",
+      "searchPlaceholder": "Որոնել ըստ համարի, հաճախորդի, էլ․ փոստի, հեռախոսի…",
+      "searchAria": "Որոնել պատվերներ"
+    },
+    "status": {
+      "pending": "Սպասող",
+      "processing": "Մշակվում է",
+      "completed": "Ավարտված",
+      "cancelled": "Չեղարկված"
+    },
+    "paymentStatus": {
+      "paid": "Վճարված",
+      "pending": "սպասող",
+      "failed": "Ձախողված"
+    },
+    "list": {
+      "order": "Պատվեր",
+      "customer": "Հաճախորդ",
+      "status": "Կարգավիճակ",
+      "payment": "Վճարում",
+      "total": "Ընդամենը",
+      "placed": "Տեղադրված",
+      "archived": "Արխիվացված",
+      "empty": "Այս զտիչներին համապատասխանող պատվերներ չկան։",
+      "selectAll": "Ընտրել էջի բոլոր պատվերները",
+      "selectOrder": "Ընտրել պատվեր {orderNumber}",
+      "selectedOnPage": "Այս էջում ընտրված է {count}"
+    },
+    "bulk": {
+      "selectedCount": "Ընտրված է {count} պատվեր",
+      "deleteSelected": "Ջնջել ընտրվածները",
+      "deleting": "Ջնջում…",
+      "selectAtLeastOne": "Ընտրեք առնվազն մեկ պատվեր։",
+      "deletedResult": "Ջնջված է {deleted}, բաց թողնված՝ {skipped}."
+    },
+    "changeStatusAria": "Փոխել {kind} կարգավիճակը",
+    "drawer": {
+      "title": "Պատվերի մանրամասներ",
+      "loading": "Պատվերի բեռնում…",
+      "summary": "Ամփոփում",
+      "orderNumber": "Պատվեր #",
+      "total": "Ընդամենը",
+      "status": "Կարգավիճակ",
+      "payment": "Վճարում",
+      "customer": "Հաճախորդ",
+      "name": "Անուն",
+      "phone": "Հեռախոսահամար",
+      "email": "Էլ․ փոստ",
+      "shippingMethod": "Առաքման եղանակ",
+      "pickupStore": "Ինքնաառաքում",
+      "shippingAddress": "Առաքման հասցե",
+      "method": "Եղանակ",
+      "amount": "Գումար",
+      "customerPaysWith": "Հաճախորդը վճարում է",
+      "prepareChange": "Պատրաստել մանրադրամ",
+      "subtotal": "Միջանկյալ գումար",
+      "delivery": "Առաքում",
+      "couponDiscount": "Կուպոնի զեղչ",
+      "freePickup": "Անվճար (ինքնաառաքում)",
+      "items": "Ապրանքներ",
+      "product": "Ապրանք",
+      "sku": "SKU",
+      "qty": "Քանակ",
+      "price": "Գին",
+      "lineTotal": "Ընդամենը",
+      "customizations": "Ավելացումներ և հեռացումներ"
+    },
+    "detail": {
+      "customer": "Հաճախորդ",
+      "totals": "Գումարներ",
+      "subtotal": "Միջանկյալ գումար",
+      "delivery": "Առաքում",
+      "couponDiscount": "Կուպոնի զեղչ",
+      "total": "Ընդամենը",
+      "placedUtc": "Տեղադրված է {datetime} UTC",
+      "lineItems": "Տողեր",
+      "product": "Ապրանք",
+      "qty": "Քանակ",
+      "lineTotal": "Տողի գումար",
+      "history": "Պատմություն",
+      "customerVisible": "տեսանելի հաճախորդին",
+      "internal": "ներքին",
+      "noEvents": "Իրադարձություններ դեռ չկան։",
+      "archived": "Արխիվացված"
+    },
+    "forms": {
+      "current": "Ընթացիկ",
+      "newStatus": "Նոր կարգավիճակ",
+      "newPaymentStatus": "Նոր վճարման կարգավիճակ",
+      "noteOptional": "Նշում (կամընտիր)",
+      "updateStatus": "Թարմացնել կարգավիճակը",
+      "updatePayment": "Թարմացնել վճարումը",
+      "terminalStatus": "Վերջնական կարգավիճակ — այլ անցումներ չկան։",
+      "terminalPayment": "Վերջնական վճարման կարգավիճակ — այլ անցումներ չկան։",
+      "addInternalNote": "Ավելացնել ներքին նշում",
+      "note": "Նշում",
+      "addNote": "Ավելացնել նշում",
+      "archive": "Արխիվ",
+      "archiveOrder": "Արխիվացնել պատվերը",
+      "restoreOrder": "Վերականգնել պատվերը",
+      "archiveHint": "Արխիվը թաքցնում է պատվերը լռելյայն ցուցակներից՝ առանց տվյալները ջնջելու։",
+      "archivedHint": "Այս պատվերը արխիվացված է։ Վերականգնեք՝ լռելյայն ցուցակներում ցույց տալու համար։"
+    }
+  },
+  "users": {
+    "title": "Օգտատերեր",
+    "subtitle": "Ադմին / Հաճախորդ",
+    "searchPlaceholder": "Որոնել էլ․ փոստով, հեռախոսով, անունով...",
+    "searchAria": "Որոնել օգտատերեր",
+    "totalUsers": "Ընդամենը օգտատերեր՝ {total}",
+    "rolesFilter": {
+      "all": "Բոլորը",
+      "admins": "Ադմիններ",
+      "customers": "Հաճախորդներ"
+    },
+    "roles": {
+      "admin": "Ադմին",
+      "customer": "Հաճախորդ"
+    },
+    "statuses": {
+      "active": "Ակտիվ",
+      "suspended": "Կասեցված",
+      "anonymized": "Անանունացված"
+    },
+    "table": {
+      "user": "Օգտատեր",
+      "contact": "Կապ",
+      "orders": "Պատվերներ",
+      "roles": "Դերեր",
+      "status": "Կարգավիճակ",
+      "created": "Ստեղծված",
+      "empty": "Այս զտիչներին համապատասխանող օգտատերեր չկան։",
+      "selectAll": "Ընտրել բոլոր օգտատերերին",
+      "selectUser": "Ընտրել {name}",
+      "suspendNamed": "Կասեցնել {name}",
+      "activateNamed": "Ակտիվացնել {name}"
+    },
+    "bulk": {
+      "selectedCount": "Ընտրված է {count} օգտատեր",
+      "deleteSelected": "Ջնջել ընտրվածները"
+    },
+    "detail": {
+      "role": "Դեր",
+      "status": "Կարգավիճակ",
+      "phone": "Հեռախոս",
+      "emailVerified": "Էլ․ փոստը հաստատված է",
+      "lastLogin": "Վերջին մուտք",
+      "created": "Ստեղծված",
+      "recentOrders": "Վերջին պատվերներ",
+      "noOrders": "Պատվերներ չկան։"
+    },
+    "forms": {
+      "role": "Դեր",
+      "current": "Ընթացիկ",
+      "newRole": "Նոր դեր",
+      "updateRole": "Թարմացնել դերը",
+      "status": "Կարգավիճակ",
+      "newStatus": "Նոր կարգավիճակ",
+      "updateStatus": "Թարմացնել կարգավիճակը",
+      "terminalStatus": "Վերջնական կարգավիճակ — այլ անցումներ չկան։"
+    }
+  },
+  "messages": {
+    "title": "Հաղորդագրություններ",
+    "count": "{count} հաղորդագրություն",
+    "searchPlaceholder": "Անուն, էլ․ փոստ, թեմա…",
+    "empty": "Այս զտիչներին համապատասխանող հաղորդագրություններ չկան։",
+    "table": {
+      "subject": "Թեմա",
+      "from": "Ումից",
+      "status": "Կարգավիճակ",
+      "received": "Ստացված"
+    },
+    "spamScore": "սպամ {score}",
+    "status": {
+      "unread": "Չկարդացված",
+      "read": "Կարդացված",
+      "replied": "Պատասխանված",
+      "archived": "Արխիվացված"
+    },
+    "detail": {
+      "from": "Ումից",
+      "email": "Էլ․ փոստ",
+      "phone": "Հեռախոս",
+      "status": "Կարգավիճակ",
+      "spamScore": "Սպամի գնահատական",
+      "received": "Ստացված",
+      "message": "Հաղորդագրություն"
+    },
+    "forms": {
+      "current": "Ընթացիկ",
+      "newStatus": "Նոր կարգավիճակ",
+      "updateStatus": "Թարմացնել կարգավիճակը",
+      "noFurtherChanges": "Այլ կարգավիճակի փոփոխություններ չկան։"
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "addCategory": "Add Category",
+    "searchPlaceholder": "Enter category title",
+    "searchAria": "Search categories",
+    "reorderHint": "Clear search to reorder categories.",
+    "empty": "No categories yet.",
+    "emptySearch": "No categories match this search.",
+    "rootCategory": "None (Root Category)",
+    "reorder": "Reorder",
+    "reorderNamed": "Reorder {title}",
+    "editNamed": "Edit {title}",
+    "deleteNamed": "Delete {title}",
+    "table": {
+      "categoryTitle": "Category Title",
+      "category": "Category"
+    },
+    "subcategoriesCount": "{count} subcategories",
+    "drawer": {
+      "addTitle": "Add Category",
+      "editTitle": "Edit Category",
+      "categoryTitle": "Category Title",
+      "titlePlaceholder": "Enter category title",
+      "slug": "Slug",
+      "slugPlaceholder": "---",
+      "slugHint": "Generated automatically from the title and used on /products.",
+      "parent": "Parent Category",
+      "rootOption": "None (Root Category)",
+      "status": "Status",
+      "published": "Published",
+      "archived": "Archived",
+      "image": "Image",
+      "changeImage": "Change image",
+      "uploadImage": "+ Upload Image",
+      "createCategory": "Create Category"
+    }
+  },
+  "delivery": {
+    "title": "Առաքում",
+    "subtitle": "Սահմանեք առաքման գները ըստ երկրի և քաղաքի՝ վճարման էջի համար։",
+    "addLocation": "Ավելացնել վայր",
+    "empty": "Առաքման վայրեր դեռ չկան։ Ավելացրեք վայր՝ վճարման էջում առաքում առաջարկելու համար։",
+    "confirmDelete": "Հեռացնե՞լ առաքումը {city}-ի համար։",
+    "editNamed": "Խմբագրել {city}",
+    "deleteNamed": "Ջնջել {city}",
+    "table": {
+      "country": "Երկիր",
+      "city": "Քաղաք",
+      "price": "Գին",
+      "freeFrom": "Անվճար սկսած"
+    },
+    "drawer": {
+      "addTitle": "Ավելացնել վայր",
+      "editTitle": "Խմբագրել վայրը",
+      "country": "Երկիր",
+      "city": "Քաղաք",
+      "price": "Գին (AMD)",
+      "freeFrom": "Անվճար առաքում սկսած (AMD)",
+      "countryPlaceholder": "Հայաստան",
+      "cityPlaceholder": "Երևան"
+    }
+  },
+  "discounts": {
+    "title": "Զեղչեր",
+    "automaticDiscount": "Ավտոմատ զեղչ",
+    "info": {
+      "title": "Օգտակար տեղեկություն",
+      "subtitle": "Զեղչերի մասին",
+      "point1": "Գլոբալ զեղչը կիրառվում է բոլոր ապրանքների վրա, եթե չկա ավելի ուժեղ ապրանքային կանոն։",
+      "point2": "Կատեգորիայի զեղչը կիրառվում է այդ կատեգորիայի ապրանքների վրա։",
+      "point3": "Ապրանքի զեղչը գերակայում է կատեգորիայի և գլոբալ տոկոսին այդ ապրանքի համար։",
+      "point4": "Մաքրելը հեռացնում է կանոնը, Պահպանելը պահում է ընթացիկ տոկոսը։",
+      "moreSettings": "Այլ կարգավորումներ →"
+    },
+    "global": {
+      "title": "Գլոբալ զեղչ",
+      "subtitle": "Բոլոր ապրանքների համար",
+      "percentAria": "Գլոբալ զեղչի տոկոս",
+      "empty": "Գլոբալ զեղչ չկա։ Մուտքագրեք տոկոս (0-100)՝ բոլոր ապրանքները զեղչելու համար։",
+      "active": "Ակտիվ գլոբալ զեղչ՝ {percent}%.",
+      "cleared": "Գլոբալ զեղչը մաքրվեց։",
+      "setTo": "Գլոբալ զեղչը սահմանվեց {percent}%.",
+      "invalid": "Մուտքագրեք ամբողջ թիվ 1–100 միջակայքում կամ թողեք դատարկ։"
+    },
+    "category": {
+      "title": "Կատեգորիայի զեղչեր",
+      "subtitle": "Կիրառեք զեղչեր կատեգորիայի յուրաքանչյուր ապրանքի վրա",
+      "empty": "Կատեգորիաներ չեն գտնվել",
+      "discountFor": "Զեղչ՝ {title}",
+      "invalid": "Անվավեր տոկոս «{title}»-ի համար։ Օգտագործեք 1–100։",
+      "saved": "Պահպանված է {count} կատեգորիայի զեղչ։"
+    },
+    "product": {
+      "title": "Ապրանքի զեղչեր",
+      "subtitle": "Սահմանեք անհատական զեղչի տոկոս յուրաքանչյուր ապրանքի համար",
+      "searchPlaceholder": "Որոնել անունով կամ slug-ով...",
+      "searchAria": "Որոնել ապրանքներ",
+      "empty": "Ապրանքներ չեն գտնվել",
+      "discountFor": "Զեղչ՝ {title}",
+      "invalid": "Անվավեր տոկոս «{title}»-ի համար։ Օգտագործեք 1–100։",
+      "cleared": "«{title}»-ի զեղչը մաքրվեց։",
+      "saved": "Պահպանված է {percent}% «{title}»-ի համար։"
+    }
+  },
+  "coupons": {
+    "title": "Պրոմո կոդեր",
+    "subtitle": "Ստեղծեք, խմբագրեք կամ հեռացրեք զեղչի կոդերը վճարման էջի համար։",
+    "add": "Ավելացնել պրոմո կոդ",
+    "empty": "Պրոմո կոդեր դեռ չկան։",
+    "crumb": "Կուպոններ",
+    "usedTimes": "Օգտագործվել է {count} անգամ",
+    "typePercent": "Տոկոսային զեղչ",
+    "typeFixed": "Ֆիքսված գումար (AMD)",
+    "table": {
+      "code": "Կոդ",
+      "type": "Տեսակ",
+      "value": "Արժեք",
+      "usageLimit": "Օգտագործման սահման",
+      "used": "Օգտագործված",
+      "active": "Ակտիվ",
+      "validUntil": "Վավեր մինչև"
+    },
+    "editNamed": "Խմբագրել {code}",
+    "duplicateNamed": "Կրկնօրինակել {code}",
+    "deleteNamed": "Ջնջել {code}",
+    "drawer": {
+      "newTitle": "Նոր կուպոն",
+      "editTitle": "Խմբագրել կուպոնը",
+      "name": "Անուն",
+      "code": "Կոդ",
+      "discountType": "Զեղչի տեսակ",
+      "value": "Արժեք",
+      "quantity": "Քանակ",
+      "expires": "Ավարտ (կամընտիր)",
+      "selectUsers": "Ընտրել օգտատերեր",
+      "allUsersHint": "Բոլոր օգտատերերը կարող են օգտագործել այս կուպոնը",
+      "codeRequired": "Կոդը պարտադիր է։"
+    }
+  },
+  "promotions": {
+    "form": {
+      "editTitle": "Խմբագրել ակցիան",
+      "createCoupon": "Ստեղծել կուպոն",
+      "createAutomatic": "Ստեղծել ավտոմատ զեղչ",
+      "kind": "Տեսակ",
+      "kindCoupon": "ԿՈՒՊՈՆ",
+      "kindAutomatic": "ԱՎՏՈՄԱՏ",
+      "code": "Կոդ",
+      "codePlaceholder": "WELCOME10",
+      "productTarget": "Ապրանքի թիրախ",
+      "categoryTarget": "Կատեգորիայի թիրախ",
+      "targetHint": "Ընտրեք ճիշտ մեկ թիրախ՝ ապրանք կամ կատեգորիա։",
+      "discountType": "Զեղչի տեսակ",
+      "typePercentage": "ՏՈԿՈՍ",
+      "typeFixed": "ՖԻՔՍՎԱԾ (AMD փոքր միավորներ)",
+      "discountValue": "Զեղչի արժեք",
+      "maxDiscount": "Առավելագույն զեղչ (կամընտիր)",
+      "minOrder": "Նվազագույն պատվեր (կամընտիր)",
+      "totalUsageLimit": "Ընդհանուր օգտագործման սահման",
+      "perUserLimit": "Սահման մեկ օգտատիրոջ համար",
+      "startsAt": "Սկիզբ",
+      "endsAt": "Ավարտ",
+      "priority": "Առաջնահերթություն",
+      "allowStacking": "Թույլատրել համադրում",
+      "active": "Ակտիվ",
+      "saveChanges": "Պահպանել փոփոխությունները"
+    },
+    "toggle": {
+      "activate": "Ակտիվացնել",
+      "deactivate": "Ապաակտիվացնել"
+    }
+  },
+  "hero": {
+    "title": "Hero սլայդներ",
+    "count": "{count} սլայդ",
+    "create": "Ստեղծել hero սլայդ",
+    "slidesHeading": "Սլայդներ ({count})",
+    "empty": "Hero սլայդներ դեռ չկան։",
+    "noImage": "Նկար չկա",
+    "sort": "կարգ {order}",
+    "published": "ՀՐԱՊԱՐԱԿՎԱԾ",
+    "draft": "ՍԵՎԱԳԻՐ",
+    "editNamed": "Խմբագրել {title}",
+    "deleteNamed": "Ջնջել {title}",
+    "publish": "Հրապարակել սլայդը",
+    "unpublish": "Հանել հրապարակումից",
+    "modal": {
+      "createTitle": "Ստեղծել hero սլայդ",
+      "editTitle": "Խմբագրել hero սլայդը",
+      "title": "Վերնագիր",
+      "subtitle": "Ենթավերնագիր",
+      "uploadImage": "Վերբեռնել նկար",
+      "changeImage": "Փոխել նկարը",
+      "uploadButton": "+ Վերբեռնել"
+    }
+  },
+  "blog": {
+    "title": "Բլոգ",
+    "addPost": "Ավելացնել գրառում",
+    "searchPlaceholder": "Որոնել անունով կամ slug-ով",
+    "searchAria": "Որոնել բլոգի գրառումներ",
+    "empty": "Բլոգի գրառումներ դեռ չկան։",
+    "emptySearch": "Այս որոնմանը համապատասխանող գրառումներ չկան։",
+    "confirmDelete": "Ջնջե՞լ այս բլոգի գրառումը։ Ադմին ցուցակից վերականգնել հնարավոր չէ։",
+    "editNamed": "Խմբագրել {title}",
+    "deleteNamed": "Ջնջել {title}",
+    "status": {
+      "published": "Հրապարակված",
+      "draft": "Սևագիր",
+      "archived": "Արխիվացված"
+    },
+    "drawer": {
+      "addTitle": "Ավելացնել բլոգի գրառում",
+      "editTitle": "Խմբագրել բլոգի գրառումը",
+      "title": "Վերնագիր",
+      "excerpt": "Կարճ հատված",
+      "content": "Ամբողջական տեքստ",
+      "contentHint": "Պարզ տեքստ կամ HTML։ Կրկնակի տողադարձերը ստեղծում են նոր պարբերություններ։",
+      "common": "Ընդհանուր",
+      "publicationDate": "Հրապարակման ամսաթիվ",
+      "publicationHint": "Թողեք դատարկ՝ հրապարակելիս այսօրվա ամսաթիվը օգտագործելու համար։",
+      "status": "Կարգավիճակ",
+      "coverImage": "Կազմի նկար",
+      "changeImage": "Փոխել նկարը",
+      "uploadImage": "+ Վերբեռնել",
+      "imageHint": "JPEG, PNG, WebP կամ GIF։ Առավելագույնը 5MB։",
+      "titleRequired": "Վերնագիրը և ամբողջական տեքստը պարտադիր են։"
+    },
+    "form": {
+      "createTitle": "Ստեղծել բլոգի գրառում",
+      "editTitle": "Խմբագրել բլոգի գրառումը",
+      "title": "Վերնագիր",
+      "slug": "Slug",
+      "slugPlaceholder": "my-post-title",
+      "excerpt": "Հատված",
+      "content": "Բովանդակություն (HTML)",
+      "seoTitle": "SEO վերնագիր",
+      "seoDescription": "SEO նկարագրություն",
+      "tags": "Պիտակներ (ստորակետով)",
+      "publish": "Հրապարակել",
+      "archive": "Արխիվ",
+      "saveChanges": "Պահպանել փոփոխությունները"
+    }
+  },
+  "careers": {
+    "title": "Աշխատանք",
+    "addPosition": "Ավելացնել հաստիք",
+    "searchPlaceholder": "Որոնել անունով, վայրով կամ slug-ով",
+    "searchAria": "Որոնել աշխատանքի հայտարարություններ",
+    "empty": "Աշխատանքի հայտարարություններ դեռ չկան։",
+    "emptySearch": "Այս որոնմանը համապատասխանող հայտարարություններ չկան։",
+    "noImage": "Նկար չկա",
+    "confirmDelete": "Ջնջե՞լ այս աշխատանքի հայտարարությունը։ Ադմին ցուցակից վերականգնել հնարավոր չէ։",
+    "editNamed": "Խմբագրել {title}",
+    "deleteNamed": "Ջնջել {title}",
+    "status": {
+      "active": "Ակտիվ",
+      "draft": "Սևագիր",
+      "archived": "Արխիվացված"
+    },
+    "employment": {
+      "fullTime": "Լրիվ դրույք",
+      "partTime": "Կես դրույք",
+      "contract": "Պայմանագիր",
+      "internship": "Պրակտիկա"
+    },
+    "drawer": {
+      "addTitle": "Ավելացնել աշխատանքի հաստիք",
+      "editTitle": "Խմբագրել աշխատանքի հաստիքը",
+      "addShort": "Ավելացնել հաստիք",
+      "editShort": "Խմբագրել հաստիքը",
+      "title": "Վերնագիր",
+      "location": "Վայր",
+      "locationPlaceholder": "Երևան",
+      "summary": "Կարճ ամփոփում",
+      "description": "Նկարագրություն",
+      "descriptionHint": "Պարզ տեքստ կամ HTML։ Կրկնակի տողադարձերը ստեղծում են նոր պարբերություններ։",
+      "slug": "Slug",
+      "slugHint": "Մեկ slug բոլոր լեզուների համար (hy / en / ru).",
+      "employmentType": "Աշխատանքի տեսակ",
+      "status": "Կարգավիճակ",
+      "salary": "Աշխատավարձ",
+      "salaryOptional": "Կամընտիր",
+      "salaryCurrency": "Աշխատավարձի արժույթ",
+      "sortOrder": "Դասավորման կարգ",
+      "publishedDate": "Հրապարակման ամսաթիվ",
+      "publishedHint": "Թողեք դատարկ՝ ակտիվացնելիս այսօրվա ամսաթիվը օգտագործելու համար։",
+      "coverImage": "Կազմի նկար",
+      "changeImage": "Փոխել նկարը",
+      "common": "Ընդհանուր",
+      "imageHint": "JPEG, PNG, WebP կամ GIF։ Առավելագույնը 5 ՄԲ։",
+      "titleRequired": "Վերնագիրը և նկարագրությունը պարտադիր են։"
+    }
+  },
+  "settings": {
+    "title": "Խանութի կարգավորումներ",
+    "subtitle": "Կարգավորեք խանութի ինքնությունը և արժույթի փոխարժեքները",
+    "identity": {
+      "title": "Խանութի ինքնություն",
+      "name": "Անուն",
+      "supportEmail": "Աջակցության էլ․ փոստ",
+      "phone": "Հեռախոս",
+      "save": "Պահպանել ինքնությունը"
+    },
+    "fx": {
+      "title": "Փոխարժեքներ",
+      "help": "Կատալոգի գները մնում են AMD։ Մուտքագրեք քանի USD / RUB է հավասար 1 AMD-ին (կետով կամ ստորակետով, օր. 0.2137 կամ 0,2137)։ Վիտրինայի արժույթը օգտագործում է այս փոխարժեքները։",
+      "usd": "USD՝ 1 AMD-ի դիմաց",
+      "rub": "RUB՝ 1 AMD-ի դիմաց",
+      "usdPlaceholder": "0.0026",
+      "rubPlaceholder": "0.24",
+      "save": "Պահպանել փոխարժեքները"
+    },
+    "savedKey": "Պահպանված է {key}."
+  },
+  "analytics": {
+    "title": "Վերլուծություն",
+    "subtitle": "Հետևեք բիզնեսի արդյունքներին և վիճակագրությանը",
+    "period": {
+      "title": "Ժամանակահատված",
+      "label": "Ժամանակահատված",
+      "from": "Սկսած",
+      "to": "Մինչև",
+      "apply": "Կիրառել",
+      "downloadCsv": "Ներբեռնել CSV արտահանում",
+      "invalidRange": "Անվավեր ամսաթվերի միջակայք։ Ցուցադրվում են լռելյայնները։",
+      "last7": "Վերջին 7 օր",
+      "last30": "Վերջին 30 օր",
+      "last90": "Վերջին 90 օր",
+      "thisMonth": "Այս ամիս",
+      "custom": "Կամայական միջակայք"
+    },
+    "metrics": {
+      "totalOrders": "Ընդամենը պատվերներ",
+      "totalRevenue": "Ընդամենը եկամուտ",
+      "totalUsers": "Ընդամենը օգտատերեր"
+    },
+    "rankings": {
+      "topProducts": "Թոփ վաճառվող ապրանքներ",
+      "topCategories": "Թոփ կատեգորիաներ",
+      "soldCount": "Վաճառվել է {quantity}",
+      "ordersCount": "{count} պատվեր",
+      "itemsCount": "{count} ապրանք",
+      "noProductSales": "Այս ժամանակահատվածում ապրանքների վաճառք չկա։",
+      "noCategorySales": "Այս ժամանակահատվածում կատեգորիաների վաճառք չկա։"
+    },
+    "ordersByDay": {
+      "title": "Պատվերներ ըստ օրվա",
+      "subtitle": "Օրական պատվերների և եկամտի միտումներ",
+      "chartAria": "Պատվերների միտումների գծապատկեր ըստ օրվա",
+      "empty": "Այս ժամանակահատվածում պատվերներ չկան։",
+      "ordersCount": "{count} պատվեր",
+      "revenue": "եկամուտ"
     }
   }
 }

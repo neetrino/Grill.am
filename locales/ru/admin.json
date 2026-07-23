@@ -3,7 +3,7 @@
     "dashboard": "Панель",
     "orders": "Заказы",
     "products": "Товары",
-    "categories": "Категории",
+    "categories": "Categories",
     "delivery": "Доставка",
     "discounts": "Скидки",
     "coupons": "Купоны",
@@ -17,7 +17,9 @@
     "openMenu": "Меню",
     "expandSidebar": "Развернуть меню",
     "collapseSidebar": "Свернуть меню",
-    "storeHome": "Главная White Shop"
+    "storeHome": "Главная White Shop",
+    "closeMenu": "Закрыть меню админки",
+    "toggleProductSubpages": "Подстраницы товаров"
   },
   "common": {
     "save": "Сохранить",
@@ -29,7 +31,68 @@
     "creating": "Создание…",
     "close": "Закрыть",
     "translations": "Переводы",
-    "actionsFailed": "Не удалось выполнить действие."
+    "actionsFailed": "Не удалось выполнить действие.",
+    "previous": "Назад",
+    "next": "Далее",
+    "pageOf": "Страница {page} / {totalPages}",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "yes": "да",
+    "no": "нет",
+    "never": "никогда",
+    "na": "Н/Д",
+    "loading": "Загрузка…",
+    "uploading": "Загрузка файла…",
+    "updating": "Обновление…",
+    "deleting": "Удаление…",
+    "selectedCount": "Выбрано {count}",
+    "deleteSelected": "Удалить выбранные",
+    "noResults": "Нет результатов.",
+    "actions": "Действия",
+    "image": "Изображение",
+    "status": "Статус",
+    "created": "Создано",
+    "unknownStatus": "Неизвестный статус.",
+    "unknownRole": "Неизвестная роль.",
+    "back": "Назад",
+    "all": "Все",
+    "required": "Обязательно",
+    "optional": "Необязательно",
+    "utc": "UTC",
+    "clear": "Очистить",
+    "duplicate": "Дублировать",
+    "remove": "Удалить",
+    "change": "Изменить",
+    "upload": "Загрузить",
+    "active": "Активно",
+    "draft": "Черновик",
+    "published": "Опубликовано",
+    "archived": "В архиве",
+    "none": "— нет —",
+    "dash": "—"
+  },
+  "dashboard": {
+    "welcome": "Добро пожаловать в панель администратора",
+    "users": "Пользователи",
+    "activeProducts": "Активные товары",
+    "ordersRange": "Заказы (период)",
+    "revenueRange": "Выручка (период)",
+    "vsPrev": "{delta} к пред.",
+    "recentOrders": "Недавние заказы",
+    "topProducts": "Топ товары",
+    "viewAll": "Смотреть все",
+    "noRecentOrders": "Недавних заказов нет.",
+    "noProductSales": "В этом периоде нет продаж.",
+    "soldCount": "Продано {quantity}",
+    "quickActions": "Быстрые действия",
+    "addProduct": "Добавить товар",
+    "addProductHint": "Создать новый товар",
+    "manageOrders": "Управление заказами",
+    "manageOrdersHint": "Смотреть все заказы",
+    "manageUsers": "Управление пользователями",
+    "manageUsersHint": "Смотреть всех пользователей",
+    "settings": "Настройки",
+    "settingsHint": "Настроить магазин"
   },
   "products": {
     "addNew": "Добавить товар",
@@ -64,6 +127,633 @@
       "exclusionLabel": "Название исключения",
       "removeExclusion": "Удалить исключение",
       "newExclusionPlaceholder": "Новое исключение…"
+    },
+    "filters": {
+      "totalProducts": "Всего товаров: {total}",
+      "searchTitleSlug": "Поиск по названию или slug",
+      "searchTitleSlugPlaceholder": "Поиск по названию или slug...",
+      "searchSku": "Поиск по SKU",
+      "skuPlaceholder": "Введите код SKU",
+      "filterCategory": "Фильтр по категории",
+      "filterStock": "Фильтр по наличию",
+      "allCategories": "Все категории",
+      "allProducts": "Все товары",
+      "inStock": "В наличии",
+      "outOfStock": "Нет в наличии",
+      "lowStock": "Мало на складе"
+    },
+    "table": {
+      "product": "Товар",
+      "stock": "Склад",
+      "price": "Цена",
+      "category": "Категория",
+      "featured": "Избранное",
+      "empty": "Нет товаров по этим фильтрам."
+    },
+    "bulk": {
+      "selectedCount": "Выбрано товаров: {count}",
+      "deleteSelected": "Удалить выбранные"
+    },
+    "form": {
+      "title": "Название",
+      "slug": "Slug",
+      "shortDescription": "Краткое описание",
+      "description": "Описание",
+      "composition": "Состав",
+      "price": "Цена",
+      "compareAtPrice": "Цена до скидки",
+      "sku": "SKU",
+      "quantity": "Количество",
+      "titlePlaceholder": "Название товара",
+      "slugPlaceholder": "product-slug",
+      "shortDescriptionPlaceholder": "Краткое описание для страницы товара",
+      "descriptionPlaceholder": "Описание товара",
+      "compositionPlaceholder": "Ингредиенты / состав",
+      "pricePlaceholder": "Цена в AMD",
+      "compareAtPlaceholder": "Необязательно",
+      "skuPlaceholder": "SKU",
+      "stockPlaceholder": "Склад",
+      "slugHint": "Один slug для всех языков (hy / en / ru)."
+    },
+    "errors": {
+      "titleRequired": "Заполните название хотя бы на одном языке.",
+      "slugRequired": "Slug обязателен."
+    },
+    "images": {
+      "mainTitle": "Главное изображение",
+      "upload": "+ Загрузить изображение",
+      "hint": "Загрузите одно или несколько изображений, затем отметьте главное галочкой.",
+      "main": "Главное",
+      "remove": "Удалить изображение"
+    },
+    "categoriesForm": {
+      "title": "Категории",
+      "select": "Выберите категории",
+      "empty": "Категорий пока нет.",
+      "addCategory": "+ Добавить категорию",
+      "categoryTitle": "Название категории",
+      "categoryTitlePlaceholder": "Введите название категории",
+      "adding": "Добавление…",
+      "add": "Добавить",
+      "titleRequired": "Название категории обязательно."
+    }
+  },
+  "orders": {
+    "title": "Заказы",
+    "filters": {
+      "totalOrders": "Всего заказов: {total}",
+      "allStatuses": "Все статусы",
+      "allPaymentStatuses": "Все статусы оплаты",
+      "orderStatus": "Статус заказа",
+      "paymentStatus": "Статус оплаты",
+      "searchPlaceholder": "Поиск по № заказа, клиенту, email, телефону…",
+      "searchAria": "Поиск заказов"
+    },
+    "status": {
+      "pending": "Ожидает",
+      "processing": "В обработке",
+      "completed": "Завершён",
+      "cancelled": "Отменён"
+    },
+    "paymentStatus": {
+      "paid": "Оплачен",
+      "pending": "ожидает",
+      "failed": "Ошибка"
+    },
+    "list": {
+      "order": "Заказ",
+      "customer": "Клиент",
+      "status": "Статус",
+      "payment": "Оплата",
+      "total": "Итого",
+      "placed": "Оформлен",
+      "archived": "В архиве",
+      "empty": "Нет заказов по этим фильтрам.",
+      "selectAll": "Выбрать все заказы на странице",
+      "selectOrder": "Выбрать заказ {orderNumber}",
+      "selectedOnPage": "На этой странице выбрано: {count}"
+    },
+    "bulk": {
+      "selectedCount": "Выбрано заказов: {count}",
+      "deleteSelected": "Удалить выбранные",
+      "deleting": "Удаление…",
+      "selectAtLeastOne": "Выберите хотя бы один заказ.",
+      "deletedResult": "Удалено {deleted}, пропущено {skipped}."
+    },
+    "changeStatusAria": "Изменить статус {kind}",
+    "drawer": {
+      "title": "Детали заказа",
+      "loading": "Загрузка заказа…",
+      "summary": "Сводка",
+      "orderNumber": "Заказ #",
+      "total": "Итого",
+      "status": "Статус",
+      "payment": "Оплата",
+      "customer": "Клиент",
+      "name": "Имя",
+      "phone": "Телефон",
+      "email": "Email",
+      "shippingMethod": "Способ доставки",
+      "pickupStore": "Самовывоз",
+      "shippingAddress": "Адрес доставки",
+      "method": "Способ",
+      "amount": "Сумма",
+      "customerPaysWith": "Клиент платит",
+      "prepareChange": "Подготовить сдачу",
+      "subtotal": "Подытог",
+      "delivery": "Доставка",
+      "couponDiscount": "Скидка по купону",
+      "freePickup": "Бесплатно (самовывоз)",
+      "items": "Позиции",
+      "product": "Товар",
+      "sku": "SKU",
+      "qty": "Кол-во",
+      "price": "Цена",
+      "lineTotal": "Итого",
+      "customizations": "Добавки и исключения"
+    },
+    "detail": {
+      "customer": "Клиент",
+      "totals": "Итоги",
+      "subtotal": "Подытог",
+      "delivery": "Доставка",
+      "couponDiscount": "Скидка по купону",
+      "total": "Итого",
+      "placedUtc": "Оформлен {datetime} UTC",
+      "lineItems": "Позиции",
+      "product": "Товар",
+      "qty": "Кол-во",
+      "lineTotal": "Сумма строки",
+      "history": "История",
+      "customerVisible": "видно клиенту",
+      "internal": "внутреннее",
+      "noEvents": "Событий пока нет.",
+      "archived": "В архиве"
+    },
+    "forms": {
+      "current": "Текущий",
+      "newStatus": "Новый статус",
+      "newPaymentStatus": "Новый статус оплаты",
+      "noteOptional": "Заметка (необязательно)",
+      "updateStatus": "Обновить статус",
+      "updatePayment": "Обновить оплату",
+      "terminalStatus": "Конечный статус — дальнейшие переходы недоступны.",
+      "terminalPayment": "Конечный статус оплаты — дальнейшие переходы недоступны.",
+      "addInternalNote": "Добавить внутреннюю заметку",
+      "note": "Заметка",
+      "addNote": "Добавить заметку",
+      "archive": "Архив",
+      "archiveOrder": "Архивировать заказ",
+      "restoreOrder": "Восстановить заказ",
+      "archiveHint": "Архив скрывает заказ из списков по умолчанию, не удаляя данные.",
+      "archivedHint": "Этот заказ в архиве. Восстановите его, чтобы снова показывать в списках."
+    }
+  },
+  "users": {
+    "title": "Пользователи",
+    "subtitle": "Админ / Клиент",
+    "searchPlaceholder": "Поиск по email, телефону, имени...",
+    "searchAria": "Поиск пользователей",
+    "totalUsers": "Всего пользователей: {total}",
+    "rolesFilter": {
+      "all": "Все",
+      "admins": "Админы",
+      "customers": "Клиенты"
+    },
+    "roles": {
+      "admin": "Админ",
+      "customer": "Клиент"
+    },
+    "statuses": {
+      "active": "Активен",
+      "suspended": "Приостановлен",
+      "anonymized": "Анонимизирован"
+    },
+    "table": {
+      "user": "Пользователь",
+      "contact": "Контакты",
+      "orders": "Заказы",
+      "roles": "Роли",
+      "status": "Статус",
+      "created": "Создан",
+      "empty": "Нет пользователей по этим фильтрам.",
+      "selectAll": "Выбрать всех пользователей",
+      "selectUser": "Выбрать {name}",
+      "suspendNamed": "Приостановить {name}",
+      "activateNamed": "Активировать {name}"
+    },
+    "bulk": {
+      "selectedCount": "Выбрано пользователей: {count}",
+      "deleteSelected": "Удалить выбранные"
+    },
+    "detail": {
+      "role": "Роль",
+      "status": "Статус",
+      "phone": "Телефон",
+      "emailVerified": "Email подтверждён",
+      "lastLogin": "Последний вход",
+      "created": "Создан",
+      "recentOrders": "Недавние заказы",
+      "noOrders": "Заказов нет."
+    },
+    "forms": {
+      "role": "Роль",
+      "current": "Текущая",
+      "newRole": "Новая роль",
+      "updateRole": "Обновить роль",
+      "status": "Статус",
+      "newStatus": "Новый статус",
+      "updateStatus": "Обновить статус",
+      "terminalStatus": "Конечный статус — дальнейшие переходы недоступны."
+    }
+  },
+  "messages": {
+    "title": "Сообщения",
+    "count": "{count} сообщ.",
+    "searchPlaceholder": "Имя, email, тема…",
+    "empty": "Нет сообщений по этим фильтрам.",
+    "table": {
+      "subject": "Тема",
+      "from": "От кого",
+      "status": "Статус",
+      "received": "Получено"
+    },
+    "spamScore": "спам {score}",
+    "status": {
+      "unread": "Непрочитано",
+      "read": "Прочитано",
+      "replied": "Отвечено",
+      "archived": "В архиве"
+    },
+    "detail": {
+      "from": "От кого",
+      "email": "Email",
+      "phone": "Телефон",
+      "status": "Статус",
+      "spamScore": "Оценка спама",
+      "received": "Получено",
+      "message": "Сообщение"
+    },
+    "forms": {
+      "current": "Текущий",
+      "newStatus": "Новый статус",
+      "updateStatus": "Обновить статус",
+      "noFurtherChanges": "Дальнейшие изменения статуса недоступны."
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "addCategory": "Add Category",
+    "searchPlaceholder": "Enter category title",
+    "searchAria": "Search categories",
+    "reorderHint": "Clear search to reorder categories.",
+    "empty": "No categories yet.",
+    "emptySearch": "No categories match this search.",
+    "rootCategory": "None (Root Category)",
+    "reorder": "Reorder",
+    "reorderNamed": "Reorder {title}",
+    "editNamed": "Edit {title}",
+    "deleteNamed": "Delete {title}",
+    "table": {
+      "categoryTitle": "Category Title",
+      "category": "Category"
+    },
+    "subcategoriesCount": "{count} subcategories",
+    "drawer": {
+      "addTitle": "Add Category",
+      "editTitle": "Edit Category",
+      "categoryTitle": "Category Title",
+      "titlePlaceholder": "Enter category title",
+      "slug": "Slug",
+      "slugPlaceholder": "---",
+      "slugHint": "Generated automatically from the title and used on /products.",
+      "parent": "Parent Category",
+      "rootOption": "None (Root Category)",
+      "status": "Status",
+      "published": "Published",
+      "archived": "Archived",
+      "image": "Image",
+      "changeImage": "Change image",
+      "uploadImage": "+ Upload Image",
+      "createCategory": "Create Category"
+    }
+  },
+  "delivery": {
+    "title": "Доставка",
+    "subtitle": "Задайте цены доставки по стране и городу для оформления заказа.",
+    "addLocation": "Добавить локацию",
+    "empty": "Локаций доставки пока нет. Добавьте локацию, чтобы предложить доставку при оформлении.",
+    "confirmDelete": "Удалить доставку для {city}?",
+    "editNamed": "Редактировать {city}",
+    "deleteNamed": "Удалить {city}",
+    "table": {
+      "country": "Страна",
+      "city": "Город",
+      "price": "Цена",
+      "freeFrom": "Бесплатно от"
+    },
+    "drawer": {
+      "addTitle": "Добавить локацию",
+      "editTitle": "Редактировать локацию",
+      "country": "Страна",
+      "city": "Город",
+      "price": "Цена (AMD)",
+      "freeFrom": "Бесплатная доставка от (AMD)",
+      "countryPlaceholder": "Армения",
+      "cityPlaceholder": "Ереван"
+    }
+  },
+  "discounts": {
+    "title": "Скидки",
+    "automaticDiscount": "Автоматическая скидка",
+    "info": {
+      "title": "Полезная информация",
+      "subtitle": "О скидках",
+      "point1": "Глобальная скидка применяется ко всем товарам, если нет более сильного правила для товара.",
+      "point2": "Скидка категории применяется к товарам этой категории.",
+      "point3": "Скидка товара перекрывает проценты категории и глобальной скидки для этой позиции.",
+      "point4": "«Очистить» удаляет правило; «Сохранить» сохраняет текущий процент.",
+      "moreSettings": "Другие настройки →"
+    },
+    "global": {
+      "title": "Глобальная скидка",
+      "subtitle": "Для всех товаров",
+      "percentAria": "Процент глобальной скидки",
+      "empty": "Глобальной скидки нет. Введите процент (0–100), чтобы скинуть все товары.",
+      "active": "Активная глобальная скидка: {percent}%.",
+      "cleared": "Глобальная скидка очищена.",
+      "setTo": "Глобальная скидка установлена на {percent}%.",
+      "invalid": "Введите целое число от 1 до 100 или оставьте пустым."
+    },
+    "category": {
+      "title": "Скидки по категориям",
+      "subtitle": "Примените скидки к товарам в каждой категории",
+      "empty": "Категории не найдены",
+      "discountFor": "Скидка для {title}",
+      "invalid": "Неверный процент для «{title}». Используйте 1–100.",
+      "saved": "Сохранено скидок категорий: {count}."
+    },
+    "product": {
+      "title": "Скидки по товарам",
+      "subtitle": "Задайте индивидуальный процент скидки для каждого товара",
+      "searchPlaceholder": "Поиск по названию или slug...",
+      "searchAria": "Поиск товаров",
+      "empty": "Товары не найдены",
+      "discountFor": "Скидка для {title}",
+      "invalid": "Неверный процент для «{title}». Используйте 1–100.",
+      "cleared": "Скидка для «{title}» очищена.",
+      "saved": "Сохранено {percent}% для «{title}»."
+    }
+  },
+  "coupons": {
+    "title": "Промокоды",
+    "subtitle": "Создавайте, редактируйте или удаляйте коды скидок для оформления заказа.",
+    "add": "Добавить промокод",
+    "empty": "Промокодов пока нет.",
+    "crumb": "Купоны",
+    "usedTimes": "Использовано {count} раз",
+    "typePercent": "Процент скидки",
+    "typeFixed": "Фиксированная сумма (AMD)",
+    "table": {
+      "code": "Код",
+      "type": "Тип",
+      "value": "Значение",
+      "usageLimit": "Лимит использований",
+      "used": "Использовано",
+      "active": "Активен",
+      "validUntil": "Действует до"
+    },
+    "editNamed": "Редактировать {code}",
+    "duplicateNamed": "Дублировать {code}",
+    "deleteNamed": "Удалить {code}",
+    "drawer": {
+      "newTitle": "Новый купон",
+      "editTitle": "Редактировать купон",
+      "name": "Название",
+      "code": "Код",
+      "discountType": "Тип скидки",
+      "value": "Значение",
+      "quantity": "Количество",
+      "expires": "Истекает (необязательно)",
+      "selectUsers": "Выбрать пользователей",
+      "allUsersHint": "Этот купон могут использовать все пользователи",
+      "codeRequired": "Код обязателен."
+    }
+  },
+  "promotions": {
+    "form": {
+      "editTitle": "Редактировать акцию",
+      "createCoupon": "Создать купон",
+      "createAutomatic": "Создать автоматическую скидку",
+      "kind": "Тип",
+      "kindCoupon": "КУПОН",
+      "kindAutomatic": "АВТОМАТИЧЕСКАЯ",
+      "code": "Код",
+      "codePlaceholder": "WELCOME10",
+      "productTarget": "Цель: товар",
+      "categoryTarget": "Цель: категория",
+      "targetHint": "Выберите ровно одну цель: товар или категорию.",
+      "discountType": "Тип скидки",
+      "typePercentage": "ПРОЦЕНТ",
+      "typeFixed": "ФИКСИРОВАННАЯ (минорные единицы AMD)",
+      "discountValue": "Значение скидки",
+      "maxDiscount": "Макс. скидка (необязательно)",
+      "minOrder": "Мин. заказ (необязательно)",
+      "totalUsageLimit": "Общий лимит использований",
+      "perUserLimit": "Лимит на пользователя",
+      "startsAt": "Начало",
+      "endsAt": "Окончание",
+      "priority": "Приоритет",
+      "allowStacking": "Разрешить совмещение",
+      "active": "Активна",
+      "saveChanges": "Сохранить изменения"
+    },
+    "toggle": {
+      "activate": "Активировать",
+      "deactivate": "Деактивировать"
+    }
+  },
+  "hero": {
+    "title": "Hero-слайды",
+    "count": "{count} слайд(ов)",
+    "create": "Создать hero-слайд",
+    "slidesHeading": "Слайды ({count})",
+    "empty": "Hero-слайдов пока нет.",
+    "noImage": "Нет изображения",
+    "sort": "порядок {order}",
+    "published": "ОПУБЛИКОВАН",
+    "draft": "ЧЕРНОВИК",
+    "editNamed": "Редактировать {title}",
+    "deleteNamed": "Удалить {title}",
+    "publish": "Опубликовать слайд",
+    "unpublish": "Снять с публикации",
+    "modal": {
+      "createTitle": "Создать hero-слайд",
+      "editTitle": "Редактировать hero-слайд",
+      "title": "Заголовок",
+      "subtitle": "Подзаголовок",
+      "uploadImage": "Загрузить изображение",
+      "changeImage": "Изменить изображение",
+      "uploadButton": "+ Загрузить"
+    }
+  },
+  "blog": {
+    "title": "Блог",
+    "addPost": "Добавить запись",
+    "searchPlaceholder": "Поиск по названию или slug",
+    "searchAria": "Поиск записей блога",
+    "empty": "Записей блога пока нет.",
+    "emptySearch": "Нет записей по этому поиску.",
+    "confirmDelete": "Удалить эту запись блога? Из списка админки это нельзя отменить.",
+    "editNamed": "Редактировать {title}",
+    "deleteNamed": "Удалить {title}",
+    "status": {
+      "published": "Опубликовано",
+      "draft": "Черновик",
+      "archived": "В архиве"
+    },
+    "drawer": {
+      "addTitle": "Добавить запись блога",
+      "editTitle": "Редактировать запись блога",
+      "title": "Заголовок",
+      "excerpt": "Краткий фрагмент",
+      "content": "Полный текст",
+      "contentHint": "Обычный текст или HTML. Двойные переносы строк создают новые абзацы.",
+      "common": "Общее",
+      "publicationDate": "Дата публикации",
+      "publicationHint": "Оставьте пустым, чтобы использовать сегодняшнюю дату при публикации.",
+      "status": "Статус",
+      "coverImage": "Обложка",
+      "changeImage": "Изменить изображение",
+      "uploadImage": "+ Загрузить",
+      "imageHint": "JPEG, PNG, WebP или GIF. Макс. 5MB.",
+      "titleRequired": "Заголовок и полный текст обязательны."
+    },
+    "form": {
+      "createTitle": "Создать запись блога",
+      "editTitle": "Редактировать запись блога",
+      "title": "Заголовок",
+      "slug": "Slug",
+      "slugPlaceholder": "my-post-title",
+      "excerpt": "Фрагмент",
+      "content": "Контент (HTML)",
+      "seoTitle": "SEO-заголовок",
+      "seoDescription": "SEO-описание",
+      "tags": "Теги (через запятую)",
+      "publish": "Опубликовать",
+      "archive": "Архив",
+      "saveChanges": "Сохранить изменения"
+    }
+  },
+  "careers": {
+    "title": "Вакансии",
+    "addPosition": "Добавить вакансию",
+    "searchPlaceholder": "Поиск по названию, месту или slug",
+    "searchAria": "Поиск вакансий",
+    "empty": "Вакансий пока нет.",
+    "emptySearch": "Нет вакансий по этому поиску.",
+    "noImage": "Нет изображения",
+    "confirmDelete": "Удалить эту вакансию? Из списка админки это нельзя отменить.",
+    "editNamed": "Редактировать {title}",
+    "deleteNamed": "Удалить {title}",
+    "status": {
+      "active": "Активна",
+      "draft": "Черновик",
+      "archived": "В архиве"
+    },
+    "employment": {
+      "fullTime": "Полная занятость",
+      "partTime": "Частичная занятость",
+      "contract": "Контракт",
+      "internship": "Стажировка"
+    },
+    "drawer": {
+      "addTitle": "Добавить вакансию",
+      "editTitle": "Редактировать вакансию",
+      "addShort": "Добавить вакансию",
+      "editShort": "Редактировать вакансию",
+      "title": "Название",
+      "location": "Место",
+      "locationPlaceholder": "Ереван",
+      "summary": "Краткое описание",
+      "description": "Описание",
+      "descriptionHint": "Обычный текст или HTML. Двойные переносы строк создают новые абзацы.",
+      "slug": "Slug",
+      "slugHint": "Один slug для всех языков (hy / en / ru).",
+      "employmentType": "Тип занятости",
+      "status": "Статус",
+      "salary": "Зарплата",
+      "salaryOptional": "Необязательно",
+      "salaryCurrency": "Валюта зарплаты",
+      "sortOrder": "Порядок сортировки",
+      "publishedDate": "Дата публикации",
+      "publishedHint": "Оставьте пустым, чтобы использовать сегодняшнюю дату при активации.",
+      "coverImage": "Обложка",
+      "changeImage": "Изменить изображение",
+      "common": "Общее",
+      "imageHint": "JPEG, PNG, WebP или GIF. Макс. 5 МБ.",
+      "titleRequired": "Название и описание обязательны."
+    }
+  },
+  "settings": {
+    "title": "Настройки магазина",
+    "subtitle": "Настройте данные магазина и курсы валют",
+    "identity": {
+      "title": "Данные магазина",
+      "name": "Название",
+      "supportEmail": "Email поддержки",
+      "phone": "Телефон",
+      "save": "Сохранить данные"
+    },
+    "fx": {
+      "title": "Курсы валют",
+      "help": "Цены каталога остаются в AMD. Укажите, сколько USD / RUB равно 1 AMD (точка или запятая, напр. 0.2137 или 0,2137). Витрина использует эти курсы.",
+      "usd": "USD за 1 AMD",
+      "rub": "RUB за 1 AMD",
+      "usdPlaceholder": "0.0026",
+      "rubPlaceholder": "0.24",
+      "save": "Сохранить курсы"
+    },
+    "savedKey": "Сохранено {key}."
+  },
+  "analytics": {
+    "title": "Аналитика",
+    "subtitle": "Отслеживайте показатели бизнеса и статистику",
+    "period": {
+      "title": "Период",
+      "label": "Период",
+      "from": "С",
+      "to": "По",
+      "apply": "Применить",
+      "downloadCsv": "Скачать CSV-экспорт",
+      "invalidRange": "Неверный диапазон дат. Показаны значения по умолчанию.",
+      "last7": "Последние 7 дней",
+      "last30": "Последние 30 дней",
+      "last90": "Последние 90 дней",
+      "thisMonth": "Этот месяц",
+      "custom": "Произвольный диапазон"
+    },
+    "metrics": {
+      "totalOrders": "Всего заказов",
+      "totalRevenue": "Общая выручка",
+      "totalUsers": "Всего пользователей"
+    },
+    "rankings": {
+      "topProducts": "Топ продаваемых товаров",
+      "topCategories": "Топ категорий",
+      "soldCount": "Продано {quantity}",
+      "ordersCount": "{count} заказов",
+      "itemsCount": "{count} позиций",
+      "noProductSales": "В этом периоде нет продаж товаров.",
+      "noCategorySales": "В этом периоде нет продаж по категориям."
+    },
+    "ordersByDay": {
+      "title": "Заказы по дням",
+      "subtitle": "Ежедневные тренды заказов и выручки",
+      "chartAria": "График заказов по дням",
+      "empty": "В этом периоде нет заказов.",
+      "ordersCount": "{count} заказов",
+      "revenue": "выручка"
     }
   }
 }

@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_LABEL,
   ADMIN_SECTION_TITLE,
@@ -18,6 +19,9 @@ type AddOrderNoteFormProps = {
 };
 
 export function AddOrderNoteForm({ locale, orderNumber }: AddOrderNoteFormProps) {
+  const dictionary = useAdminDictionary();
+  const forms = dictionary.orders.forms;
+  const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -48,9 +52,9 @@ export function AddOrderNoteForm({ locale, orderNumber }: AddOrderNoteFormProps)
           });
         }}
       >
-        <h2 className={ADMIN_SECTION_TITLE}>Add internal note</h2>
+        <h2 className={ADMIN_SECTION_TITLE}>{forms.addInternalNote}</h2>
         <label>
-          <span className={ADMIN_LABEL}>Note</span>
+          <span className={ADMIN_LABEL}>{forms.note}</span>
           <textarea
             name="note"
             rows={3}
@@ -62,7 +66,7 @@ export function AddOrderNoteForm({ locale, orderNumber }: AddOrderNoteFormProps)
         </label>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? "Saving…" : "Add note"}
+          {isPending ? common.saving : forms.addNote}
         </Button>
       </form>
     </Card>

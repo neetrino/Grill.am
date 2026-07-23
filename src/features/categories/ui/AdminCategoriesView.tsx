@@ -10,6 +10,7 @@ import {
   ADMIN_INPUT,
   ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { formatAdminMessage } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -27,6 +28,7 @@ import {
 } from "@/features/categories/actions";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
 import { AddCategoryDrawer } from "@/features/categories/ui/AddCategoryDrawer";
+import enAdmin from "@/locales/en/admin.json";
 
 type AdminCategoriesViewProps = {
   locale: string;
@@ -62,6 +64,9 @@ export function AdminCategoriesView({
   locale,
   categories,
 }: AdminCategoriesViewProps) {
+  // Categories admin is English-only (UI + titles), regardless of admin locale.
+  const copy = enAdmin.categories;
+  const common = enAdmin.common;
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -146,7 +151,7 @@ export function AdminCategoriesView({
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>Categories</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
         <Button
           type="button"
           size="sm"
@@ -157,22 +162,20 @@ export function AdminCategoriesView({
           className="inline-flex items-center gap-1.5"
         >
           <Plus className="h-4 w-4" aria-hidden />
-          Add Category
+          {copy.addCategory}
         </Button>
       </div>
 
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Enter category title"
+        placeholder={copy.searchPlaceholder}
         className={`${ADMIN_INPUT} mb-4`}
-        aria-label="Search categories"
+        aria-label={copy.searchAria}
       />
 
       {isFiltering ? (
-        <p className="mb-3 text-xs text-gray-500">
-          Clear search to reorder categories.
-        </p>
+        <p className="mb-3 text-xs text-gray-500">{copy.reorderHint}</p>
       ) : null}
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
@@ -180,20 +183,21 @@ export function AdminCategoriesView({
       <Card className={ADMIN_TABLE_CARD}>
         {visible.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {categories.length === 0
-              ? "No categories yet."
-              : "No categories match this search."}
+            {categories.length === 0 ? copy.empty : copy.emptySearch}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
-                  <th className={`${ADMIN_TABLE_TH} w-8`} aria-label="Reorder" />
-                  <th className={ADMIN_TABLE_TH}>Image</th>
-                  <th className={ADMIN_TABLE_TH}>Category Title</th>
-                  <th className={ADMIN_TABLE_TH}>Category</th>
-                  <th className={ADMIN_TABLE_TH}>Actions</th>
+                  <th
+                    className={`${ADMIN_TABLE_TH} w-8`}
+                    aria-label={copy.reorder}
+                  />
+                  <th className={ADMIN_TABLE_TH}>{common.image}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.categoryTitle}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.category}</th>
+                  <th className={ADMIN_TABLE_TH}>{common.actions}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -242,7 +246,9 @@ export function AdminCategoriesView({
                             setDraggingId(null);
                           }}
                           className="inline-flex cursor-grab touch-none text-gray-400 active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-40"
-                          aria-label={`Reorder ${category.title}`}
+                          aria-label={formatAdminMessage(copy.reorderNamed, {
+                            title: category.title,
+                          })}
                         >
                           <GripVertical className="h-4 w-4" />
                         </button>
@@ -256,7 +262,7 @@ export function AdminCategoriesView({
                               className="h-full w-full object-cover"
                             />
                           ) : (
-                            <span className="text-gray-400">—</span>
+                            <span className="text-gray-400">{common.dash}</span>
                           )}
                         </div>
                       </td>
@@ -267,7 +273,7 @@ export function AdminCategoriesView({
                       </td>
                       <td className={ADMIN_TABLE_TD}>
                         <span className="text-sm text-gray-500">
-                          {category.parentTitle ?? "None (Root Category)"}
+                          {category.parentTitle ?? copy.rootCategory}
                         </span>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
@@ -275,7 +281,9 @@ export function AdminCategoriesView({
                           <button
                             type="button"
                             className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                            aria-label={`Edit ${category.title}`}
+                            aria-label={formatAdminMessage(copy.editNamed, {
+                              title: category.title,
+                            })}
                             onClick={() => {
                               setEditingCategory(category);
                               setDrawerOpen(true);
@@ -288,14 +296,19 @@ export function AdminCategoriesView({
                             disabled={isPending}
                             onClick={() => handleDelete(category.id)}
                             className="rounded p-1.5 text-red-500 hover:bg-red-50"
-                            aria-label={`Delete ${category.title}`}
+                            aria-label={formatAdminMessage(copy.deleteNamed, {
+                              title: category.title,
+                            })}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
                           {category.childCount > 0 ? (
                             <span
                               className="ml-1 text-gray-400"
-                              aria-label={`${category.childCount} subcategories`}
+                              aria-label={formatAdminMessage(
+                                copy.subcategoriesCount,
+                                { count: String(category.childCount) },
+                              )}
                             >
                               <ChevronRight className="h-4 w-4" />
                             </span>

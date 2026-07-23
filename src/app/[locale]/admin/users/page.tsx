@@ -5,6 +5,7 @@ import { listAdminUsers } from "@/features/users/application/queries";
 import { adminUsersFilterSchema } from "@/features/users/schemas/admin-users";
 import { AdminUsersView } from "@/features/users/ui/AdminUsersView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminUsersPageProps = {
   params: Promise<{ locale: string }>;
@@ -37,6 +38,15 @@ function buildUsersQuery(
   return params.toString();
 }
 
+function fillTemplate(
+  template: string,
+  values: Record<string, string>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    return values[key] ?? "";
+  });
+}
+
 export default async function AdminUsersPage({
   params,
   searchParams,
@@ -45,6 +55,8 @@ export default async function AdminUsersPage({
   if (!isLocale(locale)) {
     notFound();
   }
+
+  const common = getDictionary(locale).admin.common;
 
   const raw = await searchParams;
   const parsed = adminUsersFilterSchema.safeParse({
@@ -78,18 +90,21 @@ export default async function AdminUsersPage({
               href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page - 1)}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {fillTemplate(common.pageOf, {
+              page: String(filters.page),
+              totalPages: String(totalPages),
+            })}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page + 1)}`}
               className="font-medium hover:underline"
             >
-              Next
+              {common.next}
             </Link>
           ) : null}
         </nav>

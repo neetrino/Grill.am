@@ -10,6 +10,10 @@ import {
   ADMIN_LABEL,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import { upsertStoreSettingAction } from "@/features/settings/application/upsert-settings";
 import type {
   StoreFxRates,
@@ -27,6 +31,8 @@ export function StoreSettingsForms({
   identity,
   fxRates,
 }: StoreSettingsFormsProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.settings;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -58,14 +64,16 @@ export function StoreSettingsForms({
                 setError(result.error.message);
                 return;
               }
-              setMessage(`Saved ${result.value.key}.`);
+              setMessage(
+                formatAdminMessage(copy.savedKey, { key: result.value.key }),
+              );
               router.refresh();
             });
           }}
         >
-          <h2 className={ADMIN_SECTION_TITLE}>Store identity</h2>
+          <h2 className={ADMIN_SECTION_TITLE}>{copy.identity.title}</h2>
           <label>
-            <span className={ADMIN_LABEL}>Name</span>
+            <span className={ADMIN_LABEL}>{copy.identity.name}</span>
             <input
               name="name"
               defaultValue={identity.name}
@@ -74,7 +82,7 @@ export function StoreSettingsForms({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Support email</span>
+            <span className={ADMIN_LABEL}>{copy.identity.supportEmail}</span>
             <input
               name="supportEmail"
               type="email"
@@ -84,7 +92,7 @@ export function StoreSettingsForms({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Phone</span>
+            <span className={ADMIN_LABEL}>{copy.identity.phone}</span>
             <input
               name="phone"
               defaultValue={identity.phone ?? ""}
@@ -93,7 +101,7 @@ export function StoreSettingsForms({
             />
           </label>
           <Button type="submit" size="sm" disabled={isPending}>
-            Save identity
+            {copy.identity.save}
           </Button>
         </form>
       </Card>
@@ -118,45 +126,45 @@ export function StoreSettingsForms({
                 setError(result.error.message);
                 return;
               }
-              setMessage(`Saved ${result.value.key}.`);
+              setMessage(
+                formatAdminMessage(copy.savedKey, { key: result.value.key }),
+              );
               router.refresh();
             });
           }}
         >
-          <h2 className={ADMIN_SECTION_TITLE}>Exchange rates</h2>
+          <h2 className={ADMIN_SECTION_TITLE}>{copy.fx.title}</h2>
           <p className="text-sm text-[color:var(--color-muted-foreground)]">
-            Catalog prices stay in AMD. Enter how many USD / RUB equal{" "}
-            <strong>1 AMD</strong> (dot or comma decimals, e.g. 0.2137 or
-            0,2137). Storefront display currency uses these rates.
+            {copy.fx.help}
           </p>
           <label>
-            <span className={ADMIN_LABEL}>USD per 1 AMD</span>
+            <span className={ADMIN_LABEL}>{copy.fx.usd}</span>
             <input
               name="usd"
               type="text"
               inputMode="decimal"
               defaultValue={fxRates.usd}
-              placeholder="0.0026"
+              placeholder={copy.fx.usdPlaceholder}
               className={ADMIN_INPUT}
               disabled={isPending}
               required
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>RUB per 1 AMD</span>
+            <span className={ADMIN_LABEL}>{copy.fx.rub}</span>
             <input
               name="rub"
               type="text"
               inputMode="decimal"
               defaultValue={fxRates.rub}
-              placeholder="0.24"
+              placeholder={copy.fx.rubPlaceholder}
               className={ADMIN_INPUT}
               disabled={isPending}
               required
             />
           </label>
           <Button type="submit" size="sm" disabled={isPending}>
-            Save exchange rates
+            {copy.fx.save}
           </Button>
         </form>
       </Card>

@@ -6,6 +6,10 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import {
   ADMIN_BADGE,
@@ -29,6 +33,7 @@ import {
   updateUserStatusAction,
 } from "@/features/users/application/update-user";
 import type { AdminUserListItem } from "@/features/users/application/queries";
+import { adminUserRoleLabel } from "@/features/users/ui/admin-user-labels";
 
 type AdminUsersViewProps = {
   locale: string;
@@ -69,6 +74,11 @@ export function AdminUsersView({
   q,
   role,
 }: AdminUsersViewProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.users;
+  const table = copy.table;
+  const bulk = copy.bulk;
+  const common = dictionary.common;
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -98,15 +108,19 @@ export function AdminUsersView({
         await action();
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Action failed.");
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : common.actionsFailed,
+        );
       }
     });
   }
 
   const rolePills = [
-    { label: "All", value: undefined },
-    { label: "Admins", value: "ADMIN" },
-    { label: "Customers", value: "CUSTOMER" },
+    { label: copy.rolesFilter.all, value: undefined },
+    { label: copy.rolesFilter.admins, value: "ADMIN" },
+    { label: copy.rolesFilter.customers, value: "CUSTOMER" },
   ] as const;
 
   return (
@@ -115,19 +129,19 @@ export function AdminUsersView({
         <input
           name="q"
           defaultValue={q ?? ""}
-          placeholder="Search by email, phone, name..."
+          placeholder={copy.searchPlaceholder}
           className={`${ADMIN_INPUT} min-w-[220px] flex-1`}
-          aria-label="Search users"
+          aria-label={copy.searchAria}
         />
         {role ? <input type="hidden" name="role" value={role} /> : null}
         <Button type="submit" size="sm">
-          Search
+          {common.search}
         </Button>
       </form>
 
       <div className="mb-4">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-          Admin / Customer
+          {copy.subtitle}
         </p>
         <div className="flex flex-wrap gap-2">
           {rolePills.map((pill) => {
@@ -149,13 +163,17 @@ export function AdminUsersView({
         </div>
       </div>
 
-      <p className="mb-3 text-sm text-gray-600">Total users: {total}</p>
+      <p className="mb-3 text-sm text-gray-600">
+        {formatAdminMessage(copy.totalUsers, { total: String(total) })}
+      </p>
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
       <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
         <p className="text-sm text-gray-700">
-          Selected {selected.size} user{selected.size === 1 ? "" : "s"}
+          {formatAdminMessage(bulk.selectedCount, {
+            count: String(selected.size),
+          })}
         </p>
         <Button
           type="button"
@@ -172,14 +190,14 @@ export function AdminUsersView({
             })
           }
         >
-          Delete Selected
+          {bulk.deleteSelected}
         </Button>
       </Card>
 
       <Card className={ADMIN_TABLE_CARD}>
         {users.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No users match these filters.
+            {table.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
@@ -193,15 +211,15 @@ export function AdminUsersView({
                       checked={allSelected}
                       onChange={toggleAll}
                       disabled={isPending || users.length === 0}
-                      aria-label="Select all users"
+                      aria-label={table.selectAll}
                     />
                   </th>
-                  <th className={ADMIN_TABLE_TH}>User</th>
-                  <th className={ADMIN_TABLE_TH}>Contact</th>
-                  <th className={ADMIN_TABLE_TH}>Orders</th>
-                  <th className={ADMIN_TABLE_TH}>Roles</th>
-                  <th className={ADMIN_TABLE_TH}>Status</th>
-                  <th className={ADMIN_TABLE_TH}>Created</th>
+                  <th className={ADMIN_TABLE_TH}>{table.user}</th>
+                  <th className={ADMIN_TABLE_TH}>{table.contact}</th>
+                  <th className={ADMIN_TABLE_TH}>{table.orders}</th>
+                  <th className={ADMIN_TABLE_TH}>{table.roles}</th>
+                  <th className={ADMIN_TABLE_TH}>{table.status}</th>
+                  <th className={ADMIN_TABLE_TH}>{table.created}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -209,6 +227,7 @@ export function AdminUsersView({
                   const isActive = user.status === "ACTIVE";
                   const canToggle =
                     user.status === "ACTIVE" || user.status === "SUSPENDED";
+                  const name = displayName(user);
 
                   return (
                     <tr key={user.id} className={ADMIN_TABLE_ROW}>
@@ -219,7 +238,9 @@ export function AdminUsersView({
                           checked={selected.has(user.id)}
                           onChange={() => toggleOne(user.id)}
                           disabled={isPending || user.status === "ANONYMIZED"}
-                          aria-label={`Select ${displayName(user)}`}
+                          aria-label={formatAdminMessage(table.selectUser, {
+                            name,
+                          })}
                         />
                       </td>
                       <td className={ADMIN_TABLE_TD}>
@@ -228,7 +249,7 @@ export function AdminUsersView({
                           className="block min-w-[160px]"
                         >
                           <p className="font-medium text-gray-900 hover:underline">
-                            {displayName(user)}
+                            {name}
                           </p>
                           <p className="truncate text-xs text-gray-400">
                             {user.id}
@@ -238,7 +259,7 @@ export function AdminUsersView({
                       <td className={ADMIN_TABLE_TD}>
                         <p className="text-sm text-gray-600">{user.email}</p>
                         <p className="text-sm text-gray-500">
-                          {user.phone ?? "—"}
+                          {user.phone ?? common.dash}
                         </p>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
@@ -254,7 +275,7 @@ export function AdminUsersView({
                               : "bg-sky-100 text-sky-800"
                           }`}
                         >
-                          {user.role.toLowerCase()}
+                          {adminUserRoleLabel(user.role, copy.roles)}
                         </span>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
@@ -282,8 +303,10 @@ export function AdminUsersView({
                           }`}
                           aria-label={
                             isActive
-                              ? `Suspend ${displayName(user)}`
-                              : `Activate ${displayName(user)}`
+                              ? formatAdminMessage(table.suspendNamed, { name })
+                              : formatAdminMessage(table.activateNamed, {
+                                  name,
+                                })
                           }
                         >
                           <span

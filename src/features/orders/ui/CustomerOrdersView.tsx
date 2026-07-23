@@ -2,10 +2,12 @@
 
 import { useState, useTransition } from "react";
 
+import { AdminDictionaryProvider } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
 import { CustomerOrdersTable } from "@/features/orders/ui/CustomerOrdersTable";
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerOrdersViewOrder = {
   id: string;
@@ -20,9 +22,15 @@ type CustomerOrdersViewOrder = {
 type CustomerOrdersViewProps = {
   locale: string;
   orders: CustomerOrdersViewOrder[];
+  /** Order drawer copy (shared with admin order detail UI). */
+  dictionary: AdminDictionary;
 };
 
-export function CustomerOrdersView({ locale, orders }: CustomerOrdersViewProps) {
+export function CustomerOrdersView({
+  locale,
+  orders,
+  dictionary,
+}: CustomerOrdersViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,13 +61,15 @@ export function CustomerOrdersView({ locale, orders }: CustomerOrdersViewProps) 
   return (
     <>
       <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} />
-      <OrderDetailsDrawer
-        open={drawerOpen}
-        onClose={closeDrawer}
-        detail={detail}
-        error={error}
-        isLoading={isPending}
-      />
+      <AdminDictionaryProvider dictionary={dictionary}>
+        <OrderDetailsDrawer
+          open={drawerOpen}
+          onClose={closeDrawer}
+          detail={detail}
+          error={error}
+          isLoading={isPending}
+        />
+      </AdminDictionaryProvider>
     </>
   );
 }

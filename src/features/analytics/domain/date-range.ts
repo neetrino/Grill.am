@@ -36,19 +36,6 @@ export const analyticsDateRangeSchema = z
 
 export type AnalyticsDateRange = z.infer<typeof analyticsDateRangeSchema>;
 
-const PRESET_LABELS: Record<AnalyticsPeriodPreset, string> = {
-  last_7_days: "Last 7 Days",
-  last_30_days: "Last 30 Days",
-  last_90_days: "Last 90 Days",
-  this_month: "This Month",
-  custom: "Custom Range",
-};
-
-/** Human label for a period preset select option. */
-export function analyticsPeriodLabel(preset: AnalyticsPeriodPreset): string {
-  return PRESET_LABELS[preset];
-}
-
 function utcToday(): Date {
   const now = new Date();
   return new Date(

@@ -22,14 +22,15 @@ import {
   mediaAssets,
   productCategories,
   products,
-  type LocaleTranslation,
   type TranslationsJson,
 } from "@/db/schema";
+import { resolveCategorySubtreeIds } from "@/features/categories/application/resolve-category-subtree-ids";
 import { loadProductImagesForAdmin } from "@/features/products/application/persist-product-media";
 import {
   parseProductCustomization,
   type ProductCustomization,
 } from "@/features/products/domain/customization";
+import { resolveProductTranslation } from "@/features/products/domain/resolve-translation";
 import type { AdminProductsFilter } from "@/features/products/schemas/admin-list";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
@@ -70,14 +71,10 @@ export type AdminCategoryOption = {
   title: string;
 };
 
-function translationFor(
-  translations: (typeof products.$inferSelect)["translations"],
+async function buildWhere(
+  filters: AdminProductsFilter,
   locale: Locale,
-): LocaleTranslation | null {
-  return translations[locale] ?? translations.hy ?? translations.en ?? null;
-}
-
-function buildWhere(filters: AdminProductsFilter, locale: Locale): SQL | undefined {
+): Promise<SQL | undefined> {
   const conditions: SQL[] = [isNull(products.deletedAt)];
 
   if (filters.q) {
@@ -107,13 +104,17 @@ function buildWhere(filters: AdminProductsFilter, locale: Locale): SQL | undefin
   }
 
   if (filters.categoryId) {
-    conditions.push(
-      sql`exists (
-        select 1 from ${productCategories}
-        where ${productCategories.productId} = ${products.id}
-          and ${productCategories.categoryId} = ${filters.categoryId}
-      )`,
-    );
+    const categoryIds = await resolveCategorySubtreeIds([filters.categoryId]);
+    const links = await getDb()
+      .select({ productId: productCategories.productId })
+      .from(productCategories)
+      .where(inArray(productCategories.categoryId, categoryIds));
+    const productIds = [...new Set(links.map((link) => link.productId))];
+    if (productIds.length === 0) {
+      conditions.push(sql`false`);
+    } else {
+      conditions.push(inArray(products.id, productIds));
+    }
   }
 
   return and(...conditions);
@@ -185,9 +186,7 @@ async function loadCategoryMeta(
 
   for (const row of rows) {
     const title =
-      translationFor(row.translations, locale)?.title ??
-      row.translations.hy?.title ??
-      "Category";
+      resolveProductTranslation(row.translations, locale)?.title ?? "Category";
     const entry = map.get(row.productId) ?? { ids: [], labels: [] };
     entry.ids.push(row.categoryId);
     entry.labels.push(title);
@@ -201,7 +200,7 @@ export async function listAdminProducts(
   locale: Locale,
   filters: AdminProductsFilter,
 ): Promise<{ rows: AdminProductListItem[]; total: number; pageSize: number }> {
-  const where = buildWhere(filters, locale);
+  const where = await buildWhere(filters, locale);
   const db = getDb();
 
   const [totalRow] = await db
@@ -231,7 +230,7 @@ export async function listAdminProducts(
     total,
     pageSize: PAGE_SIZE,
     rows: rows.map((product) => {
-      const translation = translationFor(product.translations, locale);
+      const translation = resolveProductTranslation(product.translations, locale);
       const categoryMeta = categoryMap.get(product.id);
       return {
         id: product.id,
@@ -258,9 +257,9 @@ export async function listAdminProducts(
   };
 }
 
-/** Active categories for the admin products filter dropdown. */
+/** Active categories for the admin products filter dropdown (English titles). */
 export async function listAdminCategoryOptions(
-  locale: Locale,
+  _locale: Locale,
 ): Promise<AdminCategoryOption[]> {
   const rows = await getDb()
     .select()
@@ -270,6 +269,10 @@ export async function listAdminCategoryOptions(
 
   return rows.map((row) => ({
     id: row.id,
-    title: translationFor(row.translations, locale)?.title ?? "Category",
+    title:
+      row.translations.en?.title ??
+      row.translations.hy?.title ??
+      row.translations.ru?.title ??
+      "Category",
   }));
 }

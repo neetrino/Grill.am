@@ -1,10 +1,16 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 import { AppLink } from "@/components/ui/AppLink";
+import type { CatalogFilterCategory } from "@/features/products/application/list-catalog-products";
 import {
+  buildCatalogQuery,
   catalogHref,
   hasActiveCatalogFilters,
   type CatalogFilter,
 } from "@/features/products/schemas/catalog-list";
-import type { CatalogFilterCategory } from "@/features/products/application/list-catalog-products";
+import { CatalogPriceRangeFilter } from "@/features/products/ui/CatalogPriceRangeFilter";
 
 type CatalogLabels = {
   filters: string;
@@ -15,9 +21,7 @@ type CatalogLabels = {
   maxPrice: string;
   categories: string;
   inStockOnly: string;
-  applyFilters: string;
   clearFilters: string;
-  currencyNote: string;
 };
 
 type CatalogFiltersProps = {
@@ -25,7 +29,7 @@ type CatalogFiltersProps = {
   filters: CatalogFilter;
   categories: CatalogFilterCategory[];
   priceBounds: { min: number; max: number } | null;
-  currencyCode: string;
+  currencySymbol: string;
   labels: CatalogLabels;
 };
 
@@ -34,15 +38,24 @@ export function CatalogFilters({
   filters,
   categories,
   priceBounds,
-  currencyCode,
+  currencySymbol,
   labels,
 }: CatalogFiltersProps) {
+  const router = useRouter();
+
   const clearHref = catalogHref(locale, {
     category: [],
     sort: filters.sort,
     page: 1,
     pageSize: filters.pageSize,
   });
+
+  function navigate(overrides: Partial<CatalogFilter>): void {
+    const query = buildCatalogQuery(filters, { ...overrides, page: 1 });
+    router.push(
+      query ? `/${locale}/products?${query}` : `/${locale}/products`,
+    );
+  }
 
   return (
     <aside className="space-y-6">
@@ -61,69 +74,43 @@ export function CatalogFilters({
         ) : null}
       </div>
 
-      <form method="get" className="space-y-6">
-        {filters.sort !== "newest" ? (
-          <input type="hidden" name="sort" value={filters.sort} />
-        ) : null}
-        {filters.pageSize !== 24 ? (
-          <input type="hidden" name="pageSize" value={filters.pageSize} />
-        ) : null}
-
+      <div className="space-y-6">
         <label className="block space-y-2">
           <span className="text-sm font-medium text-gray-800">
             {labels.search}
           </span>
           <input
             type="search"
-            name="q"
             defaultValue={filters.q ?? ""}
+            key={filters.q ?? ""}
             placeholder={labels.searchPlaceholder}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              event.preventDefault();
+              const value = event.currentTarget.value.trim();
+              navigate({ q: value.length > 0 ? value : undefined });
+            }}
+            onBlur={(event) => {
+              const value = event.currentTarget.value.trim();
+              const next = value.length > 0 ? value : undefined;
+              if (next === filters.q) return;
+              navigate({ q: next });
+            }}
             className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-400"
           />
         </label>
 
-        <fieldset className="space-y-2">
-          <legend className="text-sm font-medium text-gray-800">
-            {labels.price}
-          </legend>
-          <p className="text-xs text-gray-500">
-            {labels.currencyNote.replace("{currency}", currencyCode)}
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            <label className="block space-y-1">
-              <span className="sr-only">{labels.minPrice}</span>
-              <input
-                type="number"
-                name="minPrice"
-                min={0}
-                inputMode="numeric"
-                defaultValue={filters.minPrice ?? ""}
-                placeholder={
-                  priceBounds
-                    ? String(priceBounds.min)
-                    : labels.minPrice
-                }
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-400"
-              />
-            </label>
-            <label className="block space-y-1">
-              <span className="sr-only">{labels.maxPrice}</span>
-              <input
-                type="number"
-                name="maxPrice"
-                min={0}
-                inputMode="numeric"
-                defaultValue={filters.maxPrice ?? ""}
-                placeholder={
-                  priceBounds
-                    ? String(priceBounds.max)
-                    : labels.maxPrice
-                }
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-400"
-              />
-            </label>
-          </div>
-        </fieldset>
+        <CatalogPriceRangeFilter
+          locale={locale}
+          currencySymbol={currencySymbol}
+          priceBounds={priceBounds}
+          filters={filters}
+          labels={{
+            price: labels.price,
+            minPrice: labels.minPrice,
+            maxPrice: labels.maxPrice,
+          }}
+        />
 
         {categories.length > 0 ? (
           <fieldset className="space-y-2">
@@ -138,9 +125,16 @@ export function CatalogFilters({
                     <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
                       <input
                         type="checkbox"
-                        name="category"
                         value={category.slug}
-                        defaultChecked={checked}
+                        checked={checked}
+                        onChange={(event) => {
+                          const next = event.target.checked
+                            ? [...filters.category, category.slug]
+                            : filters.category.filter(
+                                (slug) => slug !== category.slug,
+                              );
+                          navigate({ category: next });
+                        }}
                         className="size-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
                       />
                       <span className="flex-1">{category.title}</span>
@@ -158,21 +152,17 @@ export function CatalogFilters({
         <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
           <input
             type="checkbox"
-            name="inStock"
-            value="true"
-            defaultChecked={filters.inStock === true}
+            checked={filters.inStock === true}
+            onChange={(event) => {
+              navigate({
+                inStock: event.target.checked ? true : undefined,
+              });
+            }}
             className="size-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
           />
           {labels.inStockOnly}
         </label>
-
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800"
-        >
-          {labels.applyFilters}
-        </button>
-      </form>
+      </div>
     </aside>
   );
 }

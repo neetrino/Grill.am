@@ -1,3 +1,6 @@
+"use client";
+
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 
 type OrderDetailsDrawerCustomizationsProps = {
@@ -8,6 +11,7 @@ type OrderDetailsDrawerCustomizationsProps = {
 export function OrderDetailsDrawerCustomizations({
   detail,
 }: OrderDetailsDrawerCustomizationsProps) {
+  const dictionary = useAdminDictionary();
   const customized = detail.items.filter(
     (item) => item.modifierLines.length > 0,
   );
@@ -19,7 +23,7 @@ export function OrderDetailsDrawerCustomizations({
   return (
     <div className="border-t border-gray-200 px-6 py-5">
       <h3 className="mb-4 text-base font-semibold text-gray-900">
-        Additions & removals
+        {dictionary.orders.drawer.customizations}
       </h3>
       <ul className="space-y-4">
         {customized.map((item) => (

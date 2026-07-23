@@ -1,14 +1,15 @@
+"use client";
+
 import { MapPin } from "lucide-react";
 
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_BADGE,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import {
-  formatOrderDrawerMoney,
-  formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
+import { adminPaymentStatusLabel } from "@/features/orders/ui/admin-order-status-labels";
+import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 
 type OrderDetailsDrawerShippingProps = {
   detail: AdminOrderDetailView;
@@ -17,20 +18,23 @@ type OrderDetailsDrawerShippingProps = {
 export function OrderDetailsDrawerShipping({
   detail,
 }: OrderDetailsDrawerShippingProps) {
+  const dictionary = useAdminDictionary();
+  const drawer = dictionary.orders.drawer;
+
   return (
     <div className="grid gap-8 border-b border-gray-200 px-6 py-5 md:grid-cols-2">
       <section>
         <h3 className="mb-4 text-base font-semibold text-gray-900">
-          Shipping Address
+          {drawer.shippingAddress}
         </h3>
         <dl className="space-y-3 text-sm">
           <div className="flex flex-wrap items-center gap-x-2">
-            <dt className="text-gray-500">Shipping Method:</dt>
+            <dt className="text-gray-500">{drawer.shippingMethod}:</dt>
             <dd className="font-medium text-gray-900">{detail.shippingMethod}</dd>
           </div>
           {detail.isPickup ? (
             <div className="flex flex-wrap items-center gap-x-2">
-              <dt className="text-gray-500">Pickup store:</dt>
+              <dt className="text-gray-500">{drawer.pickupStore}:</dt>
               <dd className="font-medium text-gray-900">{detail.storeName}</dd>
             </div>
           ) : null}
@@ -48,14 +52,16 @@ export function OrderDetailsDrawerShipping({
       </section>
 
       <section>
-        <h3 className="mb-4 text-base font-semibold text-gray-900">Payment</h3>
+        <h3 className="mb-4 text-base font-semibold text-gray-900">
+          {drawer.payment}
+        </h3>
         <dl className="space-y-3 text-sm">
           <div className="flex flex-wrap items-center gap-x-2">
-            <dt className="text-gray-500">Method:</dt>
+            <dt className="text-gray-500">{drawer.method}:</dt>
             <dd className="font-medium text-gray-900">{detail.paymentMethod}</dd>
           </div>
           <div className="flex flex-wrap items-center gap-x-2">
-            <dt className="text-gray-500">Amount:</dt>
+            <dt className="text-gray-500">{drawer.amount}:</dt>
             <dd className="font-medium text-gray-900">
               {formatOrderDrawerMoney(
                 detail.paymentAmount,
@@ -66,7 +72,7 @@ export function OrderDetailsDrawerShipping({
           {detail.cashTenderedAmount != null ? (
             <>
               <div className="flex flex-wrap items-center gap-x-2">
-                <dt className="text-gray-500">Customer pays with:</dt>
+                <dt className="text-gray-500">{drawer.customerPaysWith}:</dt>
                 <dd className="font-medium text-gray-900">
                   {formatOrderDrawerMoney(
                     detail.cashTenderedAmount,
@@ -77,7 +83,7 @@ export function OrderDetailsDrawerShipping({
               {detail.cashChangeAmount != null &&
               detail.cashChangeAmount > 0 ? (
                 <div className="flex flex-wrap items-center gap-x-2">
-                  <dt className="text-gray-500">Prepare change:</dt>
+                  <dt className="text-gray-500">{drawer.prepareChange}:</dt>
                   <dd className="font-semibold text-amber-800">
                     {formatOrderDrawerMoney(
                       detail.cashChangeAmount,
@@ -89,12 +95,15 @@ export function OrderDetailsDrawerShipping({
             </>
           ) : null}
           <div className="flex flex-wrap items-center gap-x-2">
-            <dt className="text-gray-500">Status:</dt>
+            <dt className="text-gray-500">{drawer.status}:</dt>
             <dd>
               <span
                 className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}
               >
-                {formatOrderStatusLabel(detail.paymentStatus)}
+                {adminPaymentStatusLabel(
+                  detail.paymentStatus,
+                  dictionary.orders.paymentStatus,
+                )}
               </span>
             </dd>
           </div>

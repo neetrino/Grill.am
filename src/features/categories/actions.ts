@@ -113,12 +113,9 @@ export async function createCategoryFromDrawerAction(
   }
 
   const rawParent = formData.get("parentId");
-  const rawEditingLocale = formData.get("editingLocale");
   const parsed = createCategorySchema.safeParse({
-    editingLocale:
-      typeof rawEditingLocale === "string" && isLocale(rawEditingLocale)
-        ? rawEditingLocale
-        : locale,
+    // Categories are English-only in admin.
+    editingLocale: "en",
     title: formData.get("title"),
     slug: formData.get("slug"),
     parentId:
@@ -159,12 +156,9 @@ export async function updateCategoryFromDrawerAction(
   }
 
   const rawParent = formData.get("parentId");
-  const rawEditingLocale = formData.get("editingLocale");
   const parsed = createCategorySchema.safeParse({
-    editingLocale:
-      typeof rawEditingLocale === "string" && isLocale(rawEditingLocale)
-        ? rawEditingLocale
-        : locale,
+    // Categories are English-only in admin.
+    editingLocale: "en",
     title: formData.get("title"),
     slug: formData.get("slug"),
     parentId:

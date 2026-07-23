@@ -11,6 +11,7 @@ import {
   productCategories,
   products,
 } from "@/db/schema";
+import { resolveCategorySubtreeIds } from "@/features/categories/application/resolve-category-subtree-ids";
 import { parseProductCustomization } from "@/features/products/domain/customization";
 import { resolveProductTranslation } from "@/features/products/domain/resolve-translation";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
@@ -214,11 +215,12 @@ async function loadActiveProductsPage(
 
   let productIdFilter: string[] | null = null;
   if (categoryId) {
+    const categoryIds = await resolveCategorySubtreeIds([categoryId]);
     const links = await getDb()
       .select({ productId: productCategories.productId })
       .from(productCategories)
-      .where(eq(productCategories.categoryId, categoryId));
-    productIdFilter = links.map((link) => link.productId);
+      .where(inArray(productCategories.categoryId, categoryIds));
+    productIdFilter = [...new Set(links.map((link) => link.productId))];
     if (productIdFilter.length === 0) {
       return {
         products: [],

@@ -10,14 +10,16 @@ import {
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
-import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import {
   createCategoryFromDrawerAction,
   updateCategoryFromDrawerAction,
 } from "@/features/categories/actions";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
-import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+import enAdmin from "@/locales/en/admin.json";
+
+/** Categories are English-only in admin (no locale tabs). */
+const CATEGORY_LOCALE = "en" as const;
 
 type LocaleDraft = {
   title: string;
@@ -37,39 +39,16 @@ function emptyDraft(): LocaleDraft {
   return { title: "", slug: "", slugTouched: false };
 }
 
-function draftsFromTranslations(
+function draftFromTranslations(
   translations: TranslationsJson | undefined,
-): Record<Locale, LocaleDraft> {
-  const next = {
-    hy: emptyDraft(),
-    en: emptyDraft(),
-    ru: emptyDraft(),
-  } satisfies Record<Locale, LocaleDraft>;
-
-  for (const loc of locales) {
-    const copy = translations?.[loc];
-    if (!copy) continue;
-    next[loc] = {
-      title: copy.title,
-      slug: copy.slug,
-      slugTouched: true,
-    };
-  }
-
-  return next;
-}
-
-function resolveInitialLocale(
-  pageLocale: string,
-  translations: TranslationsJson | undefined,
-): Locale {
-  if (isLocale(pageLocale)) {
-    return pageLocale;
-  }
-  return (
-    (locales.find((loc) => translations?.[loc]?.title) as Locale | undefined) ??
-    "hy"
-  );
+): LocaleDraft {
+  const copy = translations?.[CATEGORY_LOCALE] ?? translations?.hy ?? null;
+  if (!copy) return emptyDraft();
+  return {
+    title: copy.title,
+    slug: copy.slug,
+    slugTouched: true,
+  };
 }
 
 export function AddCategoryDrawer({
@@ -79,14 +58,13 @@ export function AddCategoryDrawer({
   categories,
   category = null,
 }: AddCategoryDrawerProps) {
+  const copy = enAdmin.categories.drawer;
+  const common = enAdmin.common;
   const router = useRouter();
   const isEdit = category != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeLocale, setActiveLocale] = useState<Locale>(() =>
-    resolveInitialLocale(locale, category?.translations),
-  );
-  const [drafts, setDrafts] = useState<Record<Locale, LocaleDraft>>(() =>
-    draftsFromTranslations(category?.translations),
+  const [draft, setDraft] = useState<LocaleDraft>(() =>
+    draftFromTranslations(category?.translations),
   );
   const [parentId, setParentId] = useState("");
   const [status, setStatus] = useState<"ACTIVE" | "ARCHIVED">("ACTIVE");
@@ -115,8 +93,7 @@ export function AddCategoryDrawer({
 
   useEffect(() => {
     if (!open) {
-      setActiveLocale(resolveInitialLocale(locale, undefined));
-      setDrafts(draftsFromTranslations(undefined));
+      setDraft(emptyDraft());
       setParentId("");
       setStatus("ACTIVE");
       setImageFile(null);
@@ -129,8 +106,7 @@ export function AddCategoryDrawer({
       return;
     }
 
-    setActiveLocale(resolveInitialLocale(locale, category?.translations));
-    setDrafts(draftsFromTranslations(category?.translations));
+    setDraft(draftFromTranslations(category?.translations));
     if (category) {
       setParentId(category.parentId ?? "");
       setStatus(category.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE");
@@ -146,21 +122,18 @@ export function AddCategoryDrawer({
       setRemoveExistingImage(false);
       setError(null);
     }
-  }, [open, category, locale]);
+  }, [open, category]);
 
   if (!open) return null;
 
-  const draft = drafts[activeLocale];
   const displaySlug = draft.slugTouched
     ? draft.slug
     : slugifyCategoryTitle(draft.title) || "---";
   const parentOptions = categories.filter((item) => item.id !== category?.id);
+  const drawerTitle = isEdit ? copy.editTitle : copy.addTitle;
 
   function updateDraft(patch: Partial<LocaleDraft>): void {
-    setDrafts((current) => ({
-      ...current,
-      [activeLocale]: { ...current[activeLocale], ...patch },
-    }));
+    setDraft((current) => ({ ...current, ...patch }));
   }
 
   return (
@@ -168,7 +141,7 @@ export function AddCategoryDrawer({
       className="fixed inset-0 z-50 flex justify-end bg-black/40"
       role="dialog"
       aria-modal="true"
-      aria-label={isEdit ? "Edit Category" : "Add Category"}
+      aria-label={drawerTitle}
       onClick={onClose}
     >
       <div
@@ -176,14 +149,12 @@ export function AddCategoryDrawer({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit Category" : "Add Category"}
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">{drawerTitle}</h2>
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close"
+            aria-label={common.close}
           >
             <X className="h-5 w-5" />
           </button>
@@ -193,15 +164,14 @@ export function AddCategoryDrawer({
           className="flex min-h-0 flex-1 flex-col"
           onSubmit={(event) => {
             event.preventDefault();
-            const current = drafts[activeLocale];
             const nextSlug =
-              current.slugTouched && current.slug.trim()
-                ? current.slug.trim()
-                : slugifyCategoryTitle(current.title);
+              draft.slugTouched && draft.slug.trim()
+                ? draft.slug.trim()
+                : slugifyCategoryTitle(draft.title);
 
             const formData = new FormData();
-            formData.set("editingLocale", activeLocale);
-            formData.set("title", current.title.trim());
+            formData.set("editingLocale", CATEGORY_LOCALE);
+            formData.set("title", draft.title.trim());
             formData.set("slug", nextSlug);
             formData.set("parentId", parentId);
             formData.set("status", status);
@@ -234,28 +204,22 @@ export function AddCategoryDrawer({
           }}
         >
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-            <AdminLocaleTabs
-              activeLocale={activeLocale}
-              onChange={setActiveLocale}
-              disabled={isPending}
-            />
-
             <label className="block">
               <span className={ADMIN_LABEL}>
-                Category Title <span className="text-red-600">*</span>
+                {copy.categoryTitle} <span className="text-red-600">*</span>
               </span>
               <input
                 required
                 value={draft.title}
                 onChange={(event) => updateDraft({ title: event.target.value })}
-                placeholder="Enter category title"
+                placeholder={copy.titlePlaceholder}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Slug</span>
+              <span className={ADMIN_LABEL}>{copy.slug}</span>
               <input
                 value={displaySlug === "---" ? "" : displaySlug}
                 onChange={(event) => {
@@ -264,24 +228,24 @@ export function AddCategoryDrawer({
                     slug: event.target.value,
                   });
                 }}
-                placeholder="---"
+                placeholder={copy.slugPlaceholder}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
               <span className="mt-1 block text-xs text-gray-500">
-                Generated automatically from the title and used on /products.
+                {copy.slugHint}
               </span>
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Parent Category</span>
+              <span className={ADMIN_LABEL}>{copy.parent}</span>
               <select
                 value={parentId}
                 onChange={(event) => setParentId(event.target.value)}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               >
-                <option value="">None (Root Category)</option>
+                <option value="">{copy.rootOption}</option>
                 {parentOptions.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.title}
@@ -291,7 +255,7 @@ export function AddCategoryDrawer({
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Status</span>
+              <span className={ADMIN_LABEL}>{copy.status}</span>
               <select
                 value={status}
                 onChange={(event) =>
@@ -300,13 +264,13 @@ export function AddCategoryDrawer({
                 className={ADMIN_INPUT}
                 disabled={isPending}
               >
-                <option value="ACTIVE">Published</option>
-                <option value="ARCHIVED">Archived</option>
+                <option value="ACTIVE">{copy.published}</option>
+                <option value="ARCHIVED">{copy.archived}</option>
               </select>
             </label>
 
             <div>
-              <span className={ADMIN_LABEL}>Image</span>
+              <span className={ADMIN_LABEL}>{copy.image}</span>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
@@ -314,7 +278,7 @@ export function AddCategoryDrawer({
                   onClick={() => fileInputRef.current?.click()}
                   className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
                 >
-                  {imagePreview ? "Change Image" : "+ Upload Image"}
+                  {imagePreview ? copy.changeImage : copy.uploadImage}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -353,7 +317,7 @@ export function AddCategoryDrawer({
                     }}
                     className="text-sm font-medium text-gray-600 hover:text-red-600"
                   >
-                    Remove
+                    {common.remove}
                   </button>
                 ) : null}
               </div>
@@ -377,18 +341,18 @@ export function AddCategoryDrawer({
             >
               {isPending
                 ? isEdit
-                  ? "Saving…"
-                  : "Creating…"
+                  ? common.saving
+                  : common.creating
                 : isEdit
-                  ? "Save"
-                  : "Create Category"}
+                  ? common.save
+                  : copy.createCategory}
             </Button>
             <button
               type="button"
               onClick={onClose}
               className="whitespace-nowrap text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {common.cancel}
             </button>
           </div>
         </form>

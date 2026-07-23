@@ -32,12 +32,4 @@ export function useAdminDictionary(): AdminDictionary {
   return dictionary;
 }
 
-/** Replaces `{name}` placeholders in admin message templates. */
-export function formatAdminMessage(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
-    return values[key] ?? "";
-  });
-}
+export { formatAdminMessage } from "@/features/admin/ui/format-admin-message";

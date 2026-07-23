@@ -11,10 +11,20 @@ import {
 } from "@/features/promotions/application/queries";
 import { PromotionForm } from "@/features/promotions/ui/PromotionForm";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminDiscountDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
+
+function fillTemplate(
+  template: string,
+  values: Record<string, string>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    return values[key] ?? "";
+  });
+}
 
 export default async function AdminDiscountDetailPage({
   params,
@@ -33,6 +43,10 @@ export default async function AdminDiscountDetailPage({
     notFound();
   }
 
+  const admin = getDictionary(locale).admin;
+  const discounts = admin.discounts;
+  const coupons = admin.coupons;
+
   return (
     <section>
       <div className="mb-6">
@@ -41,12 +55,14 @@ export default async function AdminDiscountDetailPage({
             href={`/${locale}/admin/discounts`}
             className="font-medium text-gray-700 hover:underline"
           >
-            Discounts
+            {discounts.title}
           </Link>
         </p>
-        <h1 className={ADMIN_PAGE_TITLE}>Automatic discount</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{discounts.automaticDiscount}</h1>
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          Used {promo.usedCount} times
+          {fillTemplate(coupons.usedTimes, {
+            count: String(promo.usedCount),
+          })}
         </p>
       </div>
 

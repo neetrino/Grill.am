@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import type { DiscountBoardCategory } from "@/features/promotions/application/discounts-board";
 import { saveCategoryDiscountsAction } from "@/features/promotions/application/manage-discounts";
 
@@ -25,6 +29,9 @@ export function CategoryDiscountsSection({
   locale,
   categories,
 }: CategoryDiscountsSectionProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.discounts.category;
+  const common = dictionary.common;
   const router = useRouter();
   const [drafts, setDrafts] = useState<Record<string, string>>(() =>
     Object.fromEntries(
@@ -69,7 +76,9 @@ export function CategoryDiscountsSection({
     for (const category of categories) {
       const parsed = parsePercent(drafts[category.id] ?? "");
       if (parsed === "invalid") {
-        setError(`Invalid percentage for “${category.title}”. Use 1–100.`);
+        setError(
+          formatAdminMessage(copy.invalid, { title: category.title }),
+        );
         return;
       }
       items.push({ categoryId: category.id, percentage: parsed });
@@ -83,7 +92,11 @@ export function CategoryDiscountsSection({
         setError(result.error.message);
         return;
       }
-      setMessage(`Saved ${result.value.saved} category discount(s).`);
+      setMessage(
+        formatAdminMessage(copy.saved, {
+          count: String(result.value.saved),
+        }),
+      );
       router.refresh();
     });
   }
@@ -92,12 +105,8 @@ export function CategoryDiscountsSection({
     <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">
-            Category Discounts
-          </h2>
-          <p className="text-sm text-gray-500">
-            Apply discounts to each product within a category
-          </p>
+          <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
+          <p className="text-sm text-gray-500">{copy.subtitle}</p>
         </div>
         <Button
           type="button"
@@ -105,13 +114,13 @@ export function CategoryDiscountsSection({
           disabled={isPending || !isDirty || categories.length === 0}
           onClick={saveAll}
         >
-          {isPending ? "Saving…" : "Save"}
+          {isPending ? common.saving : common.save}
         </Button>
       </div>
 
       {categories.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 px-4 py-10 text-center text-sm text-gray-500">
-          No categories found
+          {copy.empty}
         </div>
       ) : (
         <ul className="max-h-80 divide-y divide-gray-100 overflow-y-auto rounded-lg border border-gray-200">
@@ -128,7 +137,9 @@ export function CategoryDiscountsSection({
               </div>
               <div className="flex items-center gap-2">
                 <label className="sr-only" htmlFor={`cat-discount-${category.id}`}>
-                  Discount for {category.title}
+                  {formatAdminMessage(copy.discountFor, {
+                    title: category.title,
+                  })}
                 </label>
                 <input
                   id={`cat-discount-${category.id}`}
@@ -155,7 +166,7 @@ export function CategoryDiscountsSection({
                   }
                   className="text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50"
                 >
-                  Clear
+                  {common.clear}
                 </button>
               </div>
             </li>

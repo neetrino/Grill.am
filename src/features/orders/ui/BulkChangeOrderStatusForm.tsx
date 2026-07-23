@@ -6,6 +6,10 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
+import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
   ADMIN_TABLE_CHECKBOX,
@@ -51,6 +55,10 @@ export function BulkChangeOrderStatusForm({
   orders,
   onOpenOrder,
 }: BulkChangeOrderStatusFormProps) {
+  const dictionary = useAdminDictionary();
+  const list = dictionary.orders.list;
+  const bulk = dictionary.orders.bulk;
+  const common = dictionary.common;
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -79,7 +87,7 @@ export function BulkChangeOrderStatusForm({
 
   function deleteSelected(): void {
     if (selected.size === 0) {
-      setError("Select at least one order.");
+      setError(bulk.selectAtLeastOne);
       return;
     }
 
@@ -96,7 +104,10 @@ export function BulkChangeOrderStatusForm({
       }
 
       setMessage(
-        `Deleted ${result.value.archived}, skipped ${result.value.skipped}.`,
+        formatAdminMessage(bulk.deletedResult, {
+          deleted: String(result.value.archived),
+          skipped: String(result.value.skipped),
+        }),
       );
       setSelected(new Set());
       router.refresh();
@@ -107,7 +118,9 @@ export function BulkChangeOrderStatusForm({
     <div className="flex flex-col gap-4">
       <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
         <p className="text-sm text-gray-700">
-          Selected {selected.size} order{selected.size === 1 ? "" : "s"}
+          {formatAdminMessage(bulk.selectedCount, {
+            count: String(selected.size),
+          })}
         </p>
         <Button
           type="button"
@@ -115,7 +128,7 @@ export function BulkChangeOrderStatusForm({
           disabled={isPending || selected.size === 0}
           onClick={deleteSelected}
         >
-          {isPending ? "Deleting…" : "Delete selected"}
+          {isPending ? bulk.deleting : bulk.deleteSelected}
         </Button>
         {error ? (
           <p className="w-full text-sm text-red-700">{error}</p>
@@ -137,15 +150,15 @@ export function BulkChangeOrderStatusForm({
                     checked={allSelected}
                     onChange={toggleAll}
                     disabled={isPending || orders.length === 0}
-                    aria-label="Select all orders on page"
+                    aria-label={list.selectAll}
                   />
                 </th>
-                <th className={ADMIN_TABLE_TH}>Order</th>
-                <th className={ADMIN_TABLE_TH}>Customer</th>
-                <th className={ADMIN_TABLE_TH}>Status</th>
-                <th className={ADMIN_TABLE_TH}>Payment</th>
-                <th className={ADMIN_TABLE_TH}>Total</th>
-                <th className={ADMIN_TABLE_TH}>Placed</th>
+                <th className={ADMIN_TABLE_TH}>{list.order}</th>
+                <th className={ADMIN_TABLE_TH}>{list.customer}</th>
+                <th className={ADMIN_TABLE_TH}>{list.status}</th>
+                <th className={ADMIN_TABLE_TH}>{list.payment}</th>
+                <th className={ADMIN_TABLE_TH}>{list.total}</th>
+                <th className={ADMIN_TABLE_TH}>{list.placed}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
@@ -158,7 +171,9 @@ export function BulkChangeOrderStatusForm({
                       checked={selected.has(order.orderNumber)}
                       onChange={() => toggleOne(order.orderNumber)}
                       disabled={isPending || order.isArchived}
-                      aria-label={`Select ${order.orderNumber}`}
+                      aria-label={formatAdminMessage(list.selectOrder, {
+                        orderNumber: order.orderNumber,
+                      })}
                     />
                   </td>
                   <td className={ADMIN_TABLE_TD}>
@@ -171,7 +186,7 @@ export function BulkChangeOrderStatusForm({
                     </button>
                     {order.isArchived ? (
                       <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
-                        Archived
+                        {list.archived}
                       </span>
                     ) : null}
                   </td>
@@ -208,7 +223,7 @@ export function BulkChangeOrderStatusForm({
                         .toISOString()
                         .slice(0, 16)
                         .replace("T", " ")}{" "}
-                      UTC
+                      {common.utc}
                     </span>
                   </td>
                 </tr>
@@ -218,12 +233,14 @@ export function BulkChangeOrderStatusForm({
         </div>
         {orders.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No orders match these filters.
+            {list.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_FOOTER_ROUNDED_B}>
             <p className="text-sm text-gray-600">
-              {selected.size} selected on this page
+              {formatAdminMessage(list.selectedOnPage, {
+                count: String(selected.size),
+              })}
             </p>
           </div>
         )}

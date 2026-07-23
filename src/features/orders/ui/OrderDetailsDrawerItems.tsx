@@ -1,3 +1,6 @@
+"use client";
+
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_OUTER_SCROLL,
@@ -17,18 +20,23 @@ type OrderDetailsDrawerItemsProps = {
 export function OrderDetailsDrawerItems({
   detail,
 }: OrderDetailsDrawerItemsProps) {
+  const dictionary = useAdminDictionary();
+  const drawer = dictionary.orders.drawer;
+
   return (
     <div className="px-6 py-5">
-      <h3 className="mb-4 text-base font-semibold text-gray-900">Items</h3>
+      <h3 className="mb-4 text-base font-semibold text-gray-900">
+        {drawer.items}
+      </h3>
       <div className={`${ADMIN_TABLE_OUTER_SCROLL} rounded-lg border border-gray-200`}>
         <table className={ADMIN_TABLE}>
           <thead className={ADMIN_TABLE_THEAD}>
             <tr>
-              <th className={ADMIN_TABLE_TH}>Product</th>
-              <th className={ADMIN_TABLE_TH}>SKU</th>
-              <th className={ADMIN_TABLE_TH}>Qty</th>
-              <th className={ADMIN_TABLE_TH}>Price</th>
-              <th className={ADMIN_TABLE_TH}>Total</th>
+              <th className={ADMIN_TABLE_TH}>{drawer.product}</th>
+              <th className={ADMIN_TABLE_TH}>{drawer.sku}</th>
+              <th className={ADMIN_TABLE_TH}>{drawer.qty}</th>
+              <th className={ADMIN_TABLE_TH}>{drawer.price}</th>
+              <th className={ADMIN_TABLE_TH}>{drawer.lineTotal}</th>
             </tr>
           </thead>
           <tbody className={ADMIN_TABLE_TBODY}>

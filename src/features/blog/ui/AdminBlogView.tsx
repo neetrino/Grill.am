@@ -10,6 +10,10 @@ import {
   ADMIN_INPUT,
   ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteBlogPostAction } from "@/features/blog/application/manage-blog";
 import type { AdminBlogListItem } from "@/features/blog/application/queries";
@@ -28,15 +32,9 @@ function statusBadgeClass(status: string): string {
   return "bg-gray-100 text-gray-800";
 }
 
-function statusLabel(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "PUBLISHED") return "Published";
-  if (normalized === "DRAFT") return "Draft";
-  if (normalized === "ARCHIVED") return "Archived";
-  return status;
-}
-
 export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.blog;
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -55,6 +53,14 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
     });
   }, [posts, query]);
 
+  function statusLabel(status: string): string {
+    const normalized = status.toUpperCase();
+    if (normalized === "PUBLISHED") return copy.status.published;
+    if (normalized === "DRAFT") return copy.status.draft;
+    if (normalized === "ARCHIVED") return copy.status.archived;
+    return status;
+  }
+
   function openCreate(): void {
     setEditingPost(null);
     setDrawerOpen(true);
@@ -71,9 +77,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
   }
 
   function handleDelete(postId: string): void {
-    const confirmed = window.confirm(
-      "Delete this blog post? This cannot be undone from the admin list.",
-    );
+    const confirmed = window.confirm(copy.confirmDelete);
     if (!confirmed) return;
 
     startTransition(async () => {
@@ -90,18 +94,18 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>Blog</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
         <Button type="button" size="sm" onClick={openCreate}>
-          Add post
+          {copy.addPost}
         </Button>
       </div>
 
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search by title or slug"
+        placeholder={copy.searchPlaceholder}
         className={`${ADMIN_INPUT} mb-4`}
-        aria-label="Search blog posts"
+        aria-label={copy.searchAria}
       />
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
@@ -110,9 +114,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
         {filtered.length === 0 ? (
           <Card className="rounded-xl p-8">
             <p className="text-center text-sm text-gray-600">
-              {posts.length === 0
-                ? "No blog posts yet."
-                : "No posts match this search."}
+              {posts.length === 0 ? copy.empty : copy.emptySearch}
             </p>
           </Card>
         ) : (
@@ -133,7 +135,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-xs font-medium text-white/70">
-                        Blog
+                        {copy.title}
                       </div>
                     )}
                   </div>
@@ -164,7 +166,9 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
                     disabled={isPending}
                     onClick={() => openEdit(post)}
                     className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
-                    aria-label={`Edit ${post.title}`}
+                    aria-label={formatAdminMessage(copy.editNamed, {
+                      title: post.title,
+                    })}
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
@@ -173,7 +177,9 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
                     disabled={isPending}
                     onClick={() => handleDelete(post.id)}
                     className="rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50"
-                    aria-label={`Delete ${post.title}`}
+                    aria-label={formatAdminMessage(copy.deleteNamed, {
+                      title: post.title,
+                    })}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

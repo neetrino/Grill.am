@@ -10,6 +10,7 @@ import { adminProductsFilterSchema } from "@/features/products/schemas/admin-lis
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminProductsPageProps = {
   params: Promise<{ locale: string }>;
@@ -23,6 +24,15 @@ function firstParam(
     return value[0];
   }
   return value;
+}
+
+function fillTemplate(
+  template: string,
+  values: Record<string, string>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    return values[key] ?? "";
+  });
 }
 
 function buildQuery(
@@ -109,6 +119,8 @@ export default async function AdminProductsPage({
     created: sortHref("created"),
   };
 
+  const common = getDictionary(locale).admin.common;
+
   return (
     <section>
       <AdminProductsFilters
@@ -137,18 +149,21 @@ export default async function AdminProductsPage({
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page - 1 })}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {fillTemplate(common.pageOf, {
+              page: String(filters.page),
+              totalPages: String(totalPages),
+            })}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page + 1 })}`}
               className="font-medium hover:underline"
             >
-              Next
+              {common.next}
             </Link>
           ) : null}
         </nav>

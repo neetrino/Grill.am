@@ -12,6 +12,7 @@ import { AnalyticsOrdersByDay } from "@/features/analytics/ui/AnalyticsOrdersByD
 import { AnalyticsPeriodCard } from "@/features/analytics/ui/AnalyticsPeriodCard";
 import { AnalyticsTopRankings } from "@/features/analytics/ui/AnalyticsTopRankings";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type AdminAnalyticsPageProps = {
@@ -37,6 +38,7 @@ export default async function AdminAnalyticsPage({
     notFound();
   }
 
+  const copy = getDictionary(locale).admin.analytics;
   const raw = await searchParams;
   const defaults = rangeForAnalyticsPeriod("last_7_days");
   const parsed = analyticsDateRangeSchema.safeParse({
@@ -52,15 +54,10 @@ export default async function AdminAnalyticsPage({
     to: range.to,
   }).toString();
 
-  const formatMoney = (amount: number): string =>
-    formatMoneyAmount(amount, "AMD", locale);
-
   return (
     <section>
       <div className="mb-6">
-        <p className={ADMIN_PAGE_SUBTITLE}>
-          Track your business performance and statistics
-        </p>
+        <p className={ADMIN_PAGE_SUBTITLE}>{copy.subtitle}</p>
       </div>
 
       <AnalyticsPeriodCard
@@ -75,20 +72,17 @@ export default async function AdminAnalyticsPage({
 
       <AnalyticsMetricCards
         orderCount={summary.orderCount}
-        revenueLabel={formatMoney(summary.revenueAmount)}
+        revenueLabel={formatMoneyAmount(summary.revenueAmount, "AMD", locale)}
         userCount={summary.userCount}
       />
 
       <AnalyticsTopRankings
+        locale={locale}
         products={summary.topProducts}
         categories={summary.topCategories}
-        formatMoney={formatMoney}
       />
 
-      <AnalyticsOrdersByDay
-        rows={summary.dailyRows}
-        formatMoney={formatMoney}
-      />
+      <AnalyticsOrdersByDay locale={locale} rows={summary.dailyRows} />
     </section>
   );
 }

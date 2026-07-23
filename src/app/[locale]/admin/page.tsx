@@ -14,6 +14,7 @@ import {
 } from "@/features/analytics/domain/date-range";
 import { getAdminDashboardMetrics } from "@/features/orders/application/queries";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminPageProps = {
   params: Promise<{ locale: string }>;
@@ -26,43 +27,14 @@ function formatMoney(amount: number): string {
   });
 }
 
-const QUICK_ACTIONS = [
-  {
-    href: "products/new",
-    title: "Add product",
-    subtitle: "Create a new product",
-    iconBg: "bg-green-100",
-    iconColor: "text-green-600",
-    iconPath: "M12 4v16m8-8H4",
-  },
-  {
-    href: "orders",
-    title: "Manage orders",
-    subtitle: "View all orders",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
-    iconPath:
-      "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
-  },
-  {
-    href: "users",
-    title: "Manage users",
-    subtitle: "View all users",
-    iconBg: "bg-purple-100",
-    iconColor: "text-purple-600",
-    iconPath:
-      "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
-  },
-  {
-    href: "settings",
-    title: "Settings",
-    subtitle: "Configure store",
-    iconBg: "bg-yellow-100",
-    iconColor: "text-yellow-600",
-    iconPath:
-      "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z",
-  },
-] as const;
+function fillTemplate(
+  template: string,
+  values: Record<string, string>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    return values[key] ?? "";
+  });
+}
 
 export default async function AdminPage({ params }: AdminPageProps) {
   const { locale } = await params;
@@ -70,16 +42,57 @@ export default async function AdminPage({ params }: AdminPageProps) {
     notFound();
   }
 
+  const copy = getDictionary(locale).admin.dashboard;
   const metrics = await getAdminDashboardMetrics(defaultAnalyticsDateRange());
-  const revenueDelta = `${formatPeriodDelta(
-    metrics.revenueAmount,
-    metrics.previousRevenueAmount,
-  )} vs prev`;
+  const revenueDelta = fillTemplate(copy.vsPrev, {
+    delta: formatPeriodDelta(
+      metrics.revenueAmount,
+      metrics.previousRevenueAmount,
+    ),
+  });
+
+  const quickActions = [
+    {
+      href: "products/new",
+      title: copy.addProduct,
+      subtitle: copy.addProductHint,
+      iconBg: "bg-green-100",
+      iconColor: "text-green-600",
+      iconPath: "M12 4v16m8-8H4",
+    },
+    {
+      href: "orders",
+      title: copy.manageOrders,
+      subtitle: copy.manageOrdersHint,
+      iconBg: "bg-blue-100",
+      iconColor: "text-blue-600",
+      iconPath:
+        "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
+    },
+    {
+      href: "users",
+      title: copy.manageUsers,
+      subtitle: copy.manageUsersHint,
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-600",
+      iconPath:
+        "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
+    },
+    {
+      href: "settings",
+      title: copy.settings,
+      subtitle: copy.settingsHint,
+      iconBg: "bg-yellow-100",
+      iconColor: "text-yellow-600",
+      iconPath:
+        "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z",
+    },
+  ] as const;
 
   return (
     <section>
       <div className="mb-8">
-        <p className={ADMIN_PAGE_SUBTITLE}>Welcome to the admin dashboard</p>
+        <p className={ADMIN_PAGE_SUBTITLE}>{copy.welcome}</p>
       </div>
 
       <DashboardStatsGrid
@@ -89,19 +102,20 @@ export default async function AdminPage({ params }: AdminPageProps) {
         orders={metrics.orders}
         revenueLabel={formatMoney(metrics.revenueAmount)}
         revenueDelta={revenueDelta}
+        labels={copy}
       />
 
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
-              Recent orders
+              {copy.recentOrders}
             </h2>
             <Link
               href={`/${locale}/admin/orders`}
               className="rounded-xl px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100"
             >
-              View all
+              {copy.viewAll}
             </Link>
           </div>
           <div className="space-y-4">
@@ -135,7 +149,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
             ))}
             {metrics.recentOrders.length === 0 ? (
               <p className="py-8 text-center text-sm text-gray-600">
-                No recent orders.
+                {copy.noRecentOrders}
               </p>
             ) : null}
           </div>
@@ -144,13 +158,13 @@ export default async function AdminPage({ params }: AdminPageProps) {
         <Card className="p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
-              Top products
+              {copy.topProducts}
             </h2>
             <Link
               href={`/${locale}/admin/products`}
               className="rounded-xl px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100"
             >
-              View all
+              {copy.viewAll}
             </Link>
           </div>
           <div className="space-y-4">
@@ -167,14 +181,16 @@ export default async function AdminPage({ params }: AdminPageProps) {
                     {product.title}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {product.quantity} sold
+                    {fillTemplate(copy.soldCount, {
+                      quantity: String(product.quantity),
+                    })}
                   </p>
                 </div>
               </div>
             ))}
             {metrics.topProducts.length === 0 ? (
               <p className="py-8 text-center text-sm text-gray-600">
-                No product sales in this range.
+                {copy.noProductSales}
               </p>
             ) : null}
           </div>
@@ -183,10 +199,10 @@ export default async function AdminPage({ params }: AdminPageProps) {
 
       <Card className="mb-8 p-6">
         <h2 className="mb-4 text-xl font-semibold text-gray-900">
-          Quick actions
+          {copy.quickActions}
         </h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {QUICK_ACTIONS.map((action) => (
+          {quickActions.map((action) => (
             <Link
               key={action.href}
               href={`/${locale}/admin/${action.href}`}

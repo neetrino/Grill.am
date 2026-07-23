@@ -8,6 +8,7 @@ import {
   ADMIN_SELECT,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import {
   normalizeJobSlug,
@@ -81,6 +82,12 @@ export function JobPostingDrawerFields({
   error,
   disabled,
 }: JobPostingDrawerFieldsProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.careers.drawer;
+  const statusCopy = dictionary.careers.status;
+  const employment = dictionary.careers.employment;
+  const common = dictionary.common;
+
   return (
     <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5">
       <AdminLocaleTabs
@@ -91,7 +98,7 @@ export function JobPostingDrawerFields({
 
       <label className="block">
         <span className={ADMIN_LABEL}>
-          Title <span className="text-red-600">*</span>
+          {copy.title} <span className="text-red-600">*</span>
         </span>
         <input
           required
@@ -103,18 +110,18 @@ export function JobPostingDrawerFields({
       </label>
 
       <label className="block">
-        <span className={ADMIN_LABEL}>Location</span>
+        <span className={ADMIN_LABEL}>{copy.location}</span>
         <input
           value={draft.location}
           onChange={(event) => onDraftChange({ location: event.target.value })}
           className={ADMIN_INPUT}
           disabled={disabled}
-          placeholder="Yerevan"
+          placeholder={copy.locationPlaceholder}
         />
       </label>
 
       <label className="block">
-        <span className={ADMIN_LABEL}>Short summary</span>
+        <span className={ADMIN_LABEL}>{copy.summary}</span>
         <input
           value={draft.summary}
           onChange={(event) => onDraftChange({ summary: event.target.value })}
@@ -125,7 +132,7 @@ export function JobPostingDrawerFields({
 
       <label className="block">
         <span className={ADMIN_LABEL}>
-          Description <span className="text-red-600">*</span>
+          {copy.description} <span className="text-red-600">*</span>
         </span>
         <textarea
           required
@@ -138,17 +145,17 @@ export function JobPostingDrawerFields({
           disabled={disabled}
         />
         <span className="mt-1 block text-xs text-gray-500">
-          Plain text or HTML. Double line breaks create new paragraphs.
+          {copy.descriptionHint}
         </span>
       </label>
 
       <div>
         <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-          Common
+          {copy.common}
         </p>
         <div className="space-y-4">
           <label className="block">
-            <span className={ADMIN_LABEL}>Slug</span>
+            <span className={ADMIN_LABEL}>{copy.slug}</span>
             <input
               value={slugTouched ? slug : normalizeJobSlug(draft.title)}
               onChange={(event) => onSlugChange(event.target.value)}
@@ -156,13 +163,13 @@ export function JobPostingDrawerFields({
               disabled={disabled}
             />
             <span className="mt-1 block text-xs text-gray-500">
-              One slug for all languages (hy / en / ru).
+              {copy.slugHint}
             </span>
           </label>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className={ADMIN_LABEL}>Employment type</span>
+              <span className={ADMIN_LABEL}>{copy.employmentType}</span>
               <select
                 value={employmentType}
                 onChange={(event) =>
@@ -173,14 +180,14 @@ export function JobPostingDrawerFields({
                 className={ADMIN_SELECT}
                 disabled={disabled}
               >
-                <option value="FULL_TIME">Full-time</option>
-                <option value="PART_TIME">Part-time</option>
-                <option value="CONTRACT">Contract</option>
-                <option value="INTERNSHIP">Internship</option>
+                <option value="FULL_TIME">{employment.fullTime}</option>
+                <option value="PART_TIME">{employment.partTime}</option>
+                <option value="CONTRACT">{employment.contract}</option>
+                <option value="INTERNSHIP">{employment.internship}</option>
               </select>
             </label>
             <label className="block">
-              <span className={ADMIN_LABEL}>Status</span>
+              <span className={ADMIN_LABEL}>{copy.status}</span>
               <select
                 value={status}
                 onChange={(event) =>
@@ -189,16 +196,16 @@ export function JobPostingDrawerFields({
                 className={ADMIN_SELECT}
                 disabled={disabled}
               >
-                <option value="DRAFT">Draft</option>
-                <option value="ACTIVE">Active</option>
-                <option value="ARCHIVED">Archived</option>
+                <option value="DRAFT">{statusCopy.draft}</option>
+                <option value="ACTIVE">{statusCopy.active}</option>
+                <option value="ARCHIVED">{statusCopy.archived}</option>
               </select>
             </label>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className={ADMIN_LABEL}>Salary</span>
+              <span className={ADMIN_LABEL}>{copy.salary}</span>
               <input
                 type="number"
                 min={0}
@@ -207,11 +214,11 @@ export function JobPostingDrawerFields({
                 onChange={(event) => onSalaryAmountChange(event.target.value)}
                 className={ADMIN_INPUT}
                 disabled={disabled}
-                placeholder="Optional"
+                placeholder={copy.salaryOptional}
               />
             </label>
             <label className="block">
-              <span className={ADMIN_LABEL}>Salary currency</span>
+              <span className={ADMIN_LABEL}>{copy.salaryCurrency}</span>
               <select
                 value={salaryCurrency}
                 onChange={(event) =>
@@ -231,7 +238,7 @@ export function JobPostingDrawerFields({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className={ADMIN_LABEL}>Sort order</span>
+              <span className={ADMIN_LABEL}>{copy.sortOrder}</span>
               <input
                 type="number"
                 step={1}
@@ -242,7 +249,7 @@ export function JobPostingDrawerFields({
               />
             </label>
             <label className="block">
-              <span className={ADMIN_LABEL}>Published date</span>
+              <span className={ADMIN_LABEL}>{copy.publishedDate}</span>
               <input
                 type="date"
                 value={publishedAt}
@@ -251,7 +258,7 @@ export function JobPostingDrawerFields({
                 disabled={disabled}
               />
               <span className="mt-1 block text-xs text-gray-500">
-                Leave empty to use today when activating.
+                {copy.publishedHint}
               </span>
             </label>
           </div>
@@ -259,7 +266,7 @@ export function JobPostingDrawerFields({
       </div>
 
       <div>
-        <span className={ADMIN_LABEL}>Cover image</span>
+        <span className={ADMIN_LABEL}>{copy.coverImage}</span>
         <div className="mt-1 flex flex-wrap items-center gap-3">
           <button
             type="button"
@@ -267,7 +274,7 @@ export function JobPostingDrawerFields({
             onClick={onPickImage}
             className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
           >
-            {imagePreview ? "Change image" : "+ Upload image"}
+            {imagePreview ? copy.changeImage : common.upload}
           </button>
           <input
             ref={fileInputRef}
@@ -288,7 +295,7 @@ export function JobPostingDrawerFields({
               onClick={onRemoveImage}
               className="text-sm font-medium text-gray-600 hover:text-red-600"
             >
-              Remove
+              {common.remove}
             </button>
           ) : null}
         </div>
@@ -300,9 +307,7 @@ export function JobPostingDrawerFields({
             className="mt-3 h-28 w-28 rounded-xl border border-gray-200 object-cover"
           />
         ) : null}
-        <p className="mt-1 text-xs text-gray-500">
-          JPEG, PNG, WebP, or GIF. Max 5MB.
-        </p>
+        <p className="mt-1 text-xs text-gray-500">{copy.imageHint}</p>
       </div>
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}

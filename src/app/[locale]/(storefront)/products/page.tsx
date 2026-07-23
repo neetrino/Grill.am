@@ -15,6 +15,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { currencySymbols } from "@/lib/money/currency";
 import {
   createDisplayPriceFormatter,
   getSelectedCurrency,
@@ -93,9 +94,7 @@ export default async function ProductsPage({
     maxPrice: catalogCopy.maxPrice,
     categories: catalogCopy.categories,
     inStockOnly: catalogCopy.inStockOnly,
-    applyFilters: catalogCopy.applyFilters,
     clearFilters: catalogCopy.clearFilters,
-    currencyNote: catalogCopy.currencyNote,
   };
 
   return (
@@ -119,7 +118,7 @@ export default async function ProductsPage({
                 filters={filters}
                 categories={catalog.categories}
                 priceBounds={catalog.priceBoundsDisplay}
-                currencyCode={currency}
+                currencySymbol={currencySymbols[currency]}
                 labels={filterLabels}
               />
             </div>
@@ -130,7 +129,7 @@ export default async function ProductsPage({
               filters={filters}
               categories={catalog.categories}
               priceBounds={catalog.priceBoundsDisplay}
-              currencyCode={currency}
+              currencySymbol={currencySymbols[currency]}
               labels={filterLabels}
             />
           </div>

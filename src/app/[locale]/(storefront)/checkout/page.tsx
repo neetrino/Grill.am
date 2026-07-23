@@ -4,6 +4,11 @@ import { getCartWithItems } from "@/features/cart/cart";
 import { getCheckoutDeliveryOptions } from "@/features/checkout/application/get-checkout-delivery";
 import { getCheckoutOrderProducts } from "@/features/checkout/application/get-checkout-order-products";
 import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
+import {
+  parseCartModifiers,
+  parseProductCustomization,
+  unitAmountWithModifiers,
+} from "@/features/products/domain/customization";
 import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -39,7 +44,12 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     getCheckoutOrderProducts(rawLocale, items),
   ]);
   const subtotal = items.reduce((sum, { item, product }) => {
-    const unit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const unit = unitAmountWithModifiers(
+      base,
+      parseProductCustomization(product.customization),
+      parseCartModifiers(item.modifiers),
+    );
     return sum + item.quantity * unit;
   }, 0);
 

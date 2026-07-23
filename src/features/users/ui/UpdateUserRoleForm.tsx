@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_LABEL,
   ADMIN_SECTION_TITLE,
@@ -15,6 +16,7 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/features/users/domain/user-lifecycle";
+import { adminUserRoleLabel } from "@/features/users/ui/admin-user-labels";
 
 type UpdateUserRoleFormProps = {
   locale: string;
@@ -29,6 +31,9 @@ export function UpdateUserRoleForm({
   currentRole,
   disabled = false,
 }: UpdateUserRoleFormProps) {
+  const dictionary = useAdminDictionary();
+  const forms = dictionary.users.forms;
+  const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -53,12 +58,15 @@ export function UpdateUserRoleForm({
           });
         }}
       >
-        <h3 className={ADMIN_SECTION_TITLE}>Role</h3>
+        <h3 className={ADMIN_SECTION_TITLE}>{forms.role}</h3>
         <p className="text-sm text-gray-700">
-          Current: <strong className="text-gray-900">{currentRole}</strong>
+          {forms.current}:{" "}
+          <strong className="text-gray-900">
+            {adminUserRoleLabel(currentRole, dictionary.users.roles)}
+          </strong>
         </p>
         <label>
-          <span className={ADMIN_LABEL}>New role</span>
+          <span className={ADMIN_LABEL}>{forms.newRole}</span>
           <select
             name="role"
             required
@@ -68,14 +76,14 @@ export function UpdateUserRoleForm({
           >
             {USER_ROLES.filter((role) => role !== currentRole).map((role) => (
               <option key={role} value={role}>
-                {role}
+                {adminUserRoleLabel(role, dictionary.users.roles)}
               </option>
             ))}
           </select>
         </label>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={disabled || isPending}>
-          {isPending ? "Updating…" : "Update role"}
+          {isPending ? common.updating : forms.updateRole}
         </Button>
       </form>
     </Card>

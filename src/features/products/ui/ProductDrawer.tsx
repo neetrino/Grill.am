@@ -11,7 +11,9 @@ import {
   ADMIN_LABEL,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
-import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import {
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import type { ModifierCatalogItem } from "@/features/products/domain/modifier-catalog";
 import type {
@@ -33,7 +35,7 @@ import {
   ProductDrawerImages,
   type ProductDraftImage,
 } from "@/features/products/ui/ProductDrawerImages";
-import { isLocale, localeLabels, locales, type Locale } from "@/lib/i18n/config";
+import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 
 type ProductDrawerProduct = Pick<
   AdminProductListItem,
@@ -420,6 +422,7 @@ export function ProductDrawer({
   if (!open) return null;
 
   const draft = drafts[activeLocale];
+  const form = dictionary.products.form;
   const drawerTitle = isEdit
     ? dictionary.products.editProduct
     : dictionary.products.addProduct;
@@ -453,13 +456,8 @@ export function ProductDrawer({
           onSubmit={(event) => {
             event.preventDefault();
             const localeCopies = buildLocaleCopies(drafts);
-            const missingLocales = locales.filter((loc) => !localeCopies[loc]);
-            if (missingLocales.length > 0) {
-              setError(
-                `Fill title for all languages: ${missingLocales
-                  .map((loc) => localeLabels[loc])
-                  .join(", ")}.`,
-              );
+            if (Object.keys(localeCopies).length === 0) {
+              setError(dictionary.products.errors.titleRequired);
               return;
             }
             const newImages = images.filter((image) => image.file);
@@ -469,7 +467,7 @@ export function ProductDrawer({
               : null;
             const nextSlug = normalizeProductSlug(slug);
             if (!nextSlug) {
-              setError("Slug is required.");
+              setError(dictionary.products.errors.slugRequired);
               return;
             }
 
@@ -535,15 +533,14 @@ export function ProductDrawer({
 
             <label className="block">
               <span className={ADMIN_LABEL}>
-                Title <span className="text-red-600">*</span>
+                {form.title} <span className="text-red-600">*</span>
               </span>
               <input
-                required
                 value={draft.title}
                 onChange={(event) =>
                   updateDraft(activeLocale, { title: event.target.value })
                 }
-                placeholder="Product title"
+                placeholder={form.titlePlaceholder}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
@@ -551,7 +548,7 @@ export function ProductDrawer({
 
             <label className="block">
               <span className={ADMIN_LABEL}>
-                Slug <span className="text-red-600">*</span>
+                {form.slug} <span className="text-red-600">*</span>
               </span>
               <input
                 required
@@ -560,17 +557,17 @@ export function ProductDrawer({
                   setSlugTouched(true);
                   setSlug(event.target.value);
                 }}
-                placeholder="product-slug"
+                placeholder={form.slugPlaceholder}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
               <span className="mt-1 block text-xs text-gray-500">
-                One slug for all languages (hy / en / ru).
+                {form.slugHint}
               </span>
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Short description</span>
+              <span className={ADMIN_LABEL}>{form.shortDescription}</span>
               <textarea
                 value={draft.shortDescription}
                 onChange={(event) =>
@@ -578,14 +575,14 @@ export function ProductDrawer({
                     shortDescription: event.target.value,
                   })
                 }
-                placeholder="Short blurb for the product page"
+                placeholder={form.shortDescriptionPlaceholder}
                 className={ADMIN_TEXTAREA}
                 disabled={isPending}
               />
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Description</span>
+              <span className={ADMIN_LABEL}>{form.description}</span>
               <textarea
                 value={draft.description}
                 onChange={(event) =>
@@ -593,14 +590,14 @@ export function ProductDrawer({
                     description: event.target.value,
                   })
                 }
-                placeholder="Product description"
+                placeholder={form.descriptionPlaceholder}
                 className={ADMIN_TEXTAREA}
                 disabled={isPending}
               />
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Composition</span>
+              <span className={ADMIN_LABEL}>{form.composition}</span>
               <textarea
                 value={draft.composition}
                 onChange={(event) =>
@@ -608,7 +605,7 @@ export function ProductDrawer({
                     composition: event.target.value,
                   })
                 }
-                placeholder="Ingredients / composition"
+                placeholder={form.compositionPlaceholder}
                 className={ADMIN_TEXTAREA}
                 disabled={isPending}
               />
@@ -639,7 +636,7 @@ export function ProductDrawer({
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
-                  Price <span className="text-red-600">*</span>
+                  {form.price} <span className="text-red-600">*</span>
                 </span>
                 <input
                   required
@@ -647,19 +644,19 @@ export function ProductDrawer({
                   type="number"
                   value={priceAmount}
                   onChange={(event) => setPriceAmount(event.target.value)}
-                  placeholder="AMD price"
+                  placeholder={form.pricePlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
               </label>
               <label>
-                <span className={ADMIN_LABEL}>Compare at price</span>
+                <span className={ADMIN_LABEL}>{form.compareAtPrice}</span>
                 <input
                   min={0}
                   type="number"
                   value={compareAtAmount}
                   onChange={(event) => setCompareAtAmount(event.target.value)}
-                  placeholder="Optional"
+                  placeholder={form.compareAtPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
@@ -669,20 +666,20 @@ export function ProductDrawer({
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
-                  SKU <span className="text-red-600">*</span>
+                  {form.sku} <span className="text-red-600">*</span>
                 </span>
                 <input
                   required
                   value={sku}
                   onChange={(event) => setSku(event.target.value)}
-                  placeholder="SKU"
+                  placeholder={form.skuPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
               </label>
               <label>
                 <span className={ADMIN_LABEL}>
-                  Quantity <span className="text-red-600">*</span>
+                  {form.quantity} <span className="text-red-600">*</span>
                 </span>
                 <input
                   required
@@ -690,7 +687,7 @@ export function ProductDrawer({
                   type="number"
                   value={stockOnHand}
                   onChange={(event) => setStockOnHand(event.target.value)}
-                  placeholder="Stock"
+                  placeholder={form.stockPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   createJobPostingAction,
   updateJobPostingAction,
@@ -81,6 +82,9 @@ export function JobPostingDrawer({
   onClose,
   posting = null,
 }: JobPostingDrawerProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.careers.drawer;
+  const common = dictionary.common;
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isEdit = posting != null;
@@ -189,7 +193,7 @@ export function JobPostingDrawer({
       className="fixed inset-0 z-50 flex justify-end bg-black/40"
       role="dialog"
       aria-modal="true"
-      aria-label={isEdit ? "Edit job position" : "Add job position"}
+      aria-label={isEdit ? copy.editTitle : copy.addTitle}
       onClick={onClose}
     >
       <div
@@ -198,13 +202,13 @@ export function JobPostingDrawer({
       >
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit position" : "Add position"}
+            {isEdit ? copy.editShort : copy.addShort}
           </h2>
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close"
+            aria-label={common.close}
           >
             <X className="h-5 w-5" />
           </button>
@@ -217,7 +221,7 @@ export function JobPostingDrawer({
             const current = drafts[activeLocale];
             const nextSlug = resolvedSlug(slug, slugTouched, current.title);
             if (!current.title.trim() || !current.description.trim()) {
-              setError("Title and description are required.");
+              setError(copy.titleRequired);
               return;
             }
 
@@ -296,7 +300,7 @@ export function JobPostingDrawer({
 
           <div className="border-t border-gray-200 px-5 py-4">
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Saving…" : "Save"}
+              {isPending ? common.saving : common.save}
             </Button>
           </div>
         </form>

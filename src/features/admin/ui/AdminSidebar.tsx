@@ -54,6 +54,7 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
             href={`/${locale}`}
             className="min-w-0 shrink text-sm font-semibold text-gray-900"
           >
+            {/* TODO: "White Shop" — no brand-name key in admin.json */}
             White Shop
           </Link>
           <AdminMenuDrawer locale={locale} pathname={pathname} />
@@ -113,8 +114,8 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
                   <button
                     type="button"
                     aria-expanded={productsNestedExpanded}
-                    aria-label="Toggle product subpages"
-                    title="Toggle product subpages"
+                    aria-label={dictionary.menu.toggleProductSubpages}
+                    title={dictionary.menu.toggleProductSubpages}
                     onClick={(event) => {
                       event.preventDefault();
                       toggleProductsNested();

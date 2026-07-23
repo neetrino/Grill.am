@@ -70,6 +70,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  // Match MEDIA_IMAGE_MAX_BYTES (5MB) × up to 12 product images + multipart overhead.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "64mb",
+    },
+  },
   images: {
     remotePatterns: buildImageRemotePatterns(),
   },

@@ -1,5 +1,8 @@
+"use client";
+
 import type { ReactNode } from "react";
 
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
@@ -7,9 +10,10 @@ import {
 } from "@/features/admin/ui/status-badge";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import {
-  formatOrderDrawerMoney,
-  formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
+  adminOrderStatusLabel,
+  adminPaymentStatusLabel,
+} from "@/features/orders/ui/admin-order-status-labels";
+import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 
 type OrderDetailsDrawerSummaryProps = {
   detail: AdminOrderDetailView;
@@ -18,36 +22,47 @@ type OrderDetailsDrawerSummaryProps = {
 export function OrderDetailsDrawerSummary({
   detail,
 }: OrderDetailsDrawerSummaryProps) {
+  const dictionary = useAdminDictionary();
+  const drawer = dictionary.orders.drawer;
+
   return (
     <div className="grid gap-8 border-b border-gray-200 px-6 py-5 md:grid-cols-2">
       <section>
-        <h3 className="mb-4 text-base font-semibold text-gray-900">Summary</h3>
+        <h3 className="mb-4 text-base font-semibold text-gray-900">
+          {drawer.summary}
+        </h3>
         <dl className="space-y-3 text-sm">
-          <DetailRow label="Order #:" value={detail.orderNumber} />
           <DetailRow
-            label="Total:"
+            label={`${drawer.orderNumber}:`}
+            value={detail.orderNumber}
+          />
+          <DetailRow
+            label={`${drawer.total}:`}
             value={formatOrderDrawerMoney(
               detail.totalAmount,
               detail.baseCurrency,
             )}
           />
           <DetailRow
-            label="Status:"
+            label={`${drawer.status}:`}
             value={
               <span
                 className={`${ADMIN_BADGE} ${orderStatusBadgeClass(detail.status)}`}
               >
-                {formatOrderStatusLabel(detail.status)}
+                {adminOrderStatusLabel(detail.status, dictionary.orders.status)}
               </span>
             }
           />
           <DetailRow
-            label="Payment:"
+            label={`${drawer.payment}:`}
             value={
               <span
                 className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}
               >
-                {formatOrderStatusLabel(detail.paymentStatus)}
+                {adminPaymentStatusLabel(
+                  detail.paymentStatus,
+                  dictionary.orders.paymentStatus,
+                )}
               </span>
             }
           />
@@ -55,11 +70,16 @@ export function OrderDetailsDrawerSummary({
       </section>
 
       <section>
-        <h3 className="mb-4 text-base font-semibold text-gray-900">Customer</h3>
+        <h3 className="mb-4 text-base font-semibold text-gray-900">
+          {drawer.customer}
+        </h3>
         <dl className="space-y-3 text-sm">
-          <DetailRow label="Name:" value={detail.contactName} />
-          <DetailRow label="Phone Number:" value={detail.contactPhone} />
-          <DetailRow label="Email:" value={detail.contactEmail} />
+          <DetailRow label={`${drawer.name}:`} value={detail.contactName} />
+          <DetailRow
+            label={`${drawer.phone}:`}
+            value={detail.contactPhone}
+          />
+          <DetailRow label={`${drawer.email}:`} value={detail.contactEmail} />
         </dl>
       </section>
     </div>

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { OrderDetailsDrawerCustomizations } from "@/features/orders/ui/OrderDetailsDrawerCustomizations";
 import { OrderDetailsDrawerItems } from "@/features/orders/ui/OrderDetailsDrawerItems";
@@ -25,6 +26,10 @@ export function OrderDetailsDrawer({
   error,
   isLoading,
 }: OrderDetailsDrawerProps) {
+  const dictionary = useAdminDictionary();
+  const drawer = dictionary.orders.drawer;
+  const common = dictionary.common;
+
   useEffect(() => {
     if (!open) return;
 
@@ -49,7 +54,7 @@ export function OrderDetailsDrawer({
       className="fixed inset-0 z-50 flex justify-end bg-black/40"
       role="dialog"
       aria-modal="true"
-      aria-label="Order Details"
+      aria-label={drawer.title}
       onClick={onClose}
     >
       <div
@@ -59,7 +64,7 @@ export function OrderDetailsDrawer({
         <div className="flex items-start justify-between border-b border-gray-200 px-6 py-5">
           <div>
             <h2 className="text-2xl font-semibold text-gray-900">
-              Order Details
+              {drawer.title}
             </h2>
             {detail ? (
               <p className="mt-1 text-sm text-gray-500">#{detail.orderNumber}</p>
@@ -69,7 +74,7 @@ export function OrderDetailsDrawer({
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close"
+            aria-label={common.close}
           >
             <X className="h-5 w-5" />
           </button>
@@ -77,7 +82,7 @@ export function OrderDetailsDrawer({
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           {isLoading ? (
-            <p className="px-6 py-8 text-sm text-gray-600">Loading order…</p>
+            <p className="px-6 py-8 text-sm text-gray-600">{drawer.loading}</p>
           ) : null}
           {error ? (
             <p className="px-6 py-8 text-sm text-red-700">{error}</p>

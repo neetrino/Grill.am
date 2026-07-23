@@ -11,6 +11,7 @@ import {
   ADMIN_SELECT,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import {
   createBlogPostAction,
@@ -87,6 +88,10 @@ export function BlogPostDrawer({
   onClose,
   post = null,
 }: BlogPostDrawerProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.blog.drawer;
+  const statusCopy = dictionary.blog.status;
+  const common = dictionary.common;
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isEdit = post != null;
@@ -135,6 +140,7 @@ export function BlogPostDrawer({
   if (!open) return null;
 
   const draft = drafts[activeLocale];
+  const drawerTitle = isEdit ? copy.editTitle : copy.addTitle;
 
   function updateDraft(patch: Partial<LocaleDraft>): void {
     setDrafts((current) => ({
@@ -148,7 +154,7 @@ export function BlogPostDrawer({
       className="fixed inset-0 z-50 flex justify-end bg-black/40"
       role="dialog"
       aria-modal="true"
-      aria-label={isEdit ? "Edit blog post" : "Add blog post"}
+      aria-label={drawerTitle}
       onClick={onClose}
     >
       <div
@@ -156,14 +162,12 @@ export function BlogPostDrawer({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit blog post" : "Add blog post"}
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">{drawerTitle}</h2>
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close"
+            aria-label={common.close}
           >
             <X className="h-5 w-5" />
           </button>
@@ -176,7 +180,7 @@ export function BlogPostDrawer({
             const current = drafts[activeLocale];
             const slug = resolvedSlug(current);
             if (!current.title.trim() || !current.content.trim()) {
-              setError("Title and full text are required.");
+              setError(copy.titleRequired);
               return;
             }
 
@@ -229,7 +233,7 @@ export function BlogPostDrawer({
 
             <label className="block">
               <span className={ADMIN_LABEL}>
-                Title <span className="text-red-600">*</span>
+                {copy.title} <span className="text-red-600">*</span>
               </span>
               <input
                 required
@@ -243,7 +247,7 @@ export function BlogPostDrawer({
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Short excerpt</span>
+              <span className={ADMIN_LABEL}>{copy.excerpt}</span>
               <input
                 value={draft.excerpt}
                 onChange={(event) =>
@@ -256,7 +260,7 @@ export function BlogPostDrawer({
 
             <label className="block">
               <span className={ADMIN_LABEL}>
-                Full text <span className="text-red-600">*</span>
+                {copy.content} <span className="text-red-600">*</span>
               </span>
               <textarea
                 required
@@ -269,17 +273,17 @@ export function BlogPostDrawer({
                 disabled={isPending}
               />
               <span className="mt-1 block text-xs text-gray-500">
-                Plain text or HTML. Double line breaks create new paragraphs.
+                {copy.contentHint}
               </span>
             </label>
 
             <div>
               <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                Common
+                {copy.common}
               </p>
               <div className="space-y-4">
                 <label className="block">
-                  <span className={ADMIN_LABEL}>Publication date</span>
+                  <span className={ADMIN_LABEL}>{copy.publicationDate}</span>
                   <input
                     type="date"
                     value={publishedAt}
@@ -288,11 +292,11 @@ export function BlogPostDrawer({
                     disabled={isPending}
                   />
                   <span className="mt-1 block text-xs text-gray-500">
-                    Shown on the post. Leave empty to use today when publishing.
+                    {copy.publicationHint}
                   </span>
                 </label>
                 <label className="block">
-                  <span className={ADMIN_LABEL}>Status</span>
+                  <span className={ADMIN_LABEL}>{copy.status}</span>
                   <select
                     value={status}
                     onChange={(event) =>
@@ -301,16 +305,16 @@ export function BlogPostDrawer({
                     className={ADMIN_SELECT}
                     disabled={isPending}
                   >
-                    <option value="DRAFT">Draft</option>
-                    <option value="PUBLISHED">Published</option>
-                    <option value="ARCHIVED">Archived</option>
+                    <option value="DRAFT">{statusCopy.draft}</option>
+                    <option value="PUBLISHED">{statusCopy.published}</option>
+                    <option value="ARCHIVED">{statusCopy.archived}</option>
                   </select>
                 </label>
               </div>
             </div>
 
             <div>
-              <span className={ADMIN_LABEL}>Cover image</span>
+              <span className={ADMIN_LABEL}>{copy.coverImage}</span>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
@@ -318,7 +322,7 @@ export function BlogPostDrawer({
                   onClick={() => fileInputRef.current?.click()}
                   className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
                 >
-                  {imagePreview ? "Change image" : "+ Upload image"}
+                  {imagePreview ? copy.changeImage : copy.uploadImage}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -357,7 +361,7 @@ export function BlogPostDrawer({
                     }}
                     className="text-sm font-medium text-gray-600 hover:text-red-600"
                   >
-                    Remove
+                    {common.remove}
                   </button>
                 ) : null}
               </div>
@@ -370,7 +374,7 @@ export function BlogPostDrawer({
                 />
               ) : null}
               <p className="mt-1 text-xs text-gray-500">
-                JPEG, PNG, WebP, or GIF. Max 5MB.
+                {copy.imageHint}
               </p>
             </div>
 
@@ -379,7 +383,7 @@ export function BlogPostDrawer({
 
           <div className="border-t border-gray-200 px-5 py-4">
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Saving…" : "Save"}
+              {isPending ? common.saving : common.save}
             </Button>
           </div>
         </form>

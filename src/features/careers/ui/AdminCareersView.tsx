@@ -10,6 +10,10 @@ import {
   ADMIN_INPUT,
   ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteJobPostingAction } from "@/features/careers/application/manage-job";
 import type { AdminJobListItem } from "@/features/careers/application/queries";
@@ -29,30 +33,9 @@ function statusBadgeClass(status: string): string {
   return "bg-gray-100 text-gray-800";
 }
 
-function statusLabel(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "ACTIVE") return "Active";
-  if (normalized === "DRAFT") return "Draft";
-  if (normalized === "ARCHIVED") return "Archived";
-  return status;
-}
-
-function employmentLabel(type: string): string {
-  switch (type) {
-    case "FULL_TIME":
-      return "Full-time";
-    case "PART_TIME":
-      return "Part-time";
-    case "CONTRACT":
-      return "Contract";
-    case "INTERNSHIP":
-      return "Internship";
-    default:
-      return type;
-  }
-}
-
 export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.careers;
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -72,6 +55,29 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
     });
   }, [postings, query]);
 
+  function statusLabel(status: string): string {
+    const normalized = status.toUpperCase();
+    if (normalized === "ACTIVE") return copy.status.active;
+    if (normalized === "DRAFT") return copy.status.draft;
+    if (normalized === "ARCHIVED") return copy.status.archived;
+    return status;
+  }
+
+  function employmentLabel(type: string): string {
+    switch (type) {
+      case "FULL_TIME":
+        return copy.employment.fullTime;
+      case "PART_TIME":
+        return copy.employment.partTime;
+      case "CONTRACT":
+        return copy.employment.contract;
+      case "INTERNSHIP":
+        return copy.employment.internship;
+      default:
+        return type;
+    }
+  }
+
   function openCreate(): void {
     setEditingPosting(null);
     setDrawerOpen(true);
@@ -88,9 +94,7 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
   }
 
   function handleDelete(postingId: string): void {
-    const confirmed = window.confirm(
-      "Delete this job posting? This cannot be undone from the admin list.",
-    );
+    const confirmed = window.confirm(copy.confirmDelete);
     if (!confirmed) return;
 
     startTransition(async () => {
@@ -107,18 +111,18 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>Careers</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
         <Button type="button" size="sm" onClick={openCreate}>
-          Add position
+          {copy.addPosition}
         </Button>
       </div>
 
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search by title, location, or slug"
+        placeholder={copy.searchPlaceholder}
         className={`${ADMIN_INPUT} mb-4`}
-        aria-label="Search job postings"
+        aria-label={copy.searchAria}
       />
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
@@ -127,9 +131,7 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
         {filtered.length === 0 ? (
           <Card className="rounded-xl p-8">
             <p className="text-center text-sm text-gray-600">
-              {postings.length === 0
-                ? "No job postings yet."
-                : "No postings match this search."}
+              {postings.length === 0 ? copy.empty : copy.emptySearch}
             </p>
           </Card>
         ) : (
@@ -146,7 +148,7 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
                     />
                   ) : (
                     <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-xs text-gray-400">
-                      No image
+                      {copy.noImage}
                     </div>
                   )}
                   <div className="min-w-0">
@@ -178,7 +180,9 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
                     disabled={isPending}
                     onClick={() => openEdit(posting)}
                     className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
-                    aria-label={`Edit ${posting.title}`}
+                    aria-label={formatAdminMessage(copy.editNamed, {
+                      title: posting.title,
+                    })}
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
@@ -187,7 +191,9 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
                     disabled={isPending}
                     onClick={() => handleDelete(posting.id)}
                     className="rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50"
-                    aria-label={`Delete ${posting.title}`}
+                    aria-label={formatAdminMessage(copy.deleteNamed, {
+                      title: posting.title,
+                    })}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

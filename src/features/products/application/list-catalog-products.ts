@@ -18,6 +18,7 @@ import { unstable_cache } from "next/cache";
 
 import { getDb } from "@/db/client";
 import { categories, productCategories, products } from "@/db/schema";
+import { resolveCategorySubtreeIds } from "@/features/categories/application/resolve-category-subtree-ids";
 import { withCatalogEnrichment } from "@/features/products/application/catalog-enrichment";
 import {
   amdToDisplayMajor,
@@ -143,10 +144,11 @@ async function buildWhere(
   }
 
   if (filters.category.length > 0) {
-    const categoryIds = await resolveCategoryIdsBySlugs(
+    const matchedIds = await resolveCategoryIdsBySlugs(
       locale,
       filters.category,
     );
+    const categoryIds = await resolveCategorySubtreeIds(matchedIds);
     if (categoryIds.length === 0) {
       conditions.push(sql`false`);
     } else {
