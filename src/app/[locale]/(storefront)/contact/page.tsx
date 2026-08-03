@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { ContactForm } from "@/features/contact/ui/ContactForm";
 import { ContactInfo } from "@/features/contact/ui/ContactInfo";
 import { ContactMap } from "@/features/contact/ui/ContactMap";
-import { ContactTrustStrip } from "@/features/contact/ui/ContactTrustStrip";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -24,7 +23,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   return (
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 -my-10 bg-white">
       <section>
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-10 sm:px-6 sm:py-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10 lg:px-8 lg:py-14">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 pb-4 pt-10 sm:px-6 sm:pb-6 sm:pt-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10 lg:px-8 lg:pb-6 lg:pt-14">
           <ContactInfo copy={copy} />
           <ContactForm
             copy={{
@@ -43,13 +42,10 @@ export default async function ContactPage({ params }: ContactPageProps) {
         </div>
       </section>
 
-      <ContactMap title={copy.mapTitle} />
-
-      <ContactTrustStrip
-        support={copy.trust.support}
-        response={copy.trust.response}
-        safe={copy.trust.safe}
-        satisfaction={copy.trust.satisfaction}
+      <ContactMap
+        title={copy.mapTitle}
+        addresses={copy.storeAddresses}
+        openRouteLabel={copy.mapRoute}
       />
     </div>
   );

@@ -41,11 +41,5 @@
   "mapTitle": "Store location",
   "mapAddressTitle": "Khorenatsi 95/2, Yerevan",
   "mapTransport": "Easy access by bus and car. Parking nearby.",
-  "mapRoute": "View route",
-  "trust": {
-    "support": "24/7 support",
-    "response": "Fast response",
-    "safe": "Safe and reliable",
-    "satisfaction": "Customer satisfaction"
-  }
+  "mapRoute": "View route"
 }
