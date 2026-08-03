@@ -217,11 +217,17 @@ export function ProfileSidebarNav({
               aria-current={active ? "page" : undefined}
             >
               <span
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                style={{
-                  backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
-                  color: PROFILE_SIDEBAR_ICON_TONE.foreground,
-                }}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                  active ? "bg-transparent text-brand-yellow" : ""
+                }`}
+                style={
+                  active
+                    ? undefined
+                    : {
+                        backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
+                        color: PROFILE_SIDEBAR_ICON_TONE.foreground,
+                      }
+                }
               >
                 {item.icon}
               </span>
