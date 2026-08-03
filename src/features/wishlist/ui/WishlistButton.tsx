@@ -33,7 +33,7 @@ export function WishlistButton({
   const router = useRouter();
   const [inWishlist, setInWishlist] = useState(initialInWishlist);
   const [pending, startTransition] = useTransition();
-  const iconClass = size === "sm" ? "h-5 w-5" : "h-6 w-6";
+  const iconClass = size === "sm" ? "h-5 w-5" : "h-7 w-7";
   const idleIconClass =
     tone === "onImage"
       ? "fill-white text-white"

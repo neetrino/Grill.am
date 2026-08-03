@@ -81,9 +81,9 @@ export function ProductCard({
             initialInWishlist={inWishlist}
             isSignedIn={isSignedIn}
             label={wishlistLabel}
-            size="sm"
+            size="md"
             tone="onImage"
-            className="absolute top-1.5 right-4 z-10 h-[30px] w-8 bg-transparent shadow-none hover:bg-transparent"
+            className="absolute top-2 right-3 z-10 h-10 w-10 bg-transparent shadow-none hover:bg-transparent"
           />
         ) : null}
 
