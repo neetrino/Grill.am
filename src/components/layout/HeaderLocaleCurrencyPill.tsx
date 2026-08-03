@@ -15,7 +15,7 @@ import { setCurrencyAction } from "@/features/preferences/set-currency-action";
 import type { Locale } from "@/lib/i18n/config";
 import { localeLabels, locales } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { currencies } from "@/lib/money/currency";
+import { currencies, currencySymbols } from "@/lib/money/currency";
 
 type HeaderLocaleCurrencyPillProps = {
   locale: Locale;
@@ -144,7 +144,10 @@ export function HeaderLocaleCurrencyPill({
         <span>{localeShortLabels[locale]}</span>
         <span aria-hidden>/</span>
         <HeaderCurrencyIcon className="h-[12px] w-[20px] shrink-0" />
-        <span>{currency}</span>
+        <span className="text-base leading-none font-bold tabular-nums" aria-hidden>
+          {currencySymbols[currency]}
+        </span>
+        <span className="sr-only">{currency}</span>
         <ChevronDown
           className={`ml-1 h-3.5 w-3.5 shrink-0 transition-transform duration-300 ease-out ${
             open ? "rotate-180" : "rotate-0"
@@ -178,6 +181,7 @@ export function HeaderLocaleCurrencyPill({
                       <button
                         type="button"
                         disabled={pending}
+                        aria-label={item}
                         className={
                           selected ? selectedItemClassName : idleItemClassName
                         }
@@ -193,7 +197,9 @@ export function HeaderLocaleCurrencyPill({
                           });
                         }}
                       >
-                        {item}
+                        <span className="text-lg font-bold tabular-nums" aria-hidden>
+                          {currencySymbols[item]}
+                        </span>
                       </button>
                     </li>
                   );
