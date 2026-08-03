@@ -25,19 +25,20 @@ export default async function CareersPage({ params }: CareersPageProps) {
         {dictionary.careers.title}
       </h1>
 
-      <div className="flex flex-col gap-5">
-        {postings.map((posting) => (
-          <JobCard
-            key={posting.id}
-            posting={posting}
-            locale={rawLocale}
-            copy={dictionary.careers}
-          />
-        ))}
-        {postings.length === 0 ? (
-          <p className="text-[var(--muted)]">{dictionary.careers.empty}</p>
-        ) : null}
-      </div>
+      {postings.length === 0 ? (
+        <p className="text-[var(--muted)]">{dictionary.careers.empty}</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          {postings.map((posting) => (
+            <JobCard
+              key={posting.id}
+              posting={posting}
+              locale={rawLocale}
+              copy={dictionary.careers}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
