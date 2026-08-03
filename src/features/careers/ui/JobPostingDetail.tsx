@@ -129,8 +129,8 @@ export function JobPostingDetail({
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-4 rounded-[20px] bg-white p-5 shadow-[0_8px_28px_rgba(0,0,0,0.08)] sm:flex-row sm:items-center sm:justify-between sm:p-6">
-        <p className="text-sm leading-relaxed text-[#5c5c5c] sm:text-base">
+      <div className="flex flex-col gap-4 rounded-[20px] bg-brand-yellow py-5 pr-5 pl-7 shadow-[0_8px_28px_rgba(0,0,0,0.08)] sm:flex-row sm:items-center sm:justify-between sm:py-6 sm:pr-6 sm:pl-8">
+        <p className="text-base leading-relaxed font-bold text-black sm:text-lg">
           {copy.applyHint}
         </p>
 
