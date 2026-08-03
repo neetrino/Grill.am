@@ -8,7 +8,10 @@ type ContactInfoProps = {
   copy: Dictionary["contact"];
 };
 
-function InfoBlock({
+const CARD_CLASS =
+  "rounded-[15px] border border-gray-100 bg-white p-5 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:p-6";
+
+function InfoCard({
   icon,
   title,
   children,
@@ -18,60 +21,71 @@ function InfoBlock({
   children: ReactNode;
 }) {
   return (
-    <div>
-      <div className="mb-3 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-700">
+    <article className={CARD_CLASS}>
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-red text-white">
           {icon}
         </div>
-        <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        <h2 className="text-lg font-bold text-gray-900">{title}</h2>
       </div>
       {children}
-    </div>
+    </article>
   );
 }
 
+/** Contact details — three branded cards (call / write / HQ). */
 export function ContactInfo({ copy }: ContactInfoProps) {
   return (
-    <div className="space-y-8">
-      <InfoBlock icon={<Phone className="h-6 w-6" />} title={copy.callTitle}>
-        <p className="mb-2 text-gray-600">{copy.callDescription}</p>
+    <div className="flex flex-col gap-4">
+      <InfoCard icon={<Phone className="size-5" aria-hidden />} title={copy.callTitle}>
+        <p className="mb-3 text-sm leading-relaxed text-gray-600">
+          {copy.callDescription}
+        </p>
         <ul className="space-y-2">
           {copy.storePhones.map((phone) => (
             <li key={phone}>
               <a
                 href={telHref(phone)}
-                className="font-medium text-orange-500 transition-colors hover:text-orange-600"
+                className="text-base font-semibold text-brand-red transition hover:text-brand-red-hot"
               >
                 {phone}
               </a>
             </li>
           ))}
         </ul>
-      </InfoBlock>
+      </InfoCard>
 
-      <InfoBlock icon={<Mail className="h-6 w-6" />} title={copy.writeTitle}>
-        <p className="mb-2 text-gray-600">{copy.writeDescription}</p>
+      <InfoCard icon={<Mail className="size-5" aria-hidden />} title={copy.writeTitle}>
+        <p className="mb-3 text-sm leading-relaxed text-gray-600">
+          {copy.writeDescription}
+        </p>
         <a
           href={`mailto:${copy.storeEmail}`}
-          className="font-medium text-orange-500 transition-colors hover:text-orange-600"
+          className="text-base font-semibold text-brand-red transition hover:text-brand-red-hot"
         >
-          {copy.emailLabel} {copy.storeEmail}
+          {copy.storeEmail}
         </a>
-      </InfoBlock>
+      </InfoCard>
 
-      <InfoBlock icon={<MapPin className="h-6 w-6" />} title={copy.hqTitle}>
-        <div className="mb-2 space-y-1 text-gray-600">
-          <p>{copy.hoursWeekdays}</p>
-          <p>{copy.hoursSaturday}</p>
-        </div>
-        <ul className="space-y-1">
+      <InfoCard icon={<MapPin className="size-5" aria-hidden />} title={copy.hqTitle}>
+        <p className="mb-4 text-sm leading-relaxed text-gray-600">
+          {copy.hqDescription}
+        </p>
+        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {copy.storeAddresses.map((address) => (
-            <li key={address} className="font-medium text-orange-500">
-              {address}
+            <li
+              key={address}
+              className="flex items-start gap-2 text-sm font-medium text-gray-800"
+            >
+              <MapPin
+                className="mt-0.5 size-3.5 shrink-0 text-brand-red"
+                aria-hidden
+              />
+              <span>{address}</span>
             </li>
           ))}
         </ul>
-      </InfoBlock>
+      </InfoCard>
     </div>
   );
 }

@@ -9,7 +9,7 @@ describe("getDictionary", () => {
     expect(dictionary.brand).toBe("Grill.am");
     expect(dictionary.nav.home).toBe("Home");
     expect(dictionary.home.title).toBe("Grill.am");
-    expect(dictionary.contact.title).toBe("Contact");
+    expect(dictionary.contact.title).toBe("Contact us");
     expect(dictionary.cartDrawer.title).toBe("Shopping Cart");
     expect(dictionary.checkout.title).toBe("Checkout");
   });
