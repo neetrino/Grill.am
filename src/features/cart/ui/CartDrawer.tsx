@@ -21,6 +21,7 @@ import type { Currency } from "@/lib/money/currency";
 type CartDrawerTriggerArgs = {
   open: boolean;
   badgeCount: number;
+  totalFormatted: string;
   label: string;
   openDrawer: () => void;
   prefetchDrawerView: () => void;
@@ -67,6 +68,7 @@ export function CartDrawer({
   const [pending, startTransition] = useTransition();
   const labels = dictionary.cartDrawer;
   const badgeCount = view?.itemCount ?? itemCount;
+  const totalFormatted = view?.totalFormatted ?? "0.00";
 
   useEffect(() => {
     if (!open) {
@@ -332,6 +334,7 @@ export function CartDrawer({
         renderTrigger({
           open,
           badgeCount,
+          totalFormatted,
           label: dictionary.nav.cart,
           openDrawer,
           prefetchDrawerView,

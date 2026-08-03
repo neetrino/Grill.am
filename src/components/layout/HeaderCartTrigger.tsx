@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -28,7 +28,7 @@ export function HeaderCartTrigger({
       itemCount={itemCount}
       renderTrigger={({
         open,
-        badgeCount,
+        totalFormatted,
         label,
         openDrawer,
         prefetchDrawerView,
@@ -40,10 +40,14 @@ export function HeaderCartTrigger({
           onFocus={prefetchDrawerView}
           aria-label={label}
           aria-expanded={open}
-          className="inline-flex h-12 min-w-[114px] items-center justify-center gap-2.5 rounded-full bg-brand-red px-5 text-base font-bold text-white transition hover:bg-brand-red-hot"
+          className="inline-flex h-12 min-w-[114px] shrink-0 items-center justify-center gap-[11px] rounded-full bg-brand-red px-5 text-base leading-6 font-bold whitespace-nowrap text-white transition hover:bg-brand-red-hot"
         >
-          <ShoppingBag className="h-5 w-5" aria-hidden />
-          <span>{badgeCount > 0 ? badgeCount : "0.00"}</span>
+          <ShoppingCart
+            className="h-[21px] w-[22px] shrink-0 fill-white text-white"
+            strokeWidth={1.2}
+            aria-hidden
+          />
+          <span className="tabular-nums">{totalFormatted}</span>
         </button>
       )}
     />

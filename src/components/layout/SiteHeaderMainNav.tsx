@@ -1,10 +1,9 @@
 import Image from "next/image";
 
 import { AccountControls } from "@/components/layout/AccountControls";
-import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
 import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
+import { HeaderLocaleCurrencyPill } from "@/components/layout/HeaderLocaleCurrencyPill";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
-import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
@@ -97,7 +96,7 @@ export function SiteHeaderMainNav({
                 key={`${item.href}-${item.label}`}
                 href={item.href}
                 prefetchPolicy="intent"
-                className={`rounded-[10px] px-4 py-2 text-sm font-semibold whitespace-nowrap transition ${
+                className={`rounded-[10px] px-4 py-2 text-base font-semibold whitespace-nowrap transition ${
                   index === 0
                     ? "text-brand-red"
                     : "text-[#101010] hover:text-brand-red"
@@ -129,41 +128,38 @@ export function SiteHeaderMainNav({
               currency={currency}
               labels={searchLabels}
               showLabel
-              triggerClassName="flex h-14 w-full items-center gap-2 rounded-full bg-brand-surface px-8 text-sm text-[rgba(33,43,54,0.46)] transition hover:bg-[#ececec]"
+              triggerClassName="flex h-[49px] w-full items-center gap-2 rounded-full bg-brand-surface px-8 text-sm text-[rgba(33,43,54,0.46)] transition hover:bg-[#ececec]"
             />
           </div>
 
           <div className="flex shrink-0 items-center gap-4">
-            <AccountControls
-              locale={locale}
-              loginLabel={dictionary.header.login}
-              logoutLabel={dictionary.header.logout}
-              profileLabel={dictionary.header.profile}
-              adminLabel={dictionary.header.admin}
-              user={user}
-            />
-            <WishlistHeaderLink
-              locale={locale}
-              label={dictionary.nav.wishlist}
-              count={wishlistCount}
-            />
+            <div className="relative z-10 inline-flex shrink-0 items-center gap-5 overflow-visible">
+              <AccountControls
+                locale={locale}
+                loginLabel={dictionary.header.login}
+                logoutLabel={dictionary.header.logout}
+                profileLabel={dictionary.header.profile}
+                adminLabel={dictionary.header.admin}
+                user={user}
+              />
+              <WishlistHeaderLink
+                locale={locale}
+                label={dictionary.nav.wishlist}
+                count={wishlistCount}
+              />
+            </div>
             <HeaderCartTrigger
               locale={locale}
               currency={currency}
               dictionary={dictionary}
               itemCount={cartItemCount}
             />
-            <div className="flex h-12 items-center gap-2 rounded-full bg-brand-surface px-4 text-sm font-bold text-[#333]">
-              <LocaleSwitcher
-                locale={locale}
-                label={dictionary.header.language}
-              />
-              <span aria-hidden>/</span>
-              <CurrencySwitcher
-                currency={currency}
-                label={dictionary.header.currency}
-              />
-            </div>
+            <HeaderLocaleCurrencyPill
+              locale={locale}
+              currency={currency}
+              languageLabel={dictionary.header.language}
+              currencyLabel={dictionary.header.currency}
+            />
           </div>
         </div>
       </div>

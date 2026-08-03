@@ -49,7 +49,14 @@ export function IconDropdown({
   }, [open]);
 
   return (
-    <div ref={rootRef} className={open ? "relative z-50" : "relative"}>
+    <div
+      ref={rootRef}
+      className={
+        open
+          ? "relative z-50 inline-flex items-center"
+          : "relative inline-flex items-center"
+      }
+    >
       <button
         type="button"
         className={
