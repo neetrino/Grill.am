@@ -260,3 +260,70 @@ select:disabled {
     animation: none !important;
   }
 }
+
+/* Centered app modals — MaMarie / Mobee confirm dialog motion */
+@keyframes app-modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes app-modal-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes app-modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes app-modal-panel-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+.animate-app-modal-backdrop-in {
+  animation: app-modal-backdrop-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-app-modal-backdrop-out {
+  animation: app-modal-backdrop-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-app-modal-panel-in {
+  animation: app-modal-panel-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-app-modal-panel-out {
+  animation: app-modal-panel-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-app-modal-backdrop-in,
+  .animate-app-modal-backdrop-out,
+  .animate-app-modal-panel-in,
+  .animate-app-modal-panel-out {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

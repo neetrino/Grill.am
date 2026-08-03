@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import {
   createCustomerAddressAction,
   deleteCustomerAddressAction,
@@ -13,6 +13,12 @@ import {
 } from "@/features/profile/application/manage-addresses";
 import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 import { ProfileAddressCard } from "@/features/profile/ui/ProfileAddressCard";
+import {
+  PROFILE_BTN_PRIMARY_CLASS,
+  PROFILE_BTN_SECONDARY_CLASS,
+  PROFILE_CARD_CLASS,
+  PROFILE_SECTION_TITLE_CLASS,
+} from "@/features/profile/ui/profile-ui";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
@@ -63,6 +69,7 @@ export function ProfileAddressesView({
   labels,
 }: ProfileAddressesViewProps) {
   const router = useRouter();
+  const { confirmDelete } = useConfirmDelete();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<AddressFormState>(emptyForm);
@@ -75,14 +82,11 @@ export function ProfileAddressesView({
     setEditingId(null);
   }
 
-  function toggleForm(): void {
-    if (showForm) {
-      setShowForm(false);
-      resetForm();
-      return;
-    }
+  function openAddForm(): void {
     resetForm();
     setShowForm(true);
+    setError(null);
+    setMessage(null);
   }
 
   function startEdit(address: CustomerAddressListItem): void {
@@ -121,25 +125,33 @@ export function ProfileAddressesView({
   }
 
   function onDelete(addressId: string): void {
-    if (!window.confirm(labels.deleteConfirm)) {
-      return;
-    }
-
-    setError(null);
-    setMessage(null);
-    startTransition(async () => {
-      const result = await deleteCustomerAddressAction(locale, addressId);
-      if (!result.ok) {
-        setError(result.error.message);
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: labels.delete,
+        message: labels.deleteConfirm,
+        confirmText: labels.delete,
+        cancelText: labels.cancel,
+      });
+      if (!accepted) {
         return;
       }
-      setMessage("Address deleted.");
-      if (editingId === addressId) {
-        setShowForm(false);
-        resetForm();
-      }
-      router.refresh();
-    });
+
+      setError(null);
+      setMessage(null);
+      startTransition(async () => {
+        const result = await deleteCustomerAddressAction(locale, addressId);
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+        setMessage("Address deleted.");
+        if (editingId === addressId) {
+          setShowForm(false);
+          resetForm();
+        }
+        router.refresh();
+      });
+    })();
   }
 
   function onSetDefault(addressId: string): void {
@@ -156,151 +168,155 @@ export function ProfileAddressesView({
     });
   }
 
+  const sortedAddresses = [...addresses].sort((left, right) => {
+    const leftDefault = left.isDefaultShipping ? 0 : 1;
+    const rightDefault = right.isDefaultShipping ? 0 : 1;
+    return leftDefault - rightDefault;
+  });
+
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <Card className="rounded-[15px] border-0 p-5 shadow-none ring-1 ring-gray-100/80 sm:p-7 lg:p-8">
-        <div className="mb-6 flex flex-col gap-4 border-b border-gray-100 pb-5 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
-          <h1 className="text-xl font-bold tracking-tight text-gray-900">
-            {labels.title}
-          </h1>
+    <section className={`p-5 sm:p-7 lg:p-8 ${PROFILE_CARD_CLASS}`}>
+      <div className="mb-7 flex flex-col gap-4 sm:mb-9 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className={PROFILE_SECTION_TITLE_CLASS}>{labels.title}</h1>
+        {!showForm ? (
           <Button
             type="button"
             variant="primary"
-            className="h-11 w-full shrink-0 sm:w-auto"
-            onClick={toggleForm}
+            className={`${PROFILE_BTN_PRIMARY_CLASS} w-full shrink-0 sm:w-auto`}
+            onClick={openAddForm}
             disabled={isPending}
           >
-            {showForm ? labels.cancel : `+ ${labels.addNew}`}
+            {`+ ${labels.addNew}`}
           </Button>
-        </div>
+        ) : null}
+      </div>
 
-        {showForm ? (
-          <form
-            onSubmit={onSave}
-            className="mb-8 space-y-5 rounded-[15px] border border-dashed border-gray-300 bg-gray-50/50 p-4 sm:mb-10 sm:p-6"
-          >
-            <h2 className="text-base font-semibold text-gray-900">
-              {editingId ? labels.formEditTitle : labels.formAddTitle}
-            </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
-              <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-                {labels.line1}
-                <input
-                  required
-                  value={form.line1}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, line1: event.target.value }))
-                  }
-                  className={FIELD_CLASS}
-                  autoComplete="street-address"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-                {labels.city}
-                <input
-                  required
-                  value={form.city}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, city: event.target.value }))
-                  }
-                  className={FIELD_CLASS}
-                  autoComplete="address-level2"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700 sm:col-span-2">
-                {labels.phone}
-                <input
-                  required
-                  type="tel"
-                  value={form.phone}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, phone: event.target.value }))
-                  }
-                  placeholder={labels.phonePlaceholder}
-                  className={FIELD_CLASS}
-                  autoComplete="tel"
-                />
-              </label>
-            </div>
-            <label className="flex cursor-pointer items-center gap-3">
+      {showForm ? (
+        <form
+          onSubmit={onSave}
+          className={`mb-8 space-y-5 p-4 sm:mb-10 sm:p-6 ${PROFILE_CARD_CLASS}`}
+        >
+          <h2 className="text-base font-semibold text-gray-900">
+            {editingId ? labels.formEditTitle : labels.formAddTitle}
+          </h2>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+              {labels.city}
               <input
-                type="checkbox"
-                checked={form.isDefault}
+                required
+                value={form.city}
                 onChange={(event) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    isDefault: event.target.checked,
-                  }))
+                  setForm((prev) => ({ ...prev, city: event.target.value }))
                 }
-                className="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                className={FIELD_CLASS}
+                autoComplete="address-level2"
               />
-              <span className="text-sm text-gray-700">{labels.isDefault}</span>
             </label>
-            <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="h-11 w-full sm:w-auto"
-                onClick={() => {
-                  setShowForm(false);
-                  resetForm();
-                }}
-                disabled={isPending}
-              >
-                {labels.cancel}
-              </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                className="h-11 w-full sm:w-auto"
-                disabled={isPending}
-              >
-                {isPending
-                  ? labels.saving
-                  : editingId
-                    ? labels.update
-                    : labels.add}
-              </Button>
-            </div>
-          </form>
-        ) : null}
-
-        {error ? (
-          <p className="mb-4 text-sm text-red-700" role="alert">
-            {error}
-          </p>
-        ) : null}
-        {message ? (
-          <p className="mb-4 text-sm text-green-700" role="status">
-            {message}
-          </p>
-        ) : null}
-
-        <div className="space-y-4 sm:space-y-5">
-          {addresses.length > 0 ? (
-            addresses.map((address) => (
-              <ProfileAddressCard
-                key={address.id}
-                address={address}
-                disabled={isPending}
-                labels={{
-                  defaultBadge: labels.defaultBadge,
-                  setDefault: labels.setDefault,
-                  edit: labels.edit,
-                  delete: labels.delete,
-                }}
-                onSetDefault={onSetDefault}
-                onEdit={startEdit}
-                onDelete={onDelete}
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+              {labels.line1}
+              <input
+                required
+                value={form.line1}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, line1: event.target.value }))
+                }
+                className={FIELD_CLASS}
+                autoComplete="street-address"
               />
-            ))
-          ) : (
-            <p className="py-12 text-center text-sm text-gray-500 sm:py-16">
-              {labels.noAddresses}
-            </p>
-          )}
-        </div>
-      </Card>
-    </div>
+            </label>
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700 sm:col-span-2">
+              {labels.phone}
+              <input
+                required
+                type="tel"
+                value={form.phone}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, phone: event.target.value }))
+                }
+                placeholder={labels.phonePlaceholder}
+                className={FIELD_CLASS}
+                autoComplete="tel"
+              />
+            </label>
+          </div>
+          <label className="flex cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
+              checked={form.isDefault}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  isDefault: event.target.checked,
+                }))
+              }
+              className="h-4 w-4 rounded border-gray-300 text-brand-red focus:ring-brand-red"
+            />
+            <span className="text-sm text-gray-700">{labels.isDefault}</span>
+          </label>
+          <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className={`${PROFILE_BTN_SECONDARY_CLASS} w-full sm:w-auto`}
+              onClick={() => {
+                setShowForm(false);
+                resetForm();
+              }}
+              disabled={isPending}
+            >
+              {labels.cancel}
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              className={`${PROFILE_BTN_PRIMARY_CLASS} w-full sm:w-auto`}
+              disabled={isPending}
+            >
+              {isPending
+                ? labels.saving
+                : editingId
+                  ? labels.update
+                  : labels.add}
+            </Button>
+          </div>
+        </form>
+      ) : null}
+
+      {error ? (
+        <p className="mb-4 text-sm text-red-700" role="alert">
+          {error}
+        </p>
+      ) : null}
+      {message ? (
+        <p className="mb-4 text-sm text-green-700" role="status">
+          {message}
+        </p>
+      ) : null}
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {sortedAddresses.length > 0 ? (
+          sortedAddresses.map((address) => (
+            <ProfileAddressCard
+              key={address.id}
+              address={address}
+              disabled={isPending}
+              labels={{
+                defaultBadge: labels.defaultBadge,
+                setDefault: labels.setDefault,
+                edit: labels.edit,
+                delete: labels.delete,
+              }}
+              onSetDefault={onSetDefault}
+              onEdit={startEdit}
+              onDelete={onDelete}
+            />
+          ))
+        ) : (
+          <p className="col-span-full py-12 text-center text-sm text-gray-500 sm:py-16">
+            {labels.noAddresses}
+          </p>
+        )}
+      </div>
+    </section>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -67,6 +68,7 @@ export function AdminCategoriesView({
   // Categories admin is English-only (UI + titles), regardless of admin locale.
   const copy = enAdmin.categories;
   const common = enAdmin.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -100,15 +102,25 @@ export function AdminCategoriesView({
   }, [ordered, isFiltering, needle]);
 
   function handleDelete(categoryId: string): void {
-    startTransition(async () => {
-      setError(null);
-      const result = await deleteCategoryAction(locale, categoryId);
-      if (!result.ok) {
-        setError(result.error.message);
-        return;
-      }
-      router.refresh();
-    });
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: common.confirmDeleteTitle,
+        message: copy.confirmDelete,
+        confirmText: common.delete,
+        cancelText: common.cancel,
+      });
+      if (!accepted) return;
+
+      startTransition(async () => {
+        setError(null);
+        const result = await deleteCategoryAction(locale, categoryId);
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+        router.refresh();
+      });
+    })();
   }
 
   function persistCurrentOrder(): void {

@@ -8,6 +8,7 @@ import {
   changePasswordAction,
   type ChangePasswordActionState,
 } from "@/features/auth/change-password-action";
+import { PROFILE_BTN_PRIMARY_CLASS } from "@/features/profile/ui/profile-ui";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
@@ -130,7 +131,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
           <Button
             type="submit"
             variant="primary"
-            className="h-11 w-full sm:w-auto"
+            className={`${PROFILE_BTN_PRIMARY_CLASS} w-full sm:w-auto`}
             disabled={isPending}
           >
             {isPending ? labels.changing : labels.change}

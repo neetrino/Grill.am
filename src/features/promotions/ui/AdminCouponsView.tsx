@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Check, Copy, Pencil, Trash2 } from "lucide-react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -56,6 +57,7 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.coupons;
   const common = dictionary.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] =
@@ -204,15 +206,28 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
                             code: promo.code ?? "",
                           })}
                           onClick={() =>
-                            runAction(async () => {
-                              const result = await deletePromotionAction(
-                                locale,
-                                promo.id,
-                              );
-                              if (!result.ok) {
-                                throw new Error(result.error.message);
-                              }
-                            })
+                            void (async () => {
+                              const accepted = await confirmDelete({
+                                title: common.confirmDeleteTitle,
+                                message: formatAdminMessage(
+                                  copy.confirmDelete,
+                                  { code: promo.code ?? "" },
+                                ),
+                                confirmText: common.delete,
+                                cancelText: common.cancel,
+                              });
+                              if (!accepted) return;
+
+                              runAction(async () => {
+                                const result = await deletePromotionAction(
+                                  locale,
+                                  promo.id,
+                                );
+                                if (!result.ok) {
+                                  throw new Error(result.error.message);
+                                }
+                              });
+                            })()
                           }
                         >
                           <Trash2 className="h-4 w-4" />

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -45,6 +46,7 @@ export function AdminDeliveryView({
   const dictionary = useAdminDictionary();
   const copy = dictionary.delivery;
   const common = dictionary.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingLocation, setEditingLocation] =
@@ -68,23 +70,27 @@ export function AdminDeliveryView({
   }
 
   function onDelete(location: AdminDeliveryLocation): void {
-    if (
-      !window.confirm(
-        formatAdminMessage(copy.confirmDelete, { city: location.city }),
-      )
-    ) {
-      return;
-    }
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: dictionary.common.confirmDeleteTitle,
+        message: formatAdminMessage(copy.confirmDelete, {
+          city: location.city,
+        }),
+        confirmText: dictionary.common.delete,
+        cancelText: dictionary.common.cancel,
+      });
+      if (!accepted) return;
 
-    startTransition(async () => {
-      setError(null);
-      const result = await deleteDeliveryLocationAction(locale, location.id);
-      if (!result.ok) {
-        setError(result.error.message);
-        return;
-      }
-      router.refresh();
-    });
+      startTransition(async () => {
+        setError(null);
+        const result = await deleteDeliveryLocationAction(locale, location.id);
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+        router.refresh();
+      });
+    })();
   }
 
   return (

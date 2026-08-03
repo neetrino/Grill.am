@@ -1,6 +1,14 @@
 {
   "brand": "Grill.am",
   "close": "Փակել",
+  "buttons": {
+    "cancel": "Չեղարկել",
+    "delete": "Ջնջել"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Հաստատել ջնջումը",
+    "confirmDeleteMessage": "Համոզվա՞ծ եք, որ ուզում եք ջնջել սա։ Այս գործողությունը հնարավոր չէ հետարկել։"
+  },
   "nav": {
     "home": "Գլխավոր",
     "products": "Մենյու",

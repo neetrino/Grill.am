@@ -61,5 +61,15 @@ export const PROFILE_PENDING_BADGE_CLASS =
 export const PROFILE_PRIMARY_BUTTON_CLASS =
   "inline-flex h-11 items-center justify-center rounded-full bg-brand-red px-6 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red";
 
+/** Profile form CTAs — soft pills (15px), red primary / white secondary. */
+export const PROFILE_BTN_PRIMARY_CLASS =
+  "h-11 !rounded-[15px] bg-brand-red px-6 text-sm font-semibold text-white hover:bg-brand-red-hot focus:ring-brand-red";
+
+export const PROFILE_BTN_SECONDARY_CLASS =
+  "h-11 !rounded-[15px] border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:ring-gray-300";
+
+export const PROFILE_BTN_DANGER_CLASS =
+  "h-11 !rounded-[15px] bg-brand-red px-6 text-sm font-semibold text-white hover:bg-brand-red-hot focus:ring-brand-red";
+
 export const PROFILE_MOBILE_SHEET_Z_INDEX = 90;
 export const PROFILE_MOBILE_SHEET_HEIGHT_VH = 72;

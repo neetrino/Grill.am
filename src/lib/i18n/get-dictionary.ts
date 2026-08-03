@@ -70,6 +70,8 @@ function buildDictionary(namespaces: LocaleNamespaces) {
   return {
     brand: namespaces.common.brand,
     close: namespaces.common.close,
+    buttons: namespaces.common.buttons,
+    dialogs: namespaces.common.dialogs,
     nav: namespaces.common.nav,
     header: namespaces.common.header,
     footer: namespaces.common.footer,

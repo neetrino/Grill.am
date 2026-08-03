@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2 } from "lucide-react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -35,6 +36,7 @@ function statusBadgeClass(status: string): string {
 export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.blog;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -77,18 +79,25 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
   }
 
   function handleDelete(postId: string): void {
-    const confirmed = window.confirm(copy.confirmDelete);
-    if (!confirmed) return;
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: dictionary.common.confirmDeleteTitle,
+        message: copy.confirmDelete,
+        confirmText: dictionary.common.delete,
+        cancelText: dictionary.common.cancel,
+      });
+      if (!accepted) return;
 
-    startTransition(async () => {
-      setError(null);
-      const result = await deleteBlogPostAction(locale, { postId });
-      if (!result.ok) {
-        setError(result.error.message);
-        return;
-      }
-      router.refresh();
-    });
+      startTransition(async () => {
+        setError(null);
+        const result = await deleteBlogPostAction(locale, { postId });
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+        router.refresh();
+      });
+    })();
   }
 
   return (

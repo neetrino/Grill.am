@@ -1,6 +1,14 @@
 {
   "brand": "Grill.am",
   "close": "Close",
+  "buttons": {
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Confirm delete",
+    "confirmDeleteMessage": "Are you sure you want to delete this? This action cannot be undone."
+  },
   "nav": {
     "home": "Home",
     "products": "Menu",

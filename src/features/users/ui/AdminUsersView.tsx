@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -79,6 +80,7 @@ export function AdminUsersView({
   const table = copy.table;
   const bulk = copy.bulk;
   const common = dictionary.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -181,13 +183,25 @@ export function AdminUsersView({
           variant="outline"
           disabled={isPending || selected.size === 0}
           onClick={() =>
-            runAction(async () => {
-              const result = await bulkAnonymizeUsersAction(locale, {
-                userIds: [...selected],
+            void (async () => {
+              const accepted = await confirmDelete({
+                title: common.confirmDeleteTitle,
+                message: formatAdminMessage(bulk.confirmDelete, {
+                  count: String(selected.size),
+                }),
+                confirmText: common.delete,
+                cancelText: common.cancel,
               });
-              if (!result.ok) throw new Error(result.error.message);
-              setSelected(new Set());
-            })
+              if (!accepted) return;
+
+              runAction(async () => {
+                const result = await bulkAnonymizeUsersAction(locale, {
+                  userIds: [...selected],
+                });
+                if (!result.ok) throw new Error(result.error.message);
+                setSelected(new Set());
+              });
+            })()
           }
         >
           {bulk.deleteSelected}

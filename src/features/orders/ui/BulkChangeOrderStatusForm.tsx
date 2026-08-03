@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -59,6 +60,7 @@ export function BulkChangeOrderStatusForm({
   const list = dictionary.orders.list;
   const bulk = dictionary.orders.bulk;
   const common = dictionary.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -91,27 +93,39 @@ export function BulkChangeOrderStatusForm({
       return;
     }
 
-    startTransition(async () => {
-      setError(null);
-      setMessage(null);
-      const result = await bulkArchiveOrdersAction(locale, {
-        orderNumbers: [...selected],
-      });
-
-      if (!result.ok) {
-        setError(result.error.message);
-        return;
-      }
-
-      setMessage(
-        formatAdminMessage(bulk.deletedResult, {
-          deleted: String(result.value.archived),
-          skipped: String(result.value.skipped),
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: common.confirmDeleteTitle,
+        message: formatAdminMessage(bulk.confirmDelete, {
+          count: String(selected.size),
         }),
-      );
-      setSelected(new Set());
-      router.refresh();
-    });
+        confirmText: common.delete,
+        cancelText: common.cancel,
+      });
+      if (!accepted) return;
+
+      startTransition(async () => {
+        setError(null);
+        setMessage(null);
+        const result = await bulkArchiveOrdersAction(locale, {
+          orderNumbers: [...selected],
+        });
+
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+
+        setMessage(
+          formatAdminMessage(bulk.deletedResult, {
+            deleted: String(result.value.archived),
+            skipped: String(result.value.skipped),
+          }),
+        );
+        setSelected(new Set());
+        router.refresh();
+      });
+    })();
   }
 
   return (

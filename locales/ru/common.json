@@ -1,6 +1,14 @@
 {
   "brand": "Grill.am",
   "close": "Закрыть",
+  "buttons": {
+    "cancel": "Отмена",
+    "delete": "Удалить"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Подтвердите удаление",
+    "confirmDeleteMessage": "Вы уверены, что хотите удалить это? Это действие нельзя отменить."
+  },
   "nav": {
     "home": "Главная",
     "products": "Меню",

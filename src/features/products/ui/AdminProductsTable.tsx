@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -52,6 +53,7 @@ export function AdminProductsTable({
 }: AdminProductsTableProps) {
   const router = useRouter();
   const dictionary = useAdminDictionary();
+  const { confirmDelete } = useConfirmDelete();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -91,13 +93,25 @@ export function AdminProductsTable({
 
   function deleteSelected(): void {
     if (selected.size === 0) return;
-    runAction(async () => {
-      const result = await softDeleteProductsAction(locale, {
-        productIds: [...selected],
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: dictionary.common.confirmDeleteTitle,
+        message: formatAdminMessage(dictionary.products.bulk.confirmDelete, {
+          count: String(selected.size),
+        }),
+        confirmText: dictionary.common.delete,
+        cancelText: dictionary.common.cancel,
       });
-      if (!result.ok) throw new Error(result.error.message);
-      setSelected(new Set());
-    });
+      if (!accepted) return;
+
+      runAction(async () => {
+        const result = await softDeleteProductsAction(locale, {
+          productIds: [...selected],
+        });
+        if (!result.ok) throw new Error(result.error.message);
+        setSelected(new Set());
+      });
+    })();
   }
 
   return (
@@ -201,17 +215,30 @@ export function AdminProductsTable({
                       })
                     }
                     onDelete={() =>
-                      runAction(async () => {
-                        const result = await softDeleteProductsAction(locale, {
-                          productIds: [product.id],
+                      void (async () => {
+                        const accepted = await confirmDelete({
+                          title: dictionary.common.confirmDeleteTitle,
+                          message: dictionary.products.confirmDelete,
+                          confirmText: dictionary.common.delete,
+                          cancelText: dictionary.common.cancel,
                         });
-                        if (!result.ok) throw new Error(result.error.message);
-                        setSelected((prev) => {
-                          const next = new Set(prev);
-                          next.delete(product.id);
-                          return next;
+                        if (!accepted) return;
+
+                        runAction(async () => {
+                          const result = await softDeleteProductsAction(
+                            locale,
+                            {
+                              productIds: [product.id],
+                            },
+                          );
+                          if (!result.ok) throw new Error(result.error.message);
+                          setSelected((prev) => {
+                            const next = new Set(prev);
+                            next.delete(product.id);
+                            return next;
+                          });
                         });
-                      })
+                      })()
                     }
                     onVisibility={() =>
                       runAction(async () => {
