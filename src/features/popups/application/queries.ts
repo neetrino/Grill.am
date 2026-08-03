@@ -95,7 +95,7 @@ async function loadActiveStorefrontPopup(): Promise<StorefrontPopup | null> {
 export async function getActiveStorefrontPopup(): Promise<StorefrontPopup | null> {
   return unstable_cache(
     async () => loadActiveStorefrontPopup(),
-    ["active-storefront-popup"],
+    ["active-storefront-popup-v2"],
     {
       tags: [CACHE_TAGS.popups],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

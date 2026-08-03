@@ -3,11 +3,13 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+type FeatureTone = "red" | "white" | "cream" | "yellow";
+
 type FeatureItem = {
   title: string;
   description: string;
   imageSrc: string;
-  tone: "red" | "white" | "cream" | "yellow";
+  tone: FeatureTone;
 };
 
 type HomeFeaturesProps = {
@@ -16,18 +18,42 @@ type HomeFeaturesProps = {
   items: readonly FeatureItem[];
 };
 
-const TONE_CLASSES: Record<FeatureItem["tone"], string> = {
-  red: "bg-brand-red text-white",
-  white: "bg-white text-brand-red ring-1 ring-black/5",
-  cream: "bg-brand-cream text-brand-ink",
-  yellow: "bg-brand-yellow text-brand-ink",
+/** Figma card shells — nodes 187:254 / 258 / 263 / 267 (322×257, r24). */
+const CARD_SHELL: Record<FeatureTone, string> = {
+  red: "bg-brand-red",
+  white: "bg-white shadow-[0_8px_28px_rgba(0,0,0,0.12)]",
+  cream: "bg-brand-cream",
+  yellow: "bg-brand-yellow",
 };
 
-const DESCRIPTION_CLASSES: Record<FeatureItem["tone"], string> = {
-  red: "text-white/89",
-  white: "text-[rgba(245,37,22,0.57)]",
-  cream: "text-[#7a5a2a]",
-  yellow: "text-[#7a5a2a]",
+const CARD_TITLE: Record<FeatureTone, string> = {
+  red: "left-[140px] top-[45px] w-[159px] text-[25px] leading-[30px] text-white",
+  white: "left-[161px] top-[43px] w-[136px] text-[25px] leading-[30px] text-brand-red",
+  cream: "left-[140px] top-[46px] w-[159px] text-[25px] leading-[30px] text-brand-ink",
+  yellow: "left-[161px] top-[39px] text-[24px] leading-[30px] text-brand-ink",
+};
+
+const CARD_DESCRIPTION: Record<FeatureTone, string> = {
+  red: "left-[139px] top-[112px] w-[170px] text-[16px] leading-[22.75px] text-white/89",
+  white:
+    "left-[161px] top-[115px] w-[139px] text-[14px] leading-[22.75px] text-[rgba(245,37,22,0.57)]",
+  cream: "left-[142px] top-[113px] w-[168px] text-[14px] leading-[22.75px] text-[#7a5a2a]",
+  yellow: "left-[161px] top-[103px] w-[149px] text-[14px] leading-[22.75px] text-[#7a5a2a]",
+};
+
+const CARD_IMAGE: Record<FeatureTone, string> = {
+  red: "left-[-36px] top-[17px] z-[1] h-[218px] w-[168px] rotate-[1.86deg]",
+  white: "left-[-24px] top-[27px] z-[1] h-[198px] w-[185px]",
+  cream: "left-[-16px] top-[28px] z-[1] h-[201px] w-[155px]",
+  yellow: "left-[-46px] top-[20px] z-[1] size-[218px]",
+};
+
+/** Figma vertical offsets — cards sit at different heights. */
+const CARD_OFFSET_Y: Record<FeatureTone, number> = {
+  red: 0,
+  white: -66,
+  cream: 0,
+  yellow: -60,
 };
 
 function FeatureCard({
@@ -39,38 +65,41 @@ function FeatureCard({
   index: number;
   revealed: boolean;
 }) {
-  const titleLines = item.title.split(/\s+/);
+  const titleLines = item.title.trim().split(/\s+/);
   const stackedTitle =
     titleLines.length === 2 ? `${titleLines[0]}\n${titleLines[1]}` : item.title;
+  const offsetY = CARD_OFFSET_Y[item.tone];
+  const offsetX = revealed ? 0 : 64;
 
   return (
     <article
-      className={`relative h-[220px] w-[240px] shrink-0 overflow-hidden rounded-3xl transition-all duration-700 ease-out sm:h-[257px] sm:w-[280px] lg:w-[300px] xl:w-[322px] ${TONE_CLASSES[item.tone]} ${
-        revealed
-          ? "translate-x-0 opacity-100"
-          : "translate-x-16 opacity-0"
+      className={`relative h-[257px] w-[322px] shrink-0 overflow-visible rounded-[24px] transition-all duration-700 ease-out ${CARD_SHELL[item.tone]} ${
+        revealed ? "opacity-100" : "opacity-0"
       }`}
-      style={{ transitionDelay: revealed ? `${120 + index * 90}ms` : "0ms" }}
+      style={{
+        transitionDelay: revealed ? `${120 + index * 90}ms` : "0ms",
+        transform: `translate3d(${offsetX}px, ${offsetY}px, 0)`,
+      }}
     >
-      <div className="absolute top-5 -left-6 h-[180px] w-[160px] sm:h-[200px] sm:w-[175px]">
+      <div className={`pointer-events-none absolute ${CARD_IMAGE[item.tone]}`}>
         <Image
           src={item.imageSrc}
           alt=""
           fill
-          sizes="175px"
-          className="object-contain"
+          sizes="220px"
+          className="object-contain drop-shadow-md"
         />
       </div>
-      <div className="relative z-10 ml-[40%] flex h-full flex-col justify-center py-8 pr-4 pl-1 sm:ml-[42%] sm:py-10 sm:pr-5 sm:pl-2">
-        <h3 className="text-[20px] leading-[26px] font-black whitespace-pre-line sm:text-[24px] sm:leading-[30px]">
-          {stackedTitle}
-        </h3>
-        <p
-          className={`mt-2 text-xs leading-[20px] sm:mt-3 sm:text-sm sm:leading-[22.75px] ${DESCRIPTION_CLASSES[item.tone]}`}
-        >
-          {item.description}
-        </p>
-      </div>
+      <h3
+        className={`absolute z-10 font-black break-words whitespace-pre-line ${CARD_TITLE[item.tone]}`}
+      >
+        {stackedTitle}
+      </h3>
+      <p
+        className={`absolute z-10 break-words ${CARD_DESCRIPTION[item.tone]}`}
+      >
+        {item.description}
+      </p>
     </article>
   );
 }
@@ -172,7 +201,7 @@ export function HomeFeatures({
         className="relative mx-auto h-[300px] w-full max-w-[1440px] sm:h-[360px] lg:h-[421px]"
       >
         <div
-          className={`home-why-track absolute inset-y-0 left-0 flex h-full items-center gap-4 px-4 sm:gap-5 sm:px-6 lg:gap-6 lg:px-8 ${
+          className={`home-why-track absolute inset-y-0 left-0 flex h-full items-center gap-4 px-4 sm:gap-5 sm:px-6 lg:gap-[31px] lg:px-8 ${
             revealed ? "is-revealed" : "is-intro"
           }`}
           style={{
@@ -181,7 +210,7 @@ export function HomeFeatures({
         >
           <div
             ref={cardsRef}
-            className="flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-[18px]"
+            className="flex shrink-0 items-center gap-[18px] overflow-visible sm:gap-6 lg:gap-[31px]"
           >
             {items.map((item, index) => (
               <FeatureCard
