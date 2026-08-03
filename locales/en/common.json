@@ -4,6 +4,7 @@
   "nav": {
     "home": "Home",
     "products": "Menu",
+    "categories": "Categories",
     "shop": "Shop",
     "blog": "Blog",
     "careers": "Careers",
@@ -13,7 +14,8 @@
     "wishlist": "Wishlist",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "navigation": "Navigation"
+    "navigation": "Navigation",
+    "allCategories": "All"
   },
   "header": {
     "language": "Language",

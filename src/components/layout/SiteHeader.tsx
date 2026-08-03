@@ -1,3 +1,4 @@
+import { listStorefrontNavCategories } from "@/features/categories/application/list-storefront-nav-categories";
 import {
   HeaderDesktopActionsIsland,
   HeaderMobileNavIsland,
@@ -18,8 +19,13 @@ type SiteHeaderProps = {
  * Sticky chrome stays mounted across navigations. Only account/cart/wishlist
  * stream through nested Suspense islands (no full-header remount flicker).
  */
-export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
+export async function SiteHeader({
+  locale,
+  currency,
+  dictionary,
+}: SiteHeaderProps) {
   const navItems = getStorefrontNavItems(locale, dictionary);
+  const categories = await listStorefrontNavCategories(locale);
 
   return (
     <SiteHeaderMainNav
@@ -27,12 +33,14 @@ export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
       currency={currency}
       dictionary={dictionary}
       navItems={navItems}
+      categories={categories}
       mobileNav={
         <HeaderMobileNavIsland
           locale={locale}
           currency={currency}
           dictionary={dictionary}
           navItems={navItems}
+          categories={categories}
         />
       }
       desktopActions={

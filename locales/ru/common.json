@@ -4,6 +4,7 @@
   "nav": {
     "home": "Главная",
     "products": "Меню",
+    "categories": "Категории",
     "shop": "Магазин",
     "blog": "Блог",
     "careers": "Вакансии",
@@ -13,7 +14,8 @@
     "wishlist": "Избранное",
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
-    "navigation": "Навигация"
+    "navigation": "Навигация",
+    "allCategories": "Все"
   },
   "header": {
     "language": "Язык",

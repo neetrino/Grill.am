@@ -4,6 +4,7 @@
   "nav": {
     "home": "Գլխավոր",
     "products": "Մենյու",
+    "categories": "Կատեգորիաներ",
     "shop": "Խանութ",
     "blog": "Բլոգ",
     "careers": "Աշխատանք",
@@ -13,7 +14,8 @@
     "wishlist": "Ցանկեր",
     "openMenu": "Բացել մենյուն",
     "closeMenu": "Փակել մենյուն",
-    "navigation": "Նավիգացիա"
+    "navigation": "Նավիգացիա",
+    "allCategories": "Բոլորը"
   },
   "header": {
     "language": "Լեզու",

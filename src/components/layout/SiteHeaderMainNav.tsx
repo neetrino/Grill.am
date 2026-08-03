@@ -6,13 +6,12 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { HeaderLocaleCurrencyPill } from "@/components/layout/HeaderLocaleCurrencyPill";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
+import { PrimaryNavLinks } from "@/components/layout/PrimaryNavLinks";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
-import {
-  isStorefrontNavActive,
-  type StorefrontNavItem,
-} from "@/components/layout/storefront-nav";
+import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { AppLink } from "@/components/ui/AppLink";
+import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -22,6 +21,7 @@ type SiteHeaderMainNavProps = {
   currency: Currency;
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
+  categories: readonly StorefrontNavCategory[];
   mobileNav: React.ReactNode;
   desktopActions: React.ReactNode;
 };
@@ -85,6 +85,7 @@ export function SiteHeaderMainNav({
   currency,
   dictionary,
   navItems,
+  categories,
   mobileNav,
   desktopActions,
 }: SiteHeaderMainNavProps) {
@@ -381,44 +382,13 @@ export function SiteHeaderMainNav({
                     aria-label="Primary"
                     className="order-3 hidden w-full items-center justify-center gap-0.5 lg:order-none lg:flex lg:w-auto lg:flex-1"
                   >
-                    {navItems.map((item) => {
-                      const active = isStorefrontNavActive(
-                        pathname,
-                        item,
-                        locale,
-                      );
-
-                      return (
-                        <AppLink
-                          key={item.id}
-                          href={item.href}
-                          prefetchPolicy="intent"
-                          aria-current={active ? "page" : undefined}
-                          className={`rounded-[10px] px-4 py-2 text-base font-semibold whitespace-nowrap transition ${
-                            active
-                              ? "text-brand-red"
-                              : "text-[#101010] hover:text-brand-red"
-                          }`}
-                          onClick={(event) => {
-                            if (!active) {
-                              return;
-                            }
-                            event.preventDefault();
-                            if (item.id === "home") {
-                              scrollHomeToTop();
-                              return;
-                            }
-                            window.scrollTo({
-                              top: 0,
-                              left: 0,
-                              behavior: "smooth",
-                            });
-                          }}
-                        >
-                          {item.label}
-                        </AppLink>
-                      );
-                    })}
+                    <PrimaryNavLinks
+                      locale={locale}
+                      navItems={navItems}
+                      categories={categories}
+                      allCategoriesLabel={dictionary.nav.allCategories}
+                      onHomeActiveClick={scrollHomeToTop}
+                    />
                   </nav>
 
                   <div className="hidden items-center gap-6 text-base font-medium text-[#333] md:flex">

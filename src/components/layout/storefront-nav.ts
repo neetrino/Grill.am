@@ -5,6 +5,8 @@ export type StorefrontNavItem = {
   id: string;
   href: string;
   label: string;
+  /** Opens category dropdown instead of navigating. */
+  kind?: "link" | "categories";
 };
 
 /**
@@ -20,6 +22,7 @@ export function getStorefrontNavItems(
       id: "menu",
       href: `/${locale}/products`,
       label: dictionary.nav.products,
+      kind: "categories",
     },
     {
       id: "shop",
@@ -44,18 +47,27 @@ export function isStorefrontNavActive(
   pathname: string,
   item: StorefrontNavItem,
   locale: Locale,
+  options?: { categorySlug?: string | null },
 ): boolean {
   const homeHref = `/${locale}`;
+  const productsPath = `/${locale}/products`;
 
   if (item.id === "home") {
     return pathname === homeHref || pathname === `${homeHref}/`;
   }
 
-  if (item.id === "menu" || item.id === "shop") {
-    return (
-      pathname === `/${locale}/products` ||
-      pathname.startsWith(`/${locale}/products/`)
-    );
+  if (item.id === "menu") {
+    return pathname === productsPath && Boolean(options?.categorySlug);
+  }
+
+  if (item.id === "shop") {
+    if (pathname.startsWith(`${productsPath}/`)) {
+      return true;
+    }
+    if (pathname === productsPath) {
+      return !options?.categorySlug;
+    }
+    return false;
   }
 
   return pathname === item.href || pathname.startsWith(`${item.href}/`);

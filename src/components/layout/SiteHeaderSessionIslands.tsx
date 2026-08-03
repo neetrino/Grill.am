@@ -5,6 +5,7 @@ import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { getCartItemCount } from "@/features/cart/cart";
+import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -86,6 +87,7 @@ type HeaderMobileNavProps = {
   currency: Currency;
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
+  categories: readonly StorefrontNavCategory[];
 };
 
 async function HeaderMobileNavAsync({
@@ -93,6 +95,7 @@ async function HeaderMobileNavAsync({
   currency,
   dictionary,
   navItems,
+  categories,
 }: HeaderMobileNavProps) {
   const { user } = await loadHeaderSessionData();
 
@@ -103,6 +106,7 @@ async function HeaderMobileNavAsync({
       dictionary={dictionary}
       user={user}
       navItems={navItems}
+      categories={categories}
     />
   );
 }
@@ -128,6 +132,7 @@ export function HeaderMobileNavIsland(props: HeaderMobileNavProps) {
           dictionary={props.dictionary}
           user={null}
           navItems={props.navItems}
+          categories={props.categories}
         />
       }
     >
