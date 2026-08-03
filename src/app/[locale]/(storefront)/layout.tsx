@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { StorefrontScrollToTop } from "@/components/layout/StorefrontScrollToTop";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveStorefrontPopup } from "@/features/popups/application/queries";
 import { SitePopupOverlay } from "@/features/popups/ui/SitePopupOverlay";
@@ -39,6 +40,7 @@ export default async function StorefrontLayout({
 
   return (
     <div className="flex min-h-dvh flex-1 flex-col bg-white">
+      <StorefrontScrollToTop />
       <SiteHeader
         locale={locale}
         currency={currency}

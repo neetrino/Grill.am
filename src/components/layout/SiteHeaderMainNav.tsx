@@ -2,21 +2,16 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { AccountControls } from "@/components/layout/AccountControls";
-import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
 import { HeaderLocaleCurrencyPill } from "@/components/layout/HeaderLocaleCurrencyPill";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
-import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
 import { AppLink } from "@/components/ui/AppLink";
-import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import type { SessionUser } from "@/lib/auth/session";
 
 type NavItem = {
   href: string;
@@ -27,15 +22,53 @@ type SiteHeaderMainNavProps = {
   locale: Locale;
   currency: Currency;
   dictionary: Dictionary;
-  user: SessionUser | null;
   navItems: readonly NavItem[];
-  cartItemCount: number;
-  wishlistCount: number;
+  mobileNav: React.ReactNode;
+  desktopActions: React.ReactNode;
 };
 
 const TOP_REVEAL_Y = 24;
 const DIRECTION_DELTA = 10;
+/** Instant sync — scroll restore / route jumps, not user wheel. */
+const SCROLL_JUMP_DELTA = 80;
 const DESKTOP_MIN_WIDTH = 768;
+const HIDDEN_STATE_STORAGE_PREFIX = "grill:header-primary-hidden:";
+
+function readShouldHidePrimary(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  if (window.innerWidth < DESKTOP_MIN_WIDTH) {
+    return false;
+  }
+  return window.scrollY > TOP_REVEAL_Y;
+}
+
+function readStoredHidden(pathname: string): boolean | null {
+  try {
+    const raw = sessionStorage.getItem(`${HIDDEN_STATE_STORAGE_PREFIX}${pathname}`);
+    if (raw === "1") {
+      return true;
+    }
+    if (raw === "0") {
+      return false;
+    }
+  } catch {
+    // sessionStorage may be unavailable
+  }
+  return null;
+}
+
+function writeStoredHidden(pathname: string, hidden: boolean): void {
+  try {
+    sessionStorage.setItem(
+      `${HIDDEN_STATE_STORAGE_PREFIX}${pathname}`,
+      hidden ? "1" : "0",
+    );
+  } catch {
+    // sessionStorage may be unavailable
+  }
+}
 
 function headerSearchLabels(dictionary: Dictionary) {
   return {
@@ -52,19 +85,114 @@ export function SiteHeaderMainNav({
   locale,
   currency,
   dictionary,
-  user,
   navItems,
-  cartItemCount,
-  wishlistCount,
+  mobileNav,
+  desktopActions,
 }: SiteHeaderMainNavProps) {
   const searchLabels = headerSearchLabels(dictionary);
   const pathname = usePathname();
   const homeHref = `/${locale}`;
-  const isHomePage =
-    pathname === homeHref || pathname === `${homeHref}/`;
+  const isHomePage = pathname === homeHref || pathname === `${homeHref}/`;
+
+  // Always start expanded so SSR HTML matches the first client render.
+  // Scroll/collapse is applied in useLayoutEffect before paint.
   const [primaryHidden, setPrimaryHidden] = useState(false);
+  const [motionEnabled, setMotionEnabled] = useState(false);
   const lastScrollYRef = useRef(0);
   const primaryHiddenRef = useRef(false);
+  const motionEnabledRef = useRef(false);
+  const motionEnableTimerRef = useRef<number | null>(null);
+  const pathnameRef = useRef(pathname);
+  const routeSyncTimerRef = useRef<number | null>(null);
+  const isPopNavigationRef = useRef(false);
+
+  function clearMotionEnableTimer(): void {
+    if (motionEnableTimerRef.current != null) {
+      window.clearTimeout(motionEnableTimerRef.current);
+      motionEnableTimerRef.current = null;
+    }
+  }
+
+  function clearRouteSyncTimer(): void {
+    if (routeSyncTimerRef.current != null) {
+      window.clearTimeout(routeSyncTimerRef.current);
+      routeSyncTimerRef.current = null;
+    }
+  }
+
+  function scheduleMotionEnable(): void {
+    clearMotionEnableTimer();
+    motionEnableTimerRef.current = window.setTimeout(() => {
+      motionEnabledRef.current = true;
+      setMotionEnabled(true);
+      motionEnableTimerRef.current = null;
+    }, 50);
+  }
+
+  function setHiddenState(nextHidden: boolean, animate: boolean): void {
+    const changed = primaryHiddenRef.current !== nextHidden;
+
+    if (!animate) {
+      clearMotionEnableTimer();
+      if (motionEnabledRef.current) {
+        motionEnabledRef.current = false;
+        setMotionEnabled(false);
+      }
+      scheduleMotionEnable();
+    }
+
+    if (!changed) {
+      return;
+    }
+
+    primaryHiddenRef.current = nextHidden;
+    setPrimaryHidden(nextHidden);
+    writeStoredHidden(pathnameRef.current, nextHidden);
+  }
+
+  useEffect(() => {
+    function onPopState(): void {
+      isPopNavigationRef.current = true;
+    }
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useLayoutEffect(() => {
+    pathnameRef.current = pathname;
+    clearRouteSyncTimer();
+
+    const isPop = isPopNavigationRef.current;
+    isPopNavigationRef.current = false;
+
+    if (isPop) {
+      // Back/forward: wait for scroll restoration, then match header to it.
+      const stored = readStoredHidden(pathname);
+      const y = window.scrollY;
+      if (stored === true && y <= TOP_REVEAL_Y) {
+        setHiddenState(true, false);
+        routeSyncTimerRef.current = window.setTimeout(() => {
+          lastScrollYRef.current = window.scrollY;
+          setHiddenState(readShouldHidePrimary(), false);
+          routeSyncTimerRef.current = null;
+        }, 120);
+      } else {
+        lastScrollYRef.current = window.scrollY;
+        setHiddenState(readShouldHidePrimary(), false);
+      }
+    } else {
+      // Forward navigation lands at top — primary bar must be visible.
+      lastScrollYRef.current = 0;
+      setHiddenState(false, false);
+    }
+
+    return () => {
+      clearMotionEnableTimer();
+      clearRouteSyncTimer();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional pathname gate
+  }, [pathname]);
 
   useEffect(() => {
     lastScrollYRef.current = window.scrollY;
@@ -72,8 +200,7 @@ export function SiteHeaderMainNav({
     function onScroll(): void {
       if (window.innerWidth < DESKTOP_MIN_WIDTH) {
         if (primaryHiddenRef.current) {
-          primaryHiddenRef.current = false;
-          setPrimaryHidden(false);
+          setHiddenState(false, false);
         }
         lastScrollYRef.current = window.scrollY;
         return;
@@ -81,6 +208,13 @@ export function SiteHeaderMainNav({
 
       const y = window.scrollY;
       const delta = y - lastScrollYRef.current;
+
+      if (Math.abs(delta) >= SCROLL_JUMP_DELTA) {
+        lastScrollYRef.current = y;
+        setHiddenState(y > TOP_REVEAL_Y, false);
+        return;
+      }
+
       let nextHidden = primaryHiddenRef.current;
 
       if (y <= TOP_REVEAL_Y) {
@@ -91,32 +225,50 @@ export function SiteHeaderMainNav({
         nextHidden = false;
       }
 
-      if (primaryHiddenRef.current !== nextHidden) {
-        primaryHiddenRef.current = nextHidden;
-        setPrimaryHidden(nextHidden);
-      }
       lastScrollYRef.current = y;
+      setHiddenState(nextHidden, motionEnabledRef.current);
+    }
+
+    function onPageShow(event: PageTransitionEvent): void {
+      if (!event.persisted) {
+        return;
+      }
+      lastScrollYRef.current = window.scrollY;
+      setHiddenState(readShouldHidePrimary(), false);
     }
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("pageshow", onPageShow);
+
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      window.removeEventListener("pageshow", onPageShow);
+      clearMotionEnableTimer();
+      clearRouteSyncTimer();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- listeners once; refs hold latest
   }, []);
+
+  const collapseTransitionClass = motionEnabled
+    ? "transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+    : "transition-none";
+  const fadeTransitionClass = motionEnabled
+    ? "transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+    : "transition-none";
 
   return (
     <div className="sticky top-0 z-50 bg-white">
       <div
-        className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+        className={`grid ${collapseTransitionClass} ${
           primaryHidden ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
         }`}
         aria-hidden={primaryHidden}
       >
         <div className="min-h-0 overflow-hidden">
           <div
-            className={`origin-top transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+            className={`origin-top ${fadeTransitionClass} ${
               primaryHidden
                 ? "pointer-events-none -translate-y-3 opacity-0"
                 : "translate-y-0 opacity-100"
@@ -154,13 +306,7 @@ export function SiteHeaderMainNav({
                         currency={currency}
                         labels={searchLabels}
                       />
-                      <MobileNavDrawer
-                        locale={locale}
-                        currency={currency}
-                        dictionary={dictionary}
-                        user={user}
-                        navItems={navItems}
-                      />
+                      {mobileNav}
                     </div>
                   </div>
 
@@ -216,27 +362,7 @@ export function SiteHeaderMainNav({
           </div>
 
           <div className="flex shrink-0 items-center gap-4">
-            <div className="relative z-10 inline-flex shrink-0 items-center gap-5 overflow-visible">
-              <AccountControls
-                locale={locale}
-                loginLabel={dictionary.header.login}
-                logoutLabel={dictionary.header.logout}
-                profileLabel={dictionary.header.profile}
-                adminLabel={dictionary.header.admin}
-                user={user}
-              />
-              <WishlistHeaderLink
-                locale={locale}
-                label={dictionary.nav.wishlist}
-                count={wishlistCount}
-              />
-            </div>
-            <HeaderCartTrigger
-              locale={locale}
-              currency={currency}
-              dictionary={dictionary}
-              itemCount={cartItemCount}
-            />
+            {desktopActions}
             <HeaderLocaleCurrencyPill
               locale={locale}
               currency={currency}
