@@ -11,7 +11,7 @@ import {
 import { CatalogActiveChips } from "@/features/products/ui/CatalogActiveChips";
 import { CatalogBreadcrumbs } from "@/features/products/ui/CatalogBreadcrumbs";
 import { CatalogFilters } from "@/features/products/ui/CatalogFilters";
-import { CatalogSortBar } from "@/features/products/ui/CatalogSortBar";
+import { CatalogListingView } from "@/features/products/ui/CatalogListingView";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -160,81 +160,82 @@ export default async function ProductsPage({
             ]}
           />
 
-          <div className="mt-6">
-            <CatalogSortBar
-              locale={rawLocale}
-              filters={filters}
-              labels={{
-                popular: catalogCopy.sortPopular,
-                newest: catalogCopy.sortNewest,
-                onSale: catalogCopy.sortOnSale,
-              }}
-            />
-          </div>
-
-          <div className="mt-4">
-            <CatalogActiveChips
-              locale={rawLocale}
-              filters={filters}
-              categories={catalog.categories}
-              currencyCode={currency}
-              labels={{
-                searchChip: catalogCopy.searchChip,
-                minPriceChip: catalogCopy.minPriceChip,
-                maxPriceChip: catalogCopy.maxPriceChip,
-                inStockChip: catalogCopy.inStockChip,
-                onSaleChip: catalogCopy.onSaleChip,
-                removeFilter: catalogCopy.removeFilter,
-              }}
-            />
-          </div>
-
-          {priced.length === 0 ? (
-            <div className="mt-6 rounded-[24px] border border-dashed border-[#e5e7eb] px-6 py-16 text-center">
-              <p className="text-base font-medium text-[#101828]">
-                {catalogCopy.emptyTitle}
-              </p>
-              <p className="mt-2 text-sm text-[#4a5565]">
-                {catalogCopy.emptyDescription}
-              </p>
-              <AppLink
-                href={catalogHref(rawLocale, {
-                  category: [],
-                  sort: "newest",
-                  page: 1,
-                  pageSize: filters.pageSize,
-                })}
-                prefetchPolicy="intent"
-                className="mt-6 inline-flex rounded-full border border-[#e5e7eb] px-4 py-2 text-sm font-medium text-[#374151] hover:bg-[#f9fafb]"
-              >
-                {catalogCopy.clearFilters}
-              </AppLink>
-            </div>
-          ) : (
-            <div className="mt-5 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-2 xl:grid-cols-3">
-              {priced.map(({ product, price, compareAtFormatted }, index) => (
-                <ProductCard
-                  key={product.id}
-                  href={`/${rawLocale}/products/${product.translation.slug}`}
-                  title={product.translation.title}
-                  categoryTitle={product.categoryTitle}
-                  priceFormatted={price.formatted}
-                  compareAtFormatted={compareAtFormatted}
-                  discountPercent={product.discountPercent}
-                  imageUrl={product.imageUrl}
-                  inStock={product.stockOnHand > 0}
-                  priority={index < 4}
-                  locale={rawLocale}
-                  productId={product.id}
-                  inWishlist={wishlistIds.has(product.id)}
-                  isSignedIn={Boolean(user)}
-                  wishlistLabel={dictionary.nav.wishlist}
-                  addToCartLabel={dictionary.product.addToCart}
-                  requiresConfiguration={product.requiresConfiguration}
-                />
-              ))}
-            </div>
-          )}
+          <CatalogListingView
+            locale={rawLocale}
+            filters={filters}
+            sortLabels={{
+              popular: catalogCopy.sortPopular,
+              newest: catalogCopy.sortNewest,
+              onSale: catalogCopy.sortOnSale,
+            }}
+            viewLabels={{
+              group: catalogCopy.viewModeLabel,
+              three: catalogCopy.viewThreeColumns,
+              four: catalogCopy.viewFourColumns,
+            }}
+            chips={
+              <CatalogActiveChips
+                locale={rawLocale}
+                filters={filters}
+                categories={catalog.categories}
+                currencyCode={currency}
+                labels={{
+                  searchChip: catalogCopy.searchChip,
+                  minPriceChip: catalogCopy.minPriceChip,
+                  maxPriceChip: catalogCopy.maxPriceChip,
+                  inStockChip: catalogCopy.inStockChip,
+                  onSaleChip: catalogCopy.onSaleChip,
+                  removeFilter: catalogCopy.removeFilter,
+                }}
+              />
+            }
+            empty={
+              priced.length === 0 ? (
+                <div className="mt-6 rounded-[24px] border border-dashed border-[#e5e7eb] px-6 py-16 text-center">
+                  <p className="text-base font-medium text-[#101828]">
+                    {catalogCopy.emptyTitle}
+                  </p>
+                  <p className="mt-2 text-sm text-[#4a5565]">
+                    {catalogCopy.emptyDescription}
+                  </p>
+                  <AppLink
+                    href={catalogHref(rawLocale, {
+                      category: [],
+                      sort: "newest",
+                      page: 1,
+                      pageSize: filters.pageSize,
+                    })}
+                    prefetchPolicy="intent"
+                    className="mt-6 inline-flex rounded-full border border-[#e5e7eb] px-4 py-2 text-sm font-medium text-[#374151] hover:bg-[#f9fafb]"
+                  >
+                    {catalogCopy.clearFilters}
+                  </AppLink>
+                </div>
+              ) : null
+            }
+          >
+            {priced.map(({ product, price, compareAtFormatted }, index) => (
+              <ProductCard
+                key={product.id}
+                href={`/${rawLocale}/products/${product.translation.slug}`}
+                title={product.translation.title}
+                categoryTitle={product.categoryTitle}
+                priceFormatted={price.formatted}
+                compareAtFormatted={compareAtFormatted}
+                discountPercent={product.discountPercent}
+                imageUrl={product.imageUrl}
+                inStock={product.stockOnHand > 0}
+                priority={index < 4}
+                locale={rawLocale}
+                productId={product.id}
+                inWishlist={wishlistIds.has(product.id)}
+                isSignedIn={Boolean(user)}
+                wishlistLabel={dictionary.nav.wishlist}
+                addToCartLabel={dictionary.product.addToCart}
+                requiresConfiguration={product.requiresConfiguration}
+              />
+            ))}
+          </CatalogListingView>
 
           {totalPages > 1 ? (
             <nav
