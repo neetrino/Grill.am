@@ -50,9 +50,7 @@
     "deliveryPolicy": "Delivery Policy",
     "contactInfo": "Contact",
     "followUs": "Follow us",
-    "addresses": "Addresses",
-    "rights": "All Rights Reserved",
-    "createdBy": "Created by Neetrino IT Company"
+    "addresses": "Addresses"
   },
   "popup": {
     "close": "Close popup"

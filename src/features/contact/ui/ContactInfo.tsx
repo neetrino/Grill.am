@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { telHref } from "@/lib/phone";
 
 type ContactInfoProps = {
   copy: Dictionary["contact"];
@@ -34,12 +35,18 @@ export function ContactInfo({ copy }: ContactInfoProps) {
     <div className="space-y-8">
       <InfoBlock icon={<Phone className="h-6 w-6" />} title={copy.callTitle}>
         <p className="mb-2 text-gray-600">{copy.callDescription}</p>
-        <a
-          href={`tel:${copy.storePhone}`}
-          className="font-medium text-orange-500 transition-colors hover:text-orange-600"
-        >
-          {copy.storePhone}
-        </a>
+        <ul className="space-y-2">
+          {copy.storePhones.map((phone) => (
+            <li key={phone}>
+              <a
+                href={telHref(phone)}
+                className="font-medium text-orange-500 transition-colors hover:text-orange-600"
+              >
+                {phone}
+              </a>
+            </li>
+          ))}
+        </ul>
       </InfoBlock>
 
       <InfoBlock icon={<Mail className="h-6 w-6" />} title={copy.writeTitle}>
@@ -57,7 +64,13 @@ export function ContactInfo({ copy }: ContactInfoProps) {
           <p>{copy.hoursWeekdays}</p>
           <p>{copy.hoursSaturday}</p>
         </div>
-        <p className="font-medium text-orange-500">{copy.storeAddress}</p>
+        <ul className="space-y-1">
+          {copy.storeAddresses.map((address) => (
+            <li key={address} className="font-medium text-orange-500">
+              {address}
+            </li>
+          ))}
+        </ul>
       </InfoBlock>
     </div>
   );

@@ -50,9 +50,7 @@
     "deliveryPolicy": "Политика доставки",
     "contactInfo": "Контакты",
     "followUs": "Мы в соцсетях",
-    "addresses": "Адреса",
-    "rights": "Все права защищены",
-    "createdBy": "Создано Neetrino IT Company"
+    "addresses": "Адреса"
   },
   "popup": {
     "close": "Закрыть попап"

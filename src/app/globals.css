@@ -32,6 +32,7 @@
   --color-brand-surface: var(--brand-surface);
   --font-sans: var(--font-montserrat);
   --font-display: var(--font-display);
+  --font-mirage: var(--font-mirage-bold);
   --font-mono: var(--font-geist-mono);
 }
 

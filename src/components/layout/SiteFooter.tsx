@@ -1,19 +1,23 @@
 import Image from "next/image";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 
+import { FooterAddressDropdown } from "@/components/layout/FooterAddressDropdown";
 import {
   FacebookIcon,
   InstagramIcon,
-  LinkedInIcon,
+  WhatsAppIcon,
 } from "@/components/layout/SocialIcons";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { telHref } from "@/lib/phone";
 
 type SiteFooterProps = {
   dictionary: Dictionary;
   locale: Locale;
 };
+
+const CONTACT_ICON_CLASS = "h-[15px] w-[15px] shrink-0 text-[#FF4A12]";
 
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   const year = new Date().getFullYear();
@@ -29,159 +33,146 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
       Icon: FacebookIcon,
     },
     {
-      href: dictionary.contact.social.linkedin,
-      label: "LinkedIn",
-      Icon: LinkedInIcon,
+      href: dictionary.contact.social.whatsapp,
+      label: "WhatsApp",
+      Icon: WhatsAppIcon,
+    },
+  ] as const;
+
+  const navLinks = [
+    {
+      href: `/${locale}/products`,
+      label: dictionary.footer.categories,
+    },
+    {
+      href: `/${locale}/products`,
+      label: dictionary.footer.promotions,
+    },
+    {
+      href: `/${locale}/products`,
+      label: dictionary.footer.bestsellers,
+    },
+    {
+      href: `/${locale}/about`,
+      label: dictionary.nav.about,
+    },
+    {
+      href: `/${locale}/contact`,
+      label: dictionary.nav.contact,
+    },
+  ] as const;
+
+  const supportLinks = [
+    {
+      href: `/${locale}/legal/delivery`,
+      label: dictionary.footer.refundPolicy,
+    },
+    {
+      href: `/${locale}/legal/terms`,
+      label: dictionary.footer.terms,
+    },
+    {
+      href: `/${locale}/legal/privacy`,
+      label: dictionary.footer.privacyPolicy,
+    },
+    {
+      href: `/${locale}/contact`,
+      label: dictionary.footer.faq,
     },
   ] as const;
 
   return (
-    <footer className="mt-auto hidden overflow-hidden rounded-t-[60px] bg-black md:block">
-      <div className="relative mx-auto max-w-[1440px] px-5 pt-14 pb-10 sm:px-8 lg:px-10 lg:pt-16">
-        <p
-          aria-hidden
-          className="pointer-events-none absolute bottom-8 left-0 font-black text-[clamp(64px,20vw,281px)] leading-none text-white/25 uppercase opacity-40 select-none"
-        >
-          GRILL.AM
-        </p>
+    <footer className="relative mt-auto hidden overflow-hidden rounded-tl-[30px] rounded-tr-[30px] bg-black md:block">
+      <p
+        aria-hidden
+        className="pointer-events-none absolute bottom-[18px] left-[19px] z-0 translate-y-1/2 font-mirage text-[281px] leading-[230px] whitespace-nowrap text-white/25 uppercase opacity-40 select-none"
+      >
+        GRILL.AM
+      </p>
 
-        <div className="relative z-10 grid grid-cols-2 gap-8 lg:grid-cols-5">
+      <div className="relative z-10 mx-auto max-w-[1440px] px-10 pt-[71px] pb-10">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[minmax(240px,1.6fr)_repeat(4,minmax(140px,1fr))]">
           <div className="col-span-2 lg:col-span-1">
-            <div className="relative mb-4 h-9 w-[92px]">
+            <div className="relative h-[37px] w-[92px]">
               <Image
                 src="/assets/brand/logo.webp"
                 alt={dictionary.brand}
                 fill
                 sizes="92px"
-                className="object-contain brightness-0 invert"
+                className="object-contain object-left"
               />
             </div>
-            <p className="max-w-[280px] text-sm leading-[22.75px] text-white/50">
+            <p className="mt-[19.5px] mb-[22.75px] max-w-[280px] text-sm leading-[22.75px] text-white/50">
               {dictionary.footer.description}
             </p>
-            <div className="mt-6 flex items-center gap-3">
-              {socialLinks.map(({ href, label, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-white/8 text-white transition hover:bg-white/15"
-                  aria-label={label}
-                >
-                  <Icon className="h-[18px] w-[18px]" />
-                </a>
-              ))}
+            <div className="flex items-center gap-3 pt-6">
+              {socialLinks.map(({ href, label, Icon }) => {
+                const isExternalHttp = href.startsWith("http");
+                return (
+                  <a
+                    key={label}
+                    href={href}
+                    {...(isExternalHttp
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-white/8 text-white/60 transition hover:bg-white/15 hover:text-white"
+                    aria-label={label}
+                  >
+                    <Icon className="h-[18px] w-[18px]" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
           <div>
-            <h4 className="mb-3 text-sm font-black tracking-[1.68px] text-white uppercase">
+            <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.quickLinks}
             </h4>
-            <ul className="space-y-3 text-sm text-white/50">
-              <li>
-                <AppLink
-                  href={`/${locale}/products`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.footer.categories}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/products`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.footer.promotions}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/products`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.footer.bestsellers}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/about`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.nav.about}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/contact`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.nav.contact}
-                </AppLink>
-              </li>
+            <ul className="mt-[9px] space-y-3 text-sm text-white/50">
+              {navLinks.map(({ href, label }) => (
+                <li key={label}>
+                  <AppLink
+                    href={href}
+                    prefetchPolicy="intent"
+                    className="transition hover:text-white"
+                  >
+                    {label}
+                  </AppLink>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-3 text-sm font-black tracking-[0.7px] text-white uppercase">
+            <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.support}
             </h4>
-            <ul className="space-y-3 text-sm text-white/60">
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/delivery`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.footer.refundPolicy}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/terms`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.footer.terms}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/privacy`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.footer.privacyPolicy}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/contact`}
-                  prefetchPolicy="intent"
-                  className="transition hover:text-white"
-                >
-                  {dictionary.footer.faq}
-                </AppLink>
-              </li>
+            <ul className="mt-6 space-y-4 text-sm text-white/60">
+              {supportLinks.map(({ href, label }) => (
+                <li key={label}>
+                  <AppLink
+                    href={href}
+                    prefetchPolicy="intent"
+                    className="transition hover:text-white"
+                  >
+                    {label}
+                  </AppLink>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-3 text-sm font-black tracking-[1.68px] text-white uppercase">
+            <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.hours}
             </h4>
-            <div className="space-y-2 text-sm">
+            <div className="mt-5 space-y-2 text-sm">
               <p className="text-white/50">{dictionary.footer.hoursWeekdaysLabel}</p>
               <p className="font-semibold text-white">
                 {dictionary.footer.hoursWeekdays}
               </p>
-              <p className="pt-2 text-white/50">
+              <p className="pt-1 text-white/50">
                 {dictionary.footer.hoursWeekendLabel}
               </p>
               <p className="font-semibold text-white">
@@ -191,21 +182,23 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           </div>
 
           <div>
-            <h4 className="mb-3 text-sm font-black tracking-[1.68px] text-white uppercase">
+            <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.contactInfo}
             </h4>
-            <ul className="space-y-4 text-sm text-white/60">
+            <ul className="mt-5 space-y-4 text-sm text-white/60">
+              {dictionary.contact.storePhones.map((phone) => (
+                <li key={phone} className="flex items-center gap-3">
+                  <Phone className={CONTACT_ICON_CLASS} aria-hidden />
+                  <a
+                    href={telHref(phone)}
+                    className="transition hover:text-white"
+                  >
+                    {phone}
+                  </a>
+                </li>
+              ))}
               <li className="flex items-center gap-3">
-                <Phone className="h-[15px] w-[15px] shrink-0" aria-hidden />
-                <a
-                  href={`tel:${dictionary.contact.storePhone.replace(/\s/g, "")}`}
-                  className="transition hover:text-white"
-                >
-                  {dictionary.contact.storePhone}
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-[15px] w-[15px] shrink-0" aria-hidden />
+                <Mail className={CONTACT_ICON_CLASS} aria-hidden />
                 <a
                   href={`mailto:${dictionary.contact.storeEmail}`}
                   className="transition hover:text-white"
@@ -213,17 +206,25 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   {dictionary.contact.storeEmail}
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-[15px] w-[15px] shrink-0" aria-hidden />
-                <span>{dictionary.contact.storeAddress}</span>
-              </li>
+              <FooterAddressDropdown
+                addresses={dictionary.contact.storeAddresses}
+                toggleLabel={dictionary.footer.addresses}
+              />
             </ul>
           </div>
         </div>
 
-        <div className="relative z-10 mt-16 border-t border-white/10 pt-8">
-          <p className="text-sm text-white/30">
-            {`Copyright © ${year} | ${dictionary.footer.rights} | ${dictionary.footer.createdBy}`}
+        <div className="relative z-10 mt-16 pt-8">
+          <p className="text-sm text-white">
+            {`Copyright © ${year} | All Rights Reserved | Created by `}
+            <a
+              href="https://neetrino.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold transition hover:text-white/80"
+            >
+              Neetrino IT Company
+            </a>
           </p>
         </div>
       </div>

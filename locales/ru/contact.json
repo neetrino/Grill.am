@@ -9,13 +9,24 @@
   "submit": "Отправить",
   "success": "Спасибо — сообщение отправлено.",
   "error": "Не удалось отправить сообщение.",
-  "storePhone": "+374 60 50 04 06",
-  "storeEmail": "info@grill.am",
-  "storeAddress": "Ереван, Комитаса 12",
+  "storePhones": ["+374 33 600 700", "+374 10 600 700"],
+  "storeEmail": "infogrillam@gmail.com",
+  "storeAddresses": [
+    "Хоренаци 95/2",
+    "Хоренаци 88",
+    "Пушкин 43/3",
+    "Тотовенц 2/7",
+    "Баграмян 50/5",
+    "Адмирала Исакова 27",
+    "Андраника 94/4",
+    "Себастия 16/1",
+    "Тигран Петросян 13/8"
+  ],
   "social": {
-    "instagram": "https://instagram.com",
-    "facebook": "https://facebook.com",
-    "linkedin": "https://linkedin.com"
+    "instagram": "https://www.instagram.com/grill.am",
+    "facebook": "https://www.facebook.com/Grill.am",
+    "linkedin": "https://linkedin.com",
+    "whatsapp": "https://wa.me/37433600700"
   },
   "callTitle": "Позвоните нам:",
   "callDescription": "Мы на связи 24/7, 7 дней в неделю.",

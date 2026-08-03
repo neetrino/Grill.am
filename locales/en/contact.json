@@ -9,13 +9,24 @@
   "submit": "Send message",
   "success": "Thank you — your message was sent.",
   "error": "Unable to send your message.",
-  "storePhone": "+374 60 50 04 06",
-  "storeEmail": "info@grill.am",
-  "storeAddress": "Yerevan, Komitas 12",
+  "storePhones": ["+374 33 600 700", "+374 10 600 700"],
+  "storeEmail": "infogrillam@gmail.com",
+  "storeAddresses": [
+    "Khorenatsi 95/2",
+    "Khorenatsi 88",
+    "Pushkin 43/3",
+    "Totovents 2/7",
+    "Baghramyan 50/5",
+    "Admiral Isakov 27",
+    "Andranik 94/4",
+    "Sebastia 16/1",
+    "Tigran Petrosyan 13/8"
+  ],
   "social": {
-    "instagram": "https://instagram.com",
-    "facebook": "https://facebook.com",
-    "linkedin": "https://linkedin.com"
+    "instagram": "https://www.instagram.com/grill.am",
+    "facebook": "https://www.facebook.com/Grill.am",
+    "linkedin": "https://linkedin.com",
+    "whatsapp": "https://wa.me/37433600700"
   },
   "callTitle": "Call Us:",
   "callDescription": "We are available 24/7, 7 days a week.",

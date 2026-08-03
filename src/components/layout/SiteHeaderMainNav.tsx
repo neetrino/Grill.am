@@ -13,6 +13,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import type { SessionUser } from "@/lib/auth/session";
+import { telHref } from "@/lib/phone";
 
 type NavItem = {
   href: string;
@@ -108,13 +109,20 @@ export function SiteHeaderMainNav({
           </nav>
 
           <div className="hidden items-center gap-6 text-base font-medium text-[#333] md:flex">
-            <a
-              href={`tel:${dictionary.contact.storePhone.replace(/\s/g, "")}`}
-              className="inline-flex items-center gap-2 capitalize transition hover:text-brand-red"
-            >
-              <Phone className="h-[19px] w-[19px]" aria-hidden />
-              {dictionary.contact.storePhone}
-            </a>
+            <div className="inline-flex items-center gap-2">
+              <Phone className="h-[19px] w-[19px] shrink-0" aria-hidden />
+              <div className="flex flex-col gap-0.5 leading-tight">
+                {dictionary.contact.storePhones.map((phone) => (
+                  <a
+                    key={phone}
+                    href={telHref(phone)}
+                    className="capitalize transition hover:text-brand-red"
+                  >
+                    {phone}
+                  </a>
+                ))}
+              </div>
+            </div>
             <AppLink
               href={`/${locale}/contact`}
               prefetchPolicy="intent"

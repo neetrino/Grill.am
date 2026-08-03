@@ -9,13 +9,24 @@
   "submit": "Ուղարկել",
   "success": "Շնորհակալություն — հաղորդագրությունն ուղարկված է։",
   "error": "Չհաջողվեց ուղարկել հաղորդագրությունը։",
-  "storePhone": "+374 60 50 04 06",
-  "storeEmail": "info@grill.am",
-  "storeAddress": "Երևան, Կոմիտասի 12",
+  "storePhones": ["+374 33 600 700", "+374 10 600 700"],
+  "storeEmail": "infogrillam@gmail.com",
+  "storeAddresses": [
+    "Խորենացի 95/2",
+    "Խորենացի 88",
+    "Պուշկին 43/3",
+    "Թոթովենց 2/7",
+    "Բաղրամյան 50/5",
+    "Ծովակալ Իսակովի 27",
+    "Անդրանիկի 94/4",
+    "Սեբաստիա 16/1",
+    "Տիգրան Պետրոսյան 13/8"
+  ],
   "social": {
-    "instagram": "https://instagram.com",
-    "facebook": "https://facebook.com",
-    "linkedin": "https://linkedin.com"
+    "instagram": "https://www.instagram.com/grill.am",
+    "facebook": "https://www.facebook.com/Grill.am",
+    "linkedin": "https://linkedin.com",
+    "whatsapp": "https://wa.me/37433600700"
   },
   "callTitle": "Զանգահարեք մեզ՝",
   "callDescription": "Մենք հասանելի ենք 24/7, շաբաթը 7 օր։",

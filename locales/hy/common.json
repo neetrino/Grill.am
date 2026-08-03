@@ -50,9 +50,7 @@
     "deliveryPolicy": "Առաքման քաղաքականություն",
     "contactInfo": "Կապ",
     "followUs": "Հետևեք մեզ",
-    "addresses": "Հասցեներ",
-    "rights": "Բոլոր իրավունքները պաշտպանված են",
-    "createdBy": "Ստեղծվել է Neetrino IT Company կողմից"
+    "addresses": "Հասցեներ"
   },
   "popup": {
     "close": "Փակել popup-ը"
