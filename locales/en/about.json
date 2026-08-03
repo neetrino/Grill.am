@@ -1,13 +1,15 @@
 {
-  "eyebrow": "Elegant design",
-  "title": "About our online store",
+  "eyebrow": "About us",
+  "titleLead": "Flavor in the fire,",
+  "titleAccent": "our story from the heart",
   "paragraphs": [
-    "We are delighted to welcome you to our online store. Our company strives to provide you with the best shopping experience with a wide range of quality products and excellent service.",
-    "Our mission is to make online shopping simple, convenient and enjoyable. We carefully select each product to ensure high quality and customer satisfaction.",
-    "We are proud to offer not only excellent products but also excellent customer service. Our team is always ready to help you find exactly what you are looking for."
+    "Welcome to the tastiest grill site — our dishes are made only from fresh local meat, and skilled couriers deliver them hot and fast.",
+    "Grill.am is one of the longest-running food chains on the Armenian market, preparing meals with the most delicious, high-quality meat products.",
+    "Since 2013-05-20 we have been operating under the grill.am brand, which is also our website address.",
+    "We promise: the fastest and tastiest dishes are waiting for you on our menu.",
+    "We are at 9 locations — Khorenatsi 95/2, Khorenatsi 88, Pushkin 43/3, Totovents 2/7, Baghramyan 50/5, Admiral Isakov 27, Andranik 94/4, Sebastia 16/1, Tigran Petrosyan 13/8 — and we also offer fast, delicious delivery."
   ],
-  "teamEyebrow": "About us",
-  "teamTitle": "Our team",
-  "teamDescription": "Our team consists of experienced professionals who are dedicated to their work and strive to provide the best service for our customers.",
-  "heroImageAlt": "Our team working together"
+  "badgeLabel": "Since",
+  "badgeYear": "2013",
+  "heroImageAlt": "Grilled skewers with fresh bread and sauces"
 }
