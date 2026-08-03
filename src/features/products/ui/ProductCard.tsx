@@ -46,8 +46,8 @@ export function ProductCard({
   const showAddToCart = productId != null && addToCartLabel != null;
 
   return (
-    <div className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow hover:shadow-md">
-      <div className="relative aspect-square overflow-hidden bg-gray-100">
+    <div className="group relative overflow-hidden rounded-3xl bg-white shadow-[0px_7px_22px_rgba(62,87,61,0.13)] transition hover:-translate-y-0.5 hover:shadow-[0px_10px_28px_rgba(62,87,61,0.18)]">
+      <div className="relative aspect-[279/214] overflow-hidden rounded-3xl bg-brand-surface">
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
@@ -58,7 +58,7 @@ export function ProductCard({
               src={imageUrl}
               alt={title}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 279px"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               priority={priority}
             />
@@ -69,6 +69,12 @@ export function ProductCard({
           )}
         </AppLink>
 
+        {discountPercent != null ? (
+          <span className="absolute top-3.5 left-4 z-10 inline-flex h-[26px] min-w-[90px] items-center justify-center rounded-full bg-brand-yellow px-3 text-[11px] font-semibold text-[#222]">
+            -{discountPercent}%
+          </span>
+        ) : null}
+
         {showWishlist ? (
           <WishlistButton
             locale={locale}
@@ -77,23 +83,7 @@ export function ProductCard({
             isSignedIn={isSignedIn}
             label={wishlistLabel}
             size="sm"
-            className="absolute top-3 left-3 z-10 h-9 w-9 bg-white/90 text-gray-800 shadow-sm hover:bg-white"
-          />
-        ) : null}
-
-        {discountPercent != null ? (
-          <span className="absolute top-3 right-3 z-10 rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white">
-            -{discountPercent}%
-          </span>
-        ) : null}
-
-        {showAddToCart ? (
-          <AddToCartButton
-            productId={productId}
-            label={addToCartLabel}
-            disabled={!inStock}
-            size="sm"
-            className="absolute right-3 bottom-3 z-10 h-9 w-9 bg-white/90 text-gray-800 shadow-sm hover:bg-white"
+            className="absolute top-3 right-3 z-10 h-8 w-8 bg-transparent text-[#222] shadow-none hover:bg-white/80"
           />
         ) : null}
 
@@ -104,13 +94,8 @@ export function ProductCard({
         ) : null}
       </div>
 
-      <div className="p-4">
-        {categoryTitle ? (
-          <p className="mb-1 text-xs font-medium tracking-wide text-gray-500 uppercase">
-            {categoryTitle}
-          </p>
-        ) : null}
-        <h3 className="mb-1 line-clamp-2 text-base font-medium text-gray-900">
+      <div className="relative px-4 pt-3 pb-5">
+        <h3 className="line-clamp-1 text-base font-bold text-[#111]">
           <AppLink
             href={href}
             prefetchPolicy={priority ? "intent" : "auto"}
@@ -119,12 +104,34 @@ export function ProductCard({
             {title}
           </AppLink>
         </h3>
-        <div className="flex flex-wrap items-baseline gap-2">
-          <p className="text-lg font-semibold text-gray-900">{priceFormatted}</p>
-          {onSale ? (
-            <p className="text-sm text-gray-500 line-through">
-              {compareAtFormatted}
+        {categoryTitle ? (
+          <p className="mt-1 text-base font-semibold text-[rgba(17,17,17,0.54)]">
+            {categoryTitle}
+          </p>
+        ) : (
+          <div className="mt-1 h-6" aria-hidden />
+        )}
+
+        <div className="mt-2 flex items-end justify-between gap-2">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <p className="text-2xl leading-5 font-extrabold text-[#0d0d0d]">
+              {priceFormatted}
             </p>
+            {onSale ? (
+              <p className="text-sm font-extrabold text-[#bababa] line-through">
+                {compareAtFormatted}
+              </p>
+            ) : null}
+          </div>
+
+          {showAddToCart ? (
+            <AddToCartButton
+              productId={productId}
+              label={addToCartLabel}
+              disabled={!inStock}
+              size="sm"
+              className="h-[51px] w-[51px] shrink-0 bg-brand-red text-white hover:bg-brand-red-hot [&>svg]:text-white [&>svg]:fill-none"
+            />
           ) : null}
         </div>
       </div>

@@ -34,6 +34,8 @@ type HeaderSearchProps = {
   locale: Locale;
   currency: Currency;
   labels: HeaderSearchLabels;
+  triggerClassName?: string;
+  showLabel?: boolean;
 };
 
 const DEBOUNCE_MS = 250;
@@ -42,7 +44,13 @@ function subscribeNoop(): () => void {
   return () => undefined;
 }
 
-export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
+export function HeaderSearch({
+  locale,
+  currency,
+  labels,
+  triggerClassName,
+  showLabel = false,
+}: HeaderSearchProps) {
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const titleId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -148,9 +156,13 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
         type="button"
         onClick={openSearch}
         aria-label={labels.search}
-        className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition-colors duration-150 hover:text-gray-900"
+        className={
+          triggerClassName ??
+          "relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition-colors duration-150 hover:text-gray-900"
+        }
       >
-        <Search className="h-5 w-5" aria-hidden="true" />
+        <Search className="h-6 w-6 shrink-0" aria-hidden="true" />
+        {showLabel ? <span>{labels.search}</span> : null}
       </button>
 
       {mounted && open

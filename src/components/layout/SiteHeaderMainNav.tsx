@@ -1,8 +1,13 @@
+import Image from "next/image";
+import { MapPin, Phone } from "lucide-react";
+
 import { AccountControls } from "@/components/layout/AccountControls";
+import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
+import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
+import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import { AppLink } from "@/components/ui/AppLink";
-import { CartDrawer } from "@/features/cart/ui/CartDrawer";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -23,10 +28,6 @@ type SiteHeaderMainNavProps = {
   cartItemCount: number;
   wishlistCount: number;
 };
-
-function navLinkClassName(): string {
-  return "rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:text-gray-900";
-}
 
 function headerSearchLabels(dictionary: Dictionary) {
   return {
@@ -51,16 +52,23 @@ export function SiteHeaderMainNav({
   const searchLabels = headerSearchLabels(dictionary);
 
   return (
-    <header className="relative z-10 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm backdrop-blur-sm">
-      <div className="mx-auto max-w-7xl px-2 sm:px-4 md:px-6 lg:px-8">
-        <div className="flex flex-wrap items-center gap-2 py-4 sm:gap-4 md:py-3">
-          <div className="flex w-full items-center justify-between md:w-auto md:justify-start md:gap-0">
+    <header className="relative z-10 bg-white">
+      <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-10">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/7 py-3">
+          <div className="flex items-center gap-3">
             <AppLink
               href={`/${locale}`}
               prefetchPolicy="intent"
-              className="text-lg font-semibold tracking-tight text-gray-900"
+              className="relative block h-9 w-[92px] shrink-0"
             >
-              {dictionary.brand}
+              <Image
+                src="/assets/brand/logo.png"
+                alt={dictionary.brand}
+                fill
+                sizes="92px"
+                className="object-contain"
+                priority
+              />
             </AppLink>
 
             <div className="flex items-center gap-1 md:hidden">
@@ -81,26 +89,55 @@ export function SiteHeaderMainNav({
 
           <nav
             aria-label="Primary"
-            className="order-3 hidden w-full items-center justify-center gap-1 md:order-none md:flex md:flex-1"
+            className="order-3 hidden w-full items-center justify-center gap-0.5 lg:order-none lg:flex lg:w-auto lg:flex-1"
           >
-            {navItems.map((item) => (
+            {navItems.map((item, index) => (
               <AppLink
-                key={item.href}
+                key={`${item.href}-${item.label}`}
                 href={item.href}
                 prefetchPolicy="intent"
-                className={navLinkClassName()}
+                className={`rounded-[10px] px-4 py-2 text-sm font-semibold whitespace-nowrap transition ${
+                  index === 0
+                    ? "text-brand-red"
+                    : "text-[#101010] hover:text-brand-red"
+                }`}
               >
                 {item.label}
               </AppLink>
             ))}
           </nav>
 
-          <div className="ml-auto hidden items-center gap-2 md:flex">
+          <div className="hidden items-center gap-6 text-base font-medium text-[#333] md:flex">
+            <a
+              href={`tel:${dictionary.contact.storePhone.replace(/\s/g, "")}`}
+              className="inline-flex items-center gap-2 capitalize transition hover:text-brand-red"
+            >
+              <Phone className="h-[19px] w-[19px]" aria-hidden />
+              {dictionary.contact.storePhone}
+            </a>
+            <AppLink
+              href={`/${locale}/contact`}
+              prefetchPolicy="intent"
+              className="inline-flex items-center gap-2 capitalize transition hover:text-brand-red"
+            >
+              <MapPin className="h-[19px] w-[15px]" aria-hidden />
+              {dictionary.footer.addresses}
+            </AppLink>
+          </div>
+        </div>
+
+        <div className="hidden items-center gap-4 py-4 md:flex">
+          <div className="min-w-0 flex-1">
             <HeaderSearch
               locale={locale}
               currency={currency}
               labels={searchLabels}
+              showLabel
+              triggerClassName="flex h-14 w-full items-center gap-2 rounded-full bg-brand-surface px-8 text-sm text-[rgba(33,43,54,0.46)] transition hover:bg-[#ececec]"
             />
+          </div>
+
+          <div className="flex shrink-0 items-center gap-4">
             <AccountControls
               locale={locale}
               loginLabel={dictionary.header.login}
@@ -114,12 +151,23 @@ export function SiteHeaderMainNav({
               label={dictionary.nav.wishlist}
               count={wishlistCount}
             />
-            <CartDrawer
+            <HeaderCartTrigger
               locale={locale}
               currency={currency}
               dictionary={dictionary}
               itemCount={cartItemCount}
             />
+            <div className="flex h-12 items-center gap-2 rounded-full bg-brand-surface px-4 text-sm font-bold text-[#333]">
+              <LocaleSwitcher
+                locale={locale}
+                label={dictionary.header.language}
+              />
+              <span aria-hidden>/</span>
+              <CurrencySwitcher
+                currency={currency}
+                label={dictionary.header.currency}
+              />
+            </div>
           </div>
         </div>
       </div>

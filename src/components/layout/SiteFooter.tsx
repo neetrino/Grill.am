@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 import {
@@ -35,72 +36,82 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   ] as const;
 
   return (
-    <footer className="mt-auto hidden border-t border-gray-800 bg-black md:block">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">
-              {dictionary.footer.shop}
-            </h3>
-            <p className="text-sm text-gray-300">{dictionary.footer.description}</p>
-            <div className="mt-5">
-              <p className="mb-3 text-sm font-semibold text-white">
-                {dictionary.footer.followUs}
-              </p>
-              <div className="flex items-center gap-3">
-                {socialLinks.map(({ href, label, Icon }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-md text-gray-400 transition-colors hover:text-white"
-                    aria-label={label}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </a>
-                ))}
-              </div>
+    <footer className="mt-auto hidden overflow-hidden rounded-t-[60px] bg-black md:block">
+      <div className="relative mx-auto max-w-[1440px] px-5 pt-14 pb-10 sm:px-8 lg:px-10 lg:pt-16">
+        <p
+          aria-hidden
+          className="pointer-events-none absolute bottom-8 left-0 font-black text-[clamp(64px,20vw,281px)] leading-none text-white/25 uppercase opacity-40 select-none"
+        >
+          GRILL.AM
+        </p>
+
+        <div className="relative z-10 grid grid-cols-2 gap-8 lg:grid-cols-5">
+          <div className="col-span-2 lg:col-span-1">
+            <div className="relative mb-4 h-9 w-[92px]">
+              <Image
+                src="/assets/brand/logo.png"
+                alt={dictionary.brand}
+                fill
+                sizes="92px"
+                className="object-contain brightness-0 invert"
+              />
+            </div>
+            <p className="max-w-[280px] text-sm leading-[22.75px] text-white/50">
+              {dictionary.footer.description}
+            </p>
+            <div className="mt-6 flex items-center gap-3">
+              {socialLinks.map(({ href, label, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-white/8 text-white transition hover:bg-white/15"
+                  aria-label={label}
+                >
+                  <Icon className="h-[18px] w-[18px]" />
+                </a>
+              ))}
             </div>
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-white">
+            <h4 className="mb-3 text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.quickLinks}
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-3 text-sm text-white/50">
               <li>
                 <AppLink
                   href={`/${locale}/products`}
                   prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  className="transition hover:text-white"
                 >
-                  {dictionary.nav.products}
+                  {dictionary.footer.categories}
                 </AppLink>
               </li>
               <li>
                 <AppLink
-                  href={`/${locale}/blog`}
+                  href={`/${locale}/products`}
                   prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  className="transition hover:text-white"
                 >
-                  {dictionary.nav.blog}
+                  {dictionary.footer.promotions}
                 </AppLink>
               </li>
               <li>
                 <AppLink
-                  href={`/${locale}/careers`}
+                  href={`/${locale}/products`}
                   prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  className="transition hover:text-white"
                 >
-                  {dictionary.nav.careers}
+                  {dictionary.footer.bestsellers}
                 </AppLink>
               </li>
               <li>
                 <AppLink
                   href={`/${locale}/about`}
                   prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  className="transition hover:text-white"
                 >
                   {dictionary.nav.about}
                 </AppLink>
@@ -109,7 +120,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 <AppLink
                   href={`/${locale}/contact`}
                   prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  className="transition hover:text-white"
                 >
                   {dictionary.nav.contact}
                 </AppLink>
@@ -118,85 +129,101 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-white">
-              {dictionary.footer.legal}
+            <h4 className="mb-3 text-sm font-black tracking-[0.7px] text-white uppercase">
+              {dictionary.footer.support}
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-3 text-sm text-white/60">
               <li>
                 <AppLink
-                  href={`/${locale}/legal/privacy`}
+                  href={`/${locale}/legal/delivery`}
                   prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.footer.privacyPolicy}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/terms`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.footer.terms}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/refund`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  className="transition hover:text-white"
                 >
                   {dictionary.footer.refundPolicy}
                 </AppLink>
               </li>
               <li>
                 <AppLink
-                  href={`/${locale}/legal/delivery`}
+                  href={`/${locale}/legal/terms`}
                   prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  className="transition hover:text-white"
                 >
-                  {dictionary.footer.deliveryPolicy}
+                  {dictionary.footer.terms}
+                </AppLink>
+              </li>
+              <li>
+                <AppLink
+                  href={`/${locale}/legal/privacy`}
+                  prefetchPolicy="intent"
+                  className="transition hover:text-white"
+                >
+                  {dictionary.footer.privacyPolicy}
+                </AppLink>
+              </li>
+              <li>
+                <AppLink
+                  href={`/${locale}/contact`}
+                  prefetchPolicy="intent"
+                  className="transition hover:text-white"
+                >
+                  {dictionary.footer.faq}
                 </AppLink>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-white">
+            <h4 className="mb-3 text-sm font-black tracking-[1.68px] text-white uppercase">
+              {dictionary.footer.hours}
+            </h4>
+            <div className="space-y-2 text-sm">
+              <p className="text-white/50">{dictionary.footer.hoursWeekdaysLabel}</p>
+              <p className="font-semibold text-white">
+                {dictionary.footer.hoursWeekdays}
+              </p>
+              <p className="pt-2 text-white/50">
+                {dictionary.footer.hoursWeekendLabel}
+              </p>
+              <p className="font-semibold text-white">
+                {dictionary.footer.hoursWeekend}
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="mb-3 text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.contactInfo}
             </h4>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-gray-400" />
-                <span className="text-sm text-gray-300">
-                  {dictionary.contact.storeAddress}
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-5 w-5 shrink-0 text-gray-400" />
+            <ul className="space-y-4 text-sm text-white/60">
+              <li className="flex items-center gap-3">
+                <Phone className="h-[15px] w-[15px] shrink-0" aria-hidden />
                 <a
-                  href={`tel:${dictionary.contact.storePhone}`}
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  href={`tel:${dictionary.contact.storePhone.replace(/\s/g, "")}`}
+                  className="transition hover:text-white"
                 >
                   {dictionary.contact.storePhone}
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="h-5 w-5 shrink-0 text-gray-400" />
+              <li className="flex items-center gap-3">
+                <Mail className="h-[15px] w-[15px] shrink-0" aria-hidden />
                 <a
                   href={`mailto:${dictionary.contact.storeEmail}`}
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+                  className="transition hover:text-white"
                 >
                   {dictionary.contact.storeEmail}
                 </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-[15px] w-[15px] shrink-0" aria-hidden />
+                <span>{dictionary.contact.storeAddress}</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-8 border-t border-gray-800 pt-8">
-          <p className="text-center text-sm text-gray-300 md:text-left">
-            {`Copyright © ${year} | ${dictionary.footer.rights}, ${dictionary.footer.createdBy}`}
+        <div className="relative z-10 mt-16 border-t border-white/10 pt-8">
+          <p className="text-sm text-white/30">
+            {`Copyright © ${year} | ${dictionary.footer.rights} | ${dictionary.footer.createdBy}`}
           </p>
         </div>
       </div>

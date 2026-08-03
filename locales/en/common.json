@@ -1,9 +1,9 @@
 {
-  "brand": "White-Shop",
+  "brand": "Grill.am",
   "close": "Close",
   "nav": {
     "home": "Home",
-    "products": "Products",
+    "products": "Menu",
     "shop": "Shop",
     "blog": "Blog",
     "careers": "Careers",
@@ -31,17 +31,28 @@
   },
   "footer": {
     "shop": "Shop",
-    "description": "Professional e-commerce storefront for everyday shopping.",
-    "quickLinks": "Quick Links",
+    "description": "The most complete online food platform in Armenia. Fresh, tasty, fast.",
+    "quickLinks": "Navigation",
+    "support": "Support",
+    "hours": "Working Hours",
+    "hoursWeekdaysLabel": "Mon – Fri",
+    "hoursWeekdays": "09:00 – 22:00",
+    "hoursWeekendLabel": "Sat – Sun",
+    "hoursWeekend": "10:00 – 23:00",
+    "categories": "Categories",
+    "promotions": "Promotions",
+    "bestsellers": "Bestsellers",
+    "faq": "FAQ",
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",
     "terms": "Terms & Conditions",
-    "refundPolicy": "Refund Policy",
+    "refundPolicy": "Delivery & Returns",
     "deliveryPolicy": "Delivery Policy",
-    "contactInfo": "Contact Information",
+    "contactInfo": "Contact",
     "followUs": "Follow us",
+    "addresses": "Addresses",
     "rights": "All Rights Reserved",
-    "createdBy": "Created by NEETRINO IT COMPANY"
+    "createdBy": "Created by Neetrino IT Company"
   },
   "popup": {
     "close": "Close popup"

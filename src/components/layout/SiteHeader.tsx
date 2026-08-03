@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
-import { SiteHeaderTopBar } from "@/components/layout/SiteHeaderTopBar";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -18,7 +17,7 @@ type SiteHeaderProps = {
 function HeaderControlsFallback() {
   return (
     <div
-      className="h-11 w-28 animate-pulse rounded-lg bg-gray-100"
+      className="h-11 w-28 animate-pulse rounded-lg bg-brand-surface"
       aria-hidden="true"
     />
   );
@@ -32,9 +31,9 @@ async function SiteHeaderMainNavAsync({
   const navItems = [
     { href: `/${locale}`, label: dictionary.nav.home },
     { href: `/${locale}/products`, label: dictionary.nav.products },
-    { href: `/${locale}/blog`, label: dictionary.nav.blog },
-    { href: `/${locale}/careers`, label: dictionary.nav.careers },
+    { href: `/${locale}/products`, label: dictionary.nav.shop },
     { href: `/${locale}/about`, label: dictionary.nav.about },
+    { href: `/${locale}/careers`, label: dictionary.nav.careers },
     { href: `/${locale}/contact`, label: dictionary.nav.contact },
   ] as const;
 
@@ -58,22 +57,17 @@ async function SiteHeaderMainNavAsync({
 }
 
 /**
- * Storefront chrome: top bar streams immediately; account/cart/wishlist
- * load in a Suspense island so page content is not blocked.
+ * Storefront chrome: account/cart/wishlist load in a Suspense island
+ * so page content is not blocked.
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
-    <div className="relative z-40">
-      <SiteHeaderTopBar
-        locale={locale}
-        currency={currency}
-        dictionary={dictionary}
-      />
+    <div className="relative z-40 bg-white">
       <Suspense
         fallback={
-          <header className="relative z-10 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-              <span className="text-lg font-semibold tracking-tight text-gray-900">
+          <header className="relative z-10 bg-white">
+            <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
+              <span className="text-lg font-semibold tracking-tight text-[#101010]">
                 {dictionary.brand}
               </span>
               <HeaderControlsFallback />

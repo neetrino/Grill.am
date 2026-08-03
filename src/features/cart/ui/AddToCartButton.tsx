@@ -50,12 +50,10 @@ export function AddToCartButton({
       onClick={handleClick}
       disabled={disabled || pending}
       aria-label={label}
-      className={`inline-flex items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
+      className={`inline-flex items-center justify-center rounded-full text-gray-700 transition disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
     >
       <ShoppingCart
-        className={`${iconClass} ${
-          justAdded ? "fill-gray-900 text-gray-900" : "text-gray-700"
-        }`}
+        className={`${iconClass} ${justAdded ? "fill-current" : ""}`}
         aria-hidden
       />
     </button>

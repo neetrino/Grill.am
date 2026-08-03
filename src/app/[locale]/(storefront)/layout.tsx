@@ -38,7 +38,7 @@ export default async function StorefrontLayout({
   const activePopup = await getActiveStorefrontPopup();
 
   return (
-    <div className="flex min-h-dvh flex-1 flex-col bg-gray-50">
+    <div className="flex min-h-dvh flex-1 flex-col bg-white">
       <SiteHeader
         locale={locale}
         currency={currency}
