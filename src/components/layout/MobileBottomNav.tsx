@@ -141,6 +141,7 @@ export function MobileBottomNav({
   return (
     <nav
       aria-label={dictionary.nav.navigation}
+      data-mobile-bottom-nav
       className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm md:hidden"
     >
       <div className="mx-auto flex h-14 max-w-7xl items-stretch">
@@ -168,7 +169,7 @@ export function MobileBottomNav({
               aria-expanded={open}
               className={tabClassName(open)}
             >
-              <span className="relative inline-flex">
+              <span className="relative inline-flex" data-cart-fly-target>
                 <ShoppingCart
                   className="h-5 w-5"
                   strokeWidth={open ? 2.25 : 1.75}

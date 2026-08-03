@@ -23,9 +23,11 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
       <div className={AUTH_CARD_CLASS}>
         <div className="mx-auto w-full max-w-md">
           <div className="mb-7 sm:mb-8">
-            <h1 className="text-[26px] leading-tight font-black text-brand-red uppercase sm:text-[30px] sm:leading-[1.2]">
-              {dictionary.auth.registerTitleLead}{" "}
-              <span className="text-[#171717]">
+            <h1 className="text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
+              <span className="text-brand-red">
+                {dictionary.auth.registerTitleLead}
+              </span>{" "}
+              <span className="text-brand-yellow">
                 {dictionary.auth.registerTitleAccent}
               </span>
             </h1>

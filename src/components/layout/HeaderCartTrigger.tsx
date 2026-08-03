@@ -43,7 +43,10 @@ export function HeaderCartTrigger({
           aria-expanded={open}
           className="inline-flex h-12 min-w-[114px] shrink-0 items-center justify-center gap-[11px] rounded-full bg-brand-red px-5 text-base leading-6 font-bold whitespace-nowrap text-white transition hover:bg-brand-red-hot"
         >
-          <span className="relative inline-flex shrink-0">
+          <span
+            className="relative inline-flex shrink-0"
+            data-cart-fly-target
+          >
             <ShoppingCart
               className="h-[21px] w-[22px] shrink-0 fill-white text-white"
               strokeWidth={1.2}

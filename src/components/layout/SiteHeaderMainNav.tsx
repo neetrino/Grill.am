@@ -288,6 +288,7 @@ export function SiteHeaderMainNav({
   return (
     <div
       ref={headerRootRef}
+      data-site-header
       className="sticky top-0 z-50 bg-white [overflow-anchor:none]"
     >
       <div

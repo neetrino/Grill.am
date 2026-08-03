@@ -23,9 +23,11 @@ export default async function LoginPage({ params }: LoginPageProps) {
       <div className="rounded-[15px] bg-white px-5 py-12 shadow-[0_8px_28px_rgba(0,0,0,0.08)] sm:px-7 sm:py-14 lg:px-8 lg:py-16">
         <div className="mx-auto w-full max-w-sm">
           <div className="mb-12 sm:mb-14">
-            <h1 className="text-[26px] leading-tight font-black text-brand-red uppercase sm:text-[30px] sm:leading-[1.2]">
-              {dictionary.auth.loginTitleLead}{" "}
-              <span className="text-[#171717]">
+            <h1 className="text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
+              <span className="text-brand-red">
+                {dictionary.auth.loginTitleLead}
+              </span>{" "}
+              <span className="text-brand-yellow">
                 {dictionary.auth.loginTitleAccent}
               </span>
             </h1>

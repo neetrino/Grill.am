@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 
 import { addToCart } from "@/features/cart/cart";
+import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
 import { notifyCartChanged } from "@/features/cart/cart-client-sync";
+import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import {
   computeModifiersDelta,
   hasRequiredModifiersSelected,
@@ -199,6 +201,13 @@ export function ProductBuyBox({
     if (!canAdd || quantity < 1) return;
     setMessage(null);
     setError(null);
+
+    const flyOrigin = document.querySelector("[data-product-fly-origin]");
+    playCartFlyAnimation({
+      fromElement: flyOrigin,
+      imageUrl: PRODUCT_CARD_IMAGE,
+    });
+
     startTransition(async () => {
       try {
         await addToCart(productId, quantity, modifiers);

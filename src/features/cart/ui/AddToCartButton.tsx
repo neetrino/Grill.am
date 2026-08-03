@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { addToCart } from "@/features/cart/cart";
+import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
 import { notifyCartChanged } from "@/features/cart/cart-client-sync";
+import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type AddToCartButtonProps = {
   productId: string;
@@ -14,6 +16,7 @@ type AddToCartButtonProps = {
   disabled?: boolean;
   className?: string;
   size?: "sm" | "md";
+  imageUrl?: string | null;
   /**
    * When set, navigates here instead of quick-adding (required options / sauces).
    */
@@ -26,6 +29,7 @@ export function AddToCartButton({
   disabled = false,
   className = "",
   size = "md",
+  imageUrl = null,
   configureHref,
 }: AddToCartButtonProps) {
   const router = useRouter();
@@ -42,6 +46,18 @@ export function AddToCartButton({
       router.push(configureHref);
       return;
     }
+
+    const button = event.currentTarget;
+    const card = button.closest("[data-product-card]");
+    const origin =
+      (card?.querySelector(
+        "[data-product-fly-origin]",
+      ) as HTMLElement | null) ?? button;
+
+    playCartFlyAnimation({
+      fromElement: origin,
+      imageUrl: imageUrl || PRODUCT_CARD_IMAGE,
+    });
 
     startTransition(async () => {
       try {

@@ -53,8 +53,14 @@ export function ProductCard({
   const showAddToCart = productId != null && addToCartLabel != null;
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-[24px] bg-white transition hover:-translate-y-0.5">
-      <div className="relative aspect-[279/214] shrink-0 overflow-hidden bg-brand-surface">
+    <article
+      data-product-card
+      className="group relative flex h-full flex-col overflow-hidden rounded-[24px] bg-white transition hover:-translate-y-0.5"
+    >
+      <div
+        data-product-fly-origin
+        className="relative aspect-[279/214] shrink-0 overflow-hidden bg-brand-surface"
+      >
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
@@ -133,6 +139,7 @@ export function ProductCard({
               label={addToCartLabel}
               disabled={!inStock}
               size="sm"
+              imageUrl={PRODUCT_CARD_IMAGE}
               configureHref={requiresConfiguration ? href : undefined}
               className="h-[51px] w-[51px] shrink-0 rounded-[45px] bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 [&>svg]:h-[29px] [&>svg]:w-[29px] [&>svg]:text-white"
             />
