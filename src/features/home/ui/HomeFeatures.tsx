@@ -174,18 +174,24 @@ export function HomeFeatures({
     }
 
     let started = false;
+    let revealTimer: ReturnType<typeof setTimeout> | null = null;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting || started) return;
         started = true;
         observer.disconnect();
-        window.setTimeout(() => setRevealed(true), 150);
+        revealTimer = window.setTimeout(() => setRevealed(true), 800);
       },
       { threshold: 0.28, rootMargin: "0px 0px -10% 0px" },
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (revealTimer) {
+        window.clearTimeout(revealTimer);
+      }
+    };
   }, [reduceMotion]);
 
   const translateX =
