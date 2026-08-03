@@ -4,13 +4,6 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, MapPin } from "lucide-react";
 
-import {
-  DROPDOWN_ANIMATION_MS,
-  DROPDOWN_PANEL_PORTAL_CLASS,
-  dropdownPanelStateClass,
-  dropdownPortalStyle,
-} from "@/components/ui/dropdown-styles";
-
 type StoreAddressDropdownProps = {
   addresses: readonly string[];
   toggleLabel: string;
@@ -24,6 +17,7 @@ type MenuPosition = {
   maxWidth: number;
 };
 
+const MENU_TRANSITION_MS = 200;
 const VIEWPORT_PADDING = 16;
 
 const VARIANT_STYLES = {
@@ -34,7 +28,8 @@ const VARIANT_STYLES = {
     text: "leading-5 text-white/60",
     chevron: "mt-0.5 shrink-0 text-[#9C9FA1] transition hover:text-white",
     chevronIcon: "h-[18px] w-[18px]",
-    item: "px-4 py-3 text-sm leading-5 text-gray-800",
+    menu: "fixed z-[200] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-3 py-2.5 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
+    item: "leading-5 break-words",
   },
   header: {
     root: "relative z-20",
@@ -43,7 +38,8 @@ const VARIANT_STYLES = {
     text: "text-base font-medium text-[#333]",
     chevron: "shrink-0 text-[#333] transition hover:text-brand-red",
     chevronIcon: "h-5 w-5",
-    item: "px-4 py-3 text-sm leading-5 text-gray-800",
+    menu: "fixed z-[200] max-h-[140px] origin-top-right space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#333] shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
+    item: "leading-5 break-words",
   },
 } as const;
 
@@ -89,7 +85,7 @@ export function StoreAddressDropdown({
     closeTimerRef.current = setTimeout(() => {
       setMounted(false);
       closeTimerRef.current = null;
-    }, DROPDOWN_ANIMATION_MS);
+    }, MENU_TRANSITION_MS);
   }
 
   function toggleMenu(): void {
@@ -144,7 +140,7 @@ export function StoreAddressDropdown({
       closeTimerRef.current = setTimeout(() => {
         setMounted(false);
         closeTimerRef.current = null;
-      }, DROPDOWN_ANIMATION_MS);
+      }, MENU_TRANSITION_MS);
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -156,7 +152,7 @@ export function StoreAddressDropdown({
       closeTimerRef.current = setTimeout(() => {
         setMounted(false);
         closeTimerRef.current = null;
-      }, DROPDOWN_ANIMATION_MS);
+      }, MENU_TRANSITION_MS);
     };
 
     document.addEventListener("pointerdown", onPointerDown);
@@ -182,11 +178,20 @@ export function StoreAddressDropdown({
           <ul
             ref={menuRef}
             id={listId}
-            className={`${DROPDOWN_PANEL_PORTAL_CLASS} ${dropdownPanelStateClass(visible)}`}
-            style={dropdownPortalStyle(menuPosition)}
+            className={`${styles.menu} ${
+              visible
+                ? "translate-y-0 opacity-100"
+                : "pointer-events-none -translate-y-1 opacity-0"
+            }`}
+            style={{
+              top: menuPosition.top,
+              left: menuPosition.left,
+              minWidth: menuPosition.minWidth,
+              maxWidth: menuPosition.maxWidth,
+            }}
           >
             {menuAddresses.map((address) => (
-              <li key={address} className={`${styles.item} break-words whitespace-normal`}>
+              <li key={address} className={styles.item}>
                 {address}
               </li>
             ))}
@@ -211,7 +216,7 @@ export function StoreAddressDropdown({
           >
             <span className={styles.text}>{displayLabel}</span>
             <ChevronDown
-              className={`${styles.chevronIcon} shrink-0 transition-transform duration-150 ease-out motion-reduce:transition-none ${
+              className={`${styles.chevronIcon} shrink-0 transition-transform duration-200 ease-out motion-reduce:transition-none ${
                 visible ? "rotate-180" : ""
               }`}
               aria-hidden
