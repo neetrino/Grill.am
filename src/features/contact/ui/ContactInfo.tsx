@@ -42,13 +42,15 @@ export function ContactInfo({ copy }: ContactInfoProps) {
           {copy.callDescription}
         </p>
         <ul className="space-y-2">
-          {copy.storePhones.map((phone) => (
+          {copy.storePhones.map((phone, index) => (
             <li key={phone}>
               <a
                 href={telHref(phone)}
                 className="text-base font-semibold text-brand-red transition hover:text-brand-red-hot"
               >
-                {phone}
+                {index === 0
+                  ? `${phone} (${copy.deliveryPhoneLabel})`
+                  : phone}
               </a>
             </li>
           ))}
