@@ -76,7 +76,7 @@ export function CatalogSortBar({
             className={`inline-flex h-[34px] items-center rounded-full px-4 text-sm font-semibold transition ${
               active
                 ? "bg-brand-red text-white"
-                : "bg-[#f3f4f6] text-[#374151] hover:bg-[#e5e7eb]"
+                : "bg-white text-[#6b7280] hover:bg-[#fafafa]"
             }`}
           >
             {tab.label}

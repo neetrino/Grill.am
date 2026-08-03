@@ -34,6 +34,8 @@ const SHOW_DELTA = 14;
 const DESKTOP_MIN_WIDTH = 768;
 /** Ignore opposite direction while the open/close animation runs. */
 const TOGGLE_LOCK_MS = 420;
+/** Live sticky header height for catalog sidebars and other sticky rails. */
+const STOREFRONT_HEADER_OFFSET_VAR = "--storefront-header-offset";
 
 function headerSearchLabels(dictionary: Dictionary) {
   return {
@@ -75,6 +77,7 @@ export function SiteHeaderMainNav({
   const [routePathname, setRoutePathname] = useState(pathname);
   const [scrollLocked, setScrollLocked] = useState(false);
 
+  const headerRootRef = useRef<HTMLDivElement>(null);
   const lastScrollYRef = useRef(0);
   const primaryHiddenRef = useRef(false);
   const motionEnabledRef = useRef(false);
@@ -188,6 +191,34 @@ export function SiteHeaderMainNav({
   }, [primaryHidden, motionEnabled]);
 
   useLayoutEffect(() => {
+    const headerRoot = headerRootRef.current;
+    if (!headerRoot) {
+      return;
+    }
+
+    function publishHeaderOffset(): void {
+      const el = headerRootRef.current;
+      if (!el) {
+        return;
+      }
+      const height = Math.ceil(el.getBoundingClientRect().height);
+      document.documentElement.style.setProperty(
+        STOREFRONT_HEADER_OFFSET_VAR,
+        `${height}px`,
+      );
+    }
+
+    publishHeaderOffset();
+    const observer = new ResizeObserver(publishHeaderOffset);
+    observer.observe(headerRoot);
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty(STOREFRONT_HEADER_OFFSET_VAR);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     lastScrollYRef.current = window.scrollY;
     primaryHiddenRef.current = false;
     toggleLockUntilRef.current = 0;
@@ -255,7 +286,10 @@ export function SiteHeaderMainNav({
     : "duration-0";
 
   return (
-    <div className="sticky top-0 z-50 bg-white [overflow-anchor:none]">
+    <div
+      ref={headerRootRef}
+      className="sticky top-0 z-50 bg-white [overflow-anchor:none]"
+    >
       <div
         className={`grid transition-[grid-template-rows] ${motionClass} ${
           primaryHidden ? "grid-rows-[0fr]" : "grid-rows-[1fr]"

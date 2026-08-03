@@ -14,6 +14,8 @@
   --brand-cream: #f4ead3;
   --brand-ink: #071014;
   --brand-surface: #f4f4f4;
+  /* Expanded sticky header; JS updates as primary nav collapses on scroll. */
+  --storefront-header-offset: 9.5rem;
 }
 
 @theme inline {

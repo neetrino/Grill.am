@@ -105,10 +105,10 @@ export default async function ProductsPage({
   };
 
   return (
-    <section className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 -mt-10 mb-[-2.5rem]">
+    <section className="relative -mt-10 mb-[-2.5rem] w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
       <div className="grid min-h-[calc(100dvh-12rem)] lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_288px]">
         <div className="hidden lg:block">
-          <div className="sticky top-[var(--storefront-header-offset,7.5rem)] h-[calc(100dvh-var(--storefront-header-offset,7.5rem))]">
+          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh-var(--storefront-header-offset))] self-start">
             <CatalogFilters
               locale={rawLocale}
               filters={filters}
@@ -122,7 +122,7 @@ export default async function ProductsPage({
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-col px-4 pt-3 pb-10 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 flex-col bg-[#f2f0f0] px-4 pt-3 pb-10 sm:px-6 lg:px-8">
           <details className="mb-4 rounded-[14px] border border-[#e5e7eb] bg-white lg:hidden">
             <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-[#101828]">
               {catalogCopy.filters}
@@ -281,7 +281,7 @@ export default async function ProductsPage({
         </div>
 
         <div className="hidden xl:block">
-          <div className="sticky top-[var(--storefront-header-offset,7.5rem)] h-[calc(100dvh-var(--storefront-header-offset,7.5rem))]">
+          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh-var(--storefront-header-offset))] self-start">
             <CatalogCartSidebar
               locale={rawLocale}
               currency={currency}
