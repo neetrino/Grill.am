@@ -75,6 +75,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       deliveryOptions={deliveryOptions}
       labels={{
         title: copy.title,
+        titleLead: copy.titleLead,
+        titleAccent: copy.titleAccent,
         productsInOrder: copy.productsInOrder,
         itemsOne: copy.itemsOne,
         itemsMany: copy.itemsMany,

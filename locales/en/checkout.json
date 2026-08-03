@@ -1,5 +1,7 @@
 {
   "title": "Checkout",
+  "titleLead": "Order",
+  "titleAccent": "checkout",
   "productsInOrder": "Products in your order",
   "itemsOne": "1 item",
   "itemsMany": "{count} items",

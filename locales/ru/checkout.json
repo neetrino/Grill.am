@@ -1,5 +1,7 @@
 {
   "title": "Оформление",
+  "titleLead": "Оформление",
+  "titleAccent": "заказа",
   "productsInOrder": "Товары в заказе",
   "itemsOne": "1 товар",
   "itemsMany": "{count} товаров",
