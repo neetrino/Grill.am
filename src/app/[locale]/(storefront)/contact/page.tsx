@@ -42,11 +42,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
         </div>
       </section>
 
-      <ContactMap
-        title={copy.mapTitle}
-        addresses={copy.storeAddresses}
-        openRouteLabel={copy.mapRoute}
-      />
+      <ContactMap title={copy.mapTitle} />
     </div>
   );
 }
