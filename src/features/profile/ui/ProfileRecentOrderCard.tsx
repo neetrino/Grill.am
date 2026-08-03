@@ -4,6 +4,7 @@ import { ShoppingBag } from "lucide-react";
 
 import {
   PROFILE_CARD_FLAT_CLASS,
+  PROFILE_ICON_TONE,
   PROFILE_PENDING_BADGE_CLASS,
 } from "@/features/profile/ui/profile-ui";
 
@@ -49,7 +50,13 @@ export function ProfileRecentOrderCard({
       <div className="my-4 border-t border-dashed border-gray-200" aria-hidden />
 
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-surface text-gray-700">
+        <div
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+          style={{
+            backgroundColor: PROFILE_ICON_TONE.background,
+            color: PROFILE_ICON_TONE.foreground,
+          }}
+        >
           <ShoppingBag className="h-5 w-5" aria-hidden />
         </div>
         <div className="min-w-0 pt-0.5 text-sm leading-relaxed text-gray-600">

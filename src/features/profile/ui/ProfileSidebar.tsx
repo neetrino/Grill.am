@@ -2,7 +2,10 @@ import { Mail, Phone } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { ProfileSidebarNav } from "@/features/profile/ui/ProfileSidebarNav";
-import { PROFILE_CARD_CLASS } from "@/features/profile/ui/profile-ui";
+import {
+  PROFILE_CARD_CLASS,
+  PROFILE_SIDEBAR_ICON_TONE,
+} from "@/features/profile/ui/profile-ui";
 import { logoutAction } from "@/features/auth/logout-action";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -23,7 +26,13 @@ function ProfileContactRow({
 }) {
   return (
     <div className="flex items-center gap-3 rounded-[15px] bg-white px-4 py-3 ring-1 ring-gray-100/80">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-surface text-gray-700">
+      <span
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+        style={{
+          backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
+          color: PROFILE_SIDEBAR_ICON_TONE.foreground,
+        }}
+      >
         {icon}
       </span>
       <p className="min-w-0 break-all text-sm font-medium text-gray-700">

@@ -18,9 +18,12 @@ export function ProfileStatCard({ label, value, icon }: ProfileStatCardProps) {
     >
       <div className="flex w-full items-center gap-3">
         <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-gray-700 [&>svg]:h-5 [&>svg]:w-5"
-          style={{ backgroundColor: PROFILE_ICON_TONE.background }}
-        >
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full [&>svg]:h-5 [&>svg]:w-5"
+          style={{
+            backgroundColor: PROFILE_ICON_TONE.background,
+            color: PROFILE_ICON_TONE.foreground,
+          }}
+          >
           {icon}
         </div>
         <div className="min-w-0">

@@ -24,9 +24,9 @@ import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import {
-  PROFILE_ICON_TONE,
   PROFILE_NAV_ACTIVE,
   PROFILE_NAV_TRANSITION_MS,
+  PROFILE_SIDEBAR_ICON_TONE,
   type ProfileNavKey,
 } from "@/features/profile/ui/profile-ui";
 import styles from "@/features/profile/ui/ProfileSidebarNav.module.css";
@@ -219,8 +219,8 @@ export function ProfileSidebarNav({
               <span
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
                 style={{
-                  backgroundColor: PROFILE_ICON_TONE.background,
-                  color: PROFILE_ICON_TONE.foreground,
+                  backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
+                  color: PROFILE_SIDEBAR_ICON_TONE.foreground,
                 }}
               >
                 {item.icon}
@@ -247,8 +247,8 @@ export function ProfileSidebarNav({
           <span
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
             style={{
-              backgroundColor: PROFILE_ICON_TONE.background,
-              color: PROFILE_ICON_TONE.foreground,
+              backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
+              color: PROFILE_SIDEBAR_ICON_TONE.foreground,
             }}
           >
             <LogOut className="h-5 w-5" />

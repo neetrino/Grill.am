@@ -1,7 +1,7 @@
 /** Shared clay-profile visual tokens (MaMarie layout, Grill mono palette). */
 
 /** Light gray wash for the profile shell. */
-export const PROFILE_PAGE_BG_CLASS = "bg-[#fafafa]";
+export const PROFILE_PAGE_BG_CLASS = "bg-[#f3f3f3]";
 
 export const PROFILE_CARD_RADIUS_CLASS = "rounded-[15px]";
 
@@ -18,8 +18,14 @@ export const PROFILE_SIDEBAR_WIDTH_PX = 280;
 
 export const PROFILE_NAV_TRANSITION_MS = 380;
 
-/** Single icon treatment for nav/menu rows. */
+/** Brand-yellow icon chip with white glyph strokes (mobile menu / stats). */
 export const PROFILE_ICON_TONE = {
+  background: "#ffc12c",
+  foreground: "#ffffff",
+} as const;
+
+/** Desktop sidebar icon chip — muted gray. */
+export const PROFILE_SIDEBAR_ICON_TONE = {
   background: "#f4f4f4",
   foreground: "#374151",
 } as const;

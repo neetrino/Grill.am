@@ -50,19 +50,13 @@ type MenuRow =
 
 const SHEET_CLOSE_MS = 280;
 
-function MenuIconBox({
-  danger,
-  children,
-}: {
-  danger?: boolean;
-  children: ReactNode;
-}) {
+function MenuIconBox({ children }: { children: ReactNode }) {
   return (
     <span
       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl [&>svg]:h-5 [&>svg]:w-5"
       style={{
-        backgroundColor: danger ? "#fef2f2" : PROFILE_ICON_TONE.background,
-        color: danger ? "#ef4444" : PROFILE_ICON_TONE.foreground,
+        backgroundColor: PROFILE_ICON_TONE.background,
+        color: PROFILE_ICON_TONE.foreground,
       }}
     >
       {children}
@@ -189,7 +183,7 @@ export function ProfileMobileMenu({
                   </span>
                 </span>
                 <ChevronRight
-                  className="h-[18px] w-[18px] shrink-0 text-gray-400"
+                  className="h-[18px] w-[18px] shrink-0 text-brand-yellow"
                   aria-hidden
                 />
               </>
@@ -228,7 +222,7 @@ export function ProfileMobileMenu({
             className="flex w-full items-center justify-between rounded-[12px] border border-red-200 bg-white px-3 py-3 text-left transition-colors hover:bg-red-50/60"
           >
             <span className="flex min-w-0 items-center gap-3">
-              <MenuIconBox danger>
+              <MenuIconBox>
                 <Trash2 />
               </MenuIconBox>
               <span className="text-base font-semibold text-red-500">
@@ -236,7 +230,7 @@ export function ProfileMobileMenu({
               </span>
             </span>
             <ChevronRight
-              className="h-[18px] w-[18px] shrink-0 text-red-400"
+              className="h-[18px] w-[18px] shrink-0 text-brand-yellow"
               aria-hidden
             />
           </AppLink>
