@@ -22,6 +22,9 @@ export const metadata: Metadata = {
     template: "%s · Grill.am",
   },
   description: "Fresh grilled food delivery in Armenia",
+  icons: {
+    icon: [{ url: "/favicon.webp", type: "image/webp" }],
+  },
 };
 
 export default function RootLayout({
