@@ -105,6 +105,9 @@ export function SiteHeaderMainNav({
   const pathnameRef = useRef(pathname);
   const routeSyncTimerRef = useRef<number | null>(null);
   const isPopNavigationRef = useRef(false);
+  const programmaticScrollRef = useRef(false);
+  const programmaticScrollTimerRef = useRef<number | null>(null);
+  const [scrollLocked, setScrollLocked] = useState(false);
 
   function clearMotionEnableTimer(): void {
     if (motionEnableTimerRef.current != null) {
@@ -120,6 +123,13 @@ export function SiteHeaderMainNav({
     }
   }
 
+  function clearProgrammaticScrollTimer(): void {
+    if (programmaticScrollTimerRef.current != null) {
+      window.clearTimeout(programmaticScrollTimerRef.current);
+      programmaticScrollTimerRef.current = null;
+    }
+  }
+
   function scheduleMotionEnable(): void {
     clearMotionEnableTimer();
     motionEnableTimerRef.current = window.setTimeout(() => {
@@ -130,24 +140,73 @@ export function SiteHeaderMainNav({
   }
 
   function setHiddenState(nextHidden: boolean, animate: boolean): void {
-    const changed = primaryHiddenRef.current !== nextHidden;
+    if (primaryHiddenRef.current === nextHidden) {
+      return;
+    }
 
     if (!animate) {
       clearMotionEnableTimer();
-      if (motionEnabledRef.current) {
-        motionEnabledRef.current = false;
-        setMotionEnabled(false);
-      }
-      scheduleMotionEnable();
-    }
-
-    if (!changed) {
-      return;
+      motionEnabledRef.current = false;
+      setMotionEnabled(false);
     }
 
     primaryHiddenRef.current = nextHidden;
     setPrimaryHidden(nextHidden);
     writeStoredHidden(pathnameRef.current, nextHidden);
+
+    if (!animate && !programmaticScrollRef.current) {
+      scheduleMotionEnable();
+    }
+  }
+
+  function unlockProgrammaticScroll(): void {
+    clearProgrammaticScrollTimer();
+    programmaticScrollRef.current = false;
+    lastScrollYRef.current = window.scrollY;
+    setScrollLocked(false);
+    scheduleMotionEnable();
+  }
+
+  function scrollHomeToTop(): void {
+    clearProgrammaticScrollTimer();
+    clearMotionEnableTimer();
+
+    programmaticScrollRef.current = true;
+    setScrollLocked(true);
+    motionEnabledRef.current = false;
+    setMotionEnabled(false);
+
+    // Expand primary instantly with transitions forced off.
+    if (primaryHiddenRef.current) {
+      primaryHiddenRef.current = false;
+      setPrimaryHidden(false);
+      writeStoredHidden(pathnameRef.current, false);
+    }
+
+    if (window.scrollY <= TOP_REVEAL_Y) {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      programmaticScrollTimerRef.current = window.setTimeout(() => {
+        unlockProgrammaticScroll();
+      }, 100);
+      return;
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+
+    function onScrollEnd(): void {
+      window.removeEventListener("scrollend", onScrollEnd);
+      clearProgrammaticScrollTimer();
+      programmaticScrollTimerRef.current = window.setTimeout(() => {
+        unlockProgrammaticScroll();
+      }, 120);
+    }
+
+    window.addEventListener("scrollend", onScrollEnd, { once: true });
+    // Fallback when scrollend is unavailable.
+    programmaticScrollTimerRef.current = window.setTimeout(() => {
+      window.removeEventListener("scrollend", onScrollEnd);
+      unlockProgrammaticScroll();
+    }, 1200);
   }
 
   useEffect(() => {
@@ -207,6 +266,13 @@ export function SiteHeaderMainNav({
       }
 
       const y = window.scrollY;
+
+      // Logo smooth-scroll — freeze chrome; ignore hide/jump until unlock.
+      if (programmaticScrollRef.current) {
+        lastScrollYRef.current = y;
+        return;
+      }
+
       const delta = y - lastScrollYRef.current;
 
       if (Math.abs(delta) >= SCROLL_JUMP_DELTA) {
@@ -247,14 +313,16 @@ export function SiteHeaderMainNav({
       window.removeEventListener("pageshow", onPageShow);
       clearMotionEnableTimer();
       clearRouteSyncTimer();
+      clearProgrammaticScrollTimer();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- listeners once; refs hold latest
   }, []);
 
-  const collapseTransitionClass = motionEnabled
+  const allowMotion = motionEnabled && !scrollLocked;
+  const collapseTransitionClass = allowMotion
     ? "transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
     : "transition-none";
-  const fadeTransitionClass = motionEnabled
+  const fadeTransitionClass = allowMotion
     ? "transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
     : "transition-none";
 
@@ -287,7 +355,7 @@ export function SiteHeaderMainNav({
                           return;
                         }
                         event.preventDefault();
-                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        scrollHomeToTop();
                       }}
                     >
                       <Image
