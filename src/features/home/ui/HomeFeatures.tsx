@@ -180,7 +180,7 @@ export function HomeFeatures({
         if (!entry?.isIntersecting || started) return;
         started = true;
         observer.disconnect();
-        revealTimer = window.setTimeout(() => setRevealed(true), 800);
+        revealTimer = window.setTimeout(() => setRevealed(true), 750);
       },
       { threshold: 0.28, rootMargin: "0px 0px -10% 0px" },
     );
