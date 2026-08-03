@@ -3,8 +3,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-const fieldClassName =
-  "h-10 w-full rounded-lg border border-gray-200 px-3 pr-10 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
+import { AUTH_PASSWORD_FIELD_CLASS } from "@/features/auth/ui/auth-ui";
 
 type PasswordFieldProps = {
   name: string;
@@ -32,11 +31,11 @@ export function PasswordField({
           name={name}
           type={visible ? "text" : "password"}
           autoComplete={autoComplete}
-          className={fieldClassName}
+          className={AUTH_PASSWORD_FIELD_CLASS}
         />
         <button
           type="button"
-          className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-gray-500 transition hover:text-gray-800"
+          className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-gray-500 transition hover:text-gray-800"
           aria-label={visible ? hidePasswordLabel : showPasswordLabel}
           aria-pressed={visible}
           onClick={() => setVisible((current) => !current)}
