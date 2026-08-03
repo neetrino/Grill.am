@@ -230,6 +230,7 @@ export default async function ProductsPage({
                   isSignedIn={Boolean(user)}
                   wishlistLabel={dictionary.nav.wishlist}
                   addToCartLabel={dictionary.product.addToCart}
+                  requiresConfiguration={product.requiresConfiguration}
                 />
               ))}
             </div>

@@ -10,6 +10,10 @@ import {
   products,
 } from "@/db/schema";
 import { resolveProductTranslation } from "@/features/products/domain/resolve-translation";
+import {
+  parseProductCustomization,
+  productRequiresConfiguration,
+} from "@/features/products/domain/customization";
 import type { CatalogProduct } from "@/features/products/types";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type { Locale } from "@/lib/i18n/config";
@@ -36,6 +40,9 @@ function toCatalogProduct(
     translation,
     imageUrl,
     categoryTitle,
+    requiresConfiguration: productRequiresConfiguration(
+      parseProductCustomization(product.customization),
+    ),
   };
 }
 

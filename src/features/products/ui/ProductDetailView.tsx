@@ -123,6 +123,7 @@ export function ProductDetailView({
               decreaseQuantity: dictionary.cartDrawer.decreaseQuantity,
               increaseQuantity: dictionary.cartDrawer.increaseQuantity,
               addToCart: labels.addToCart,
+              selectRequired: labels.selectRequired,
               adding: labels.adding,
               outOfStock: labels.outOfStock,
               added: labels.added,

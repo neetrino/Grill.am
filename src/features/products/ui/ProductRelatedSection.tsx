@@ -86,6 +86,7 @@ export async function ProductRelatedSection({
               isSignedIn={isSignedIn}
               wishlistLabel={dictionary.nav.wishlist}
               addToCartLabel={labels.addToCart}
+              requiresConfiguration={item.requiresConfiguration}
             />
           );
         })}

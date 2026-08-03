@@ -25,6 +25,8 @@ type ProductCardProps = {
   isSignedIn?: boolean;
   wishlistLabel?: string;
   addToCartLabel?: string;
+  /** When true, cart CTA opens the product page for option selection. */
+  requiresConfiguration?: boolean;
 };
 
 export function ProductCard({
@@ -43,6 +45,7 @@ export function ProductCard({
   isSignedIn = false,
   wishlistLabel,
   addToCartLabel,
+  requiresConfiguration = false,
 }: ProductCardProps) {
   const onSale = Boolean(compareAtFormatted);
   const showWishlist =
@@ -130,6 +133,7 @@ export function ProductCard({
               label={addToCartLabel}
               disabled={!inStock}
               size="sm"
+              configureHref={requiresConfiguration ? href : undefined}
               className="h-[51px] w-[51px] shrink-0 rounded-[45px] bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 [&>svg]:h-[29px] [&>svg]:w-[29px] [&>svg]:text-white"
             />
           ) : null}

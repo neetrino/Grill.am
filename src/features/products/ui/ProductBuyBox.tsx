@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { addToCart } from "@/features/cart/cart";
 import {
   computeModifiersDelta,
-  defaultModifiers,
+  hasRequiredModifiersSelected,
   type CartModifiers,
   type ProductCustomization,
   type StorefrontCustomization,
@@ -23,6 +23,7 @@ type ProductBuyBoxLabels = {
   decreaseQuantity: string;
   increaseQuantity: string;
   addToCart: string;
+  selectRequired: string;
   adding: string;
   outOfStock: string;
   added: string;
@@ -103,15 +104,22 @@ export function ProductBuyBox({
   labels,
 }: ProductBuyBoxProps) {
   const maxQty = Math.max(stockOnHand, 0);
-  const [modifiers, setModifiers] = useState<CartModifiers>(() =>
-    defaultModifiers(rawCustomization),
-  );
+  const [modifiers, setModifiers] = useState<CartModifiers>({
+    optionChoices: {},
+    addonIds: [],
+    exclusionIds: [],
+  });
   const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [livePricing, setLivePricing] = useState(false);
   const disabled = maxQty < 1;
+  const optionsComplete = hasRequiredModifiersSelected(
+    rawCustomization,
+    modifiers,
+  );
+  const canAdd = !disabled && optionsComplete;
 
   useEffect(() => {
     setLivePricing(true);
@@ -185,7 +193,7 @@ export function ProductBuyBox({
   }
 
   function handleAdd(): void {
-    if (disabled || quantity < 1) return;
+    if (!canAdd || quantity < 1) return;
     setMessage(null);
     setError(null);
     startTransition(async () => {
@@ -315,7 +323,7 @@ export function ProductBuyBox({
         <div className="mt-5 flex flex-col gap-[22px]">
           <button
             type="button"
-            disabled={disabled || pending}
+            disabled={!canAdd || pending}
             onClick={handleAdd}
             className="inline-flex h-[53px] w-full items-center justify-center gap-3 rounded-[66px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -327,11 +335,13 @@ export function ProductBuyBox({
             <span>
               {disabled
                 ? labels.outOfStock
-                : pending
-                  ? labels.adding
-                  : labels.addToCart}
+                : !optionsComplete
+                  ? labels.selectRequired
+                  : pending
+                    ? labels.adding
+                    : labels.addToCart}
             </span>
-            {!disabled ? (
+            {canAdd && !pending ? (
               <span className="text-base font-black">{lineFormatted}</span>
             ) : null}
           </button>

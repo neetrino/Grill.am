@@ -13,6 +13,10 @@ type AddToCartButtonProps = {
   disabled?: boolean;
   className?: string;
   size?: "sm" | "md";
+  /**
+   * When set, navigates here instead of quick-adding (required options / sauces).
+   */
+  configureHref?: string;
 };
 
 export function AddToCartButton({
@@ -21,6 +25,7 @@ export function AddToCartButton({
   disabled = false,
   className = "",
   size = "md",
+  configureHref,
 }: AddToCartButtonProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -31,6 +36,11 @@ export function AddToCartButton({
     event.preventDefault();
     event.stopPropagation();
     if (disabled || pending) return;
+
+    if (configureHref) {
+      router.push(configureHref);
+      return;
+    }
 
     startTransition(async () => {
       try {
