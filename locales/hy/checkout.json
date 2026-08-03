@@ -35,6 +35,19 @@
     "enterCity": "Մուտքագրեք քաղաքը",
     "selectDeliveryLocation": "Ընտրեք առաքման վայրը"
   },
+  "deliveryCities": {
+    "yerevan": "Երևան",
+    "aragatsotn": "Արագածոտն",
+    "ararat": "Արարատ",
+    "armavir": "Արմավիր",
+    "gegharkunik": "Գեղարքունիք",
+    "kotayk": "Կոտայք",
+    "lori": "Լոռի",
+    "shirak": "Շիրակ",
+    "syunik": "Սյունիք",
+    "tavush": "Տավուշ",
+    "vayotsDzor": "Վայոց Ձոր"
+  },
   "payment": {
     "cashOnDelivery": "Կանխիկ առաքման պահին",
     "cashOnDeliveryDescription": "Վճարեք կանխիկ՝ պատվերը ստանալիս",

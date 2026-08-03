@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
+import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import {
   CHECKOUT_FIELD_CLASS,
   CHECKOUT_OPTION_BASE_CLASS,
@@ -193,26 +194,24 @@ export function CheckoutDetailsSections({
           <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
             {labels.shippingAddress}
           </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              {labels.deliveryLocation}
-              <select
+          <div className="flex flex-col gap-4 md:flex-row md:items-end">
+            <div className="w-full shrink-0 md:w-[150px]">
+              <CheckoutSelect
+                label={labels.deliveryLocation}
                 name="deliveryRuleId"
                 required
                 value={deliveryRuleId}
-                onChange={(event) => onDeliveryRuleChange(event.target.value)}
+                onChange={onDeliveryRuleChange}
                 disabled={pending || deliveryOptions.length === 0}
-                className={CHECKOUT_FIELD_CLASS}
-              >
-                <option value="">{labels.selectLocation}</option>
-                {deliveryOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                placeholder={labels.selectLocation}
+                options={deliveryOptions.map((option) => ({
+                  value: option.id,
+                  label: option.label,
+                }))}
+                className="w-full"
+              />
+            </div>
+            <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.address}
               <input
                 name="line1"

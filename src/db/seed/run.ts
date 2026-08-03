@@ -187,30 +187,51 @@ async function seed(): Promise<void> {
     ])
     .onConflictDoNothing({ target: schema.productCategories.id });
 
-  await db
-    .insert(schema.deliveryRules)
-    .values({
-      id: seedIds.deliveryArmenia,
-      countryCode: "Armenia",
-      city: "Yerevan",
-      priceAmount: 1500,
-      freeThresholdAmount: 50000,
-      estimatedDaysMin: 1,
-      estimatedDaysMax: 3,
-      isActive: true,
-      priority: 100,
-    })
-    .onConflictDoUpdate({
-      target: schema.deliveryRules.id,
-      set: {
-        isActive: true,
-        countryCode: "Armenia",
-        city: "Yerevan",
+  const deliveryCitySeeds: Array<{
+    id: string;
+    city: string;
+    priority: number;
+  }> = [
+    { id: seedIds.deliveryArmenia, city: "Yerevan", priority: 110 },
+    { id: seedIds.deliveryAragatsotn, city: "Aragatsotn", priority: 100 },
+    { id: seedIds.deliveryArarat, city: "Ararat", priority: 90 },
+    { id: seedIds.deliveryArmavir, city: "Armavir", priority: 80 },
+    { id: seedIds.deliveryGegharkunik, city: "Gegharkunik", priority: 70 },
+    { id: seedIds.deliveryKotayk, city: "Kotayk", priority: 60 },
+    { id: seedIds.deliveryLori, city: "Lori", priority: 50 },
+    { id: seedIds.deliveryShirak, city: "Shirak", priority: 40 },
+    { id: seedIds.deliverySyunik, city: "Syunik", priority: 30 },
+    { id: seedIds.deliveryTavush, city: "Tavush", priority: 20 },
+    { id: seedIds.deliveryVayotsDzor, city: "Vayots Dzor", priority: 10 },
+  ];
+
+  for (const location of deliveryCitySeeds) {
+    await db
+      .insert(schema.deliveryRules)
+      .values({
+        id: location.id,
+        countryCode: "AM",
+        city: location.city,
         priceAmount: 1500,
         freeThresholdAmount: 50000,
-        updatedAt: now,
-      },
-    });
+        estimatedDaysMin: 1,
+        estimatedDaysMax: 3,
+        isActive: true,
+        priority: location.priority,
+      })
+      .onConflictDoUpdate({
+        target: schema.deliveryRules.id,
+        set: {
+          isActive: true,
+          countryCode: "AM",
+          city: location.city,
+          priceAmount: 1500,
+          freeThresholdAmount: 50000,
+          priority: location.priority,
+          updatedAt: now,
+        },
+      });
+  }
 
   await db
     .insert(schema.heroSlides)

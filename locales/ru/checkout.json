@@ -35,6 +35,19 @@
     "enterCity": "Укажите город",
     "selectDeliveryLocation": "Выберите место доставки"
   },
+  "deliveryCities": {
+    "yerevan": "Ереван",
+    "aragatsotn": "Арагацотн",
+    "ararat": "Арарат",
+    "armavir": "Армавир",
+    "gegharkunik": "Гехаркуник",
+    "kotayk": "Котайк",
+    "lori": "Лори",
+    "shirak": "Ширак",
+    "syunik": "Сюник",
+    "tavush": "Тавуш",
+    "vayotsDzor": "Вайоц Дзор"
+  },
   "payment": {
     "cashOnDelivery": "Наличными при получении",
     "cashOnDeliveryDescription": "Оплатите наличными при получении заказа",

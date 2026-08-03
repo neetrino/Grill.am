@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import { getCartWithItems } from "@/features/cart/cart";
 import { getCheckoutDeliveryOptions } from "@/features/checkout/application/get-checkout-delivery";
 import { getCheckoutOrderProducts } from "@/features/checkout/application/get-checkout-order-products";
+import {
+  CHECKOUT_DELIVERY_CITY_I18N_KEYS,
+  resolveCheckoutDeliveryCity,
+} from "@/features/checkout/domain/checkout-delivery-cities";
 import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
 import {
   parseCartModifiers,
@@ -28,12 +32,23 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliveryOptions, minimumOrder] = await Promise.all([
+  const [user, { items }, deliveryOptionsRaw, minimumOrder] = await Promise.all([
     getCurrentUser(),
     getCartWithItems(),
     getCheckoutDeliveryOptions(),
     getStoreMinimumOrder(),
   ]);
+  const deliveryOptions = deliveryOptionsRaw.map((option) => {
+    const city = resolveCheckoutDeliveryCity(option.city);
+    if (!city) {
+      return option;
+    }
+    const key = CHECKOUT_DELIVERY_CITY_I18N_KEYS[city];
+    return {
+      ...option,
+      label: copy.deliveryCities[key],
+    };
+  });
   const [defaultAddress, prices, orderProducts] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
     resolveProductPrices(

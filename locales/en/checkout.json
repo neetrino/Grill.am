@@ -35,6 +35,19 @@
     "enterCity": "Enter City",
     "selectDeliveryLocation": "Select delivery location"
   },
+  "deliveryCities": {
+    "yerevan": "Yerevan",
+    "aragatsotn": "Aragatsotn",
+    "ararat": "Ararat",
+    "armavir": "Armavir",
+    "gegharkunik": "Gegharkunik",
+    "kotayk": "Kotayk",
+    "lori": "Lori",
+    "shirak": "Shirak",
+    "syunik": "Syunik",
+    "tavush": "Tavush",
+    "vayotsDzor": "Vayots Dzor"
+  },
   "payment": {
     "cashOnDelivery": "Cash on Delivery",
     "cashOnDeliveryDescription": "Pay cash when you receive your order",
