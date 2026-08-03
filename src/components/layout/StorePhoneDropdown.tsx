@@ -36,16 +36,18 @@ const VARIANT_STYLES = {
     link: "leading-5 text-white/60 transition hover:text-white",
     chevron: "shrink-0 text-[#9C9FA1] transition hover:text-white",
     chevronIcon: "h-3.5 w-3.5",
-    menuLink: `${DROPDOWN_OPTION_CLASS} hover:text-brand-red`,
+    menuLink: `${DROPDOWN_OPTION_CLASS} !flex items-center gap-2 hover:text-brand-red`,
+    menuIcon: "size-4 shrink-0",
   },
   header: {
     root: "relative z-20",
     row: "inline-flex items-center gap-2",
-    icon: "h-[19px] w-[19px] shrink-0",
+    icon: "h-[19px] w-[19px] shrink-0 text-[#333]",
     link: "text-base font-medium text-[#333] transition hover:text-brand-red",
     chevron: "shrink-0 text-[#333] transition hover:text-brand-red",
     chevronIcon: "h-5 w-5",
-    menuLink: `${DROPDOWN_OPTION_CLASS} hover:text-brand-red`,
+    menuLink: `${DROPDOWN_OPTION_CLASS} !flex items-center gap-2 hover:text-brand-red`,
+    menuIcon: "size-4 shrink-0 text-[#333]",
   },
   topbar: {
     root: "relative z-20",
@@ -54,7 +56,8 @@ const VARIANT_STYLES = {
     link: "font-medium transition-colors hover:text-brand-red",
     chevron: "shrink-0 text-gray-500 transition hover:text-brand-red",
     chevronIcon: "h-5 w-5",
-    menuLink: `${DROPDOWN_OPTION_CLASS} hover:text-brand-red`,
+    menuLink: `${DROPDOWN_OPTION_CLASS} !flex items-center gap-2 hover:text-brand-red`,
+    menuIcon: "size-4 shrink-0",
   },
 } as const;
 
@@ -194,6 +197,7 @@ export function StorePhoneDropdown({
             {rest.map((phone) => (
               <li key={phone}>
                 <a href={telHref(phone)} className={styles.menuLink}>
+                  <Phone className={styles.menuIcon} aria-hidden />
                   {phone}
                 </a>
               </li>
