@@ -119,7 +119,7 @@ export function ProductDrawerImages({
                     checked={image.isPrimary}
                     disabled={disabled}
                     onChange={() => setPrimary(image.key)}
-                    className="h-3.5 w-3.5 rounded border-gray-300"
+                    className="h-3.5 w-3.5 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
                   />
                   {copy.main}
                 </label>

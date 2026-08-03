@@ -323,7 +323,7 @@ export function PromotionForm({
             name="allowStacking"
             defaultChecked={defaults?.allowStacking ?? false}
             disabled={isPending}
-            className="h-4 w-4 rounded border-gray-300"
+            className="h-4 w-4 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
           />
           {copy.allowStacking}
         </label>
@@ -333,7 +333,7 @@ export function PromotionForm({
             name="isActive"
             defaultChecked={defaults?.isActive ?? true}
             disabled={isPending}
-            className="h-4 w-4 rounded border-gray-300"
+            className="h-4 w-4 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
           />
           {copy.active}
         </label>

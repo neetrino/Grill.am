@@ -52,6 +52,7 @@
     "addNew": "Add New Address",
     "defaultBadge": "Default",
     "setDefault": "Set as Default",
+    "setDefaultConfirm": "Set this address as your default shipping address?",
     "edit": "Edit",
     "delete": "Delete",
     "deleteConfirm": "Delete this address?",

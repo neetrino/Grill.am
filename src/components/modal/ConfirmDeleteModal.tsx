@@ -21,6 +21,14 @@ import {
 import { Button } from "@/components/ui/Button";
 import { useAnimatedModalDismiss } from "@/lib/ui/useAnimatedModalDismiss";
 
+export type ConfirmModalTone = "danger" | "info";
+
+const CONFIRM_BUTTON_TONE_CLASS: Record<ConfirmModalTone, string> = {
+  danger:
+    "!bg-brand-red !text-white hover:!bg-brand-red-hot focus:!ring-brand-red",
+  info: "!bg-[#5281e1] !text-white hover:!bg-[#3f6dc9] focus:!ring-[#5281e1]",
+};
+
 export type ConfirmDeleteModalProps = {
   isOpen: boolean;
   title: string;
@@ -29,6 +37,8 @@ export type ConfirmDeleteModalProps = {
   cancelText?: string;
   confirming?: boolean;
   showCancel?: boolean;
+  /** Confirm CTA color — `danger` (red) or `info` (status blue). */
+  confirmTone?: ConfirmModalTone;
   onCancel: () => void;
   onConfirm: () => void;
 };
@@ -39,6 +49,7 @@ type CachedModalContent = {
   confirmText?: string;
   cancelText?: string;
   showCancel: boolean;
+  confirmTone: ConfirmModalTone;
 };
 
 type ConfirmDeleteModalPanelProps = {
@@ -49,6 +60,7 @@ type ConfirmDeleteModalPanelProps = {
   showCancel: boolean;
   confirming: boolean;
   actionsDisabled: boolean;
+  confirmTone: ConfirmModalTone;
   panelMotionClass: string;
   onCancel: () => void;
   onConfirm: () => void;
@@ -67,6 +79,7 @@ function ConfirmDeleteModalPanel({
   showCancel,
   confirming,
   actionsDisabled,
+  confirmTone,
   panelMotionClass,
   onCancel,
   onConfirm,
@@ -109,7 +122,7 @@ function ConfirmDeleteModalPanel({
           variant="primary"
           onClick={onConfirm}
           disabled={actionsDisabled}
-          className="min-w-24 !rounded-[15px] !bg-brand-red !text-white hover:!bg-brand-red-hot focus:!ring-brand-red"
+          className={`min-w-24 !rounded-[15px] ${CONFIRM_BUTTON_TONE_CLASS[confirmTone]}`}
         >
           {confirming ? `${confirmLabel}...` : confirmLabel}
         </Button>
@@ -162,6 +175,7 @@ export function ConfirmDeleteModal({
   cancelText = "Cancel",
   confirming = false,
   showCancel = true,
+  confirmTone = "danger",
   onCancel,
   onConfirm,
 }: ConfirmDeleteModalProps) {
@@ -193,6 +207,7 @@ export function ConfirmDeleteModal({
     confirmText,
     cancelText,
     showCancel,
+    confirmTone,
   });
 
   const actionsDisabled = confirming || isExiting;
@@ -201,8 +216,15 @@ export function ConfirmDeleteModal({
     if (!isOpen) {
       return;
     }
-    setCached({ title, message, confirmText, cancelText, showCancel });
-  }, [isOpen, title, message, confirmText, cancelText, showCancel]);
+    setCached({
+      title,
+      message,
+      confirmText,
+      cancelText,
+      showCancel,
+      confirmTone,
+    });
+  }, [isOpen, title, message, confirmText, cancelText, showCancel, confirmTone]);
 
   useEffect(() => {
     if (!isVisible || actionsDisabled) {
@@ -238,6 +260,7 @@ export function ConfirmDeleteModal({
         showCancel={cached.showCancel}
         confirming={confirming}
         actionsDisabled={actionsDisabled}
+        confirmTone={cached.confirmTone}
         panelMotionClass={panelMotionClass}
         onCancel={onCancel}
         onConfirm={onConfirm}

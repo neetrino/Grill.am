@@ -170,6 +170,11 @@ input[type="file"]:not(:disabled) {
   cursor: pointer;
 }
 
+/* Native checkboxes — brand yellow checked fill */
+input[type="checkbox"] {
+  accent-color: var(--brand-yellow);
+}
+
 button:disabled,
 [aria-disabled="true"],
 input:disabled,

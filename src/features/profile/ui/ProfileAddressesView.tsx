@@ -38,6 +38,7 @@ type ProfileAddressesViewProps = {
     addNew: string;
     defaultBadge: string;
     setDefault: string;
+    setDefaultConfirm: string;
     edit: string;
     delete: string;
     deleteConfirm: string;
@@ -155,17 +156,30 @@ export function ProfileAddressesView({
   }
 
   function onSetDefault(addressId: string): void {
-    setError(null);
-    setMessage(null);
-    startTransition(async () => {
-      const result = await setDefaultCustomerAddressAction(locale, addressId);
-      if (!result.ok) {
-        setError(result.error.message);
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: labels.setDefault,
+        message: labels.setDefaultConfirm,
+        confirmText: labels.setDefault,
+        cancelText: labels.cancel,
+        confirmTone: "info",
+      });
+      if (!accepted) {
         return;
       }
-      setMessage("Default address updated.");
-      router.refresh();
-    });
+
+      setError(null);
+      setMessage(null);
+      startTransition(async () => {
+        const result = await setDefaultCustomerAddressAction(locale, addressId);
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+        setMessage("Default address updated.");
+        router.refresh();
+      });
+    })();
   }
 
   const sortedAddresses = [...addresses].sort((left, right) => {
@@ -249,7 +263,7 @@ export function ProfileAddressesView({
                   isDefault: event.target.checked,
                 }))
               }
-              className="h-4 w-4 rounded border-gray-300 text-brand-red focus:ring-brand-red"
+              className="h-4 w-4 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
             />
             <span className="text-sm text-gray-700">{labels.isDefault}</span>
           </label>
@@ -293,7 +307,7 @@ export function ProfileAddressesView({
         </p>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         {sortedAddresses.length > 0 ? (
           sortedAddresses.map((address) => (
             <ProfileAddressCard

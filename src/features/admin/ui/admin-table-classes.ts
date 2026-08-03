@@ -39,7 +39,8 @@ export const ADMIN_TABLE_TD_CHECK =
 
 export const ADMIN_TABLE_TD = "min-w-0 px-3 py-2.5 align-middle text-sm";
 
-export const ADMIN_TABLE_CHECKBOX = "h-4 w-4 shrink-0 rounded border-gray-300";
+export const ADMIN_TABLE_CHECKBOX =
+  "h-4 w-4 shrink-0 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow";
 
 /** Footer row(s) below the table (pagination, bulk actions) */
 export const ADMIN_TABLE_FOOTER = "border-t border-gray-200 px-4 py-3 sm:px-5";

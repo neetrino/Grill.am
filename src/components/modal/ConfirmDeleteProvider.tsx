@@ -10,13 +10,17 @@ import {
   type ReactNode,
 } from "react";
 
-import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
+import {
+  ConfirmDeleteModal,
+  type ConfirmModalTone,
+} from "@/components/modal/ConfirmDeleteModal";
 
 export type ConfirmDeleteOptions = {
   title?: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
+  confirmTone?: ConfirmModalTone;
 };
 
 export type ConfirmDeleteDefaultLabels = {
@@ -106,6 +110,7 @@ export function ConfirmDeleteProvider({
         message={active?.options.message ?? labels.message}
         confirmText={active?.options.confirmText ?? labels.confirmText}
         cancelText={active?.options.cancelText ?? labels.cancelText}
+        confirmTone={active?.options.confirmTone ?? "danger"}
         onCancel={() => finish(false)}
         onConfirm={() => finish(true)}
       />

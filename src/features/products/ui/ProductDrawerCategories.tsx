@@ -134,7 +134,7 @@ export function ProductDrawerCategories({
                     checked={selectedIds.includes(category.id)}
                     disabled={disabled || isPending}
                     onChange={() => toggleCategory(category.id)}
-                    className="h-4 w-4 rounded border-gray-300"
+                    className="h-4 w-4 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
                   />
                   <span>{category.title}</span>
                 </label>
