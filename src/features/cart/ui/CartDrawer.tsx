@@ -200,12 +200,14 @@ export function CartDrawer({
                       <li key={item.id}>
                         <CartDrawerItemRow
                           item={item}
+                          productHref={`/${locale}/products/${item.slug}`}
                           pending={pending}
                           removeLabel={labels.removeItem}
                           decreaseLabel={labels.decreaseQuantity}
                           increaseLabel={labels.increaseQuantity}
                           onRemove={removeCartItem}
                           onChangeQuantity={changeQuantity}
+                          onNavigate={closeDrawer}
                         />
                       </li>
                     ))}

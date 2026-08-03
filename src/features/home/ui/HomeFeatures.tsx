@@ -174,7 +174,7 @@ export function HomeFeatures({
     }
 
     let started = false;
-    let revealTimer: ReturnType<typeof setTimeout> | null = null;
+    let revealTimer: number | null = null;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting || started) return;
@@ -188,7 +188,7 @@ export function HomeFeatures({
     observer.observe(node);
     return () => {
       observer.disconnect();
-      if (revealTimer) {
+      if (revealTimer != null) {
         window.clearTimeout(revealTimer);
       }
     };

@@ -55,7 +55,7 @@ export function ProductCard({
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
-          className="absolute inset-0 block"
+          className="absolute inset-0 z-[1] block"
         >
           <Image
             src={PRODUCT_CARD_IMAGE}
