@@ -91,7 +91,7 @@ function FeatureCard({
         />
       </div>
       <h3
-        className={`absolute z-10 font-black break-words whitespace-pre-line ${CARD_TITLE[item.tone]}`}
+        className={`absolute z-10 font-black break-words whitespace-pre-line [text-shadow:0.3px_0_0_currentColor,-0.3px_0_0_currentColor,0_0.3px_0_currentColor,0_-0.3px_0_currentColor] ${CARD_TITLE[item.tone]}`}
       >
         {stackedTitle}
       </h3>
