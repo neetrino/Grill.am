@@ -6,8 +6,13 @@ import { useId, useState, useTransition } from "react";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
+  ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import {
+  DROPDOWN_PANEL_CLASS,
+  dropdownPanelStateClass,
+} from "@/components/ui/dropdown-styles";
 import { createCategoryAction } from "@/features/categories/actions";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
@@ -87,14 +92,14 @@ export function ProductDrawerCategories({
   return (
     <div>
       <span className={ADMIN_LABEL}>{copy.title}</span>
-      <div className="mt-1">
+      <div className="relative mt-1">
         <button
           type="button"
           disabled={disabled || isPending}
           aria-expanded={open}
           aria-controls={listId}
           onClick={() => setOpen((value) => !value)}
-          className={`${ADMIN_INPUT} flex items-center justify-between gap-2 text-left disabled:opacity-50`}
+          className={`${ADMIN_SELECT} flex items-center justify-between gap-2 text-left disabled:opacity-50`}
         >
           <span
             className={`min-w-0 flex-1 truncate ${
@@ -104,7 +109,7 @@ export function ProductDrawerCategories({
             {triggerLabel}
           </span>
           <ChevronDown
-            className={`h-4 w-4 shrink-0 text-gray-400 transition-transform ${
+            className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-150 ${
               open ? "rotate-180" : ""
             }`}
             aria-hidden
@@ -114,7 +119,7 @@ export function ProductDrawerCategories({
         {open ? (
           <div
             id={listId}
-            className="mt-1 max-h-40 space-y-2 overflow-y-auto rounded-xl border border-gray-200 px-3 py-2"
+            className={`${DROPDOWN_PANEL_CLASS} relative z-20 mt-1.5 max-h-40 space-y-2 px-3 py-2 ${dropdownPanelStateClass(true)}`}
           >
             {categories.length === 0 ? (
               <p className="text-sm text-gray-500">{copy.empty}</p>
@@ -122,7 +127,7 @@ export function ProductDrawerCategories({
               categories.map((category) => (
                 <label
                   key={category.id}
-                  className="flex items-center gap-2 text-sm text-gray-800"
+                  className="flex items-center gap-2 px-1 py-1 text-sm text-gray-800"
                 >
                   <input
                     type="checkbox"

@@ -5,6 +5,13 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { AppLink } from "@/components/ui/AppLink";
+import {
+  DROPDOWN_OPTION_CLASS,
+  DROPDOWN_OPTION_SELECTED_CLASS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
+  dropdownPanelStateClass,
+  dropdownPortalStyle,
+} from "@/components/ui/dropdown-styles";
 import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -167,16 +174,8 @@ export function NavCategoriesDropdown({
               id={menuId}
               role="menu"
               aria-label={label}
-              className={`fixed z-[300] overflow-hidden rounded-[14px] border border-gray-200 bg-white py-1.5 shadow-lg transition-[opacity,transform] duration-150 ease-out motion-reduce:transition-none ${
-                visible
-                  ? "translate-y-0 opacity-100"
-                  : "pointer-events-none -translate-y-1 opacity-0"
-              }`}
-              style={{
-                top: menuPosition.top,
-                left: menuPosition.left,
-                minWidth: menuPosition.minWidth,
-              }}
+              className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-1.5 ${dropdownPanelStateClass(visible)}`}
+              style={dropdownPortalStyle(menuPosition)}
               onMouseEnter={openMenu}
               onMouseLeave={scheduleClose}
             >
@@ -184,9 +183,9 @@ export function NavCategoriesDropdown({
                 href={productsPath}
                 prefetchPolicy="intent"
                 role="menuitem"
-                className={`block px-4 py-2.5 text-sm font-medium transition hover:bg-[#fff4ee] hover:text-brand-red ${
+                className={`${DROPDOWN_OPTION_CLASS} font-medium hover:text-brand-red ${
                   isOnProductsList && !activeCategorySlug
-                    ? "text-brand-red"
+                    ? `${DROPDOWN_OPTION_SELECTED_CLASS} text-brand-red`
                     : "text-[#101010]"
                 }`}
                 onClick={() => {
@@ -206,8 +205,10 @@ export function NavCategoriesDropdown({
                     href={href}
                     prefetchPolicy="intent"
                     role="menuitem"
-                    className={`block px-4 py-2.5 text-sm font-medium transition hover:bg-[#fff4ee] hover:text-brand-red ${
-                      active ? "text-brand-red" : "text-[#101010]"
+                    className={`${DROPDOWN_OPTION_CLASS} font-medium hover:text-brand-red ${
+                      active
+                        ? `${DROPDOWN_OPTION_SELECTED_CLASS} text-brand-red`
+                        : "text-[#101010]"
                     }`}
                     onClick={() => {
                       clearCloseTimer();

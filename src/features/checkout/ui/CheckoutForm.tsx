@@ -20,6 +20,10 @@ import {
   CHECKOUT_PRIMARY_BUTTON_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
+import {
+  CHECKOUT_DELIVERY_CITY_PRIMARY,
+  normalizeCheckoutDeliveryCity,
+} from "@/features/checkout/domain/checkout-delivery-cities";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
 import type { Locale } from "@/lib/i18n/config";
@@ -130,7 +134,16 @@ export function CheckoutForm({
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
-  const defaultRuleId = deliveryOptions[0]?.id ?? "";
+  const primaryCityKey = normalizeCheckoutDeliveryCity(
+    CHECKOUT_DELIVERY_CITY_PRIMARY,
+  );
+  const defaultRuleId =
+    deliveryOptions.find(
+      (option) =>
+        normalizeCheckoutDeliveryCity(option.city) === primaryCityKey,
+    )?.id ??
+    deliveryOptions[0]?.id ??
+    "";
   const [shippingMethod, setShippingMethod] = useState<"pickup" | "delivery">(
     deliveryOptions.length > 0 ? "delivery" : "pickup",
   );

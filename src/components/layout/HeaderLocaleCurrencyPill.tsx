@@ -6,6 +6,11 @@ import { ChevronDown, Globe } from "lucide-react";
 
 import { HeaderCurrencyIcon } from "@/components/layout/HeaderIcons";
 import { AppLink } from "@/components/ui/AppLink";
+import {
+  DROPDOWN_ANIMATION_MS,
+  DROPDOWN_PANEL_ANCHORED_CLASS,
+  dropdownPanelStateClass,
+} from "@/components/ui/dropdown-styles";
 import { setCurrencyAction } from "@/features/preferences/set-currency-action";
 import type { Locale } from "@/lib/i18n/config";
 import { localeLabels, locales } from "@/lib/i18n/config";
@@ -24,9 +29,6 @@ const localeShortLabels: Record<Locale, string> = {
   en: "ENG",
   ru: "RU",
 };
-
-const DROPDOWN_ANIMATION_MS = 300;
-const DROPDOWN_GAP_PX = 8;
 
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
   const segments = pathname.split("/");
@@ -156,15 +158,7 @@ export function HeaderLocaleCurrencyPill({
           id={menuId}
           role="dialog"
           aria-label={`${currencyLabel} / ${languageLabel}`}
-          className={`absolute inset-x-0 z-[100] w-full origin-top overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-lg transition-all ease-out motion-reduce:transition-none ${
-            visible
-              ? "pointer-events-auto translate-y-0 opacity-100"
-              : "pointer-events-none -translate-y-2 opacity-0"
-          }`}
-          style={{
-            top: `calc(100% + ${DROPDOWN_GAP_PX}px)`,
-            transitionDuration: `${DROPDOWN_ANIMATION_MS}ms`,
-          }}
+          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} !min-w-full !w-full overflow-hidden py-2 ${dropdownPanelStateClass(visible)}`}
         >
           <div className="flex w-full">
             <div className="min-w-0 flex-1 border-r border-gray-100">

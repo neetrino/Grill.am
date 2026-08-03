@@ -1,11 +1,12 @@
 "use client";
 
 import { Card } from "@/components/ui/Card";
+import {
+  ADMIN_FILTER_INPUT,
+  ADMIN_FILTER_SELECT,
+} from "@/features/admin/ui/admin-form-classes";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
-
-const FILTER_CONTROL =
-  "rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
 const ORDER_STATUS_FILTERS = [
   { label: "pending", value: "PENDING" },
@@ -47,7 +48,7 @@ export function CustomerOrdersFilters({
         <select
           name="status"
           defaultValue={status ?? ""}
-          className={`${FILTER_CONTROL} w-[160px] shrink-0`}
+          className={`${ADMIN_FILTER_SELECT} w-[160px] shrink-0`}
           aria-label="Order status"
         >
           <option value="">All statuses</option>
@@ -60,7 +61,7 @@ export function CustomerOrdersFilters({
         <select
           name="paymentStatus"
           defaultValue={paymentStatus ?? ""}
-          className={`${FILTER_CONTROL} w-[180px] shrink-0`}
+          className={`${ADMIN_FILTER_SELECT} w-[180px] shrink-0`}
           aria-label="Payment status"
         >
           <option value="">All payment statuses</option>
@@ -74,7 +75,7 @@ export function CustomerOrdersFilters({
           name="q"
           defaultValue={q ?? ""}
           placeholder="Search by order #"
-          className={`${FILTER_CONTROL} min-w-0 flex-1`}
+          className={`${ADMIN_FILTER_INPUT} min-w-0 flex-1`}
           aria-label="Search orders"
         />
       </form>

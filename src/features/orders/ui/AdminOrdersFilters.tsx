@@ -2,15 +2,16 @@
 
 import { Card } from "@/components/ui/Card";
 import {
+  ADMIN_FILTER_INPUT,
+  ADMIN_FILTER_SELECT,
+} from "@/features/admin/ui/admin-form-classes";
+import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
 import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
-
-const FILTER_CONTROL =
-  "rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
 /** Admin list filter options mapped to stored enum values. */
 const ORDER_STATUS_FILTERS = [
@@ -64,7 +65,7 @@ export function AdminOrdersFilters({
         <select
           name="status"
           defaultValue={status ?? ""}
-          className={`${FILTER_CONTROL} w-[160px] shrink-0`}
+          className={`${ADMIN_FILTER_SELECT} w-[160px] shrink-0`}
           aria-label={filters.orderStatus}
         >
           <option value="">{filters.allStatuses}</option>
@@ -77,7 +78,7 @@ export function AdminOrdersFilters({
         <select
           name="paymentStatus"
           defaultValue={paymentStatus ?? ""}
-          className={`${FILTER_CONTROL} w-[180px] shrink-0`}
+          className={`${ADMIN_FILTER_SELECT} w-[180px] shrink-0`}
           aria-label={filters.paymentStatus}
         >
           <option value="">{filters.allPaymentStatuses}</option>
@@ -91,7 +92,7 @@ export function AdminOrdersFilters({
           name="q"
           defaultValue={q ?? ""}
           placeholder={filters.searchPlaceholder}
-          className={`${FILTER_CONTROL} min-w-0 flex-1`}
+          className={`${ADMIN_FILTER_INPUT} min-w-0 flex-1`}
           aria-label={filters.searchAria}
         />
       </form>

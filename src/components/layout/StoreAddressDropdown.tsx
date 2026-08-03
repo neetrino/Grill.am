@@ -4,6 +4,13 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, MapPin } from "lucide-react";
 
+import {
+  DROPDOWN_ANIMATION_MS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
+  dropdownPanelStateClass,
+  dropdownPortalStyle,
+} from "@/components/ui/dropdown-styles";
+
 type StoreAddressDropdownProps = {
   addresses: readonly string[];
   toggleLabel: string;
@@ -17,7 +24,6 @@ type MenuPosition = {
   maxWidth: number;
 };
 
-const MENU_TRANSITION_MS = 200;
 const VIEWPORT_PADDING = 16;
 
 const VARIANT_STYLES = {
@@ -26,20 +32,18 @@ const VARIANT_STYLES = {
     row: "flex items-start gap-3",
     icon: "mt-0.5 h-[15px] w-[15px] shrink-0 text-[#FF4A12]",
     text: "leading-5 text-white/60",
-    chevron:
-      "mt-0.5 shrink-0 text-[#9C9FA1] transition hover:text-white",
+    chevron: "mt-0.5 shrink-0 text-[#9C9FA1] transition hover:text-white",
     chevronIcon: "h-[18px] w-[18px]",
-    menu: "fixed z-[200] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-3 py-2.5 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
+    item: "px-4 py-3 text-sm leading-5 text-gray-800",
   },
   header: {
     root: "relative z-20",
     row: "inline-flex items-center gap-2",
     icon: "h-[19px] w-[15px] shrink-0",
     text: "text-base font-medium text-[#333]",
-    chevron:
-      "shrink-0 text-[#333] transition hover:text-brand-red",
+    chevron: "shrink-0 text-[#333] transition hover:text-brand-red",
     chevronIcon: "h-5 w-5",
-    menu: "fixed z-[200] max-h-[140px] origin-top-right space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#333] shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
+    item: "px-4 py-3 text-sm leading-5 text-gray-800",
   },
 } as const;
 
@@ -85,7 +89,7 @@ export function StoreAddressDropdown({
     closeTimerRef.current = setTimeout(() => {
       setMounted(false);
       closeTimerRef.current = null;
-    }, MENU_TRANSITION_MS);
+    }, DROPDOWN_ANIMATION_MS);
   }
 
   function toggleMenu(): void {
@@ -140,7 +144,7 @@ export function StoreAddressDropdown({
       closeTimerRef.current = setTimeout(() => {
         setMounted(false);
         closeTimerRef.current = null;
-      }, MENU_TRANSITION_MS);
+      }, DROPDOWN_ANIMATION_MS);
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -152,7 +156,7 @@ export function StoreAddressDropdown({
       closeTimerRef.current = setTimeout(() => {
         setMounted(false);
         closeTimerRef.current = null;
-      }, MENU_TRANSITION_MS);
+      }, DROPDOWN_ANIMATION_MS);
     };
 
     document.addEventListener("pointerdown", onPointerDown);
@@ -178,20 +182,11 @@ export function StoreAddressDropdown({
           <ul
             ref={menuRef}
             id={listId}
-            className={`${styles.menu} ${
-              visible
-                ? "translate-y-0 opacity-100"
-                : "pointer-events-none -translate-y-1 opacity-0"
-            }`}
-            style={{
-              top: menuPosition.top,
-              left: menuPosition.left,
-              minWidth: menuPosition.minWidth,
-              maxWidth: menuPosition.maxWidth,
-            }}
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} ${dropdownPanelStateClass(visible)}`}
+            style={dropdownPortalStyle(menuPosition)}
           >
             {menuAddresses.map((address) => (
-              <li key={address} className="leading-5 break-words">
+              <li key={address} className={`${styles.item} break-words whitespace-normal`}>
                 {address}
               </li>
             ))}
@@ -216,7 +211,7 @@ export function StoreAddressDropdown({
           >
             <span className={styles.text}>{displayLabel}</span>
             <ChevronDown
-              className={`${styles.chevronIcon} shrink-0 transition-transform duration-200 ease-out motion-reduce:transition-none ${
+              className={`${styles.chevronIcon} shrink-0 transition-transform duration-150 ease-out motion-reduce:transition-none ${
                 visible ? "rotate-180" : ""
               }`}
               aria-hidden

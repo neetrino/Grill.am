@@ -4,6 +4,13 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, Phone } from "lucide-react";
 
+import {
+  DROPDOWN_ANIMATION_MS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
+  DROPDOWN_OPTION_CLASS,
+  dropdownPanelStateClass,
+  dropdownPortalStyle,
+} from "@/components/ui/dropdown-styles";
 import { telHref } from "@/lib/phone";
 
 type StorePhoneDropdownProps = {
@@ -19,7 +26,6 @@ type MenuPosition = {
   maxWidth: number;
 };
 
-const MENU_TRANSITION_MS = 200;
 const VIEWPORT_PADDING = 16;
 
 const VARIANT_STYLES = {
@@ -30,8 +36,7 @@ const VARIANT_STYLES = {
     link: "leading-5 text-white/60 transition hover:text-white",
     chevron: "shrink-0 text-[#9C9FA1] transition hover:text-white",
     chevronIcon: "h-3.5 w-3.5",
-    menu: "fixed z-[200] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-3 py-2.5 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
-    menuLink: "block leading-5 whitespace-nowrap transition hover:text-white",
+    menuLink: `${DROPDOWN_OPTION_CLASS} hover:text-brand-red`,
   },
   header: {
     root: "relative z-20",
@@ -40,8 +45,7 @@ const VARIANT_STYLES = {
     link: "text-base font-medium text-[#333] transition hover:text-brand-red",
     chevron: "shrink-0 text-[#333] transition hover:text-brand-red",
     chevronIcon: "h-5 w-5",
-    menu: "fixed z-[200] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#333] shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
-    menuLink: "block leading-5 whitespace-nowrap transition hover:text-brand-red",
+    menuLink: `${DROPDOWN_OPTION_CLASS} hover:text-brand-red`,
   },
   topbar: {
     root: "relative z-20",
@@ -50,9 +54,7 @@ const VARIANT_STYLES = {
     link: "font-medium transition-colors hover:text-brand-red",
     chevron: "shrink-0 text-gray-500 transition hover:text-brand-red",
     chevronIcon: "h-5 w-5",
-    menu: "fixed z-[200] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
-    menuLink:
-      "block leading-5 whitespace-nowrap transition hover:text-brand-red",
+    menuLink: `${DROPDOWN_OPTION_CLASS} hover:text-brand-red`,
   },
 } as const;
 
@@ -95,7 +97,7 @@ export function StorePhoneDropdown({
     closeTimerRef.current = setTimeout(() => {
       setMounted(false);
       closeTimerRef.current = null;
-    }, MENU_TRANSITION_MS);
+    }, DROPDOWN_ANIMATION_MS);
   }
 
   function toggleMenu(): void {
@@ -146,7 +148,7 @@ export function StorePhoneDropdown({
       closeTimerRef.current = setTimeout(() => {
         setMounted(false);
         closeTimerRef.current = null;
-      }, MENU_TRANSITION_MS);
+      }, DROPDOWN_ANIMATION_MS);
     };
 
     const onPointerDown = (event: PointerEvent) => {
@@ -186,17 +188,8 @@ export function StorePhoneDropdown({
           <ul
             ref={menuRef}
             id={listId}
-            className={`${styles.menu} ${
-              visible
-                ? "translate-y-0 opacity-100"
-                : "pointer-events-none -translate-y-1 opacity-0"
-            }`}
-            style={{
-              top: menuPosition.top,
-              left: menuPosition.left,
-              minWidth: menuPosition.minWidth,
-              maxWidth: menuPosition.maxWidth,
-            }}
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} ${dropdownPanelStateClass(visible)}`}
+            style={dropdownPortalStyle(menuPosition)}
           >
             {rest.map((phone) => (
               <li key={phone}>
@@ -229,7 +222,7 @@ export function StorePhoneDropdown({
               onClick={toggleMenu}
             >
               <ChevronDown
-                className={`${styles.chevronIcon} transition-transform duration-200 ease-out motion-reduce:transition-none ${
+                className={`${styles.chevronIcon} transition-transform duration-150 ease-out motion-reduce:transition-none ${
                   visible ? "rotate-180" : ""
                 }`}
                 aria-hidden

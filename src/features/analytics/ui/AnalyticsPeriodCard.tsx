@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
+  ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
@@ -106,7 +107,7 @@ export function AnalyticsPeriodCard({
       <label className="block max-w-md">
         <span className={ADMIN_LABEL}>{copy.label}</span>
         <select
-          className={ADMIN_INPUT}
+          className={ADMIN_SELECT}
           value={selectedPreset}
           disabled={pending}
           onChange={(event) => onPeriodChange(event.target.value)}

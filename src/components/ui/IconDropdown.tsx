@@ -2,6 +2,12 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
+import {
+  DROPDOWN_PANEL_ANCHORED_CLASS,
+  DROPDOWN_PANEL_CLASS,
+  dropdownPanelStateClass,
+} from "@/components/ui/dropdown-styles";
+
 type IconDropdownProps = {
   label: string;
   trigger: React.ReactNode;
@@ -48,6 +54,11 @@ export function IconDropdown({
     };
   }, [open]);
 
+  const placementClass =
+    menuPlacement === "top"
+      ? "bottom-full mb-[6px] top-auto"
+      : "";
+
   return (
     <div
       ref={rootRef}
@@ -77,16 +88,10 @@ export function IconDropdown({
           id={menuId}
           role="menu"
           aria-label={label}
-          className={
-            menuPlacement === "top"
-              ? "absolute right-0 bottom-full z-[100] mb-2 min-w-40 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-2xl"
-              : "absolute top-full right-0 z-[100] mt-2 min-w-40 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-2xl"
-          }
+          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} right-0 left-auto min-w-40 overflow-hidden py-1 ${placementClass} ${dropdownPanelStateClass(true)}`}
         >
           <div
             onClick={(event) => {
-              // Closing unmounts menu children. Form submits (e.g. logout)
-              // must finish first; the following redirect navigates away.
               const target = event.target;
               if (
                 target instanceof Element &&
@@ -117,3 +122,6 @@ export function IconDropdown({
     </div>
   );
 }
+
+/** Re-export panel class for menus that compose custom children. */
+export { DROPDOWN_PANEL_CLASS };

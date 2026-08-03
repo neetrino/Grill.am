@@ -8,6 +8,13 @@ import {
   useState,
 } from "react";
 
+import {
+  DROPDOWN_ANIMATION_MS,
+  DROPDOWN_PANEL_ANCHORED_CLASS,
+  dropdownOptionClass,
+  dropdownPanelStateClass,
+} from "@/components/ui/dropdown-styles";
+
 export type CheckoutSelectOption = {
   value: string;
   label: string;
@@ -24,10 +31,6 @@ type CheckoutSelectProps = {
   name?: string;
   className?: string;
 };
-
-const DROPDOWN_ANIMATION_MS = 150;
-const DROPDOWN_GAP_PX = 6;
-const DROPDOWN_MAX_HEIGHT_PX = 220;
 
 function SelectChevron({ isOpen }: { isOpen: boolean }) {
   return (
@@ -52,7 +55,7 @@ function SelectChevron({ isOpen }: { isOpen: boolean }) {
   );
 }
 
-/** Custom checkout dropdown — MaMarie city picker style, Grill colors. */
+/** Checkout location select — uses global dropdown panel styles. */
 export function CheckoutSelect({
   label,
   placeholder,
@@ -161,7 +164,10 @@ export function CheckoutSelect({
     : "border-gray-200";
 
   return (
-    <div ref={containerRef} className={`relative w-max max-w-full ${className}`.trim()}>
+    <div
+      ref={containerRef}
+      className={`relative w-full ${className}`.trim()}
+    >
       <label
         htmlFor={triggerId}
         className="mb-1.5 block text-sm font-medium text-gray-700"
@@ -188,7 +194,7 @@ export function CheckoutSelect({
         aria-required={required || undefined}
         disabled={disabled}
         onClick={toggleDropdown}
-        className={`flex h-11 w-full min-w-[150px] items-center justify-between gap-3 rounded-[15px] border bg-white px-3 text-left transition-colors outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:cursor-not-allowed disabled:bg-gray-50 ${triggerBorderClass}`}
+        className={`flex h-11 w-full min-w-0 items-center justify-between gap-3 rounded-[15px] border bg-white px-3 text-left transition-colors outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:cursor-not-allowed disabled:bg-gray-50 ${triggerBorderClass}`}
       >
         <span
           className={`truncate text-sm ${
@@ -204,15 +210,7 @@ export function CheckoutSelect({
         <ul
           id={listboxId}
           role="listbox"
-          className={`absolute left-0 z-50 w-max min-w-full origin-top overflow-y-auto overflow-x-hidden rounded-[15px] border border-gray-100 bg-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-all duration-150 ease-out ${
-            isDropdownExpanded
-              ? "pointer-events-auto translate-y-0 opacity-100"
-              : "pointer-events-none -translate-y-1 opacity-0"
-          }`}
-          style={{
-            top: `calc(100% + ${DROPDOWN_GAP_PX}px)`,
-            maxHeight: DROPDOWN_MAX_HEIGHT_PX,
-          }}
+          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} ${dropdownPanelStateClass(isDropdownExpanded)}`}
         >
           {options.map((option) => {
             const isSelected = option.value === value;
@@ -224,9 +222,7 @@ export function CheckoutSelect({
                   role="option"
                   aria-selected={isSelected}
                   onClick={() => handleSelect(option.value)}
-                  className={`w-full whitespace-nowrap px-4 py-3 text-left text-sm leading-5 text-gray-800 transition-colors hover:bg-gray-50 ${
-                    isSelected ? "bg-gray-50 font-medium text-gray-900" : ""
-                  }`}
+                  className={dropdownOptionClass(isSelected)}
                 >
                   {option.label}
                 </button>

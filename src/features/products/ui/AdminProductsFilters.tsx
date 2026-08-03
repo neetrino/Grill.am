@@ -1,6 +1,6 @@
 "use client";
 
-import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_INPUT, ADMIN_LABEL, ADMIN_SELECT } from "@/features/admin/ui/admin-form-classes";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -72,7 +72,7 @@ export function AdminProductsFilters({
           <select
             name="categoryId"
             defaultValue={categoryId ?? ""}
-            className={ADMIN_INPUT}
+            className={ADMIN_SELECT}
             aria-label={filters.filterCategory}
           >
             <option value="">{filters.allCategories}</option>
@@ -88,7 +88,7 @@ export function AdminProductsFilters({
           <select
             name="stock"
             defaultValue={stock}
-            className={ADMIN_INPUT}
+            className={ADMIN_SELECT}
             aria-label={filters.filterStock}
           >
             <option value="all">{filters.allProducts}</option>

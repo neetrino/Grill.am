@@ -9,6 +9,7 @@ import type { TranslationsJson } from "@/db/schema";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
+  ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
 import {
   createCategoryFromDrawerAction,
@@ -242,7 +243,7 @@ export function AddCategoryDrawer({
               <select
                 value={parentId}
                 onChange={(event) => setParentId(event.target.value)}
-                className={ADMIN_INPUT}
+                className={ADMIN_SELECT}
                 disabled={isPending}
               >
                 <option value="">{copy.rootOption}</option>
@@ -261,7 +262,7 @@ export function AddCategoryDrawer({
                 onChange={(event) =>
                   setStatus(event.target.value as "ACTIVE" | "ARCHIVED")
                 }
-                className={ADMIN_INPUT}
+                className={ADMIN_SELECT}
                 disabled={isPending}
               >
                 <option value="ACTIVE">{copy.published}</option>
