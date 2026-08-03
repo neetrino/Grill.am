@@ -99,7 +99,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
         GRILL.AM
       </p>
 
-      <div className="relative z-10 mx-auto max-w-[1440px] px-10 pt-[71px] pb-10">
+      <div className="relative z-10 mx-auto max-w-[1440px] px-10 pt-[55px] pb-10">
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[minmax(240px,1.6fr)_repeat(2,minmax(140px,1fr))_auto]">
           <div className="col-span-2 lg:col-span-1">
             <div className="relative h-[37px] w-[92px]">
