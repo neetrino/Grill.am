@@ -2,7 +2,12 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { X } from "lucide-react";
 
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
@@ -42,12 +47,44 @@ export function CheckoutProductsInOrder({
   onCartChanged,
 }: CheckoutProductsInOrderProps) {
   const router = useRouter();
+  const listRef = useRef<HTMLUListElement>(null);
   const [products, setProducts] = useState(initialProducts);
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
     setProducts(initialProducts);
   }, [initialProducts]);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) {
+      return;
+    }
+
+    const onWheel = (event: WheelEvent) => {
+      if (list.scrollWidth <= list.clientWidth) {
+        return;
+      }
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+        return;
+      }
+
+      const nextLeft = list.scrollLeft + event.deltaY;
+      const maxLeft = list.scrollWidth - list.clientWidth;
+      const clamped = Math.min(maxLeft, Math.max(0, nextLeft));
+      if (clamped === list.scrollLeft) {
+        return;
+      }
+
+      event.preventDefault();
+      list.scrollLeft = clamped;
+    };
+
+    list.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      list.removeEventListener("wheel", onWheel);
+    };
+  }, [products.length]);
 
   const itemCount = products.reduce((sum, product) => sum + product.quantity, 0);
 
@@ -79,7 +116,10 @@ export function CheckoutProductsInOrder({
         </p>
       </div>
 
-      <ul className="flex gap-3 overflow-x-auto overscroll-x-contain pt-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <ul
+        ref={listRef}
+        className="flex gap-3 overflow-x-auto overscroll-x-contain pt-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
         {products.map((product) => (
           <li key={product.id} className={CHECKOUT_ORDER_ITEM_CARD_CLASS}>
             <div className="flex items-stretch gap-3">
