@@ -26,48 +26,14 @@ type SiteHeaderMainNavProps = {
   desktopActions: React.ReactNode;
 };
 
-const TOP_REVEAL_Y = 24;
-const DIRECTION_DELTA = 10;
-/** Instant sync — scroll restore / route jumps, not user wheel. */
-const SCROLL_JUMP_DELTA = 80;
+const TOP_REVEAL_Y = 8;
+/** Scroll down past this → close primary. */
+const HIDE_DELTA = 14;
+/** Scroll up past this → open primary. */
+const SHOW_DELTA = 14;
 const DESKTOP_MIN_WIDTH = 768;
-const HIDDEN_STATE_STORAGE_PREFIX = "grill:header-primary-hidden:";
-
-function readShouldHidePrimary(): boolean {
-  if (typeof window === "undefined") {
-    return false;
-  }
-  if (window.innerWidth < DESKTOP_MIN_WIDTH) {
-    return false;
-  }
-  return window.scrollY > TOP_REVEAL_Y;
-}
-
-function readStoredHidden(pathname: string): boolean | null {
-  try {
-    const raw = sessionStorage.getItem(`${HIDDEN_STATE_STORAGE_PREFIX}${pathname}`);
-    if (raw === "1") {
-      return true;
-    }
-    if (raw === "0") {
-      return false;
-    }
-  } catch {
-    // sessionStorage may be unavailable
-  }
-  return null;
-}
-
-function writeStoredHidden(pathname: string, hidden: boolean): void {
-  try {
-    sessionStorage.setItem(
-      `${HIDDEN_STATE_STORAGE_PREFIX}${pathname}`,
-      hidden ? "1" : "0",
-    );
-  } catch {
-    // sessionStorage may be unavailable
-  }
-}
+/** Ignore opposite direction while the open/close animation runs. */
+const TOGGLE_LOCK_MS = 420;
 
 function headerSearchLabels(dictionary: Dictionary) {
   return {
@@ -80,6 +46,16 @@ function headerSearchLabels(dictionary: Dictionary) {
   };
 }
 
+/**
+ * Primary nav hide-on-scroll.
+ *
+ * Design choices (after flicker regressions):
+ * - Refresh always starts open (no restore-collapse).
+ * - No scrollY compensation (it fought the user scroll and caused strong flicker).
+ * - No gesture settle / majority voting (double-fired with scrollend).
+ * - After each toggle, lock direction changes for TOGGLE_LOCK_MS.
+ * - overflow-anchor: none reduces browser scroll-anchoring jumps when height changes.
+ */
 export function SiteHeaderMainNav({
   locale,
   currency,
@@ -94,33 +70,23 @@ export function SiteHeaderMainNav({
   const homeHref = `/${locale}`;
   const isHomePage = pathname === homeHref || pathname === `${homeHref}/`;
 
-  // Always start expanded so SSR HTML matches the first client render.
-  // Scroll/collapse is applied in useLayoutEffect before paint.
   const [primaryHidden, setPrimaryHidden] = useState(false);
   const [motionEnabled, setMotionEnabled] = useState(false);
+  const [routePathname, setRoutePathname] = useState(pathname);
+  const [scrollLocked, setScrollLocked] = useState(false);
+
   const lastScrollYRef = useRef(0);
   const primaryHiddenRef = useRef(false);
   const motionEnabledRef = useRef(false);
-  const motionEnableTimerRef = useRef<number | null>(null);
-  const pathnameRef = useRef(pathname);
-  const routeSyncTimerRef = useRef<number | null>(null);
-  const isPopNavigationRef = useRef(false);
+  const toggleLockUntilRef = useRef(0);
   const programmaticScrollRef = useRef(false);
   const programmaticScrollTimerRef = useRef<number | null>(null);
-  const [scrollLocked, setScrollLocked] = useState(false);
+  const motionEnableTimerRef = useRef<number | null>(null);
 
-  function clearMotionEnableTimer(): void {
-    if (motionEnableTimerRef.current != null) {
-      window.clearTimeout(motionEnableTimerRef.current);
-      motionEnableTimerRef.current = null;
-    }
-  }
-
-  function clearRouteSyncTimer(): void {
-    if (routeSyncTimerRef.current != null) {
-      window.clearTimeout(routeSyncTimerRef.current);
-      routeSyncTimerRef.current = null;
-    }
+  if (routePathname !== pathname) {
+    setRoutePathname(pathname);
+    setPrimaryHidden(false);
+    setMotionEnabled(false);
   }
 
   function clearProgrammaticScrollTimer(): void {
@@ -130,7 +96,14 @@ export function SiteHeaderMainNav({
     }
   }
 
-  function scheduleMotionEnable(): void {
+  function clearMotionEnableTimer(): void {
+    if (motionEnableTimerRef.current != null) {
+      window.clearTimeout(motionEnableTimerRef.current);
+      motionEnableTimerRef.current = null;
+    }
+  }
+
+  function armMotion(): void {
     clearMotionEnableTimer();
     motionEnableTimerRef.current = window.setTimeout(() => {
       motionEnabledRef.current = true;
@@ -139,7 +112,7 @@ export function SiteHeaderMainNav({
     }, 50);
   }
 
-  function setHiddenState(nextHidden: boolean, animate: boolean): void {
+  function setPrimaryHiddenState(nextHidden: boolean, animate: boolean): void {
     if (primaryHiddenRef.current === nextHidden) {
       return;
     }
@@ -148,14 +121,17 @@ export function SiteHeaderMainNav({
       clearMotionEnableTimer();
       motionEnabledRef.current = false;
       setMotionEnabled(false);
+    } else if (!motionEnabledRef.current) {
+      motionEnabledRef.current = true;
+      setMotionEnabled(true);
     }
 
     primaryHiddenRef.current = nextHidden;
     setPrimaryHidden(nextHidden);
-    writeStoredHidden(pathnameRef.current, nextHidden);
+    toggleLockUntilRef.current = Date.now() + TOGGLE_LOCK_MS;
 
-    if (!animate && !programmaticScrollRef.current) {
-      scheduleMotionEnable();
+    if (!animate) {
+      armMotion();
     }
   }
 
@@ -164,7 +140,7 @@ export function SiteHeaderMainNav({
     programmaticScrollRef.current = false;
     lastScrollYRef.current = window.scrollY;
     setScrollLocked(false);
-    scheduleMotionEnable();
+    armMotion();
   }
 
   function scrollHomeToTop(): void {
@@ -176,11 +152,9 @@ export function SiteHeaderMainNav({
     motionEnabledRef.current = false;
     setMotionEnabled(false);
 
-    // Expand primary instantly with transitions forced off.
     if (primaryHiddenRef.current) {
       primaryHiddenRef.current = false;
       setPrimaryHidden(false);
-      writeStoredHidden(pathnameRef.current, false);
     }
 
     if (window.scrollY <= TOP_REVEAL_Y) {
@@ -202,55 +176,26 @@ export function SiteHeaderMainNav({
     }
 
     window.addEventListener("scrollend", onScrollEnd, { once: true });
-    // Fallback when scrollend is unavailable.
     programmaticScrollTimerRef.current = window.setTimeout(() => {
       window.removeEventListener("scrollend", onScrollEnd);
       unlockProgrammaticScroll();
     }, 1200);
   }
 
-  useEffect(() => {
-    function onPopState(): void {
-      isPopNavigationRef.current = true;
-    }
-
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
+  useLayoutEffect(() => {
+    primaryHiddenRef.current = primaryHidden;
+    motionEnabledRef.current = motionEnabled;
+  }, [primaryHidden, motionEnabled]);
 
   useLayoutEffect(() => {
-    pathnameRef.current = pathname;
-    clearRouteSyncTimer();
-
-    const isPop = isPopNavigationRef.current;
-    isPopNavigationRef.current = false;
-
-    if (isPop) {
-      // Back/forward: wait for scroll restoration, then match header to it.
-      const stored = readStoredHidden(pathname);
-      const y = window.scrollY;
-      if (stored === true && y <= TOP_REVEAL_Y) {
-        setHiddenState(true, false);
-        routeSyncTimerRef.current = window.setTimeout(() => {
-          lastScrollYRef.current = window.scrollY;
-          setHiddenState(readShouldHidePrimary(), false);
-          routeSyncTimerRef.current = null;
-        }, 120);
-      } else {
-        lastScrollYRef.current = window.scrollY;
-        setHiddenState(readShouldHidePrimary(), false);
-      }
-    } else {
-      // Forward navigation lands at top — primary bar must be visible.
-      lastScrollYRef.current = 0;
-      setHiddenState(false, false);
-    }
-
+    lastScrollYRef.current = window.scrollY;
+    primaryHiddenRef.current = false;
+    toggleLockUntilRef.current = 0;
+    armMotion();
     return () => {
       clearMotionEnableTimer();
-      clearRouteSyncTimer();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional pathname gate
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- route entry only
   }, [pathname]);
 
   useEffect(() => {
@@ -259,7 +204,7 @@ export function SiteHeaderMainNav({
     function onScroll(): void {
       if (window.innerWidth < DESKTOP_MIN_WIDTH) {
         if (primaryHiddenRef.current) {
-          setHiddenState(false, false);
+          setPrimaryHiddenState(false, false);
         }
         lastScrollYRef.current = window.scrollY;
         return;
@@ -267,78 +212,61 @@ export function SiteHeaderMainNav({
 
       const y = window.scrollY;
 
-      // Logo smooth-scroll — freeze chrome; ignore hide/jump until unlock.
       if (programmaticScrollRef.current) {
         lastScrollYRef.current = y;
         return;
       }
 
       const delta = y - lastScrollYRef.current;
-
-      if (Math.abs(delta) >= SCROLL_JUMP_DELTA) {
-        lastScrollYRef.current = y;
-        setHiddenState(y > TOP_REVEAL_Y, false);
-        return;
-      }
-
-      let nextHidden = primaryHiddenRef.current;
+      lastScrollYRef.current = y;
 
       if (y <= TOP_REVEAL_Y) {
-        nextHidden = false;
-      } else if (delta > DIRECTION_DELTA) {
-        nextHidden = true;
-      } else if (delta < -DIRECTION_DELTA) {
-        nextHidden = false;
-      }
-
-      lastScrollYRef.current = y;
-      setHiddenState(nextHidden, motionEnabledRef.current);
-    }
-
-    function onPageShow(event: PageTransitionEvent): void {
-      if (!event.persisted) {
+        setPrimaryHiddenState(false, motionEnabledRef.current);
         return;
       }
-      lastScrollYRef.current = window.scrollY;
-      setHiddenState(readShouldHidePrimary(), false);
+
+      // While animating a previous toggle, only track position — no reverse flicker.
+      if (Date.now() < toggleLockUntilRef.current) {
+        return;
+      }
+
+      if (delta >= HIDE_DELTA) {
+        setPrimaryHiddenState(true, true);
+      } else if (delta <= -SHOW_DELTA) {
+        setPrimaryHiddenState(false, true);
+      }
     }
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
-    window.addEventListener("pageshow", onPageShow);
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      window.removeEventListener("pageshow", onPageShow);
       clearMotionEnableTimer();
-      clearRouteSyncTimer();
       clearProgrammaticScrollTimer();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- listeners once; refs hold latest
   }, []);
 
   const allowMotion = motionEnabled && !scrollLocked;
-  const collapseTransitionClass = allowMotion
-    ? "transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-    : "transition-none";
-  const fadeTransitionClass = allowMotion
-    ? "transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-    : "transition-none";
+  const motionClass = allowMotion
+    ? "duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+    : "duration-0";
 
   return (
-    <div className="sticky top-0 z-50 bg-white">
+    <div className="sticky top-0 z-50 bg-white [overflow-anchor:none]">
       <div
-        className={`grid ${collapseTransitionClass} ${
+        className={`grid transition-[grid-template-rows] ${motionClass} ${
           primaryHidden ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
         }`}
         aria-hidden={primaryHidden}
       >
-        <div className="min-h-0 overflow-hidden">
+        <div className="min-h-0 overflow-hidden [overflow-anchor:none]">
           <div
-            className={`origin-top ${fadeTransitionClass} ${
+            className={`origin-top transition-[opacity,transform] ${motionClass} ${
               primaryHidden
-                ? "pointer-events-none -translate-y-3 opacity-0"
+                ? "pointer-events-none -translate-y-2 opacity-0"
                 : "translate-y-0 opacity-100"
             }`}
           >
