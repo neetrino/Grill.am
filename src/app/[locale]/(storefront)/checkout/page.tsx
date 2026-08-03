@@ -142,6 +142,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         placeOrder: copy.buttons.placeOrder,
         processing: copy.buttons.processing,
         continueShopping: copy.buttons.continueShopping,
+        goToShop: copy.buttons.goToShop,
         cartEmpty: copy.errors.cartEmpty,
         minimumOrder: copy.errors.minimumOrder,
       }}

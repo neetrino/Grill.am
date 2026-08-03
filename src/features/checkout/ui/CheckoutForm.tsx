@@ -84,6 +84,7 @@ type CheckoutLabels = {
   placeOrder: string;
   processing: string;
   continueShopping: string;
+  goToShop: string;
   cartEmpty: string;
   minimumOrder: string;
 };
@@ -355,9 +356,15 @@ export function CheckoutForm({
         {minimumOrderMessage ? (
           <div
             role="alert"
-            className={`mb-6 border border-red-200 bg-red-50 p-3 ${CHECKOUT_ALERT_CLASS}`}
+            className={`mb-6 flex flex-col gap-3 border border-red-200 bg-red-50 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${CHECKOUT_ALERT_CLASS}`}
           >
             <p className="text-sm text-red-600">{minimumOrderMessage}</p>
+            <Link
+              href={productsHref}
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-full bg-brand-red px-4 text-sm font-semibold whitespace-nowrap text-white transition hover:bg-brand-red-hot"
+            >
+              {labels.goToShop}
+            </Link>
           </div>
         ) : null}
 

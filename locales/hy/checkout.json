@@ -77,7 +77,8 @@
   "buttons": {
     "placeOrder": "Պատվիրել",
     "processing": "Մշակվում է…",
-    "continueShopping": "Շարունակել գնումները"
+    "continueShopping": "Շարունակել գնումները",
+    "goToShop": "Գնալ խանութ"
   },
   "errors": {
     "cartEmpty": "Զամբյուղը դատարկ է",

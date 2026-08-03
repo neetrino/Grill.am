@@ -77,7 +77,8 @@
   "buttons": {
     "placeOrder": "Place Order",
     "processing": "Processing...",
-    "continueShopping": "Continue Shopping"
+    "continueShopping": "Continue Shopping",
+    "goToShop": "Go to shop"
   },
   "errors": {
     "cartEmpty": "Cart is empty",

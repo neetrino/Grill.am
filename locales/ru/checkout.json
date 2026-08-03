@@ -77,7 +77,8 @@
   "buttons": {
     "placeOrder": "Оформить заказ",
     "processing": "Обработка…",
-    "continueShopping": "Продолжить покупки"
+    "continueShopping": "Продолжить покупки",
+    "goToShop": "В магазин"
   },
   "errors": {
     "cartEmpty": "Корзина пуста",
