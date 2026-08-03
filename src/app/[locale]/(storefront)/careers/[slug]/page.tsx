@@ -122,7 +122,7 @@ export default async function JobPostingPage({ params }: JobPostingPageProps) {
       </Link>
 
       {posting.coverUrl ? (
-        <div className="relative aspect-[16/9] w-full overflow-hidden">
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[24px] sm:rounded-[28px]">
           <Image
             src={posting.coverUrl}
             alt=""
