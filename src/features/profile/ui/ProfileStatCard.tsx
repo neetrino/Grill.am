@@ -14,7 +14,7 @@ type ProfileStatCardProps = {
 export function ProfileStatCard({ label, value, icon }: ProfileStatCardProps) {
   return (
     <div
-      className={`relative flex items-center overflow-hidden p-6 transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${PROFILE_CARD_FLAT_CLASS}`}
+      className={`relative flex items-center overflow-hidden px-6 py-4 transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${PROFILE_CARD_FLAT_CLASS}`}
     >
       <div className="flex w-full items-center gap-3">
         <div
@@ -30,7 +30,7 @@ export function ProfileStatCard({ label, value, icon }: ProfileStatCardProps) {
           <p className="text-sm leading-snug font-medium text-gray-600">
             {label}
           </p>
-          <p className="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+          <p className="mt-0.5 text-2xl font-bold tracking-tight text-gray-900">
             {value}
           </p>
         </div>
