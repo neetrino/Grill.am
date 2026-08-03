@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { MapPin, Phone } from "lucide-react";
 
 import { AccountControls } from "@/components/layout/AccountControls";
 import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
@@ -7,13 +6,14 @@ import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
+import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
+import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
 import { AppLink } from "@/components/ui/AppLink";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import type { SessionUser } from "@/lib/auth/session";
-import { telHref } from "@/lib/phone";
 
 type NavItem = {
   href: string;
@@ -109,28 +109,16 @@ export function SiteHeaderMainNav({
           </nav>
 
           <div className="hidden items-center gap-6 text-base font-medium text-[#333] md:flex">
-            <div className="inline-flex items-center gap-2">
-              <Phone className="h-[19px] w-[19px] shrink-0" aria-hidden />
-              <div className="flex flex-col gap-0.5 leading-tight">
-                {dictionary.contact.storePhones.map((phone) => (
-                  <a
-                    key={phone}
-                    href={telHref(phone)}
-                    className="capitalize transition hover:text-brand-red"
-                  >
-                    {phone}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <AppLink
-              href={`/${locale}/contact`}
-              prefetchPolicy="intent"
-              className="inline-flex items-center gap-2 capitalize transition hover:text-brand-red"
-            >
-              <MapPin className="h-[19px] w-[15px]" aria-hidden />
-              {dictionary.footer.addresses}
-            </AppLink>
+            <StorePhoneDropdown
+              phones={dictionary.contact.storePhones}
+              toggleLabel={dictionary.contact.callTitle}
+              variant="header"
+            />
+            <StoreAddressDropdown
+              addresses={dictionary.contact.storeAddresses}
+              toggleLabel={dictionary.footer.addresses}
+              variant="header"
+            />
           </div>
         </div>
 

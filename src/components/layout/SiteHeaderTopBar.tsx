@@ -1,5 +1,3 @@
-import { Phone } from "lucide-react";
-
 import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import {
@@ -7,10 +5,10 @@ import {
   InstagramIcon,
   LinkedInIcon,
 } from "@/components/layout/SocialIcons";
+import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { telHref } from "@/lib/phone";
 
 type SiteHeaderTopBarProps = {
   locale: Locale;
@@ -28,24 +26,11 @@ export function SiteHeaderTopBar({
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-3 py-3 text-sm text-gray-700 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-gray-700">
-              <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
-              {dictionary.contact.storePhones.map((phone, index) => (
-                <span key={phone} className="inline-flex items-center gap-3">
-                  {index > 0 ? (
-                    <span className="text-gray-300" aria-hidden>
-                      |
-                    </span>
-                  ) : null}
-                  <a
-                    href={telHref(phone)}
-                    className="font-medium transition-colors hover:text-brand-red"
-                  >
-                    {phone}
-                  </a>
-                </span>
-              ))}
-            </div>
+            <StorePhoneDropdown
+              phones={dictionary.contact.storePhones}
+              toggleLabel={dictionary.contact.callTitle}
+              variant="topbar"
+            />
             <div className="flex items-center gap-3 text-gray-600">
               <a
                 href={dictionary.contact.social.instagram}

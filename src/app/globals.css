@@ -42,6 +42,36 @@ body {
   font-family: var(--font-montserrat), ui-sans-serif, sans-serif;
 }
 
+a[href],
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+[role="link"],
+[role="tab"],
+[role="menuitem"],
+[role="option"],
+[role="switch"],
+[role="checkbox"],
+[role="radio"],
+summary,
+label[for],
+label:has(:is(input, select):not(:disabled)),
+select:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="submit"]:not(:disabled),
+input[type="reset"]:not(:disabled),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+input[type="file"]:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"],
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
 /* Why choose us: intro shift is set inline from measured cards/moto widths */
 .home-why-track {
   will-change: transform;

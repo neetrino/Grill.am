@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Mail, Phone } from "lucide-react";
 
-import { FooterAddressDropdown } from "@/components/layout/FooterAddressDropdown";
+import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -18,6 +18,14 @@ type SiteFooterProps = {
 };
 
 const CONTACT_ICON_CLASS = "h-[15px] w-[15px] shrink-0 text-[#FF4A12]";
+
+const FOOTER_PAYMENT_METHODS = [
+  { src: "/assets/payments/footer-idram.webp", alt: "Idram" },
+  { src: "/assets/payments/footer-mastercard.webp", alt: "Mastercard" },
+  { src: "/assets/payments/footer-arca.webp", alt: "ArCa" },
+  { src: "/assets/payments/footer-visa.webp", alt: "Visa" },
+  { src: "/assets/payments/footer-telcell.webp", alt: "Telcell" },
+] as const;
 
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   const year = new Date().getFullYear();
@@ -91,11 +99,11 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
       </p>
 
       <div className="relative z-10 mx-auto max-w-[1440px] px-10 pt-[71px] pb-10">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[minmax(240px,1.6fr)_repeat(4,minmax(140px,1fr))]">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[minmax(240px,1.6fr)_repeat(3,minmax(140px,1fr))]">
           <div className="col-span-2 lg:col-span-1">
             <div className="relative h-[37px] w-[92px]">
               <Image
-                src="/assets/brand/logo.webp"
+                src="/assets/brand/logo-footer.webp"
                 alt={dictionary.brand}
                 fill
                 sizes="92px"
@@ -165,24 +173,6 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
 
           <div>
             <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
-              {dictionary.footer.hours}
-            </h4>
-            <div className="mt-5 space-y-2 text-sm">
-              <p className="text-white/50">{dictionary.footer.hoursWeekdaysLabel}</p>
-              <p className="font-semibold text-white">
-                {dictionary.footer.hoursWeekdays}
-              </p>
-              <p className="pt-1 text-white/50">
-                {dictionary.footer.hoursWeekendLabel}
-              </p>
-              <p className="font-semibold text-white">
-                {dictionary.footer.hoursWeekend}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.contactInfo}
             </h4>
             <ul className="mt-5 space-y-4 text-sm text-white/60">
@@ -206,15 +196,18 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   {dictionary.contact.storeEmail}
                 </a>
               </li>
-              <FooterAddressDropdown
-                addresses={dictionary.contact.storeAddresses}
-                toggleLabel={dictionary.footer.addresses}
-              />
+              <li>
+                <StoreAddressDropdown
+                  addresses={dictionary.contact.storeAddresses}
+                  toggleLabel={dictionary.footer.addresses}
+                  variant="footer"
+                />
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="relative z-10 mt-16 pt-8">
+        <div className="relative z-10 mt-16 flex flex-col gap-6 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-white">
             {`Copyright © ${year} | All Rights Reserved | Created by `}
             <a
@@ -226,6 +219,23 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               Neetrino IT Company
             </a>
           </p>
+
+          <ul className="flex flex-wrap items-center gap-[11px]">
+            {FOOTER_PAYMENT_METHODS.map((payment) => (
+              <li
+                key={payment.alt}
+                className="relative h-[30px] w-[73px] overflow-hidden rounded-lg bg-white"
+              >
+                <Image
+                  src={payment.src}
+                  alt={payment.alt}
+                  fill
+                  sizes="73px"
+                  className="object-contain p-1"
+                />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>
