@@ -17,7 +17,7 @@ type HomeHeroProps = {
 const HERO_CHICKEN = "/assets/home/hero-chicken.webp";
 
 /**
- * Figma `165:1671` — white pill with dual-label slide hover.
+ * Figma `165:1671` — white pill CTA.
  */
 function HeroMenuButton({
   href,
@@ -27,33 +27,19 @@ function HeroMenuButton({
   label: string;
 }) {
   const className =
-    "group relative inline-flex h-14 w-[193px] shrink-0 items-center overflow-hidden rounded-[28px] bg-white px-6 text-[#db0b20] transition hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
-
-  const labelStack = (
-    <span className="relative block h-14 w-full">
-      <span className="absolute top-4 left-[21px] text-base leading-[22.5px] font-extrabold tracking-wide whitespace-nowrap uppercase transition-transform duration-300 ease-out group-hover:-translate-y-9 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
-        {label}
-      </span>
-      <span
-        className="absolute top-[52px] left-[21px] text-base leading-[22.5px] font-extrabold tracking-wide whitespace-nowrap uppercase transition-transform duration-300 ease-out group-hover:-translate-y-9 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
-        aria-hidden
-      >
-        {label}
-      </span>
-    </span>
-  );
+    "inline-flex h-14 w-[193px] shrink-0 items-center justify-center rounded-[28px] bg-white px-6 text-center text-base leading-[22.5px] font-extrabold tracking-wide whitespace-nowrap text-[#db0b20] uppercase transition hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
   if (href.startsWith("/")) {
     return (
       <AppLink href={href} prefetchPolicy="intent" className={className}>
-        {labelStack}
+        {label}
       </AppLink>
     );
   }
 
   return (
     <a href={href} className={className}>
-      {labelStack}
+      {label}
     </a>
   );
 }
@@ -112,7 +98,7 @@ export function HomeHero({
   const [index, setIndex] = useState(0);
   const hasSlides = slides.length > 0;
   const active = hasSlides ? slides[index] : null;
-  const ctaLabel = active?.copy.buttonLabel ?? fallbackCtaLabel;
+  const ctaLabel = fallbackCtaLabel;
   const ctaHref = active?.copy.buttonUrl ?? fallbackCtaHref;
   const slideImage = active?.desktopImageUrl ?? active?.mobileImageUrl;
 
