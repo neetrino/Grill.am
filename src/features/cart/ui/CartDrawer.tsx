@@ -8,14 +8,15 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { ShoppingCart } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { DrawerCloseTab } from "@/components/drawer/DrawerCloseTab";
 import { AppLink } from "@/components/ui/AppLink";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
-import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
-import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
+import { notifyCartChanged } from "@/features/cart/cart-client-sync";
 import { CartDrawerItemRow } from "@/features/cart/ui/CartDrawerItemRow";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
+import { useCartDrawerView } from "@/features/cart/ui/use-cart-drawer-view";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -61,16 +62,25 @@ export function CartDrawer({
   itemCount,
   renderTrigger,
 }: CartDrawerProps) {
+  const router = useRouter();
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);
-  const [view, setView] = useState<CartDrawerView | null>(null);
-  const [loadingView, setLoadingView] = useState(false);
+  const { view, viewIsCurrent, loading } = useCartDrawerView(
+    locale,
+    currency,
+    itemCount,
+  );
   const [pending, startTransition] = useTransition();
   const labels = dictionary.cartDrawer;
-  const badgeCount = view?.itemCount ?? itemCount;
-  const totalFormatted = view?.totalFormatted ?? "0.00";
+  const currentView = viewIsCurrent ? view : null;
+  const badgeCount = currentView?.itemCount ?? itemCount;
+  const totalFormatted =
+    currentView?.totalFormatted ??
+    view?.totalFormatted ??
+    (itemCount > 0 ? "…" : "0.00");
+  const showInitialLoading = loading && (view?.items.length ?? 0) === 0;
 
   useEffect(() => {
     if (!open) {
@@ -94,15 +104,7 @@ export function CartDrawer({
   }, [open]);
 
   function prefetchDrawerView(): void {
-    if (view || loadingView || open) {
-      return;
-    }
-    setLoadingView(true);
-    startTransition(async () => {
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
-      setLoadingView(false);
-    });
+    // View is kept fresh by useCartDrawerView; hover remains a no-op for API stability.
   }
 
   function openDrawer(): void {
@@ -114,14 +116,6 @@ export function CartDrawer({
         setEntered(true);
       });
     });
-    if (!view) {
-      setLoadingView(true);
-      startTransition(async () => {
-        const next = await loadCartDrawerViewAction(locale, currency);
-        setView(next);
-        setLoadingView(false);
-      });
-    }
   }
 
   function closeDrawer(): void {
@@ -135,16 +129,16 @@ export function CartDrawer({
   function changeQuantity(itemId: string, quantity: number): void {
     startTransition(async () => {
       await updateQuantity(itemId, quantity);
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
+      notifyCartChanged();
+      router.refresh();
     });
   }
 
   function removeCartItem(itemId: string): void {
     startTransition(async () => {
       await removeItem(itemId);
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
+      notifyCartChanged();
+      router.refresh();
     });
   }
 
@@ -181,7 +175,7 @@ export function CartDrawer({
                     {labels.title}
                   </h2>
                   <p className="mt-1 text-sm text-gray-500">
-                    {loadingView && !view
+                    {showInitialLoading
                       ? labels.loading
                       : formatItemCount(badgeCount, labels)}
                   </p>
@@ -189,9 +183,9 @@ export function CartDrawer({
               </div>
 
               <div
-                className={`flex-1 overflow-y-auto px-6 py-4 ${pending || loadingView ? "opacity-70" : ""}`}
+                className={`flex-1 overflow-y-auto px-6 py-4 ${pending || loading ? "opacity-70" : ""}`}
               >
-                {loadingView && !view ? (
+                {showInitialLoading ? (
                   <p className="py-10 text-sm text-gray-500">{labels.loading}</p>
                 ) : !view || view.items.length === 0 ? (
                   <CartEmptyState

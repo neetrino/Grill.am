@@ -24,7 +24,7 @@ const VARIANT_STYLES = {
   footer: {
     root: "relative z-20",
     row: "flex items-start gap-3",
-    icon: "mt-0.5 h-[15px] w-[15px] shrink-0 text-[#FF4A12]",
+    icon: "mt-0.5 h-[15px] w-[15px] shrink-0 text-brand-yellow",
     text: "leading-5 text-white/60",
     chevron: "mt-0.5 shrink-0 text-[#9C9FA1] transition hover:text-white",
     chevronIcon: "h-[18px] w-[18px]",

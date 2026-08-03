@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import { Minus, Plus, ShoppingBasket, Trash2 } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
-import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
-import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
+import { notifyCartChanged } from "@/features/cart/cart-client-sync";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
+import { useCartDrawerView } from "@/features/cart/ui/use-cart-drawer-view";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -27,37 +28,31 @@ export function CatalogCartSidebar({
   labels,
   initialItemCount,
 }: CatalogCartSidebarProps) {
-  const [view, setView] = useState<CartDrawerView | null>(null);
-  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const { view, viewIsCurrent, loading } = useCartDrawerView(
+    locale,
+    currency,
+    initialItemCount,
+  );
   const [pending, startTransition] = useTransition();
-  const badgeCount = view?.itemCount ?? initialItemCount;
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    void loadCartDrawerViewAction(locale, currency).then((next) => {
-      if (cancelled) return;
-      setView(next);
-      setLoading(false);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [locale, currency]);
+  const badgeCount = viewIsCurrent
+    ? (view?.itemCount ?? initialItemCount)
+    : initialItemCount;
+  const showInitialLoading = loading && (view?.items.length ?? 0) === 0;
 
   function changeQuantity(itemId: string, quantity: number): void {
     startTransition(async () => {
       await updateQuantity(itemId, quantity);
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
+      notifyCartChanged();
+      router.refresh();
     });
   }
 
   function removeCartItem(itemId: string): void {
     startTransition(async () => {
       await removeItem(itemId);
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
+      notifyCartChanged();
+      router.refresh();
     });
   }
 
@@ -78,7 +73,7 @@ export function CatalogCartSidebar({
           pending || loading ? "opacity-70" : ""
         }`}
       >
-        {loading && !view ? (
+        {showInitialLoading ? (
           <p className="py-8 text-sm text-[#4a5565]">{labels.loading}</p>
         ) : !view || view.items.length === 0 ? (
           <CartEmptyState title={labels.empty} size="compact" />

@@ -18,7 +18,7 @@ type SiteFooterProps = {
   locale: Locale;
 };
 
-const CONTACT_ICON_CLASS = "h-[15px] w-[15px] shrink-0 text-[#FF4A12]";
+const CONTACT_ICON_CLASS = "h-[15px] w-[15px] shrink-0 text-brand-yellow";
 
 const FOOTER_PAYMENT_METHODS = [
   { src: FOOTER_PAYMENT_ASSETS.idram, alt: "Idram" },

@@ -1,9 +1,11 @@
 "use client";
 
 import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 
 import { addToCart } from "@/features/cart/cart";
+import { notifyCartChanged } from "@/features/cart/cart-client-sync";
 import {
   computeModifiersDelta,
   hasRequiredModifiersSelected,
@@ -103,6 +105,7 @@ export function ProductBuyBox({
   ratingCount = null,
   labels,
 }: ProductBuyBoxProps) {
+  const router = useRouter();
   const maxQty = Math.max(stockOnHand, 0);
   const [modifiers, setModifiers] = useState<CartModifiers>({
     optionChoices: {},
@@ -199,6 +202,8 @@ export function ProductBuyBox({
     startTransition(async () => {
       try {
         await addToCart(productId, quantity, modifiers);
+        notifyCartChanged();
+        router.refresh();
         setMessage(labels.added);
       } catch {
         setError(labels.error);

@@ -16,6 +16,7 @@ import {
   CHECKOUT_ORDER_ITEMS_PREVIEW_CARD_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import { removeItem } from "@/features/cart/cart";
+import { notifyCartChanged } from "@/features/cart/cart-client-sync";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type CheckoutProductsInOrderProps = {
@@ -98,6 +99,7 @@ export function CheckoutProductsInOrder({
 
     startTransition(async () => {
       await removeItem(itemId);
+      notifyCartChanged();
       router.refresh();
     });
   }

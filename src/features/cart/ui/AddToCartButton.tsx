@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { addToCart } from "@/features/cart/cart";
+import { notifyCartChanged } from "@/features/cart/cart-client-sync";
 
 type AddToCartButtonProps = {
   productId: string;
@@ -45,6 +46,7 @@ export function AddToCartButton({
     startTransition(async () => {
       try {
         await addToCart(productId, 1);
+        notifyCartChanged();
         setJustAdded(true);
         router.refresh();
         window.setTimeout(() => setJustAdded(false), 1500);
