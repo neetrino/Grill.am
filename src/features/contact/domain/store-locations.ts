@@ -8,18 +8,19 @@ export type ContactStoreLocation = {
 
 /**
  * Coordinates aligned with `contact.storeAddresses` order (hy/en/ru).
- * Approximate street positions for map display.
+ * Sourced from OpenStreetMap Grill.am POIs where present, otherwise
+ * the matching building footprint on that street.
  */
 export const CONTACT_STORE_LOCATIONS: readonly ContactStoreLocation[] = [
-  { id: "khorenatsi-95-2", lat: 40.1668, lng: 44.5102 },
-  { id: "khorenatsi-88", lat: 40.1655, lng: 44.5078 },
-  { id: "pushkin-43-3", lat: 40.1832, lng: 44.5148 },
-  { id: "totovents-2-7", lat: 40.1948, lng: 44.5286 },
-  { id: "baghramyan-50-5", lat: 40.1916, lng: 44.5042 },
-  { id: "isakov-27", lat: 40.1674, lng: 44.4768 },
-  { id: "andranik-94-4", lat: 40.1612, lng: 44.4895 },
-  { id: "sebastia-16-1", lat: 40.1746, lng: 44.4638 },
-  { id: "tigran-petrosyan-13-8", lat: 40.2042, lng: 44.4965 },
+  { id: "khorenatsi-95-2", lat: 40.165005, lng: 44.515743 },
+  { id: "khorenatsi-88", lat: 40.165027, lng: 44.515194 },
+  { id: "pushkin-43-3", lat: 40.185132, lng: 44.509099 },
+  { id: "totovents-2-7", lat: 40.201621, lng: 44.568087 },
+  { id: "baghramyan-50-5", lat: 40.19245, lng: 44.502045 },
+  { id: "isakov-27", lat: 40.15625, lng: 44.455646 },
+  { id: "andranik-94-4", lat: 40.17071, lng: 44.445947 },
+  { id: "sebastia-16-1", lat: 40.185145, lng: 44.461127 },
+  { id: "tigran-petrosyan-13-8", lat: 40.22152, lng: 44.495009 },
 ] as const;
 
 export type ContactMapPin = {

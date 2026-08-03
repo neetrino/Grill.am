@@ -140,9 +140,14 @@ export function ContactMap({
         marker.bindPopup(
           `<div class="contact-map-popup">
             <p class="contact-map-popup__label">${escapeHtml(pin.label)}</p>
-            <a class="contact-map-popup__link" href="${buildRouteUrl(pin)}" target="_blank" rel="noopener noreferrer">${escapeHtml(openRouteLabel)}</a>
+            <a class="contact-map-popup__link" href="${buildRouteUrl(pin)}" target="_blank" rel="noopener noreferrer">
+              <span>${escapeHtml(openRouteLabel)}</span>
+              <svg class="contact-map-popup__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3 7h8M7.5 3.5 11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
           </div>`,
-          { maxWidth: 240 },
+          { maxWidth: 260, className: "contact-map-popup-root" },
         );
 
         bounds.extend([pin.lat, pin.lng]);
