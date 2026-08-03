@@ -17,7 +17,7 @@ type AccountControlsProps = {
 };
 
 const menuItemClassName =
-  "block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900";
+  "block w-full px-4 py-2.5 text-left text-sm text-[#131313] transition-colors hover:bg-brand-yellow/15";
 
 const triggerClassName =
   "inline-flex h-[25px] w-[23px] shrink-0 items-center justify-center overflow-visible text-[#131313] transition-colors duration-150 hover:text-brand-red";
@@ -52,6 +52,7 @@ export function AccountControls({
     <IconDropdown
       label={profileLabel}
       triggerClassName={triggerClassName}
+      menuAlign="right"
       trigger={icon}
     >
       {user.role === "ADMIN" ? (

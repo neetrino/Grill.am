@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import {
+  DROPDOWN_ANIMATION_MS,
   DROPDOWN_PANEL_ANCHORED_CLASS,
   DROPDOWN_PANEL_CLASS,
   dropdownPanelStateClass,
@@ -15,7 +16,12 @@ type IconDropdownProps = {
   triggerClassName?: string;
   /** Where the menu opens relative to the trigger. Default: below. */
   menuPlacement?: "bottom" | "top";
+  /** Horizontal alignment of the panel under the trigger. Default: right. */
+  menuAlign?: "left" | "right";
 };
+
+/** Bridges the gap between trigger and panel so hover does not flicker. */
+const HOVER_CLOSE_DELAY_MS = 120;
 
 export function IconDropdown({
   label,
@@ -23,10 +29,73 @@ export function IconDropdown({
   children,
   triggerClassName,
   menuPlacement = "bottom",
+  menuAlign = "right",
 }: IconDropdownProps) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const unmountTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
+
+  const clearCloseTimer = useCallback((): void => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const clearUnmountTimer = useCallback((): void => {
+    if (unmountTimerRef.current) {
+      clearTimeout(unmountTimerRef.current);
+      unmountTimerRef.current = null;
+    }
+  }, []);
+
+  const openMenu = useCallback((): void => {
+    clearCloseTimer();
+    clearUnmountTimer();
+    setOpen(true);
+    setMounted(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setVisible(true));
+    });
+  }, [clearCloseTimer, clearUnmountTimer]);
+
+  const closeMenu = useCallback((): void => {
+    clearCloseTimer();
+    clearUnmountTimer();
+    setOpen(false);
+    setVisible(false);
+    unmountTimerRef.current = setTimeout(() => {
+      setMounted(false);
+      unmountTimerRef.current = null;
+    }, DROPDOWN_ANIMATION_MS);
+  }, [clearCloseTimer, clearUnmountTimer]);
+
+  const scheduleClose = useCallback((): void => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => {
+      closeTimerRef.current = null;
+      closeMenu();
+    }, HOVER_CLOSE_DELAY_MS);
+  }, [clearCloseTimer, closeMenu]);
+
+  function toggleMenu(): void {
+    if (open) {
+      closeMenu();
+      return;
+    }
+    openMenu();
+  }
+
+  useEffect(() => {
+    return () => {
+      clearCloseTimer();
+      clearUnmountTimer();
+    };
+  }, [clearCloseTimer, clearUnmountTimer]);
 
   useEffect(() => {
     if (!open) {
@@ -35,13 +104,13 @@ export function IconDropdown({
 
     function handlePointerDown(event: MouseEvent): void {
       if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+        closeMenu();
       }
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") {
-        setOpen(false);
+        closeMenu();
       }
     }
 
@@ -52,12 +121,12 @@ export function IconDropdown({
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open]);
+  }, [open, closeMenu]);
 
   const placementClass =
-    menuPlacement === "top"
-      ? "bottom-full mb-[6px] top-auto"
-      : "";
+    menuPlacement === "top" ? "bottom-full mb-[6px] top-auto" : "";
+  const alignClass =
+    menuAlign === "left" ? "!left-0 !right-auto" : "!right-0 !left-auto";
 
   return (
     <div
@@ -67,6 +136,8 @@ export function IconDropdown({
           ? "relative z-50 inline-flex items-center"
           : "relative inline-flex items-center"
       }
+      onMouseEnter={openMenu}
+      onMouseLeave={scheduleClose}
     >
       <button
         type="button"
@@ -78,17 +149,18 @@ export function IconDropdown({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
-        onClick={() => setOpen((value) => !value)}
+        onClick={toggleMenu}
+        onFocus={openMenu}
       >
         {trigger}
       </button>
 
-      {open ? (
+      {mounted ? (
         <div
           id={menuId}
           role="menu"
           aria-label={label}
-          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} right-0 left-auto min-w-40 overflow-hidden py-1 ${placementClass} ${dropdownPanelStateClass(true)}`}
+          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} ${alignClass} min-w-40 overflow-hidden ${placementClass} ${dropdownPanelStateClass(visible)}`}
         >
           <div
             onClick={(event) => {
@@ -99,7 +171,7 @@ export function IconDropdown({
               ) {
                 return;
               }
-              setOpen(false);
+              closeMenu();
             }}
             onKeyDown={(event) => {
               if (event.key !== "Enter" && event.key !== " ") {
@@ -112,7 +184,7 @@ export function IconDropdown({
               ) {
                 return;
               }
-              setOpen(false);
+              closeMenu();
             }}
           >
             {children}
