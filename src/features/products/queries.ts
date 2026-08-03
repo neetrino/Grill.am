@@ -525,6 +525,7 @@ async function loadProductDetailBySlug(
     images: gallery,
     categories: productCats,
     customization: parseProductCustomization(row.customization),
+    isFeatured: row.isFeatured,
   };
 }
 

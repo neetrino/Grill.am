@@ -1,5 +1,8 @@
-import Link from "next/link";
-
+import {
+  parseCompositionItems,
+  ProductCompositionChips,
+} from "@/features/products/ui/ProductCompositionChips";
+import { CatalogBreadcrumbs } from "@/features/products/ui/CatalogBreadcrumbs";
 import { toStorefrontCustomization } from "@/features/products/domain/customization";
 import { ProductBuyBox } from "@/features/products/ui/ProductBuyBox";
 import { ProductGallery } from "@/features/products/ui/ProductGallery";
@@ -17,6 +20,8 @@ type ProductDetailViewProps = {
   compareAtFormatted: string | null;
   isSignedIn: boolean;
   inWishlist: boolean;
+  ratingAverage: number | null;
+  ratingCount: number | null;
   dictionary: Dictionary;
   jsonLd: Record<string, unknown>;
   relatedSlot: React.ReactNode;
@@ -32,6 +37,8 @@ export function ProductDetailView({
   compareAtFormatted,
   isSignedIn,
   inWishlist,
+  ratingAverage,
+  ratingCount,
   dictionary,
   jsonLd,
   relatedSlot,
@@ -43,60 +50,74 @@ export function ProductDetailView({
     product.customization,
     locale,
   );
+  const primaryCategory = product.categories[0] ?? null;
+  const compositionItems = product.translation.composition
+    ? parseCompositionItems(product.translation.composition)
+    : [];
 
   return (
-    <article className="flex flex-col gap-16 md:gap-20">
-      <p className="text-sm text-gray-600">
-        <Link
-          href={`/${locale}/products`}
-          className="font-medium text-gray-900 underline-offset-2 hover:underline"
-        >
-          {labels.backToProducts}
-        </Link>
-      </p>
-
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
-        <ProductGallery
-          images={product.images}
-          title={product.translation.title}
-          discountPercent={product.discountPercent}
-          inStock={inStock}
-          outOfStockLabel={labels.outOfStock}
-          zoomLabel={labels.zoom}
-          closeZoomLabel={labels.closeZoom}
+    <article className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 -mt-10 mb-[-2.5rem] bg-[#f2f0f0]">
+      <div className="mx-auto w-full max-w-[1470px] px-4 pt-3 pb-16 sm:px-6 lg:px-[42px]">
+        <CatalogBreadcrumbs
+          backLabel={dictionary.catalog.back}
+          backHref={`/${locale}/products`}
+          backTone="accent"
+          items={[
+            {
+              label: dictionary.nav.products,
+              href: `/${locale}/products`,
+            },
+            ...(primaryCategory
+              ? [
+                  {
+                    label: primaryCategory.title,
+                    href: `/${locale}/products?category=${encodeURIComponent(primaryCategory.slug)}`,
+                  },
+                ]
+              : []),
+            { label: product.translation.title },
+          ]}
         />
 
-        <div className="flex flex-col gap-6 lg:min-h-full">
-          {product.categories.length > 0 ? (
-            <p className="text-sm font-medium text-gray-500">
-              {product.categories.map((category) => category.title).join(" · ")}
-            </p>
-          ) : null}
-
-          <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
-            {product.translation.title}
-          </h1>
+        <div className="mt-6 grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-[51px]">
+          <div className="flex min-w-0 flex-col gap-[35px]">
+            <ProductGallery
+              images={product.images}
+              title={product.translation.title}
+              hitLabel={product.isFeatured ? labels.hit : null}
+              inStock={inStock}
+              outOfStockLabel={labels.outOfStock}
+              zoomLabel={labels.zoom}
+              closeZoomLabel={labels.closeZoom}
+              locale={locale}
+              productId={product.id}
+              inWishlist={inWishlist}
+              isSignedIn={isSignedIn}
+              wishlistLabel={dictionary.nav.wishlist}
+            />
+            <ProductCompositionChips
+              title={labels.composition}
+              items={compositionItems}
+            />
+          </div>
 
           <ProductBuyBox
             locale={locale}
             currency={currency}
             fxRate={fxRate}
             productId={product.id}
-            sku={product.sku}
+            title={product.translation.title}
             stockOnHand={product.stockOnHand}
             baseUnitAmount={product.priceAmount}
             compareAtAmount={product.compareAtAmount}
-            discountPercent={product.discountPercent}
             initialPriceFormatted={priceFormatted}
             initialCompareAtFormatted={compareAtFormatted}
             shortDescription={product.translation.shortDescription}
-            composition={product.translation.composition}
             description={product.translation.description}
             customization={storefrontCustomization}
             rawCustomization={product.customization}
-            inWishlist={inWishlist}
-            isSignedIn={isSignedIn}
-            wishlistLabel={dictionary.nav.wishlist}
+            ratingAverage={ratingAverage}
+            ratingCount={ratingCount}
             labels={{
               quantity: labels.quantity,
               decreaseQuantity: dictionary.cartDrawer.decreaseQuantity,
@@ -106,23 +127,20 @@ export function ProductDetailView({
               outOfStock: labels.outOfStock,
               added: labels.added,
               error: labels.addError,
-              shortDescription: labels.shortDescription,
-              composition: labels.composition,
               options: labels.options,
               addons: labels.addons,
               exclusions: labels.exclusions,
-              selectAddon: labels.selectAddon,
-              selectExclusion: labels.selectExclusion,
               removeModifier: labels.removeModifier,
-              inStock: labels.inStock,
-              sku: labels.sku,
+              orderSummary: labels.orderSummary,
+              basePrice: labels.basePrice,
+              total: labels.total,
             }}
           />
         </div>
-      </div>
 
-      {relatedSlot}
-      {reviewsSlot}
+        <div className="mt-16 md:mt-20">{relatedSlot}</div>
+        <div className="mt-12">{reviewsSlot}</div>
+      </div>
 
       <script
         type="application/ld+json"

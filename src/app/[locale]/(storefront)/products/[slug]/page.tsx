@@ -7,6 +7,7 @@ import { getProductDetailBySlug } from "@/features/products/queries";
 import { ProductDetailView } from "@/features/products/ui/ProductDetailView";
 import { ProductRelatedSection } from "@/features/products/ui/ProductRelatedSection";
 import { ProductReviewsIsland } from "@/features/products/ui/ProductReviewsIsland";
+import { getProductReviewsView } from "@/features/reviews/application/queries";
 import { isProductInWishlist } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -107,10 +108,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const [user, currency, inWishlist] = await Promise.all([
+  const [user, currency, inWishlist, reviewsView] = await Promise.all([
     getCurrentUser(),
     getSelectedCurrency(),
     isProductInWishlist(product.id),
+    getProductReviewsView(product.id),
   ]);
   const formatPrice = await createDisplayPriceFormatter(locale, currency);
   const displayPrice = formatPrice(product.priceAmount);
@@ -132,6 +134,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   });
 
   const isSignedIn = Boolean(user);
+  const ratingAverage =
+    reviewsView.aggregate.count > 0 ? reviewsView.aggregate.average : null;
+  const ratingCount =
+    reviewsView.aggregate.count > 0 ? reviewsView.aggregate.count : null;
 
   return (
     <ProductDetailView
@@ -143,6 +149,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       compareAtFormatted={compareAt?.formatted ?? null}
       isSignedIn={isSignedIn}
       inWishlist={inWishlist}
+      ratingAverage={ratingAverage}
+      ratingCount={ratingCount}
       dictionary={dictionary}
       jsonLd={jsonLd}
       relatedSlot={

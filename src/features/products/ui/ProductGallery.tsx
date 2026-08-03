@@ -4,16 +4,24 @@ import Image from "next/image";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { X, ZoomIn, ZoomOut } from "lucide-react";
 
+import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { ProductGalleryImage } from "@/features/products/types";
+import type { Locale } from "@/lib/i18n/config";
+import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type ProductGalleryProps = {
   images: ProductGalleryImage[];
   title: string;
-  discountPercent?: number | null;
+  hitLabel?: string | null;
   inStock: boolean;
   outOfStockLabel: string;
   zoomLabel: string;
   closeZoomLabel: string;
+  locale?: Locale;
+  productId?: string;
+  inWishlist?: boolean;
+  isSignedIn?: boolean;
+  wishlistLabel?: string;
 };
 
 const MIN_ZOOM = 1;
@@ -23,11 +31,16 @@ const ZOOM_STEP = 0.5;
 export function ProductGallery({
   images,
   title,
-  discountPercent = null,
+  hitLabel = null,
   inStock,
   outOfStockLabel,
   zoomLabel,
   closeZoomLabel,
+  locale,
+  productId,
+  inWishlist = false,
+  isSignedIn = false,
+  wishlistLabel,
 }: ProductGalleryProps) {
   const [selectedId, setSelectedId] = useState(images[0]?.id ?? null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -36,6 +49,8 @@ export function ProductGallery({
   const titleId = useId();
   const selected =
     images.find((image) => image.id === selectedId) ?? images[0] ?? null;
+  const showWishlist =
+    locale != null && productId != null && wishlistLabel != null;
 
   const closeLightbox = useCallback(() => {
     setLightboxOpen(false);
@@ -64,47 +79,65 @@ export function ProductGallery({
   }, []);
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="relative flex h-80 w-full items-center justify-center overflow-hidden rounded-lg border border-gray-200 bg-gray-100 sm:h-[28rem] lg:h-[32rem]">
+    <div className="flex flex-col gap-[35px]">
+      <div className="relative aspect-[764/420] w-full overflow-hidden rounded-[30px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.09)]">
         {selected ? (
           <button
             type="button"
             onClick={openLightbox}
-            className="group relative h-full w-full cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
+            className="group relative h-full w-full cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
             aria-label={zoomLabel}
           >
             <Image
-              src={selected.url}
+              src={selected.url || PRODUCT_CARD_IMAGE}
               alt={selected.alt || title}
               fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-contain p-4 transition duration-300 group-hover:scale-[1.03]"
+              sizes="(max-width: 1024px) 100vw, 764px"
+              className="object-cover transition duration-300 group-hover:scale-[1.02]"
               priority
             />
-            <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-md bg-gray-900/80 px-2 py-1 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
-              <ZoomIn className="h-3.5 w-3.5" aria-hidden />
-              {zoomLabel}
-            </span>
           </button>
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
-            No image
+          <div className="relative h-full w-full">
+            <Image
+              src={PRODUCT_CARD_IMAGE}
+              alt={title}
+              fill
+              sizes="(max-width: 1024px) 100vw, 764px"
+              className="object-cover"
+              priority
+            />
           </div>
         )}
-        {discountPercent != null ? (
-          <span className="pointer-events-none absolute top-3 right-3 z-10 rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white">
-            -{discountPercent}%
+
+        {hitLabel ? (
+          <span className="pointer-events-none absolute top-5 left-5 z-10 rounded-full bg-brand-red px-3 py-1.5 text-sm leading-5 font-bold text-white">
+            {hitLabel}
           </span>
         ) : null}
+
         {!inStock ? (
-          <span className="pointer-events-none absolute top-3 left-3 z-10 rounded bg-gray-900/90 px-2 py-1 text-xs font-semibold text-white">
+          <span className="pointer-events-none absolute top-5 left-5 z-10 rounded-full bg-gray-900/90 px-3 py-1.5 text-sm font-semibold text-white">
             {outOfStockLabel}
           </span>
+        ) : null}
+
+        {showWishlist ? (
+          <WishlistButton
+            locale={locale}
+            productId={productId}
+            initialInWishlist={inWishlist}
+            isSignedIn={isSignedIn}
+            label={wishlistLabel}
+            size="md"
+            tone="onImage"
+            className="absolute top-[30px] right-6 z-10 h-[52px] w-[52px] bg-transparent shadow-none hover:bg-transparent"
+          />
         ) : null}
       </div>
 
       {images.length > 1 ? (
-        <ul className="flex flex-wrap gap-2" role="list">
+        <ul className="flex flex-wrap gap-3" role="list">
           {images.map((image) => {
             const isActive = image.id === selected?.id;
             return (
@@ -114,17 +147,17 @@ export function ProductGallery({
                   onClick={() => setSelectedId(image.id)}
                   aria-label={image.alt || title}
                   aria-pressed={isActive}
-                  className={`relative h-16 w-16 overflow-hidden rounded-md border bg-gray-100 transition ${
+                  className={`relative size-20 overflow-hidden rounded-[14px] transition ${
                     isActive
-                      ? "border-gray-900 ring-2 ring-gray-900/20"
-                      : "border-gray-200 hover:border-gray-400"
+                      ? "opacity-100 shadow-[0_0_0_2px_#fff,0_0_0_4px_#0a0a0a]"
+                      : "opacity-60 hover:opacity-100"
                   }`}
                 >
                   <Image
-                    src={image.url}
+                    src={image.url || PRODUCT_CARD_IMAGE}
                     alt=""
                     fill
-                    sizes="64px"
+                    sizes="80px"
                     className="object-cover"
                   />
                 </button>
@@ -153,7 +186,9 @@ export function ProductGallery({
               type="button"
               aria-label={zoomLabel}
               disabled={zoom >= MAX_ZOOM}
-              onClick={() => setZoom((value) => Math.min(MAX_ZOOM, value + ZOOM_STEP))}
+              onClick={() =>
+                setZoom((value) => Math.min(MAX_ZOOM, value + ZOOM_STEP))
+              }
               className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 hover:bg-white/20 disabled:opacity-40"
             >
               <ZoomIn className="h-5 w-5" aria-hidden />
@@ -162,7 +197,9 @@ export function ProductGallery({
               type="button"
               aria-label={closeZoomLabel}
               disabled={zoom <= MIN_ZOOM}
-              onClick={() => setZoom((value) => Math.max(MIN_ZOOM, value - ZOOM_STEP))}
+              onClick={() =>
+                setZoom((value) => Math.max(MIN_ZOOM, value - ZOOM_STEP))
+              }
               className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 hover:bg-white/20 disabled:opacity-40"
             >
               <ZoomOut className="h-5 w-5" aria-hidden />
@@ -185,7 +222,7 @@ export function ProductGallery({
               style={{ transform: `scale(${zoom})` }}
             >
               <Image
-                src={selected.url}
+                src={selected.url || PRODUCT_CARD_IMAGE}
                 alt={selected.alt || title}
                 fill
                 sizes="100vw"

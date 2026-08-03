@@ -44,4 +44,5 @@ export type ProductDetail = CatalogProduct & {
   categories: ProductCategoryRef[];
   /** Raw customization catalog from the product row (null when unset). */
   customization: ProductCustomization | null;
+  isFeatured: boolean;
 };
