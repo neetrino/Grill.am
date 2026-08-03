@@ -1,54 +1,103 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { AppLink } from "@/components/ui/AppLink";
 import type { CatalogFilterCategory } from "@/features/products/application/list-catalog-products";
 import {
   buildCatalogQuery,
   catalogHref,
-  hasActiveCatalogFilters,
   type CatalogFilter,
 } from "@/features/products/schemas/catalog-list";
-import { CatalogPriceRangeFilter } from "@/features/products/ui/CatalogPriceRangeFilter";
+import {
+  CatalogAllCategoriesIcon,
+  resolveCatalogCategoryIcon,
+} from "@/features/products/ui/catalog-category-icon";
+import {
+  clamp,
+  digitsOnly,
+  formatPriceLabel,
+  parseAmountInput,
+  resolvePriceBounds,
+  toFilterPrice,
+} from "@/features/products/ui/catalog-price-range";
+import { AppLink } from "@/components/ui/AppLink";
 
 type CatalogLabels = {
-  filters: string;
-  search: string;
-  searchPlaceholder: string;
+  categories: string;
+  allCategories: string;
   price: string;
   minPrice: string;
   maxPrice: string;
-  categories: string;
-  inStockOnly: string;
-  clearFilters: string;
 };
 
 type CatalogFiltersProps = {
   locale: string;
   filters: CatalogFilter;
   categories: CatalogFilterCategory[];
+  totalProductCount: number;
   priceBounds: { min: number; max: number } | null;
   currencySymbol: string;
   labels: CatalogLabels;
+  /** Desktop rail vs mobile accordion content. */
+  variant?: "sidebar" | "panel";
 };
+
+const PRICE_INPUT_CLASS =
+  "h-[38px] w-full rounded-[14px] border border-[#e5e7eb] bg-[#f9fafb] px-[13px] text-sm text-[rgba(10,10,10,0.5)] outline-none transition focus:border-brand-red focus:text-[#0a0a0a]";
 
 export function CatalogFilters({
   locale,
   filters,
   categories,
+  totalProductCount,
   priceBounds,
   currencySymbol,
   labels,
+  variant = "sidebar",
 }: CatalogFiltersProps) {
   const router = useRouter();
+  const selectedSlug = filters.category[0] ?? null;
+  const shellClass =
+    variant === "sidebar"
+      ? "flex h-full flex-col border-r border-[#f3f4f6] bg-white shadow-[1px_0_8px_rgba(0,0,0,0.03)]"
+      : "flex flex-col bg-white";
+  const { absoluteMin, absoluteMax } = resolvePriceBounds(priceBounds);
 
-  const clearHref = catalogHref(locale, {
-    category: [],
-    sort: filters.sort,
-    page: 1,
-    pageSize: filters.pageSize,
-  });
+  const [minDraft, setMinDraft] = useState(
+    filters.minPrice != null
+      ? formatPriceLabel(filters.minPrice, locale, currencySymbol)
+      : formatPriceLabel(absoluteMin, locale, currencySymbol),
+  );
+  const [maxDraft, setMaxDraft] = useState(
+    filters.maxPrice != null
+      ? formatPriceLabel(filters.maxPrice, locale, currencySymbol)
+      : formatPriceLabel(absoluteMax, locale, currencySymbol),
+  );
+
+  useEffect(() => {
+    setMinDraft(
+      formatPriceLabel(
+        filters.minPrice ?? absoluteMin,
+        locale,
+        currencySymbol,
+      ),
+    );
+    setMaxDraft(
+      formatPriceLabel(
+        filters.maxPrice ?? absoluteMax,
+        locale,
+        currencySymbol,
+      ),
+    );
+  }, [
+    filters.minPrice,
+    filters.maxPrice,
+    absoluteMin,
+    absoluteMax,
+    locale,
+    currencySymbol,
+  ]);
 
   function navigate(overrides: Partial<CatalogFilter>): void {
     const query = buildCatalogQuery(filters, { ...overrides, page: 1 });
@@ -57,112 +106,162 @@ export function CatalogFilters({
     );
   }
 
+  function commitPrice(edge: "min" | "max", raw: string): void {
+    const parsed = parseAmountInput(raw);
+    const currentMin = filters.minPrice ?? absoluteMin;
+    const currentMax = filters.maxPrice ?? absoluteMax;
+
+    if (edge === "min") {
+      const next = clamp(parsed ?? absoluteMin, absoluteMin, currentMax);
+      const minPrice = toFilterPrice(next, absoluteMin, absoluteMax, "min");
+      setMinDraft(formatPriceLabel(next, locale, currencySymbol));
+      if (minPrice === filters.minPrice) return;
+      navigate({ minPrice });
+      return;
+    }
+
+    const next = clamp(parsed ?? absoluteMax, currentMin, absoluteMax);
+    const maxPrice = toFilterPrice(next, absoluteMin, absoluteMax, "max");
+    setMaxDraft(formatPriceLabel(next, locale, currencySymbol));
+    if (maxPrice === filters.maxPrice) return;
+    navigate({ maxPrice });
+  }
+
   return (
-    <aside className="space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold tracking-wide text-gray-900 uppercase">
-          {labels.filters}
-        </h2>
-        {hasActiveCatalogFilters(filters) ? (
-          <AppLink
-            href={clearHref}
-            prefetchPolicy="intent"
-            className="text-sm font-medium text-gray-600 underline-offset-2 hover:text-gray-900 hover:underline"
-          >
-            {labels.clearFilters}
-          </AppLink>
-        ) : null}
+    <aside className={shellClass}>
+      <div className="min-h-0 flex-1 overflow-y-auto px-3.5 pt-4 pb-2">
+        <p className="px-1 text-xs font-semibold tracking-[0.6px] text-[#99a1af] uppercase">
+          {labels.categories}
+        </p>
+
+        <nav className="mt-3 flex flex-col gap-0.5" aria-label={labels.categories}>
+          <CategoryRow
+            href={catalogHref(locale, filters, { category: [], page: 1 })}
+            title={labels.allCategories}
+            count={totalProductCount}
+            active={selectedSlug == null}
+            Icon={CatalogAllCategoriesIcon}
+          />
+          {categories.map((category, index) => {
+            const active = selectedSlug === category.slug;
+            const Icon = resolveCatalogCategoryIcon(
+              category.slug,
+              category.title,
+              index,
+            );
+            return (
+              <CategoryRow
+                key={category.id}
+                href={catalogHref(locale, filters, {
+                  category: [category.slug],
+                  page: 1,
+                })}
+                title={category.title}
+                count={category.productCount}
+                active={active}
+                Icon={Icon}
+              />
+            );
+          })}
+        </nav>
       </div>
 
-      <div className="space-y-6">
-        <label className="block space-y-2">
-          <span className="text-sm font-medium text-gray-800">
-            {labels.search}
-          </span>
-          <input
-            type="search"
-            defaultValue={filters.q ?? ""}
-            key={filters.q ?? ""}
-            placeholder={labels.searchPlaceholder}
-            onKeyDown={(event) => {
-              if (event.key !== "Enter") return;
-              event.preventDefault();
-              const value = event.currentTarget.value.trim();
-              navigate({ q: value.length > 0 ? value : undefined });
-            }}
-            onBlur={(event) => {
-              const value = event.currentTarget.value.trim();
-              const next = value.length > 0 ? value : undefined;
-              if (next === filters.q) return;
-              navigate({ q: next });
-            }}
-            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-400"
-          />
-        </label>
-
-        <CatalogPriceRangeFilter
-          locale={locale}
-          currencySymbol={currencySymbol}
-          priceBounds={priceBounds}
-          filters={filters}
-          labels={{
-            price: labels.price,
-            minPrice: labels.minPrice,
-            maxPrice: labels.maxPrice,
-          }}
-        />
-
-        {categories.length > 0 ? (
-          <fieldset className="space-y-2">
-            <legend className="text-sm font-medium text-gray-800">
-              {labels.categories}
-            </legend>
-            <ul className="max-h-64 space-y-2 overflow-y-auto pr-1">
-              {categories.map((category) => {
-                const checked = filters.category.includes(category.slug);
-                return (
-                  <li key={category.id}>
-                    <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
-                      <input
-                        type="checkbox"
-                        value={category.slug}
-                        checked={checked}
-                        onChange={(event) => {
-                          const next = event.target.checked
-                            ? [...filters.category, category.slug]
-                            : filters.category.filter(
-                                (slug) => slug !== category.slug,
-                              );
-                          navigate({ category: next });
-                        }}
-                        className="size-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
-                      />
-                      <span className="flex-1">{category.title}</span>
-                      <span className="text-xs text-gray-400">
-                        {category.productCount}
-                      </span>
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
-          </fieldset>
-        ) : null}
-
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={filters.inStock === true}
-            onChange={(event) => {
-              navigate({
-                inStock: event.target.checked ? true : undefined,
-              });
-            }}
-            className="size-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
-          />
-          {labels.inStockOnly}
-        </label>
+      <div className="border-t border-[#f3f4f6] px-4 pt-[17px] pb-4">
+        <p className="px-1 text-xs font-semibold tracking-[0.6px] text-[#99a1af] uppercase">
+          {labels.price}
+        </p>
+        <div className="mt-3 space-y-3">
+          <label className="block space-y-1.5">
+            <span className="text-xs font-medium text-[#4a5565]">
+              {labels.minPrice}
+            </span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              value={minDraft}
+              onChange={(event) => {
+                const digits = digitsOnly(event.target.value);
+                setMinDraft(digits);
+              }}
+              onBlur={(event) => commitPrice("min", event.currentTarget.value)}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter") return;
+                event.preventDefault();
+                commitPrice("min", event.currentTarget.value);
+              }}
+              className={PRICE_INPUT_CLASS}
+            />
+          </label>
+          <label className="block space-y-1.5">
+            <span className="text-xs font-medium text-[#4a5565]">
+              {labels.maxPrice}
+            </span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              value={maxDraft}
+              onChange={(event) => {
+                const digits = digitsOnly(event.target.value);
+                setMaxDraft(digits);
+              }}
+              onBlur={(event) => commitPrice("max", event.currentTarget.value)}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter") return;
+                event.preventDefault();
+                commitPrice("max", event.currentTarget.value);
+              }}
+              className={PRICE_INPUT_CLASS}
+            />
+          </label>
+        </div>
       </div>
     </aside>
+  );
+}
+
+type CategoryRowProps = {
+  href: string;
+  title: string;
+  count: number;
+  active: boolean;
+  Icon: typeof CatalogAllCategoriesIcon;
+};
+
+function CategoryRow({ href, title, count, active, Icon }: CategoryRowProps) {
+  return (
+    <AppLink
+      href={href}
+      prefetchPolicy="intent"
+      className={`flex items-center gap-3 rounded-[14px] px-3 py-2.5 transition ${
+        active ? "bg-[#fff4ee]" : "hover:bg-[#f9fafb]"
+      }`}
+      aria-current={active ? "page" : undefined}
+    >
+      <span
+        className={`inline-flex size-8 shrink-0 items-center justify-center rounded-[10px] ${
+          active ? "bg-brand-red text-white" : "bg-[#f3f4f6] text-[#6b7280]"
+        }`}
+      >
+        <Icon className="size-4" strokeWidth={1.5} aria-hidden />
+      </span>
+      <span
+        className={`min-w-0 flex-1 text-sm font-medium ${
+          active ? "text-brand-red" : "text-[#374151]"
+        }`}
+      >
+        {title}
+      </span>
+      <span
+        className={`inline-flex shrink-0 items-center rounded-full px-1.5 py-0.5 text-xs font-semibold ${
+          active
+            ? "bg-brand-red text-white"
+            : "bg-[#e5e7eb] text-[#6b7280]"
+        }`}
+      >
+        {count}
+      </span>
+    </AppLink>
   );
 }

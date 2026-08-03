@@ -41,6 +41,13 @@ const optionalInStock = z.preprocess((value) => {
   return undefined;
 }, z.boolean().optional());
 
+const optionalOnSale = z.preprocess((value) => {
+  if (value === undefined || value === null || value === "") return undefined;
+  if (value === true || value === "true" || value === "1") return true;
+  if (value === false || value === "false" || value === "0") return false;
+  return undefined;
+}, z.boolean().optional());
+
 const pageSizeSchema = z.preprocess((value) => {
   if (value === undefined || value === null || value === "") return 24;
   return value;
@@ -53,6 +60,7 @@ export const catalogFilterSchema = z
     maxPrice: optionalNonNegativeInt,
     category: categorySlugsSchema.default([]),
     inStock: optionalInStock,
+    onSale: optionalOnSale,
     sort: z.enum(CATALOG_SORT_VALUES).default("newest"),
     page: z.coerce.number().int().min(1).max(500).default(1),
     pageSize: pageSizeSchema.default(24),
@@ -95,6 +103,7 @@ export function parseCatalogSearchParams(
     maxPrice: first(raw.maxPrice),
     category: raw.category,
     inStock: first(raw.inStock),
+    onSale: first(raw.onSale),
     sort: first(raw.sort) ?? "newest",
     page: first(raw.page) ?? "1",
     pageSize: first(raw.pageSize) ?? "24",
@@ -124,6 +133,7 @@ export function buildCatalogQuery(
   }
   if (merged.inStock === true) params.set("inStock", "true");
   if (merged.inStock === false) params.set("inStock", "false");
+  if (merged.onSale === true) params.set("onSale", "true");
   if (merged.sort !== "newest") params.set("sort", merged.sort);
   if (merged.pageSize !== 24) params.set("pageSize", String(merged.pageSize));
   if (merged.page > 1) params.set("page", String(merged.page));
@@ -147,6 +157,7 @@ export function hasActiveCatalogFilters(filters: CatalogFilter): boolean {
       filters.minPrice != null ||
       filters.maxPrice != null ||
       filters.category.length > 0 ||
-      filters.inStock != null,
+      filters.inStock != null ||
+      filters.onSale === true,
   );
 }

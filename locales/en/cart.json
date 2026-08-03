@@ -8,6 +8,7 @@
   "shipping": "Shipping",
   "total": "Total",
   "checkout": "Proceed to checkout",
+  "pay": "Pay",
   "close": "Close cart",
   "removeItem": "Remove item",
   "decreaseQuantity": "Decrease quantity",
