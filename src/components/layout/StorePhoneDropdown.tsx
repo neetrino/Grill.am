@@ -29,6 +29,7 @@ const VARIANT_STYLES = {
     icon: "h-[15px] w-[15px] shrink-0 text-[#FF4A12]",
     link: "leading-5 text-white/60 transition hover:text-white",
     chevron: "shrink-0 text-[#9C9FA1] transition hover:text-white",
+    chevronIcon: "h-3.5 w-3.5",
     menu: "fixed z-[200] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-3 py-2.5 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
     menuLink: "block leading-5 whitespace-nowrap transition hover:text-white",
   },
@@ -38,6 +39,7 @@ const VARIANT_STYLES = {
     icon: "h-[19px] w-[19px] shrink-0",
     link: "text-base font-medium text-[#333] transition hover:text-brand-red",
     chevron: "shrink-0 text-[#333] transition hover:text-brand-red",
+    chevronIcon: "h-5 w-5",
     menu: "fixed z-[200] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#333] shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
     menuLink: "block leading-5 whitespace-nowrap transition hover:text-brand-red",
   },
@@ -47,6 +49,7 @@ const VARIANT_STYLES = {
     icon: "h-4 w-4 shrink-0",
     link: "font-medium transition-colors hover:text-brand-red",
     chevron: "shrink-0 text-gray-500 transition hover:text-brand-red",
+    chevronIcon: "h-5 w-5",
     menu: "fixed z-[200] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
     menuLink:
       "block leading-5 whitespace-nowrap transition hover:text-brand-red",
@@ -226,7 +229,7 @@ export function StorePhoneDropdown({
               onClick={toggleMenu}
             >
               <ChevronDown
-                className={`h-3.5 w-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none ${
+                className={`${styles.chevronIcon} transition-transform duration-200 ease-out motion-reduce:transition-none ${
                   visible ? "rotate-180" : ""
                 }`}
                 aria-hidden

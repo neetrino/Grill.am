@@ -38,7 +38,7 @@ const VARIANT_STYLES = {
     text: "text-base font-medium text-[#333]",
     chevron:
       "shrink-0 text-[#333] transition hover:text-brand-red",
-    chevronIcon: "h-3.5 w-3.5",
+    chevronIcon: "h-5 w-5",
     menu: "fixed z-[200] max-h-[140px] origin-top-right space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#333] shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
   },
 } as const;
@@ -204,27 +204,27 @@ export function StoreAddressDropdown({
     <div ref={rootRef} className={styles.root}>
       <div ref={anchorRef} className={styles.row}>
         <MapPin className={styles.icon} aria-hidden />
-        <div className="flex min-w-0 items-center gap-2">
+        {showChevron ? (
+          <button
+            ref={triggerRef}
+            type="button"
+            className={`flex min-w-0 items-center gap-2 ${styles.chevron}`}
+            aria-expanded={visible}
+            aria-controls={listId}
+            aria-label={toggleLabel}
+            onClick={toggleMenu}
+          >
+            <span className={styles.text}>{displayLabel}</span>
+            <ChevronDown
+              className={`${styles.chevronIcon} shrink-0 transition-transform duration-200 ease-out motion-reduce:transition-none ${
+                visible ? "rotate-180" : ""
+              }`}
+              aria-hidden
+            />
+          </button>
+        ) : (
           <span className={styles.text}>{displayLabel}</span>
-          {showChevron ? (
-            <button
-              ref={triggerRef}
-              type="button"
-              className={styles.chevron}
-              aria-expanded={visible}
-              aria-controls={listId}
-              aria-label={toggleLabel}
-              onClick={toggleMenu}
-            >
-              <ChevronDown
-                className={`${styles.chevronIcon} transition-transform duration-200 ease-out motion-reduce:transition-none ${
-                  visible ? "rotate-180" : ""
-                }`}
-                aria-hidden
-              />
-            </button>
-          ) : null}
-        </div>
+        )}
       </div>
       {menu}
     </div>

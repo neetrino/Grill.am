@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { AccountControls } from "@/components/layout/AccountControls";
@@ -57,6 +58,10 @@ export function SiteHeaderMainNav({
   wishlistCount,
 }: SiteHeaderMainNavProps) {
   const searchLabels = headerSearchLabels(dictionary);
+  const pathname = usePathname();
+  const homeHref = `/${locale}`;
+  const isHomePage =
+    pathname === homeHref || pathname === `${homeHref}/`;
   const [primaryHidden, setPrimaryHidden] = useState(false);
   const lastScrollYRef = useRef(0);
   const primaryHiddenRef = useRef(false);
@@ -122,9 +127,16 @@ export function SiteHeaderMainNav({
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/7 py-3">
                   <div className="flex items-center gap-3">
                     <AppLink
-                      href={`/${locale}`}
+                      href={homeHref}
                       prefetchPolicy="intent"
                       className="relative block h-9 w-[92px] shrink-0"
+                      onClick={(event) => {
+                        if (!isHomePage) {
+                          return;
+                        }
+                        event.preventDefault();
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
                     >
                       <Image
                         src="/assets/brand/logo.webp"
