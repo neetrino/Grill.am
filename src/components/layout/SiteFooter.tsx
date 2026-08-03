@@ -94,7 +94,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
     <footer className="relative mt-auto hidden overflow-hidden rounded-tl-[50px] rounded-tr-[50px] bg-black md:block">
       <p
         aria-hidden
-        className="pointer-events-none absolute bottom-[18px] left-[19px] z-0 translate-y-1/2 font-mirage text-[281px] leading-[230px] whitespace-nowrap text-white/25 uppercase opacity-40 select-none"
+        className="pointer-events-none absolute bottom-[18px] left-[35px] z-0 translate-y-1/2 font-mirage text-[281px] leading-[230px] whitespace-nowrap text-white/25 uppercase opacity-40 select-none"
       >
         GRILL.AM
       </p>
