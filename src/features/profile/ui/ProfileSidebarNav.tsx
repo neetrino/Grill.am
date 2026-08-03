@@ -218,7 +218,9 @@ export function ProfileSidebarNav({
             >
               <span
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                  active ? "bg-transparent text-brand-yellow" : ""
+                  active
+                    ? "bg-transparent text-brand-yellow [&>svg]:stroke-[2.75]"
+                    : "[&>svg]:stroke-2"
                 }`}
                 style={
                   active
