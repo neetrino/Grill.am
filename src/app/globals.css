@@ -181,8 +181,80 @@ select:disabled {
   transition: transform 1.35s cubic-bezier(0.45, 0.05, 0.2, 1);
 }
 
+@keyframes home-why-float-a {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes home-why-float-b {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(12px);
+  }
+  70% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes home-why-float-c {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-10px);
+  }
+  65% {
+    transform: translateY(14px);
+  }
+}
+
+@keyframes home-why-float-d {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(18px);
+  }
+  80% {
+    transform: translateY(-6px);
+  }
+}
+
+.home-why-float-a {
+  animation: home-why-float-a 2.4s ease-in-out infinite;
+}
+
+.home-why-float-b {
+  animation: home-why-float-b 3.1s ease-in-out infinite;
+}
+
+.home-why-float-c {
+  animation: home-why-float-c 2.7s ease-in-out infinite;
+}
+
+.home-why-float-d {
+  animation: home-why-float-d 3.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .home-why-track {
     transition: none !important;
+  }
+
+  .home-why-float-a,
+  .home-why-float-b,
+  .home-why-float-c,
+  .home-why-float-d {
+    animation: none !important;
   }
 }

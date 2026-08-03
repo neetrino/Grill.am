@@ -65,15 +65,27 @@ const CARD_OFFSET_Y: Record<FeatureTone, number> = {
   yellow: -60,
 };
 
+/** Per-card bob patterns — staggered timing feels less mechanical. */
+const CARD_FLOAT_CLASS = [
+  "home-why-float-a",
+  "home-why-float-b",
+  "home-why-float-c",
+  "home-why-float-d",
+] as const;
+
+const CARD_FLOAT_DELAY_MS = [650, 1180, 920, 1400] as const;
+
 function FeatureCard({
   item,
   index,
   revealed,
+  floating = false,
   compactTitle = false,
 }: {
   item: FeatureItem;
   index: number;
   revealed: boolean;
+  floating?: boolean;
   compactTitle?: boolean;
 }) {
   const titleLines = item.title.trim().split(/\s+/);
@@ -85,37 +97,47 @@ function FeatureCard({
     compactTitle && CARD_TITLE_RU[item.tone]
       ? CARD_TITLE_RU[item.tone]
       : CARD_TITLE[item.tone];
+  const floatClass = floating
+    ? (CARD_FLOAT_CLASS[index % CARD_FLOAT_CLASS.length] ?? CARD_FLOAT_CLASS[0])
+    : "";
+  const floatDelayMs =
+    CARD_FLOAT_DELAY_MS[index % CARD_FLOAT_DELAY_MS.length] ?? 800;
 
   return (
-    <article
-      className={`relative h-[257px] w-[322px] shrink-0 overflow-visible rounded-[24px] transition-all duration-700 ease-out ${CARD_SHELL[item.tone]} ${
-        revealed ? "opacity-100" : "opacity-0"
-      }`}
-      style={{
-        transitionDelay: revealed ? `${120 + index * 90}ms` : "0ms",
-        transform: `translate3d(${offsetX}px, ${offsetY}px, 0)`,
-      }}
+    <div
+      className={floatClass}
+      style={floating ? { animationDelay: `${floatDelayMs}ms` } : undefined}
     >
-      <div className={`pointer-events-none absolute ${CARD_IMAGE[item.tone]}`}>
-        <Image
-          src={item.imageSrc}
-          alt=""
-          fill
-          sizes="220px"
-          className="object-contain drop-shadow-md"
-        />
-      </div>
-      <h3
-        className={`absolute z-10 font-black break-words whitespace-pre-line [text-shadow:0.3px_0_0_currentColor,-0.3px_0_0_currentColor,0_0.3px_0_currentColor,0_-0.3px_0_currentColor] ${titleClass}`}
+      <article
+        className={`relative h-[257px] w-[322px] shrink-0 overflow-visible rounded-[24px] transition-all duration-700 ease-out ${CARD_SHELL[item.tone]} ${
+          revealed ? "opacity-100" : "opacity-0"
+        }`}
+        style={{
+          transitionDelay: revealed ? `${120 + index * 90}ms` : "0ms",
+          transform: `translate3d(${offsetX}px, ${offsetY}px, 0)`,
+        }}
       >
-        {stackedTitle}
-      </h3>
-      <p
-        className={`absolute z-10 break-words ${CARD_DESCRIPTION[item.tone]}`}
-      >
-        {item.description}
-      </p>
-    </article>
+        <div className={`pointer-events-none absolute ${CARD_IMAGE[item.tone]}`}>
+          <Image
+            src={item.imageSrc}
+            alt=""
+            fill
+            sizes="220px"
+            className="object-contain drop-shadow-md"
+          />
+        </div>
+        <h3
+          className={`absolute z-10 font-black break-words whitespace-pre-line [text-shadow:0.3px_0_0_currentColor,-0.3px_0_0_currentColor,0_0.3px_0_currentColor,0_-0.3px_0_currentColor] ${titleClass}`}
+        >
+          {stackedTitle}
+        </h3>
+        <p
+          className={`absolute z-10 break-words ${CARD_DESCRIPTION[item.tone]}`}
+        >
+          {item.description}
+        </p>
+      </article>
+    </div>
   );
 }
 
@@ -240,6 +262,7 @@ export function HomeFeatures({
                 item={item}
                 index={index}
                 revealed={revealed}
+                floating={revealed && !reduceMotion}
                 compactTitle={compactTitle}
               />
             ))}
