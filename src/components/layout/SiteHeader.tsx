@@ -62,25 +62,23 @@ async function SiteHeaderMainNavAsync({
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
-    <div className="relative z-40 bg-white">
-      <Suspense
-        fallback={
-          <header className="relative z-10 bg-white">
-            <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
-              <span className="text-lg font-semibold tracking-tight text-[#101010]">
-                {dictionary.brand}
-              </span>
-              <HeaderControlsFallback />
-            </div>
-          </header>
-        }
-      >
-        <SiteHeaderMainNavAsync
-          locale={locale}
-          currency={currency}
-          dictionary={dictionary}
-        />
-      </Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <header className="relative z-40 bg-white">
+          <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
+            <span className="text-lg font-semibold tracking-tight text-[#101010]">
+              {dictionary.brand}
+            </span>
+            <HeaderControlsFallback />
+          </div>
+        </header>
+      }
+    >
+      <SiteHeaderMainNavAsync
+        locale={locale}
+        currency={currency}
+        dictionary={dictionary}
+      />
+    </Suspense>
   );
 }
