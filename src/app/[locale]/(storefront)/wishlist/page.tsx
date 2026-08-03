@@ -23,6 +23,13 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   }
 
   const dictionary = getDictionary(rawLocale);
+  const title = (
+    <h1 className="text-[26px] leading-tight font-black text-brand-red uppercase sm:text-[30px] sm:leading-[1.2]">
+      {dictionary.wishlist.titleLead}{" "}
+      <span className="text-[#171717]">{dictionary.wishlist.titleAccent}</span>
+    </h1>
+  );
+
   const [user, currency, products] = await Promise.all([
     getCurrentUser(),
     getSelectedCurrency(),
@@ -32,9 +39,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   if (!user) {
     return (
       <section className="flex flex-col gap-4">
-        <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
-          {dictionary.nav.wishlist}
-        </h1>
+        {title}
         <p className="text-gray-600">
           <Link
             href={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
@@ -65,9 +70,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
 
   return (
     <section className="flex flex-col gap-8">
-      <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
-        {dictionary.nav.wishlist}
-      </h1>
+      {title}
 
       {priced.length === 0 ? (
         <p className="text-gray-600">{dictionary.wishlist.empty}</p>
