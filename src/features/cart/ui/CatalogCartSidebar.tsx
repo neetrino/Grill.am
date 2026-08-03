@@ -81,11 +81,7 @@ export function CatalogCartSidebar({
         {loading && !view ? (
           <p className="py-8 text-sm text-[#4a5565]">{labels.loading}</p>
         ) : !view || view.items.length === 0 ? (
-          <CartEmptyState
-            title={labels.empty}
-            catalogLabel={labels.browseCatalog}
-            catalogHref={`/${locale}/products`}
-          />
+          <CartEmptyState title={labels.empty} size="compact" />
         ) : (
           <ul>
             {view.items.map((item, index) => (
