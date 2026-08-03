@@ -16,6 +16,8 @@ type WishlistButtonProps = {
   label: string;
   className?: string;
   size?: "sm" | "md";
+  /** Heart contrast on product imagery (Figma product card). */
+  tone?: "default" | "onImage";
 };
 
 export function WishlistButton({
@@ -26,11 +28,16 @@ export function WishlistButton({
   label,
   className = "",
   size = "md",
+  tone = "default",
 }: WishlistButtonProps) {
   const router = useRouter();
   const [inWishlist, setInWishlist] = useState(initialInWishlist);
   const [pending, startTransition] = useTransition();
-  const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const iconClass = size === "sm" ? "h-5 w-5" : "h-6 w-6";
+  const idleIconClass =
+    tone === "onImage"
+      ? "fill-white text-white"
+      : "fill-transparent text-gray-700";
 
   function handleClick(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
@@ -71,9 +78,7 @@ export function WishlistButton({
     >
       <Heart
         className={`${iconClass} ${
-          inWishlist
-            ? "fill-red-500 text-red-500"
-            : "fill-transparent text-gray-700"
+          inWishlist ? "fill-red-500 text-red-500" : idleIconClass
         }`}
         aria-hidden
       />

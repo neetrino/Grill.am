@@ -1,7 +1,7 @@
 "use client";
 
 import type { MouseEvent } from "react";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingBasket } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
@@ -25,7 +25,7 @@ export function AddToCartButton({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [justAdded, setJustAdded] = useState(false);
-  const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const iconClass = size === "sm" ? "h-[29px] w-[29px]" : "h-5 w-5";
 
   function handleClick(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
@@ -52,7 +52,7 @@ export function AddToCartButton({
       aria-label={label}
       className={`inline-flex items-center justify-center rounded-full text-gray-700 transition disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
     >
-      <ShoppingCart
+      <ShoppingBasket
         className={`${iconClass} ${justAdded ? "fill-current" : ""}`}
         aria-hidden
       />

@@ -1,9 +1,13 @@
 import Image from "next/image";
+import { Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
+
+/** Shared product-card photo until per-product media is ready. */
+export const PRODUCT_CARD_IMAGE = "/assets/products/product-card.webp";
 
 type ProductCardProps = {
   href: string;
@@ -30,7 +34,7 @@ export function ProductCard({
   priceFormatted,
   compareAtFormatted = null,
   discountPercent = null,
-  imageUrl,
+  imageUrl: _imageUrl,
   inStock,
   priority = false,
   locale,
@@ -46,31 +50,26 @@ export function ProductCard({
   const showAddToCart = productId != null && addToCartLabel != null;
 
   return (
-    <div className="group relative overflow-hidden rounded-3xl bg-white shadow-[0px_7px_22px_rgba(62,87,61,0.13)] transition hover:-translate-y-0.5 hover:shadow-[0px_10px_28px_rgba(62,87,61,0.18)]">
-      <div className="relative aspect-[279/214] overflow-hidden rounded-3xl bg-brand-surface">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-[24px] bg-white shadow-[0px_7px_11px_rgba(62,87,61,0.13)] transition hover:-translate-y-0.5 hover:shadow-[0px_10px_20px_rgba(62,87,61,0.18)]">
+      <div className="relative aspect-[279/214] shrink-0 overflow-hidden bg-brand-surface">
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
           className="absolute inset-0 block"
         >
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={title}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 279px"
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-              priority={priority}
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
-              No image
-            </div>
-          )}
+          <Image
+            src={PRODUCT_CARD_IMAGE}
+            alt={title}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 279px"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            priority={priority}
+          />
         </AppLink>
 
         {discountPercent != null ? (
-          <span className="absolute top-3.5 left-4 z-10 inline-flex h-[26px] min-w-[90px] items-center justify-center rounded-full bg-brand-yellow px-3 text-[11px] font-semibold text-[#222]">
+          <span className="absolute top-3.5 left-4 z-10 inline-flex h-[26px] items-center gap-1.5 rounded-full bg-brand-yellow pr-3 pl-[13px] text-[11px] leading-[18px] font-semibold text-[#222]">
+            <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
             -{discountPercent}%
           </span>
         ) : null}
@@ -83,7 +82,8 @@ export function ProductCard({
             isSignedIn={isSignedIn}
             label={wishlistLabel}
             size="sm"
-            className="absolute top-3 right-3 z-10 h-8 w-8 bg-transparent text-[#222] shadow-none hover:bg-white/80"
+            tone="onImage"
+            className="absolute top-1.5 right-4 z-10 h-[30px] w-8 bg-transparent shadow-none hover:bg-transparent"
           />
         ) : null}
 
@@ -94,8 +94,8 @@ export function ProductCard({
         ) : null}
       </div>
 
-      <div className="relative px-4 pt-3 pb-5">
-        <h3 className="line-clamp-1 text-base font-bold text-[#111]">
+      <div className="relative flex flex-1 flex-col px-4 pt-2.5 pb-3">
+        <h3 className="line-clamp-1 text-base leading-6 font-bold text-[#111]">
           <AppLink
             href={href}
             prefetchPolicy={priority ? "intent" : "auto"}
@@ -105,20 +105,20 @@ export function ProductCard({
           </AppLink>
         </h3>
         {categoryTitle ? (
-          <p className="mt-1 text-base font-semibold text-[rgba(17,17,17,0.54)]">
+          <p className="mt-0.5 line-clamp-1 text-base leading-6 font-semibold text-[rgba(17,17,17,0.54)]">
             {categoryTitle}
           </p>
         ) : (
-          <div className="mt-1 h-6" aria-hidden />
+          <div className="mt-0.5 h-6" aria-hidden />
         )}
 
-        <div className="mt-2 flex items-end justify-between gap-2">
-          <div className="flex flex-wrap items-baseline gap-2">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="text-2xl leading-5 font-extrabold text-[#0d0d0d]">
               {priceFormatted}
             </p>
             {onSale ? (
-              <p className="text-sm font-extrabold text-[#bababa] line-through">
+              <p className="text-sm leading-5 font-extrabold text-[#bababa] line-through">
                 {compareAtFormatted}
               </p>
             ) : null}
@@ -130,11 +130,11 @@ export function ProductCard({
               label={addToCartLabel}
               disabled={!inStock}
               size="sm"
-              className="h-[51px] w-[51px] shrink-0 bg-brand-red text-white hover:bg-brand-red-hot [&>svg]:text-white [&>svg]:fill-none"
+              className="h-[51px] w-[51px] shrink-0 rounded-[45px] bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 [&>svg]:h-[29px] [&>svg]:w-[29px] [&>svg]:text-white"
             />
           ) : null}
         </div>
       </div>
-    </div>
+    </article>
   );
 }
