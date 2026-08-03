@@ -14,8 +14,94 @@ type HomeHeroProps = {
   fallbackCtaHref: string;
 };
 
-function isInternalHref(href: string): boolean {
-  return href.startsWith("/");
+const HERO_CHICKEN = "/assets/home/hero-chicken.webp";
+
+/**
+ * Figma `165:1671` — white pill with dual-label slide hover.
+ */
+function HeroMenuButton({
+  href,
+  label,
+}: {
+  href: string;
+  label: string;
+}) {
+  const className =
+    "group relative inline-flex h-14 w-[193px] shrink-0 items-center overflow-hidden rounded-[28px] bg-white px-6 text-[#db0b20] transition hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+
+  const labelStack = (
+    <span className="relative block h-14 w-full">
+      <span className="absolute top-4 left-[21px] text-base leading-[22.5px] font-extrabold tracking-wide whitespace-nowrap uppercase transition-transform duration-300 ease-out group-hover:-translate-y-9 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
+        {label}
+      </span>
+      <span
+        className="absolute top-[52px] left-[21px] text-base leading-[22.5px] font-extrabold tracking-wide whitespace-nowrap uppercase transition-transform duration-300 ease-out group-hover:-translate-y-9 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+        aria-hidden
+      >
+        {label}
+      </span>
+    </span>
+  );
+
+  if (href.startsWith("/")) {
+    return (
+      <AppLink href={href} prefetchPolicy="intent" className={className}>
+        {labelStack}
+      </AppLink>
+    );
+  }
+
+  return (
+    <a href={href} className={className}>
+      {labelStack}
+    </a>
+  );
+}
+
+/**
+ * Figma `165:1670` / Component 4 — layout from Dev Mode CSS.
+ */
+function HeroChickenCollage() {
+  return (
+    <div
+      className="pointer-events-none absolute top-[29.47%] left-1/2 z-[2] h-[88.88%] w-[96.18%] max-w-[1385px] -translate-x-1/2"
+      aria-hidden
+    >
+      {/* Center — left 20.05% / right 26% / height 731.6 */}
+      <div className="absolute top-0 right-[26%] left-[20.05%] h-[78.25%] overflow-hidden">
+        <Image
+          src={HERO_CHICKEN}
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 1024px) 70vw, 747px"
+          className="object-contain"
+        />
+      </div>
+
+      {/* Left — width 36.65% / top 391 / height 526.1 */}
+      <div className="absolute top-[41.82%] right-[63.35%] left-0 hidden h-[56.27%] overflow-hidden lg:block">
+        <Image
+          src={HERO_CHICKEN}
+          alt=""
+          fill
+          sizes="37vw"
+          className="object-cover"
+        />
+      </div>
+
+      {/* Right — width 47.95% / top 299 / height 664.7 */}
+      <div className="absolute top-[31.98%] right-0 left-[52.05%] hidden h-[71.09%] overflow-hidden lg:block">
+        <Image
+          src={HERO_CHICKEN}
+          alt=""
+          fill
+          sizes="48vw"
+          className="object-cover"
+        />
+      </div>
+    </div>
+  );
 }
 
 export function HomeHero({
@@ -43,117 +129,85 @@ export function HomeHero({
   }, [slides.length]);
 
   return (
-    <section className="relative w-full overflow-hidden bg-brand-red">
-      <div className="relative mx-auto h-[min(92vw,640px)] w-full sm:h-[680px] lg:h-[888px]">
-        <Image
-          src="/assets/home/hero-flame.webp"
-          alt=""
-          width={2474}
-          height={888}
-          priority
-          className="pointer-events-none absolute inset-x-[-20%] top-[10%] h-[90%] w-[140%] max-w-none object-contain opacity-90"
-        />
+    <section className="relative w-full overflow-hidden bg-[#db0b20]">
+      {/* Crop empty red from Figma top; inner stage keeps 1440×1052 layout. */}
+      <div className="relative mx-auto h-[clamp(400px,60vw,860px)] w-full max-w-[1440px] overflow-hidden">
+        <div className="absolute inset-x-0 top-[-20%] h-[125%]">
+          {/* Flame background */}
+          <div className="pointer-events-none absolute inset-[13.4%_-34.36%_2.18%_-37.43%] z-0">
+            <Image
+              src="/assets/home/hero-flame.webp"
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-contain"
+            />
+          </div>
 
-        <Image
-          src="/assets/home/hero-logo.webp"
-          alt="Grill.am"
-          width={906}
-          height={239}
-          priority
-          className="pointer-events-none absolute top-[22%] left-1/2 w-[min(78%,906px)] -translate-x-1/2 object-contain"
-        />
+          {/* Grill.am wordmark */}
+          <div className="pointer-events-none absolute inset-[26.53%_18.58%_50.76%_18.54%] z-[1]">
+            <Image
+              src="/assets/home/hero-logo.webp"
+              alt="Grill.am"
+              fill
+              priority
+              sizes="(max-width: 1440px) 63vw, 906px"
+              className="object-contain"
+            />
+          </div>
 
-        <Image
-          src="/assets/home/hero-accent.webp"
-          alt=""
-          width={187}
-          height={192}
-          className="pointer-events-none absolute top-[18%] right-[12%] hidden w-[7%] max-w-[110px] xl:block"
-        />
+          {/* Flame icon above “a” */}
+          <div className="pointer-events-none absolute inset-[19.68%_21.46%_62.07%_65.56%] z-[1]">
+            <Image
+              src="/assets/home/hero-accent.webp"
+              alt=""
+              fill
+              priority
+              sizes="13vw"
+              className="object-contain"
+            />
+          </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[26%] mx-auto flex items-end justify-center">
           {slideImage ? (
-            <div className="relative h-[72%] w-[min(90%,640px)]">
+            <div className="pointer-events-none absolute inset-x-[15%] top-[29.47%] bottom-0 z-[2]">
               <Image
                 src={slideImage}
                 alt=""
                 fill
                 priority
-                sizes="(max-width: 1024px) 90vw, 640px"
-                className="object-contain object-bottom drop-shadow-2xl"
+                sizes="(max-width: 1024px) 90vw, 747px"
+                className="object-contain object-bottom"
               />
             </div>
           ) : (
-            <>
-              <div className="absolute bottom-[-6%] left-[4%] hidden h-[52%] w-[28%] lg:block">
-                <Image
-                  src="/assets/home/hero-chicken.webp"
-                  alt=""
-                  fill
-                  sizes="28vw"
-                  className="object-contain object-bottom opacity-95"
-                />
-              </div>
-              <div className="relative h-[74%] w-[min(92%,680px)]">
-                <Image
-                  src="/assets/home/hero-chicken.webp"
-                  alt=""
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 90vw, 680px"
-                  className="object-contain object-bottom drop-shadow-2xl"
-                />
-              </div>
-              <div className="absolute right-[2%] bottom-[-4%] hidden h-[58%] w-[30%] lg:block">
-                <Image
-                  src="/assets/home/hero-chicken.webp"
-                  alt=""
-                  fill
-                  sizes="30vw"
-                  className="object-contain object-bottom opacity-95"
-                />
-              </div>
-            </>
+            <HeroChickenCollage />
           )}
-        </div>
 
-        <div className="absolute bottom-[12%] left-1/2 z-10 -translate-x-1/2 sm:bottom-[14%]">
-          {isInternalHref(ctaHref) ? (
-            <AppLink
-              href={ctaHref}
-              prefetchPolicy="intent"
-              className="inline-flex h-14 min-w-[193px] items-center justify-center rounded-[28px] bg-white px-6 text-base font-extrabold tracking-wide text-brand-red uppercase transition hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              {ctaLabel}
-            </AppLink>
-          ) : (
-            <a
-              href={ctaHref}
-              className="inline-flex h-14 min-w-[193px] items-center justify-center rounded-[28px] bg-white px-6 text-base font-extrabold tracking-wide text-brand-red uppercase transition hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              {ctaLabel}
-            </a>
-          )}
-        </div>
-
-        {slides.length > 1 ? (
-          <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-            {slides.map((slide, slideIndex) => (
-              <button
-                key={slide.id}
-                type="button"
-                aria-label={`Go to slide ${slideIndex + 1}`}
-                aria-current={slideIndex === index}
-                className={
-                  slideIndex === index
-                    ? "h-2.5 w-7 rounded-full bg-white"
-                    : "h-2.5 w-2.5 rounded-full bg-white/50"
-                }
-                onClick={() => setIndex(slideIndex)}
-              />
-            ))}
+          {/* CTA — top 644 / 1052 */}
+          <div className="absolute top-[61.22%] left-1/2 z-10 -translate-x-1/2">
+            <HeroMenuButton href={ctaHref} label={ctaLabel} />
           </div>
-        ) : null}
+
+          {slides.length > 1 ? (
+            <div className="absolute bottom-[3%] left-1/2 z-10 flex -translate-x-1/2 gap-2">
+              {slides.map((slide, slideIndex) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  aria-label={`Go to slide ${slideIndex + 1}`}
+                  aria-current={slideIndex === index}
+                  className={
+                    slideIndex === index
+                      ? "h-2.5 w-7 rounded-full bg-white"
+                      : "h-2.5 w-2.5 rounded-full bg-white/50"
+                  }
+                  onClick={() => setIndex(slideIndex)}
+                />
+              ))}
+            </div>
+          ) : null}
+        </div>
       </div>
     </section>
   );
