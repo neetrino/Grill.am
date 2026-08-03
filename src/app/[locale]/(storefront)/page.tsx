@@ -185,6 +185,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomeFeatures
         titleLead={dictionary.home.whyChooseTitleLead}
         titleAccent={dictionary.home.whyChooseTitleAccent}
+        compactTitle={locale === "ru"}
         items={[
           {
             title: dictionary.home.features.deliveryTitle,

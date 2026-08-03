@@ -16,6 +16,8 @@ type HomeFeaturesProps = {
   titleLead: string;
   titleAccent: string;
   items: readonly FeatureItem[];
+  /** Smaller section title (e.g. longer Russian copy). */
+  compactTitle?: boolean;
 };
 
 /** Figma card shells — nodes 187:254 / 258 / 263 / 267 (322×257, r24). */
@@ -31,6 +33,12 @@ const CARD_TITLE: Record<FeatureTone, string> = {
   white: "left-[161px] top-[43px] w-[136px] text-[25px] leading-[30px] text-brand-red",
   cream: "left-[140px] top-[46px] w-[159px] text-[25px] leading-[30px] text-brand-ink",
   yellow: "left-[161px] top-[39px] text-[24px] leading-[30px] text-brand-ink",
+};
+
+/** Russian white-card title stacks taller — sit it higher. */
+const CARD_TITLE_RU: Partial<Record<FeatureTone, string>> = {
+  white:
+    "left-[161px] top-[28px] w-[136px] text-[20px] leading-[29px] text-brand-red",
 };
 
 const CARD_DESCRIPTION: Record<FeatureTone, string> = {
@@ -61,16 +69,22 @@ function FeatureCard({
   item,
   index,
   revealed,
+  compactTitle = false,
 }: {
   item: FeatureItem;
   index: number;
   revealed: boolean;
+  compactTitle?: boolean;
 }) {
   const titleLines = item.title.trim().split(/\s+/);
   const stackedTitle =
     titleLines.length === 2 ? `${titleLines[0]}\n${titleLines[1]}` : item.title;
   const offsetY = CARD_OFFSET_Y[item.tone];
   const offsetX = revealed ? 0 : 64;
+  const titleClass =
+    compactTitle && CARD_TITLE_RU[item.tone]
+      ? CARD_TITLE_RU[item.tone]
+      : CARD_TITLE[item.tone];
 
   return (
     <article
@@ -92,7 +106,7 @@ function FeatureCard({
         />
       </div>
       <h3
-        className={`absolute z-10 font-black break-words whitespace-pre-line [text-shadow:0.3px_0_0_currentColor,-0.3px_0_0_currentColor,0_0.3px_0_currentColor,0_-0.3px_0_currentColor] ${CARD_TITLE[item.tone]}`}
+        className={`absolute z-10 font-black break-words whitespace-pre-line [text-shadow:0.3px_0_0_currentColor,-0.3px_0_0_currentColor,0_0.3px_0_currentColor,0_-0.3px_0_currentColor] ${titleClass}`}
       >
         {stackedTitle}
       </h3>
@@ -112,6 +126,7 @@ export function HomeFeatures({
   titleLead,
   titleAccent,
   items,
+  compactTitle = false,
 }: HomeFeaturesProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -225,6 +240,7 @@ export function HomeFeatures({
                 item={item}
                 index={index}
                 revealed={revealed}
+                compactTitle={compactTitle}
               />
             ))}
           </div>
@@ -244,7 +260,13 @@ export function HomeFeatures({
               />
             </div>
 
-            <h2 className="shrink-0 text-left text-[42px] leading-[0.9] font-black tracking-tight text-[#222] uppercase sm:text-[72px] lg:text-[120px] xl:text-[160px] xl:leading-[0.88]">
+            <h2
+              className={`shrink-0 text-left font-black tracking-tight text-[#222] uppercase ${
+                compactTitle
+                  ? "text-[32px] leading-[0.9] sm:text-[52px] lg:text-[84px] xl:text-[110px] xl:leading-[0.88]"
+                  : "text-[42px] leading-[0.9] sm:text-[72px] lg:text-[120px] xl:text-[160px] xl:leading-[0.88]"
+              }`}
+            >
               <span className="block whitespace-nowrap">{titleLead}</span>
               <span className="block whitespace-nowrap text-brand-red-hot">
                 {titleAccent}
