@@ -160,13 +160,13 @@ export function CheckoutForm({
         id: "idram" as const,
         name: labels.idram,
         description: labels.idramDescription,
-        logoSrc: "/assets/payments/idram.svg",
+        logoSrc: "/assets/payments/idram.webp",
       },
       {
         id: "arca" as const,
         name: labels.arca,
         description: labels.arcaDescription,
-        logoSrc: "/assets/payments/arca.svg",
+        logoSrc: "/assets/payments/arca.webp",
       },
     ],
     [

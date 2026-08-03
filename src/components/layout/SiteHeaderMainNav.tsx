@@ -62,7 +62,7 @@ export function SiteHeaderMainNav({
               className="relative block h-9 w-[92px] shrink-0"
             >
               <Image
-                src="/assets/brand/logo.png"
+                src="/assets/brand/logo.webp"
                 alt={dictionary.brand}
                 fill
                 sizes="92px"

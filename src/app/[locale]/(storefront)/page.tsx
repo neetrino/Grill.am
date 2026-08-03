@@ -187,25 +187,25 @@ export default async function HomePage({ params }: HomePageProps) {
           {
             title: dictionary.home.features.deliveryTitle,
             description: dictionary.home.features.deliveryDescription,
-            imageSrc: "/assets/home/feature-delivery.png",
+            imageSrc: "/assets/home/feature-delivery.webp",
             tone: "red",
           },
           {
             title: dictionary.home.features.qualityTitle,
             description: dictionary.home.features.qualityDescription,
-            imageSrc: "/assets/home/feature-fresh.png",
+            imageSrc: "/assets/home/feature-fresh.webp",
             tone: "white",
           },
           {
             title: dictionary.home.features.paymentTitle,
             description: dictionary.home.features.paymentDescription,
-            imageSrc: "/assets/home/feature-payment.png",
+            imageSrc: "/assets/home/feature-payment.webp",
             tone: "cream",
           },
           {
             title: dictionary.home.features.shippingTitle,
             description: dictionary.home.features.shippingDescription,
-            imageSrc: "/assets/home/feature-shipping.png",
+            imageSrc: "/assets/home/feature-shipping.webp",
             tone: "yellow",
           },
         ]}

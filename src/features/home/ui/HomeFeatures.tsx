@@ -37,7 +37,7 @@ export function HomeFeatures({
       <div className="relative mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10">
         <div className="pointer-events-none absolute top-4 -left-8 hidden w-[220px] opacity-90 xl:block xl:w-[300px]">
           <Image
-            src="/assets/home/feature-scooter.png"
+            src="/assets/home/feature-scooter.webp"
             alt=""
             width={382}
             height={421}

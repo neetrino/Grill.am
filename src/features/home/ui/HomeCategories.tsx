@@ -24,10 +24,10 @@ type HomeCategoriesProps = {
 };
 
 const FALLBACK_IMAGES = [
-  "/assets/home/category-1.png",
-  "/assets/home/category-2.png",
-  "/assets/home/category-3.png",
-  "/assets/home/category-4.png",
+  "/assets/home/category-1.webp",
+  "/assets/home/category-2.webp",
+  "/assets/home/category-3.webp",
+  "/assets/home/category-4.webp",
 ] as const;
 
 export function HomeCategories({

@@ -49,7 +49,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           <div className="col-span-2 lg:col-span-1">
             <div className="relative mb-4 h-9 w-[92px]">
               <Image
-                src="/assets/brand/logo.png"
+                src="/assets/brand/logo.webp"
                 alt={dictionary.brand}
                 fill
                 sizes="92px"

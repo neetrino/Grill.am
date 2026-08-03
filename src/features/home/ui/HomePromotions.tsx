@@ -37,7 +37,7 @@ const FALLBACK_PRODUCT: SpecialProduct = {
   href: "#",
   priceFormatted: "8,300 ֏",
   compareAtFormatted: "4 200 ֏",
-  imageUrl: "/assets/home/promo-chicken.png",
+  imageUrl: "/assets/home/promo-chicken.webp",
   saveFormatted: "700 ֏",
 };
 
@@ -72,7 +72,7 @@ export function HomePromotions({
 
   const compareAtFormatted = product.compareAtFormatted ?? "4 200 ֏";
   const saveFormatted = product.saveFormatted ?? "700 ֏";
-  const imageSrc = product.imageUrl ?? "/assets/home/promo-chicken.png";
+  const imageSrc = product.imageUrl ?? "/assets/home/promo-chicken.webp";
   const linkHref = product.href.startsWith("/") ? product.href : ctaHref;
 
   return (
@@ -86,7 +86,7 @@ export function HomePromotions({
             className="absolute top-1/2 left-0 z-20 size-14 -translate-x-1/2 -translate-y-1/2 transition hover:scale-105"
           >
             <Image
-              src="/assets/home/promo-arrow-left.svg"
+              src="/assets/home/promo-arrow-left.webp"
               alt=""
               width={56}
               height={56}
@@ -101,7 +101,7 @@ export function HomePromotions({
             className="absolute top-1/2 right-0 z-20 size-14 translate-x-1/2 -translate-y-1/2 transition hover:scale-105"
           >
             <Image
-              src="/assets/home/promo-arrow-left.svg"
+              src="/assets/home/promo-arrow-left.webp"
               alt=""
               width={56}
               height={56}

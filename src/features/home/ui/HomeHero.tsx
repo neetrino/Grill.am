@@ -46,7 +46,7 @@ export function HomeHero({
     <section className="relative w-full overflow-hidden bg-brand-red">
       <div className="relative mx-auto h-[min(92vw,640px)] w-full sm:h-[680px] lg:h-[888px]">
         <Image
-          src="/assets/home/hero-flame.svg"
+          src="/assets/home/hero-flame.webp"
           alt=""
           width={2474}
           height={888}
@@ -55,7 +55,7 @@ export function HomeHero({
         />
 
         <Image
-          src="/assets/home/hero-logo.svg"
+          src="/assets/home/hero-logo.webp"
           alt="Grill.am"
           width={906}
           height={239}
@@ -64,7 +64,7 @@ export function HomeHero({
         />
 
         <Image
-          src="/assets/home/hero-accent.svg"
+          src="/assets/home/hero-accent.webp"
           alt=""
           width={187}
           height={192}
@@ -87,7 +87,7 @@ export function HomeHero({
             <>
               <div className="absolute bottom-[-6%] left-[4%] hidden h-[52%] w-[28%] lg:block">
                 <Image
-                  src="/assets/home/hero-chicken.png"
+                  src="/assets/home/hero-chicken.webp"
                   alt=""
                   fill
                   sizes="28vw"
@@ -96,7 +96,7 @@ export function HomeHero({
               </div>
               <div className="relative h-[74%] w-[min(92%,680px)]">
                 <Image
-                  src="/assets/home/hero-chicken.png"
+                  src="/assets/home/hero-chicken.webp"
                   alt=""
                   fill
                   priority
@@ -106,7 +106,7 @@ export function HomeHero({
               </div>
               <div className="absolute right-[2%] bottom-[-4%] hidden h-[58%] w-[30%] lg:block">
                 <Image
-                  src="/assets/home/hero-chicken.png"
+                  src="/assets/home/hero-chicken.webp"
                   alt=""
                   fill
                   sizes="30vw"
