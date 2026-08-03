@@ -45,8 +45,8 @@
     "cashChangeNoEligible": "Order total exceeds available banknotes — pay the exact amount",
     "idram": "Idram",
     "idramDescription": "Pay with Idram wallet or card",
-    "arca": "ArCa",
-    "arcaDescription": "Pay with ArCa card"
+    "arca": "By card",
+    "arcaDescription": ""
   },
   "coupon": {
     "title": "Have a coupon?",

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Mail, Phone } from "lucide-react";
 
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
+import { FOOTER_PAYMENT_ASSETS } from "@/lib/payment-assets";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -20,11 +21,11 @@ type SiteFooterProps = {
 const CONTACT_ICON_CLASS = "h-[15px] w-[15px] shrink-0 text-[#FF4A12]";
 
 const FOOTER_PAYMENT_METHODS = [
-  { src: "/assets/payments/footer-idram.webp", alt: "Idram" },
-  { src: "/assets/payments/footer-mastercard.webp", alt: "Mastercard" },
-  { src: "/assets/payments/footer-arca.webp", alt: "ArCa" },
-  { src: "/assets/payments/footer-visa.webp", alt: "Visa" },
-  { src: "/assets/payments/footer-telcell.webp", alt: "Telcell" },
+  { src: FOOTER_PAYMENT_ASSETS.idram, alt: "Idram" },
+  { src: FOOTER_PAYMENT_ASSETS.mastercard, alt: "Mastercard" },
+  { src: FOOTER_PAYMENT_ASSETS.arca, alt: "ArCa" },
+  { src: FOOTER_PAYMENT_ASSETS.visa, alt: "Visa" },
+  { src: FOOTER_PAYMENT_ASSETS.telcell, alt: "Telcell" },
 ] as const;
 
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {

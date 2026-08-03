@@ -40,7 +40,6 @@ type PaymentOption = {
   id: CheckoutPaymentMethod;
   name: string;
   description: string;
-  logoSrc: string | null;
 };
 
 type CheckoutDetailsSectionsProps = {

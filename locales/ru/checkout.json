@@ -45,8 +45,8 @@
     "cashChangeNoEligible": "Сумма заказа больше доступных купюр — оплатите без сдачи",
     "idram": "Idram",
     "idramDescription": "Оплата через Idram или картой",
-    "arca": "ArCa",
-    "arcaDescription": "Оплата картой ArCa"
+    "arca": "Картой",
+    "arcaDescription": ""
   },
   "coupon": {
     "title": "Есть промокод?",

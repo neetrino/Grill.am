@@ -45,8 +45,8 @@
     "cashChangeNoEligible": "Պատվերի գումարը գերազանցում է հասանելի թղթադրամները՝ վճարեք առանց մանրի",
     "idram": "Idram",
     "idramDescription": "Վճարեք Idram դրամապանակով կամ քարտով",
-    "arca": "ArCa",
-    "arcaDescription": "Վճարեք ArCa քարտով"
+    "arca": "Քարտով",
+    "arcaDescription": ""
   },
   "coupon": {
     "title": "Ունե՞ք պրոմոկոդ",

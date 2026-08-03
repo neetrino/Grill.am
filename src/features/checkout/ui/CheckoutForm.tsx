@@ -159,19 +159,16 @@ export function CheckoutForm({
         id: "cash_on_delivery" as const,
         name: labels.cashOnDelivery,
         description: labels.cashOnDeliveryDescription,
-        logoSrc: null,
       },
       {
         id: "idram" as const,
         name: labels.idram,
         description: labels.idramDescription,
-        logoSrc: "/assets/payments/idram.webp",
       },
       {
         id: "arca" as const,
         name: labels.arca,
         description: labels.arcaDescription,
-        logoSrc: "/assets/payments/arca.webp",
       },
     ],
     [
