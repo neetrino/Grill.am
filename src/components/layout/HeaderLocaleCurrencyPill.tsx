@@ -1,16 +1,16 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useTransition } from "react";
-import { Banknote, ChevronDown, Globe } from "lucide-react";
+import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { ChevronDown, Globe } from "lucide-react";
 
+import { HeaderCurrencyIcon } from "@/components/layout/HeaderIcons";
 import { AppLink } from "@/components/ui/AppLink";
-import { IconDropdown } from "@/components/ui/IconDropdown";
 import { setCurrencyAction } from "@/features/preferences/set-currency-action";
 import type { Locale } from "@/lib/i18n/config";
 import { localeLabels, locales } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { currencies, currencyLabels } from "@/lib/money/currency";
+import { currencies } from "@/lib/money/currency";
 
 type HeaderLocaleCurrencyPillProps = {
   locale: Locale;
@@ -24,6 +24,9 @@ const localeShortLabels: Record<Locale, string> = {
   en: "ENG",
   ru: "RU",
 };
+
+const DROPDOWN_ANIMATION_MS = 300;
+const DROPDOWN_GAP_PX = 8;
 
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
   const segments = pathname.split("/");
@@ -44,80 +47,201 @@ export function HeaderLocaleCurrencyPill({
   const pathname = usePathname();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const menuId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  function clearCloseTimer(): void {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }
+
+  function openMenu(): void {
+    clearCloseTimer();
+    setOpen(true);
+    setMounted(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setVisible(true));
+    });
+  }
+
+  function closeMenu(): void {
+    clearCloseTimer();
+    setOpen(false);
+    setVisible(false);
+    closeTimerRef.current = setTimeout(() => {
+      setMounted(false);
+      closeTimerRef.current = null;
+    }, DROPDOWN_ANIMATION_MS);
+  }
+
+  function toggleMenu(): void {
+    if (open) {
+      closeMenu();
+      return;
+    }
+    openMenu();
+  }
+
+  useEffect(() => {
+    return () => clearCloseTimer();
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    function handlePointerDown(event: MouseEvent): void {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        closeMenu();
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  const selectedItemClassName =
+    "flex w-full justify-center whitespace-nowrap rounded-lg bg-brand-red/15 px-2.5 py-1.5 text-center text-sm font-semibold text-brand-red transition-colors";
+  const idleItemClassName =
+    "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm text-gray-500 transition-colors hover:bg-gray-50";
 
   return (
-    <IconDropdown
-      label={`${languageLabel} / ${currencyLabel}`}
-      triggerClassName="inline-flex h-[49px] min-w-[212px] items-center justify-center gap-2 rounded-full bg-brand-surface px-6 text-base font-bold text-[#333] capitalize transition hover:bg-[#ececec]"
-      trigger={
-        <>
-          <Globe className="h-[18px] w-[18px] shrink-0" aria-hidden />
-          <span>{localeShortLabels[locale]}</span>
-          <span aria-hidden>/</span>
-          <Banknote className="h-3.5 w-5 shrink-0" strokeWidth={2} aria-hidden />
-          <span>{currency}</span>
-          <ChevronDown className="ml-1 h-3.5 w-3.5 shrink-0" aria-hidden />
-        </>
-      }
+    <div
+      ref={rootRef}
+      className="relative inline-flex w-[212px] shrink-0 items-center"
     >
-      <div className="border-b border-gray-100 px-4 py-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-        {languageLabel}
-      </div>
-      {locales.map((item) => {
-        const href = replaceLocaleInPath(pathname, item);
-        const selected = item === locale;
+      <button
+        type="button"
+        className="inline-flex h-[49px] w-full items-center justify-center gap-2 rounded-full bg-brand-surface px-6 text-base font-bold text-[#333] capitalize transition hover:bg-[#ececec]"
+        aria-label={`${languageLabel} / ${currencyLabel}`}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls={menuId}
+        onClick={toggleMenu}
+      >
+        <Globe className="h-[18px] w-[18px] shrink-0" aria-hidden />
+        <span>{localeShortLabels[locale]}</span>
+        <span aria-hidden>/</span>
+        <HeaderCurrencyIcon className="h-[12px] w-[20px] shrink-0" />
+        <span>{currency}</span>
+        <ChevronDown
+          className={`ml-1 h-3.5 w-3.5 shrink-0 transition-transform duration-300 ease-out ${
+            open ? "rotate-180" : "rotate-0"
+          }`}
+          aria-hidden
+        />
+      </button>
 
-        return (
-          <AppLink
-            key={item}
-            href={href}
-            hrefLang={item}
-            prefetchPolicy="intent"
-            role="menuitem"
-            aria-current={selected ? "page" : undefined}
-            className={
-              selected
-                ? "block px-4 py-2.5 text-sm font-semibold text-gray-900"
-                : "block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-            }
-          >
-            {localeShortLabels[item]}{" "}
-            <span className="text-gray-400">· {localeLabels[item]}</span>
-          </AppLink>
-        );
-      })}
-      <div className="border-t border-b border-gray-100 px-4 py-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-        {currencyLabel}
-      </div>
-      {currencies.map((item) => {
-        const selected = item === currency;
+      {mounted ? (
+        <div
+          id={menuId}
+          role="dialog"
+          aria-label={`${currencyLabel} / ${languageLabel}`}
+          className={`absolute inset-x-0 z-[100] w-full origin-top overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-lg transition-all ease-out motion-reduce:transition-none ${
+            visible
+              ? "pointer-events-auto translate-y-0 opacity-100"
+              : "pointer-events-none -translate-y-2 opacity-0"
+          }`}
+          style={{
+            top: `calc(100% + ${DROPDOWN_GAP_PX}px)`,
+            transitionDuration: `${DROPDOWN_ANIMATION_MS}ms`,
+          }}
+        >
+          <div className="flex w-full">
+            <div className="min-w-0 flex-1 border-r border-gray-100">
+              <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+                {currencyLabel}
+              </p>
+              <ul
+                role="listbox"
+                aria-label={currencyLabel}
+                className="px-1.5"
+              >
+                {currencies.map((item) => {
+                  const selected = item === currency;
 
-        return (
-          <button
-            key={item}
-            type="button"
-            role="menuitem"
-            disabled={pending}
-            aria-current={selected ? "true" : undefined}
-            className={
-              selected
-                ? "flex w-full items-center justify-between gap-2 px-4 py-2.5 text-left text-sm font-semibold text-gray-900"
-                : "flex w-full items-center justify-between gap-2 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-            }
-            onClick={() => {
-              startTransition(async () => {
-                await setCurrencyAction(item);
-                router.refresh();
-              });
-            }}
-          >
-            <span>{item}</span>
-            <span className="truncate text-xs text-gray-500">
-              {currencyLabels[item]}
-            </span>
-          </button>
-        );
-      })}
-    </IconDropdown>
+                  return (
+                    <li key={item} role="option" aria-selected={selected}>
+                      <button
+                        type="button"
+                        disabled={pending}
+                        className={
+                          selected ? selectedItemClassName : idleItemClassName
+                        }
+                        onClick={() => {
+                          if (item === currency) {
+                            closeMenu();
+                            return;
+                          }
+                          startTransition(async () => {
+                            await setCurrencyAction(item);
+                            router.refresh();
+                            closeMenu();
+                          });
+                        }}
+                      >
+                        {item}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+                {languageLabel}
+              </p>
+              <ul
+                role="listbox"
+                aria-label={languageLabel}
+                className="px-1.5"
+              >
+                {locales.map((item) => {
+                  const href = replaceLocaleInPath(pathname, item);
+                  const selected = item === locale;
+
+                  return (
+                    <li key={item} role="option" aria-selected={selected}>
+                      <AppLink
+                        href={href}
+                        hrefLang={item}
+                        prefetchPolicy="intent"
+                        aria-label={`${localeShortLabels[item]}: ${localeLabels[item]}`}
+                        className={
+                          selected ? selectedItemClassName : idleItemClassName
+                        }
+                        onClick={closeMenu}
+                      >
+                        {localeLabels[item]}
+                      </AppLink>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }
