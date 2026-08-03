@@ -30,6 +30,10 @@ type CheckoutSelectProps = {
   required?: boolean;
   name?: string;
   className?: string;
+  /** Hide the visible label (keeps it available to assistive tech). */
+  hideLabel?: boolean;
+  /** Shrink trigger to content width (filter bars). */
+  fitContent?: boolean;
 };
 
 function SelectChevron({ isOpen }: { isOpen: boolean }) {
@@ -66,6 +70,8 @@ export function CheckoutSelect({
   required = false,
   name,
   className = "",
+  hideLabel = false,
+  fitContent = false,
 }: CheckoutSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -166,11 +172,15 @@ export function CheckoutSelect({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full ${className}`.trim()}
+      className={`relative ${fitContent ? "w-fit max-w-full" : "w-full"} ${className}`.trim()}
     >
       <label
         htmlFor={triggerId}
-        className="mb-1.5 block text-sm font-medium text-gray-700"
+        className={
+          hideLabel
+            ? "sr-only"
+            : "mb-1.5 block text-sm font-medium text-gray-700"
+        }
       >
         {label}
       </label>
@@ -194,7 +204,9 @@ export function CheckoutSelect({
         aria-required={required || undefined}
         disabled={disabled}
         onClick={toggleDropdown}
-        className={`flex h-11 w-full min-w-0 items-center justify-between gap-3 rounded-[15px] border bg-white px-3 text-left transition-colors outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:cursor-not-allowed disabled:bg-gray-50 ${triggerBorderClass}`}
+        className={`flex h-11 min-w-0 items-center justify-between gap-3 rounded-[15px] border bg-white px-3 text-left transition-colors outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:cursor-not-allowed disabled:bg-gray-50 ${
+          fitContent ? "w-fit" : "w-full"
+        } ${triggerBorderClass}`}
       >
         <span
           className={`truncate text-sm ${

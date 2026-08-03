@@ -5,7 +5,7 @@ type ProfileComingSoonProps = {
 
 export function ProfileComingSoon({ title, message }: ProfileComingSoonProps) {
   return (
-    <section className="rounded-2xl border border-gray-200/80 bg-white p-6 sm:p-8">
+    <section className="rounded-[15px] border border-gray-200/80 bg-white p-6 sm:p-8">
       <h1 className="mb-3 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
         {title}
       </h1>

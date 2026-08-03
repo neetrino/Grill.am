@@ -177,7 +177,7 @@ export function ProfileAddressesView({
         {showForm ? (
           <form
             onSubmit={onSave}
-            className="mb-8 space-y-5 rounded-2xl border border-dashed border-gray-300 bg-gray-50/50 p-4 sm:mb-10 sm:p-6"
+            className="mb-8 space-y-5 rounded-[15px] border border-dashed border-gray-300 bg-gray-50/50 p-4 sm:mb-10 sm:p-6"
           >
             <h2 className="text-base font-semibold text-gray-900">
               {editingId ? labels.formEditTitle : labels.formAddTitle}

@@ -53,7 +53,7 @@ const SHEET_CLOSE_MS = 280;
 function MenuIconBox({ children }: { children: ReactNode }) {
   return (
     <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl [&>svg]:h-5 [&>svg]:w-5"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px] [&>svg]:h-5 [&>svg]:w-5"
       style={{
         backgroundColor: PROFILE_ICON_TONE.background,
         color: PROFILE_ICON_TONE.foreground,
@@ -219,7 +219,7 @@ export function ProfileMobileMenu({
           <AppLink
             href={`/${locale}/profile/delete-account`}
             prefetchPolicy="intent"
-            className="flex w-full items-center justify-between rounded-[12px] border border-red-200 bg-white px-3 py-3 text-left transition-colors hover:bg-red-50/60"
+            className="flex w-full items-center justify-between rounded-[15px] border border-red-200 bg-white px-3 py-3 text-left transition-colors hover:bg-red-50/60"
           >
             <span className="flex min-w-0 items-center gap-3">
               <MenuIconBox>

@@ -58,7 +58,7 @@ export function CustomerPromoCodesView({
         </p>
       </header>
 
-      <Card className={ADMIN_TABLE_CARD}>
+      <Card className={`${ADMIN_TABLE_CARD} !rounded-[15px] shadow-none`}>
         <div className={ADMIN_TABLE_OUTER_SCROLL}>
           <table className={ADMIN_TABLE}>
             <thead className={ADMIN_TABLE_THEAD}>

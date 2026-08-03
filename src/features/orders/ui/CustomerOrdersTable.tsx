@@ -16,6 +16,7 @@ import {
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import {
@@ -43,45 +44,52 @@ export function CustomerOrdersTable({
   onOpenOrder,
 }: CustomerOrdersTableProps) {
   return (
-    <Card className={ADMIN_TABLE_CARD}>
-      <div className={ADMIN_TABLE_OUTER_SCROLL}>
+    <Card className={`${ADMIN_TABLE_CARD} !rounded-[15px] shadow-none`}>
+      <div className={`${ADMIN_TABLE_OUTER_SCROLL} !rounded-t-[15px]`}>
         <table className={ADMIN_TABLE}>
-          <thead className={ADMIN_TABLE_THEAD}>
+          <thead className={`${ADMIN_TABLE_THEAD} !rounded-t-[15px]`}>
             <tr>
               <th className={ADMIN_TABLE_TH}>Order</th>
-              <th className={ADMIN_TABLE_TH}>Status</th>
-              <th className={ADMIN_TABLE_TH}>Payment</th>
-              <th className={ADMIN_TABLE_TH}>Total</th>
+              <th className={ADMIN_TABLE_TH_CENTER}>Status</th>
+              <th className={ADMIN_TABLE_TH_CENTER}>Payment</th>
+              <th className={ADMIN_TABLE_TH_CENTER}>Total</th>
               <th className={ADMIN_TABLE_TH}>Placed</th>
             </tr>
           </thead>
           <tbody className={ADMIN_TABLE_TBODY}>
             {orders.map((order) => (
-              <tr key={order.id} className={ADMIN_TABLE_ROW}>
-                <td className={ADMIN_TABLE_TD}>
-                  <button
-                    type="button"
-                    onClick={() => onOpenOrder(order.orderNumber)}
-                    className="font-medium text-gray-900 hover:underline"
-                  >
-                    {order.orderNumber}
-                  </button>
+              <tr
+                key={order.id}
+                className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+                tabIndex={0}
+                role="button"
+                aria-label={`Open order ${order.orderNumber}`}
+                onClick={() => onOpenOrder(order.orderNumber)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onOpenOrder(order.orderNumber);
+                  }
+                }}
+              >
+                <td className={`${ADMIN_TABLE_TD} font-medium text-gray-900`}>
+                  {order.orderNumber}
                 </td>
-                <td className={ADMIN_TABLE_TD}>
+                <td className={`${ADMIN_TABLE_TD} text-center`}>
                   <span
                     className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
                   >
                     {formatOrderStatusLabel(order.status)}
                   </span>
                 </td>
-                <td className={ADMIN_TABLE_TD}>
+                <td className={`${ADMIN_TABLE_TD} text-center`}>
                   <span
                     className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
                   >
                     {formatOrderStatusLabel(order.paymentStatus)}
                   </span>
                 </td>
-                <td className={ADMIN_TABLE_TD}>
+                <td className={`${ADMIN_TABLE_TD} text-center`}>
                   <span className="font-medium text-gray-900">
                     {formatOrderDrawerMoney(
                       order.totalAmount,
@@ -108,7 +116,7 @@ export function CustomerOrdersTable({
           No orders match these filters.
         </p>
       ) : (
-        <div className={ADMIN_TABLE_FOOTER_ROUNDED_B}>
+        <div className={`${ADMIN_TABLE_FOOTER_ROUNDED_B} !rounded-b-[15px]`}>
           <p className="text-sm text-gray-600">
             {orders.length} order{orders.length === 1 ? "" : "s"} on this page
           </p>

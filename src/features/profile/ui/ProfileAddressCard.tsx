@@ -26,7 +26,7 @@ export function ProfileAddressCard({
   onDelete,
 }: ProfileAddressCardProps) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 lg:p-6">
+    <div className="rounded-[15px] border border-gray-200 bg-white p-4 sm:p-5 lg:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">

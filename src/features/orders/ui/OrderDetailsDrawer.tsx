@@ -50,7 +50,7 @@ export function OrderDetailsDrawer({
         size="sm"
         onClick={reorder.onReorder}
         disabled={reorder.isPending}
-        className="w-full shrink-0 rounded-full bg-brand-red text-white hover:bg-brand-red-hot lg:w-auto"
+        className="!rounded-full w-full shrink-0 bg-brand-red px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-red-hot focus:ring-brand-red lg:w-auto"
       >
         {reorder.isPending ? reorder.pendingLabel : reorder.label}
       </Button>
