@@ -8,21 +8,20 @@ import { HeaderLocaleCurrencyPill } from "@/components/layout/HeaderLocaleCurren
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
+import {
+  isStorefrontNavActive,
+  type StorefrontNavItem,
+} from "@/components/layout/storefront-nav";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 
-type NavItem = {
-  href: string;
-  label: string;
-};
-
 type SiteHeaderMainNavProps = {
   locale: Locale;
   currency: Currency;
   dictionary: Dictionary;
-  navItems: readonly NavItem[];
+  navItems: readonly StorefrontNavItem[];
   mobileNav: React.ReactNode;
   desktopActions: React.ReactNode;
 };
@@ -382,20 +381,44 @@ export function SiteHeaderMainNav({
                     aria-label="Primary"
                     className="order-3 hidden w-full items-center justify-center gap-0.5 lg:order-none lg:flex lg:w-auto lg:flex-1"
                   >
-                    {navItems.map((item, index) => (
-                      <AppLink
-                        key={`${item.href}-${item.label}`}
-                        href={item.href}
-                        prefetchPolicy="intent"
-                        className={`rounded-[10px] px-4 py-2 text-base font-semibold whitespace-nowrap transition ${
-                          index === 0
-                            ? "text-brand-red"
-                            : "text-[#101010] hover:text-brand-red"
-                        }`}
-                      >
-                        {item.label}
-                      </AppLink>
-                    ))}
+                    {navItems.map((item) => {
+                      const active = isStorefrontNavActive(
+                        pathname,
+                        item,
+                        locale,
+                      );
+
+                      return (
+                        <AppLink
+                          key={item.id}
+                          href={item.href}
+                          prefetchPolicy="intent"
+                          aria-current={active ? "page" : undefined}
+                          className={`rounded-[10px] px-4 py-2 text-base font-semibold whitespace-nowrap transition ${
+                            active
+                              ? "text-brand-red"
+                              : "text-[#101010] hover:text-brand-red"
+                          }`}
+                          onClick={(event) => {
+                            if (!active) {
+                              return;
+                            }
+                            event.preventDefault();
+                            if (item.id === "home") {
+                              scrollHomeToTop();
+                              return;
+                            }
+                            window.scrollTo({
+                              top: 0,
+                              left: 0,
+                              behavior: "smooth",
+                            });
+                          }}
+                        >
+                          {item.label}
+                        </AppLink>
+                      );
+                    })}
                   </nav>
 
                   <div className="hidden items-center gap-6 text-base font-medium text-[#333] md:flex">

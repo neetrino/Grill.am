@@ -1,27 +1,27 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import {
+  isStorefrontNavActive,
+  type StorefrontNavItem,
+} from "@/components/layout/storefront-nav";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import type { SessionUser } from "@/lib/auth/session";
 
-type NavItem = {
-  href: string;
-  label: string;
-};
-
 type MobileNavDrawerProps = {
   locale: Locale;
   currency: Currency;
   dictionary: Dictionary;
   user: SessionUser | null;
-  navItems: readonly NavItem[];
+  navItems: readonly StorefrontNavItem[];
 };
 
 export function MobileNavDrawer({
@@ -31,6 +31,7 @@ export function MobileNavDrawer({
   user,
   navItems,
 }: MobileNavDrawerProps) {
+  const pathname = usePathname() ?? `/${locale}`;
   const [open, setOpen] = useState(false);
   const year = new Date().getFullYear();
 
@@ -95,17 +96,41 @@ export function MobileNavDrawer({
 
             <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto text-sm font-semibold uppercase tracking-wide text-gray-800">
               <div className="divide-y divide-gray-200">
-                {navItems.map((item) => (
-                  <AppLink
-                    key={item.href}
-                    href={item.href}
-                    prefetchPolicy="intent"
-                    className="flex items-center justify-between px-4 py-3 hover:bg-gray-50"
-                    onClick={() => setOpen(false)}
-                  >
-                    {item.label}
-                  </AppLink>
-                ))}
+                {navItems.map((item) => {
+                  const active = isStorefrontNavActive(
+                    pathname,
+                    item,
+                    locale,
+                  );
+
+                  return (
+                    <AppLink
+                      key={item.id}
+                      href={item.href}
+                      prefetchPolicy="intent"
+                      aria-current={active ? "page" : undefined}
+                      className={
+                        active
+                          ? "flex items-center justify-between px-4 py-3 text-brand-red hover:bg-gray-50"
+                          : "flex items-center justify-between px-4 py-3 hover:bg-gray-50"
+                      }
+                      onClick={(event) => {
+                        setOpen(false);
+                        if (!active) {
+                          return;
+                        }
+                        event.preventDefault();
+                        window.scrollTo({
+                          top: 0,
+                          left: 0,
+                          behavior: "smooth",
+                        });
+                      }}
+                    >
+                      {item.label}
+                    </AppLink>
+                  );
+                })}
 
                 {!user ? (
                   <>

@@ -3,6 +3,7 @@ import {
   HeaderMobileNavIsland,
 } from "@/components/layout/SiteHeaderSessionIslands";
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
+import { getStorefrontNavItems } from "@/components/layout/storefront-nav";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -18,14 +19,7 @@ type SiteHeaderProps = {
  * stream through nested Suspense islands (no full-header remount flicker).
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
-  const navItems = [
-    { href: `/${locale}`, label: dictionary.nav.home },
-    { href: `/${locale}/products`, label: dictionary.nav.products },
-    { href: `/${locale}/products`, label: dictionary.nav.shop },
-    { href: `/${locale}/about`, label: dictionary.nav.about },
-    { href: `/${locale}/careers`, label: dictionary.nav.careers },
-    { href: `/${locale}/contact`, label: dictionary.nav.contact },
-  ] as const;
+  const navItems = getStorefrontNavItems(locale, dictionary);
 
   return (
     <SiteHeaderMainNav

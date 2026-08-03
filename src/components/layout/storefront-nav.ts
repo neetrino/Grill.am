@@ -1,0 +1,62 @@
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { Locale } from "@/lib/i18n/config";
+
+export type StorefrontNavItem = {
+  id: string;
+  href: string;
+  label: string;
+};
+
+/**
+ * Primary storefront links — one destination per item.
+ */
+export function getStorefrontNavItems(
+  locale: Locale,
+  dictionary: Dictionary,
+): readonly StorefrontNavItem[] {
+  return [
+    { id: "home", href: `/${locale}`, label: dictionary.nav.home },
+    {
+      id: "menu",
+      href: `/${locale}/products`,
+      label: dictionary.nav.products,
+    },
+    {
+      id: "shop",
+      href: `/${locale}/products`,
+      label: dictionary.nav.shop,
+    },
+    { id: "about", href: `/${locale}/about`, label: dictionary.nav.about },
+    {
+      id: "careers",
+      href: `/${locale}/careers`,
+      label: dictionary.nav.careers,
+    },
+    {
+      id: "contact",
+      href: `/${locale}/contact`,
+      label: dictionary.nav.contact,
+    },
+  ] as const;
+}
+
+export function isStorefrontNavActive(
+  pathname: string,
+  item: StorefrontNavItem,
+  locale: Locale,
+): boolean {
+  const homeHref = `/${locale}`;
+
+  if (item.id === "home") {
+    return pathname === homeHref || pathname === `${homeHref}/`;
+  }
+
+  if (item.id === "menu" || item.id === "shop") {
+    return (
+      pathname === `/${locale}/products` ||
+      pathname.startsWith(`/${locale}/products/`)
+    );
+  }
+
+  return pathname === item.href || pathname.startsWith(`${item.href}/`);
+}

@@ -3,6 +3,7 @@ import { cache, Suspense } from "react";
 import { AccountControls } from "@/components/layout/AccountControls";
 import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
+import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { getCartItemCount } from "@/features/cart/cart";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import { getWishlistCount } from "@/features/wishlist/queries";
@@ -11,11 +12,6 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import type { SessionUser } from "@/lib/auth/session";
-
-type NavItem = {
-  href: string;
-  label: string;
-};
 
 type HeaderSessionData = {
   user: SessionUser | null;
@@ -89,7 +85,7 @@ type HeaderMobileNavProps = {
   locale: Locale;
   currency: Currency;
   dictionary: Dictionary;
-  navItems: readonly NavItem[];
+  navItems: readonly StorefrontNavItem[];
 };
 
 async function HeaderMobileNavAsync({
