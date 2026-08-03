@@ -57,9 +57,8 @@ function escapeHtml(value: string): string {
 }
 
 function buildRouteUrl(pin: ContactMapPin): string {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    `${pin.lat},${pin.lng}`,
-  )}`;
+  // Opens Yandex Maps with a route to the pin (mobile often hands off to Navigator).
+  return `https://yandex.ru/maps/?rtext=~${pin.lat},${pin.lng}&rtt=auto`;
 }
 
 const MARKER_HTML = `
