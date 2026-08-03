@@ -39,7 +39,7 @@ const CARD_DESCRIPTION: Record<FeatureTone, string> = {
     "left-[161px] top-[115px] w-[139px] text-[14px] leading-[22.75px] text-[rgba(245,37,22,0.78)]",
   cream: "left-[142px] top-[113px] w-[168px] text-[14px] leading-[22.75px] text-[#7a5a2a]",
   yellow:
-    "left-[150px] top-[103px] w-[160px] whitespace-pre-line text-[14px] leading-[22.75px] text-[#7a5a2a]",
+    "left-[161px] top-[103px] w-[149px] whitespace-pre-line text-[14px] leading-[22.75px] text-[#7a5a2a]",
 };
 
 const CARD_IMAGE: Record<FeatureTone, string> = {
