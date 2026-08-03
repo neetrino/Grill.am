@@ -38,7 +38,7 @@ export function CheckoutSuccessView({
   const body = copy.body.replace("{orderNumber}", orderNumber);
 
   return (
-    <section className="relative left-1/2 flex w-screen max-w-[100vw] -translate-x-1/2 -my-10 min-h-[calc(100dvh-8rem)] items-center justify-center bg-[#faf6ee] px-4 py-12 sm:px-6 lg:px-8">
+    <section className="relative left-1/2 flex w-screen max-w-[100vw] -translate-x-1/2 -my-10 min-h-[calc(100dvh-8rem)] items-center justify-center bg-white px-4 py-12 sm:px-6 lg:px-8">
       <div className="relative w-full max-w-[560px]">
         <div className="relative w-full rounded-[28px] border border-gray-100 bg-white px-5 pb-7 pt-12 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:px-8 sm:pb-8 sm:pt-14">
           <div className="absolute left-1/2 top-0 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand-yellow shadow-[0_8px_20px_rgba(255,193,44,0.45)] sm:size-16">
