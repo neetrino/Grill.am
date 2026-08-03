@@ -42,9 +42,9 @@ const CARD_DESCRIPTION: Record<FeatureTone, string> = {
 };
 
 const CARD_IMAGE: Record<FeatureTone, string> = {
-  red: "left-[-36px] top-[17px] z-[1] h-[218px] w-[168px] rotate-[1.86deg]",
+  red: "left-[-125px] top-[-93px] z-[1] h-[448px] w-[352px] rotate-[1.86deg]",
   white: "left-[-24px] top-[27px] z-[1] h-[198px] w-[185px]",
-  cream: "left-[-16px] top-[28px] z-[1] h-[201px] w-[155px]",
+  cream: "left-[-65px] top-[-32px] z-[1] h-[320px] w-[250px]",
   yellow: "left-[-46px] top-[20px] z-[1] size-[218px]",
 };
 
