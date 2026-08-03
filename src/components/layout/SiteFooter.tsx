@@ -99,7 +99,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
       </p>
 
       <div className="relative z-10 mx-auto max-w-[1440px] px-10 pt-[71px] pb-10">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[minmax(240px,1.6fr)_repeat(3,minmax(140px,1fr))]">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[minmax(240px,1.6fr)_repeat(2,minmax(140px,1fr))_auto]">
           <div className="col-span-2 lg:col-span-1">
             <div className="relative h-[37px] w-[92px]">
               <Image
@@ -152,7 +152,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             </ul>
           </div>
 
-          <div>
+          <div className="lg:-translate-x-[25px]">
             <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.support}
             </h4>
@@ -171,7 +171,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             </ul>
           </div>
 
-          <div>
+          <div className="justify-self-start lg:justify-self-end">
             <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
               {dictionary.footer.contactInfo}
             </h4>
