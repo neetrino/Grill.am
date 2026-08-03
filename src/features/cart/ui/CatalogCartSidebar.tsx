@@ -8,6 +8,7 @@ import { AppLink } from "@/components/ui/AppLink";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
 import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
 import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
+import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -80,7 +81,11 @@ export function CatalogCartSidebar({
         {loading && !view ? (
           <p className="py-8 text-sm text-[#4a5565]">{labels.loading}</p>
         ) : !view || view.items.length === 0 ? (
-          <p className="py-8 text-sm text-[#4a5565]">{labels.empty}</p>
+          <CartEmptyState
+            title={labels.empty}
+            catalogLabel={labels.browseCatalog}
+            catalogHref={`/${locale}/products`}
+          />
         ) : (
           <ul>
             {view.items.map((item, index) => (

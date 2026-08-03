@@ -15,6 +15,7 @@ import { removeItem, updateQuantity } from "@/features/cart/cart";
 import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
 import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
 import { CartDrawerItemRow } from "@/features/cart/ui/CartDrawerItemRow";
+import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -176,7 +177,7 @@ export function CartDrawer({
               >
               <div className="flex items-start justify-between px-6 pt-6 pb-4">
                 <div>
-                  <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
+                  <h2 className="text-2xl font-bold tracking-tight text-[#101828]">
                     {labels.title}
                   </h2>
                   <p className="mt-1 text-sm text-gray-500">
@@ -193,7 +194,12 @@ export function CartDrawer({
                 {loadingView && !view ? (
                   <p className="py-10 text-sm text-gray-500">{labels.loading}</p>
                 ) : !view || view.items.length === 0 ? (
-                  <p className="py-10 text-sm text-gray-500">{labels.empty}</p>
+                  <CartEmptyState
+                    title={labels.empty}
+                    catalogLabel={labels.browseCatalog}
+                    catalogHref={`/${locale}/products`}
+                    onCatalogClick={closeDrawer}
+                  />
                 ) : (
                   <ul className="space-y-3">
                     {view.items.map((item) => (
@@ -215,17 +221,17 @@ export function CartDrawer({
                 )}
               </div>
 
-              <div className="border-t border-gray-200 px-6 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-                <dl className="space-y-2 text-sm text-gray-600">
-                  <div className="flex items-center justify-between gap-3">
+              <div className="border-t border-gray-200 bg-[#fafafa] px-6 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+                <dl className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between gap-3 text-gray-500">
                     <dt>{labels.subtotal}</dt>
-                    <dd className="font-medium tabular-nums text-gray-900">
+                    <dd className="font-medium tabular-nums">
                       {view?.subtotalFormatted ?? "—"}
                     </dd>
                   </div>
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center justify-between gap-3 text-gray-500">
                     <dt>{labels.shipping}</dt>
-                    <dd className="font-medium tabular-nums text-gray-900">
+                    <dd className="font-medium tabular-nums">
                       {view?.shippingFormatted ?? "—"}
                     </dd>
                   </div>
