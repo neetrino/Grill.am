@@ -10,7 +10,7 @@ import {
 } from "@/features/auth/delete-account-action";
 
 const FIELD_CLASS =
-  "h-11 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
+  "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
 type DeleteAccountFormProps = {
   locale: string;
@@ -37,9 +37,9 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
   const [acknowledged, setAcknowledged] = useState(false);
 
   return (
-    <Card className="rounded-2xl border border-red-200 bg-red-50/30 p-5 shadow-none sm:p-7 lg:p-8">
+    <Card className="rounded-[15px] border border-red-200 bg-red-50/30 p-5 shadow-none sm:p-7 lg:p-8">
       <div className="mb-6 space-y-2 sm:mb-8">
-        <h1 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">
           {labels.title}
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-gray-700">

@@ -1,9 +1,9 @@
 import "server-only";
 
-import { count, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { orders } from "@/db/schema";
+import { addresses, orderItems, orders } from "@/db/schema";
 
 const RECENT_ORDERS_LIMIT = 5;
 
@@ -11,6 +11,7 @@ export type ProfileDashboardStats = {
   totalOrders: number;
   pendingOrders: number;
   completedOrders: number;
+  savedAddresses: number;
   totalSpent: number;
 };
 
@@ -20,40 +21,52 @@ export type ProfileRecentOrder = {
   status: (typeof orders.$inferSelect)["status"];
   totalAmount: number;
   placedAt: Date;
+  itemsCount: number;
 };
 
 /** Aggregated order stats for the profile dashboard (SQL, not full-row scan). */
 export async function getProfileDashboardStats(
   userId: string,
 ): Promise<ProfileDashboardStats> {
-  const [row] = await getDb()
-    .select({
-      totalOrders: count(),
-      pendingOrders: sql<number>`
-        count(*) filter (
-          where ${orders.status}::text in ('PENDING', 'CONFIRMED', 'PROCESSING')
-        )
-      `.mapWith(Number),
-      completedOrders: sql<number>`
-        count(*) filter (where ${orders.status}::text = 'DELIVERED')
-      `.mapWith(Number),
-      totalSpent: sql<number>`
-        coalesce(
-          sum(${orders.totalAmount}) filter (
-            where ${orders.status}::text not in ('CANCELLED', 'REFUNDED')
-          ),
-          0
-        )
-      `.mapWith(Number),
-    })
-    .from(orders)
-    .where(eq(orders.userId, userId));
+  const [[orderRow], [addressRow]] = await Promise.all([
+    getDb()
+      .select({
+        totalOrders: count(),
+        pendingOrders: sql<number>`
+          count(*) filter (
+            where ${orders.status}::text in ('PENDING', 'CONFIRMED', 'PROCESSING')
+          )
+        `.mapWith(Number),
+        completedOrders: sql<number>`
+          count(*) filter (where ${orders.status}::text = 'DELIVERED')
+        `.mapWith(Number),
+        totalSpent: sql<number>`
+          coalesce(
+            sum(${orders.totalAmount}) filter (
+              where ${orders.status}::text not in ('CANCELLED', 'REFUNDED')
+            ),
+            0
+          )
+        `.mapWith(Number),
+      })
+      .from(orders)
+      .where(eq(orders.userId, userId)),
+    getDb()
+      .select({
+        savedAddresses: count(),
+      })
+      .from(addresses)
+      .where(
+        and(eq(addresses.userId, userId), isNull(addresses.archivedAt)),
+      ),
+  ]);
 
   return {
-    totalOrders: row?.totalOrders ?? 0,
-    pendingOrders: row?.pendingOrders ?? 0,
-    completedOrders: row?.completedOrders ?? 0,
-    totalSpent: row?.totalSpent ?? 0,
+    totalOrders: orderRow?.totalOrders ?? 0,
+    pendingOrders: orderRow?.pendingOrders ?? 0,
+    completedOrders: orderRow?.completedOrders ?? 0,
+    savedAddresses: addressRow?.savedAddresses ?? 0,
+    totalSpent: orderRow?.totalSpent ?? 0,
   };
 }
 
@@ -69,6 +82,16 @@ export async function listRecentProfileOrders(
       status: orders.status,
       totalAmount: orders.totalAmount,
       placedAt: orders.placedAt,
+      itemsCount: sql<number>`
+        coalesce(
+          (
+            select sum(${orderItems.quantity})
+            from ${orderItems}
+            where ${orderItems.orderId} = ${orders.id}
+          ),
+          0
+        )
+      `.mapWith(Number),
     })
     .from(orders)
     .where(eq(orders.userId, userId))

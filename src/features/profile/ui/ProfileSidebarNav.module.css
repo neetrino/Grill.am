@@ -1,0 +1,22 @@
+.indicator {
+  transition-property: top, height, background-color, border-left-color;
+  transition-duration: var(--profile-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.indicatorInstant {
+  transition-duration: 0ms;
+}
+
+.tabLabel {
+  transition-property: color;
+  transition-duration: var(--profile-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator,
+  .tabLabel {
+    transition: none;
+  }
+}
