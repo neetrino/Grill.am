@@ -85,9 +85,14 @@
   },
   "success": {
     "title": "Order confirmed",
-    "body": "Order {orderNumber} was placed successfully. Your cart has been cleared.",
+    "titleLead": "Order",
+    "titleAccent": "confirmed",
+    "body": "Order {orderNumber} was placed successfully. Thank you for choosing us.",
+    "orderNumberLabel": "Order number",
+    "totalLabel": "Total:",
     "total": "Total: {amount}",
     "continueShopping": "Continue shopping",
-    "viewOrders": "View orders"
+    "viewOrders": "View orders",
+    "emailNote": "A confirmation will be sent to your e-mail address"
   }
 }

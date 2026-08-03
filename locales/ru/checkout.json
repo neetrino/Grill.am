@@ -85,9 +85,14 @@
   },
   "success": {
     "title": "Заказ подтверждён",
-    "body": "Заказ {orderNumber} успешно оформлен. Корзина очищена.",
+    "titleLead": "Заказ",
+    "titleAccent": "подтверждён",
+    "body": "Заказ {orderNumber} успешно оформлен. Спасибо, что выбрали нас.",
+    "orderNumberLabel": "Номер заказа",
+    "totalLabel": "Итого:",
     "total": "Итого: {amount}",
     "continueShopping": "Продолжить покупки",
-    "viewOrders": "Мои заказы"
+    "viewOrders": "Мои заказы",
+    "emailNote": "Подтверждение будет отправлено на ваш e-mail"
   }
 }
