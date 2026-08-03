@@ -40,3 +40,15 @@ body {
   color: var(--foreground);
   font-family: var(--font-montserrat), ui-sans-serif, sans-serif;
 }
+
+/* Why choose us: intro shift is set inline from measured cards/moto widths */
+.home-why-track {
+  will-change: transform;
+  transition: transform 1.35s cubic-bezier(0.45, 0.05, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-why-track {
+    transition: none !important;
+  }
+}
