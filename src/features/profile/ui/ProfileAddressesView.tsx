@@ -158,7 +158,7 @@ export function ProfileAddressesView({
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <Card className="rounded-[15px] border-0 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] ring-1 ring-gray-100/80 sm:p-7 lg:p-8">
+      <Card className="rounded-[15px] border-0 p-5 shadow-none ring-1 ring-gray-100/80 sm:p-7 lg:p-8">
         <div className="mb-6 flex flex-col gap-4 border-b border-gray-100 pb-5 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
           <h1 className="text-xl font-bold tracking-tight text-gray-900">
             {labels.title}

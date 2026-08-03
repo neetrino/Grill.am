@@ -22,7 +22,7 @@ function ProfileContactRow({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-[15px] bg-white px-4 py-3 shadow-sm ring-1 ring-gray-100/80">
+    <div className="flex items-center gap-3 rounded-[15px] bg-white px-4 py-3 ring-1 ring-gray-100/80">
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-surface text-gray-700">
         {icon}
       </span>

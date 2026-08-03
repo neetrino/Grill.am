@@ -1,9 +1,12 @@
 /** Shared clay-profile visual tokens (MaMarie layout, Grill mono palette). */
 
+/** Light gray wash for the profile shell. */
+export const PROFILE_PAGE_BG_CLASS = "bg-[#fafafa]";
+
 export const PROFILE_CARD_RADIUS_CLASS = "rounded-[15px]";
 
 export const PROFILE_CARD_CLASS =
-  "rounded-[15px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.06)] ring-1 ring-gray-100/80";
+  "rounded-[15px] bg-white ring-1 ring-gray-100/80";
 
 export const PROFILE_CARD_FLAT_CLASS =
   "rounded-[15px] bg-white ring-1 ring-gray-100/80";

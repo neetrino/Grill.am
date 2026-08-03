@@ -2,7 +2,10 @@ import { notFound } from "next/navigation";
 
 import { ProfileMobileBackLink } from "@/features/profile/ui/ProfileMobileBackLink";
 import { ProfileSidebar } from "@/features/profile/ui/ProfileSidebar";
-import { PROFILE_SIDEBAR_WIDTH_PX } from "@/features/profile/ui/profile-ui";
+import {
+  PROFILE_PAGE_BG_CLASS,
+  PROFILE_SIDEBAR_WIDTH_PX,
+} from "@/features/profile/ui/profile-ui";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -12,13 +15,13 @@ type ProfileLayoutProps = {
   params: Promise<{ locale: string }>;
 };
 
-/** Sticky rail under the header — extra top gap; leaves room at the bottom. */
-const PROFILE_SIDEBAR_STICKY_CLASS =
-  "sticky top-[calc(var(--storefront-header-offset)+1.75rem)] z-10 h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] max-h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] self-start";
+/** Shared sticky band under the header for both profile columns. */
+const PROFILE_STICKY_BAND_CLASS =
+  "lg:sticky lg:top-[calc(var(--storefront-header-offset)+1.75rem)] lg:z-10 lg:h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] lg:max-h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] lg:self-start";
 
 /**
- * Desktop sidebar sticks in the visible band under the header;
- * page + footer keep scrolling. Nav scrolls inside the card if needed.
+ * Desktop: sidebar + content stay in the visible band; content scrolls inside.
+ * Footer remains below and can still be reached by page scroll.
  */
 export default async function ProfileLayout({
   children,
@@ -35,28 +38,32 @@ export default async function ProfileLayout({
 
   return (
     <div
-      className="grid grid-cols-1 items-start gap-6 pb-10 lg:grid-cols-[var(--profile-sidebar-width)_minmax(0,1fr)] lg:gap-10"
-      style={
-        {
-          "--profile-sidebar-width": `${PROFILE_SIDEBAR_WIDTH_PX}px`,
-        } as React.CSSProperties
-      }
+      className={`relative -mt-10 mb-[-2.5rem] ml-[calc(50%-50vw)] w-screen max-w-[100vw] px-4 py-10 pb-24 sm:px-6 md:pb-10 lg:px-8 ${PROFILE_PAGE_BG_CLASS}`}
     >
-      <div className="hidden lg:block">
-        <div className={PROFILE_SIDEBAR_STICKY_CLASS}>
+      <div
+        className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-6 lg:grid-cols-[var(--profile-sidebar-width)_minmax(0,1fr)] lg:gap-10"
+        style={
+          {
+            "--profile-sidebar-width": `${PROFILE_SIDEBAR_WIDTH_PX}px`,
+          } as React.CSSProperties
+        }
+      >
+        <div className={`hidden lg:block ${PROFILE_STICKY_BAND_CLASS}`}>
           <ProfileSidebar
             locale={rawLocale}
             user={user}
             dictionary={dictionary.profile}
           />
         </div>
-      </div>
-      <div className="min-h-0 min-w-0 overflow-visible">
-        <ProfileMobileBackLink
-          locale={rawLocale}
-          label={dictionary.profile.title}
-        />
-        {children}
+        <div
+          className={`min-h-0 min-w-0 overflow-visible lg:overflow-y-auto lg:overscroll-contain ${PROFILE_STICKY_BAND_CLASS}`}
+        >
+          <ProfileMobileBackLink
+            locale={rawLocale}
+            label={dictionary.profile.title}
+          />
+          {children}
+        </div>
       </div>
     </div>
   );

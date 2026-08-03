@@ -47,7 +47,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
   }, [state.success]);
 
   return (
-    <Card className="rounded-[15px] border-0 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] ring-1 ring-gray-100/80 sm:p-7 lg:p-8">
+    <Card className="rounded-[15px] border-0 p-5 shadow-none ring-1 ring-gray-100/80 sm:p-7 lg:p-8">
       <div className="mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6">
         <h1 className="text-xl font-bold tracking-tight text-gray-900">
           {labels.title}
