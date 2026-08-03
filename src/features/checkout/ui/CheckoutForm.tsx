@@ -17,6 +17,7 @@ import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsS
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
 import {
+  CHECKOUT_ALERT_CLASS,
   CHECKOUT_PRIMARY_BUTTON_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
@@ -351,6 +352,15 @@ export function CheckoutForm({
           onCartChanged={clearAppliedCoupon}
         />
 
+        {minimumOrderMessage ? (
+          <div
+            role="alert"
+            className={`mb-6 border border-red-200 bg-red-50 p-3 ${CHECKOUT_ALERT_CLASS}`}
+          >
+            <p className="text-sm text-red-600">{minimumOrderMessage}</p>
+          </div>
+        ) : null}
+
         <form onSubmit={onSubmit}>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
             <CheckoutDetailsSections
@@ -408,7 +418,7 @@ export function CheckoutForm({
               onApplyCoupon={onApplyCoupon}
               couponError={couponError}
               isApplyingCoupon={applyingCoupon}
-              error={error ?? minimumOrderMessage}
+              error={error}
               isSubmitting={pending}
               canPlaceOrder={meetsMinimum}
               placeOrderLabel={labels.placeOrder}
