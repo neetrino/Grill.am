@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   useEffect,
   useState,
@@ -8,12 +7,14 @@ import {
   useTransition,
 } from "react";
 import { createPortal } from "react-dom";
-import { Minus, Plus, ShoppingCart, X } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 
+import { DrawerCloseTab } from "@/components/drawer/DrawerCloseTab";
 import { AppLink } from "@/components/ui/AppLink";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
 import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
 import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
+import { CartDrawerItemRow } from "@/features/cart/ui/CartDrawerItemRow";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -164,11 +165,15 @@ export function CartDrawer({
               onClick={closeDrawer}
             />
             <div
-              className={`relative flex h-full w-full max-w-md flex-col bg-white shadow-2xl transition-transform duration-200 ease-out ${
+              className={`relative h-dvh max-h-dvh w-[87%] max-w-md transition-transform duration-300 ease-out motion-reduce:transition-none sm:w-full ${
                 entered ? "translate-x-0" : "translate-x-full"
               }`}
-              onClick={(event) => event.stopPropagation()}
             >
+              <DrawerCloseTab onClose={closeDrawer} closeLabel={labels.close} />
+              <div
+                className="relative z-[2] flex h-full w-full flex-col overflow-hidden rounded-tl-3xl rounded-bl-3xl bg-white shadow-2xl"
+                onClick={(event) => event.stopPropagation()}
+              >
               <div className="flex items-start justify-between px-6 pt-6 pb-4">
                 <div>
                   <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
@@ -180,130 +185,49 @@ export function CartDrawer({
                       : formatItemCount(badgeCount, labels)}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={closeDrawer}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  aria-label={labels.close}
-                >
-                  <X className="h-5 w-5" aria-hidden="true" />
-                </button>
               </div>
 
               <div
-                className={`flex-1 overflow-y-auto px-6 ${pending || loadingView ? "opacity-70" : ""}`}
+                className={`flex-1 overflow-y-auto px-6 py-4 ${pending || loadingView ? "opacity-70" : ""}`}
               >
                 {loadingView && !view ? (
                   <p className="py-10 text-sm text-gray-500">{labels.loading}</p>
                 ) : !view || view.items.length === 0 ? (
                   <p className="py-10 text-sm text-gray-500">{labels.empty}</p>
                 ) : (
-                  <ul className="divide-y divide-gray-100">
+                  <ul className="space-y-3">
                     {view.items.map((item) => (
-                      <li key={item.id} className="flex gap-4 py-5">
-                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
-                          {item.imageUrl ? (
-                            <Image
-                              src={item.imageUrl}
-                              alt={item.title}
-                              fill
-                              sizes="80px"
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
-                              —
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="flex min-w-0 flex-1 flex-col">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <p className="truncate text-base text-gray-900">
-                                {item.title}
-                              </p>
-                              {item.modifierLines.length > 0 ? (
-                                <ul className="mt-1 space-y-0.5 text-xs text-gray-500">
-                                  {item.modifierLines.map((line) => (
-                                    <li key={line} className="truncate">
-                                      {line}
-                                    </li>
-                                  ))}
-                                </ul>
-                              ) : null}
-                              <p className="mt-1 text-base font-semibold text-gray-900">
-                                {item.unitPriceFormatted}
-                              </p>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => removeCartItem(item.id)}
-                              className="shrink-0 text-gray-400 transition-colors hover:text-gray-700"
-                              aria-label={labels.removeItem}
-                              disabled={pending}
-                            >
-                              <X className="h-4 w-4" aria-hidden="true" />
-                            </button>
-                          </div>
-
-                          <div className="mt-auto flex justify-end pt-3">
-                            <div className="inline-flex items-center gap-3 rounded-xl bg-gray-900 px-3 py-1.5 text-white">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  changeQuantity(item.id, item.quantity - 1)
-                                }
-                                className="flex h-6 w-6 items-center justify-center text-white/90 transition-opacity hover:opacity-80"
-                                aria-label={labels.decreaseQuantity}
-                                disabled={pending}
-                              >
-                                <Minus
-                                  className="h-3.5 w-3.5"
-                                  aria-hidden="true"
-                                />
-                              </button>
-                              <span className="min-w-4 text-center text-sm font-medium tabular-nums">
-                                {item.quantity}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  changeQuantity(item.id, item.quantity + 1)
-                                }
-                                className="flex h-6 w-6 items-center justify-center text-white/90 transition-opacity hover:opacity-80"
-                                aria-label={labels.increaseQuantity}
-                                disabled={pending}
-                              >
-                                <Plus
-                                  className="h-3.5 w-3.5"
-                                  aria-hidden="true"
-                                />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                      <li key={item.id}>
+                        <CartDrawerItemRow
+                          item={item}
+                          pending={pending}
+                          removeLabel={labels.removeItem}
+                          decreaseLabel={labels.decreaseQuantity}
+                          increaseLabel={labels.increaseQuantity}
+                          onRemove={removeCartItem}
+                          onChangeQuantity={changeQuantity}
+                        />
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
 
-              <div className="border-t border-gray-200 px-6 pt-5 pb-6">
-                <dl className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between text-gray-600">
+              <div className="border-t border-gray-200 px-6 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+                <dl className="space-y-2 text-sm text-gray-600">
+                  <div className="flex items-center justify-between gap-3">
                     <dt>{labels.subtotal}</dt>
-                    <dd className="tabular-nums text-gray-900">
+                    <dd className="font-medium tabular-nums text-gray-900">
                       {view?.subtotalFormatted ?? "—"}
                     </dd>
                   </div>
-                  <div className="flex items-center justify-between text-gray-600">
+                  <div className="flex items-center justify-between gap-3">
                     <dt>{labels.shipping}</dt>
-                    <dd className="tabular-nums text-gray-900">
+                    <dd className="font-medium tabular-nums text-gray-900">
                       {view?.shippingFormatted ?? "—"}
                     </dd>
                   </div>
-                  <div className="flex items-center justify-between pt-1 text-base font-semibold text-gray-900">
+                  <div className="mt-2 flex items-center justify-between gap-3 text-base font-bold text-gray-900">
                     <dt>{labels.total}</dt>
                     <dd className="tabular-nums">
                       {view?.totalFormatted ?? "—"}
@@ -315,12 +239,13 @@ export function CartDrawer({
                   <AppLink
                     href={`/${locale}/checkout`}
                     prefetchPolicy="intent"
-                    className="mt-5 flex w-full items-center justify-center rounded-full bg-gray-900 px-4 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition-colors hover:bg-black"
+                    className="mt-5 flex min-h-[50px] w-full items-center justify-center rounded-full bg-brand-red px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                     onClick={closeDrawer}
                   >
                     {labels.checkout}
                   </AppLink>
                 ) : null}
+              </div>
               </div>
             </div>
           </div>,
