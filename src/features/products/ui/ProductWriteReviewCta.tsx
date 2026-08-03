@@ -1,5 +1,6 @@
 "use client";
 
+import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -40,10 +41,10 @@ type ProductWriteReviewCtaProps = {
 };
 
 const ctaClassName =
-  "inline-flex items-center justify-center rounded-full bg-gray-900 px-10 py-3 text-base font-semibold text-white transition hover:bg-gray-800";
+  "inline-flex items-center justify-center rounded-full bg-brand-red px-10 py-3 text-base font-semibold text-white transition hover:bg-brand-red-hot";
 
-const secondaryCtaClassName =
-  "inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-8 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-gray-50";
+const editIconClassName =
+  "absolute top-2 right-2 inline-flex size-7 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 hover:text-brand-red";
 
 export function ProductWriteReviewCta({
   locale,
@@ -96,45 +97,45 @@ export function ProductWriteReviewCta({
           <p className="max-w-xl text-base text-gray-700">{labels.emptyPrompt}</p>
         ) : null}
         {showOwnCard ? (
-          <div className="w-full rounded-lg border border-gray-200 bg-white p-4 sm:p-5">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm font-medium text-gray-900">
+          <div className="relative w-full max-w-md rounded-[15px] border border-gray-200 bg-white px-3 py-4 pr-10">
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className={editIconClassName}
+              aria-label={labels.editReview}
+            >
+              <Pencil className="size-3.5" aria-hidden />
+            </button>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <p className="text-xs font-medium text-gray-900">
                 {viewerReview.authorName}
               </p>
               <RatingStars average={viewerReview.rating} size="sm" />
             </div>
             {viewerReview.comment ? (
-              <p className="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
+              <p className="mt-1.5 text-xs leading-5 text-gray-700 whitespace-pre-wrap">
                 {viewerReview.comment}
               </p>
             ) : null}
             {isPending ? (
-              <p className="mt-3 text-sm text-gray-500">{labels.reviewPending}</p>
+              <p className="mt-2 text-xs text-gray-500">{labels.reviewPending}</p>
             ) : (
-              <p className="mt-3 text-sm text-gray-500">
+              <p className="mt-2 text-xs text-gray-500">
                 {labels.alreadyReviewed}
               </p>
             )}
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className={`${secondaryCtaClassName} mt-4`}
-            >
-              {labels.editReview}
-            </button>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            <p className="max-w-xl text-sm text-gray-500">
-              {labels.alreadyReviewed}
-            </p>
+          <div className="relative w-full max-w-md rounded-[15px] border border-gray-200 bg-white px-3 py-4 pr-10">
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className={secondaryCtaClassName}
+              className={editIconClassName}
+              aria-label={labels.editReview}
             >
-              {labels.editReview}
+              <Pencil className="size-3.5" aria-hidden />
             </button>
+            <p className="text-xs text-gray-500">{labels.alreadyReviewed}</p>
           </div>
         )}
       </div>
