@@ -130,8 +130,8 @@ export function ProductGallery({
             isSignedIn={isSignedIn}
             label={wishlistLabel}
             size="md"
-            tone="onImage"
-            className="absolute top-[30px] right-6 z-10 h-[52px] w-[52px] bg-transparent shadow-none hover:bg-transparent"
+            tone="onImageBrand"
+            className="absolute top-[30px] right-6 z-10 size-[52px] bg-white shadow-none hover:bg-white"
           />
         ) : null}
       </div>
