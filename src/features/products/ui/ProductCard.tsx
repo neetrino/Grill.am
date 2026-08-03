@@ -53,7 +53,7 @@ export function ProductCard({
   const showAddToCart = productId != null && addToCartLabel != null;
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-[24px] bg-white shadow-[0px_7px_11px_rgba(62,87,61,0.13)] transition hover:-translate-y-0.5 hover:shadow-[0px_10px_20px_rgba(62,87,61,0.18)]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-[24px] bg-white transition hover:-translate-y-0.5">
       <div className="relative aspect-[279/214] shrink-0 overflow-hidden bg-brand-surface">
         <AppLink
           href={href}

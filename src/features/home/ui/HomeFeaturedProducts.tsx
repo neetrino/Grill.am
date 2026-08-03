@@ -1,4 +1,7 @@
+"use client";
+
 import { ChevronRight } from "lucide-react";
+import { useRef, useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { ProductCard } from "@/features/products/ui/ProductCard";
@@ -32,6 +35,16 @@ type HomeFeaturedProductsProps = {
   products: readonly FeaturedItem[];
 };
 
+const PRODUCTS_PER_SLIDE = 4;
+
+function chunkIntoSlides<T>(items: readonly T[], size: number): T[][] {
+  const slides: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    slides.push(items.slice(index, index + size));
+  }
+  return slides;
+}
+
 export function HomeFeaturedProducts({
   locale,
   titleLead,
@@ -45,6 +58,23 @@ export function HomeFeaturedProducts({
   isSignedIn,
   products,
 }: HomeFeaturedProductsProps) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const slides = chunkIntoSlides(products, PRODUCTS_PER_SLIDE);
+
+  function goToSlide(slideIndex: number): void {
+    const node = scrollerRef.current;
+    if (!node) return;
+    node.scrollTo({ left: node.clientWidth * slideIndex, behavior: "smooth" });
+    setActiveSlide(slideIndex);
+  }
+
+  function handleScroll(): void {
+    const node = scrollerRef.current;
+    if (!node || node.clientWidth === 0) return;
+    setActiveSlide(Math.round(node.scrollLeft / node.clientWidth));
+  }
+
   return (
     <section className="w-full overflow-hidden rounded-[30px] bg-brand-yellow-soft py-12 sm:py-16">
       <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10">
@@ -71,35 +101,63 @@ export function HomeFeaturedProducts({
         {products.length === 0 ? (
           <p className="text-[#171717]">{emptyLabel}</p>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 lg:gap-6 xl:gap-8">
-            {products.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                href={product.href}
-                title={product.title}
-                categoryTitle={product.categoryTitle}
-                priceFormatted={product.priceFormatted}
-                compareAtFormatted={product.compareAtFormatted}
-                discountPercent={product.discountPercent}
-                imageUrl={product.imageUrl}
-                inStock={product.inStock}
-                priority={index < 4}
-                locale={locale}
-                productId={product.id}
-                inWishlist={product.inWishlist ?? false}
-                isSignedIn={isSignedIn}
-                wishlistLabel={wishlistLabel}
-                addToCartLabel={addToCartLabel}
-                requiresConfiguration={product.requiresConfiguration ?? false}
-              />
+          <div
+            ref={scrollerRef}
+            onScroll={handleScroll}
+            className="flex snap-x snap-mandatory overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {slides.map((slideProducts, slideIndex) => (
+              <div
+                key={slideProducts[0]?.id ?? `slide-${slideIndex}`}
+                className="grid w-full shrink-0 snap-start grid-cols-4 gap-3 sm:gap-5 lg:gap-6 xl:gap-8"
+              >
+                {slideProducts.map((product, index) => (
+                  <ProductCard
+                    key={product.id}
+                    href={product.href}
+                    title={product.title}
+                    categoryTitle={product.categoryTitle}
+                    priceFormatted={product.priceFormatted}
+                    compareAtFormatted={product.compareAtFormatted}
+                    discountPercent={product.discountPercent}
+                    imageUrl={product.imageUrl}
+                    inStock={product.inStock}
+                    priority={slideIndex === 0 && index < 4}
+                    locale={locale}
+                    productId={product.id}
+                    inWishlist={product.inWishlist ?? false}
+                    isSignedIn={isSignedIn}
+                    wishlistLabel={wishlistLabel}
+                    addToCartLabel={addToCartLabel}
+                    requiresConfiguration={
+                      product.requiresConfiguration ?? false
+                    }
+                  />
+                ))}
+              </div>
             ))}
           </div>
         )}
 
-        {products.length > 0 ? (
+        {slides.length > 1 ? (
           <div className="mt-8 flex items-center justify-center gap-1.5 sm:mt-10">
-            <span className="h-2.5 w-7 rounded-full bg-white" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[rgba(95,95,95,0.43)]" />
+            {slides.map((slideProducts, slideIndex) => {
+              const isActive = slideIndex === activeSlide;
+              return (
+                <button
+                  key={slideProducts[0]?.id ?? `dot-${slideIndex}`}
+                  type="button"
+                  aria-label={`Go to slide ${slideIndex + 1}`}
+                  aria-current={isActive}
+                  onClick={() => goToSlide(slideIndex)}
+                  className={`h-2.5 rounded-full transition-[width,background-color] duration-300 ease-out ${
+                    isActive
+                      ? "w-7 bg-white"
+                      : "w-2.5 bg-[rgba(95,95,95,0.43)]"
+                  }`}
+                />
+              );
+            })}
           </div>
         ) : null}
       </div>
