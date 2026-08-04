@@ -7,11 +7,13 @@ import {
   resetPasswordAction,
   type ResetPasswordActionState,
 } from "@/features/auth/reset-password-action";
+import { PASSWORD_REQUIREMENTS_ERROR } from "@/features/auth/schemas";
 import {
   AUTH_BTN_PRIMARY_CLASS,
   AUTH_LINK_CLASS,
 } from "@/features/auth/ui/auth-ui";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
+import { PasswordRequirementsDisclaimer } from "@/features/auth/ui/PasswordRequirementsDisclaimer";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -63,6 +65,7 @@ export function ResetPasswordForm({
         showPasswordLabel={dictionary.showPassword}
         hidePasswordLabel={dictionary.hidePassword}
         autoComplete="new-password"
+        invalid={state.error === PASSWORD_REQUIREMENTS_ERROR}
       />
 
       <PasswordField
@@ -73,7 +76,12 @@ export function ResetPasswordForm({
         autoComplete="new-password"
       />
 
-      {state.error ? (
+      {state.error === PASSWORD_REQUIREMENTS_ERROR ? (
+        <PasswordRequirementsDisclaimer
+          title={dictionary.passwordRequirementsTitle}
+          rules={dictionary.passwordRequirements}
+        />
+      ) : state.error ? (
         <p
           role="alert"
           className="rounded-[15px] border border-red-200 bg-red-50 p-3 text-sm text-red-600"

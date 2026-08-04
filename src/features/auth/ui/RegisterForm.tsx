@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { AppLink } from "@/components/ui/AppLink";
 import { type AuthActionState } from "@/features/auth/login-action";
 import { registerAction } from "@/features/auth/register-action";
+import { PASSWORD_REQUIREMENTS_ERROR } from "@/features/auth/schemas";
 import { AuthTermsAgreement } from "@/features/auth/ui/AuthTermsAgreement";
 import {
   AUTH_BTN_PRIMARY_CLASS,
@@ -12,6 +13,7 @@ import {
   authFieldClassName,
 } from "@/features/auth/ui/auth-ui";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
+import { PasswordRequirementsDisclaimer } from "@/features/auth/ui/PasswordRequirementsDisclaimer";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -27,6 +29,12 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialState);
   const values = state.values;
   const fieldErrors = state.fieldErrors;
+  const showPasswordRequirements =
+    fieldErrors?.password === PASSWORD_REQUIREMENTS_ERROR;
+  const alertError =
+    state.error && state.error !== PASSWORD_REQUIREMENTS_ERROR
+      ? state.error
+      : null;
 
   return (
     <form
@@ -109,12 +117,19 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         />
       </div>
 
-      {state.error ? (
+      {showPasswordRequirements ? (
+        <PasswordRequirementsDisclaimer
+          title={dictionary.passwordRequirementsTitle}
+          rules={dictionary.passwordRequirements}
+        />
+      ) : null}
+
+      {alertError ? (
         <p
           role="alert"
           className="rounded-[15px] border border-red-200 bg-red-50 p-3 text-sm text-red-600"
         >
-          {state.error}
+          {alertError}
         </p>
       ) : null}
 
