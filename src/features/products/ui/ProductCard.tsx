@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
@@ -8,6 +9,12 @@ import type { Locale } from "@/lib/i18n/config";
 
 /** Shared product-card photo until per-product media is ready. */
 export const PRODUCT_CARD_IMAGE = "/assets/products/product-card.webp";
+
+/** Stagger step for catalog grid appear (MaMarie products listing). */
+export const PRODUCT_CARD_APPEAR_STAGGER_MS = 70;
+export const PRODUCT_CARD_APPEAR_DURATION_MS = 560;
+/** Cap delay so long grids do not feel sluggish. */
+const PRODUCT_CARD_APPEAR_MAX_INDEX = 11;
 
 type ProductCardProps = {
   href: string;
@@ -19,6 +26,13 @@ type ProductCardProps = {
   imageUrl: string | null;
   inStock: boolean;
   priority?: boolean;
+  /** When set, card fades/rises in with a staggered delay (catalog grids). */
+  appearIndex?: number;
+  /**
+   * Gate for scroll-triggered reveals. Defaults to true when `appearIndex` is set.
+   * Pass false until the section enters the viewport.
+   */
+  appearActive?: boolean;
   locale?: Locale;
   productId?: string;
   inWishlist?: boolean;
@@ -39,6 +53,8 @@ export function ProductCard({
   imageUrl: _imageUrl,
   inStock,
   priority = false,
+  appearIndex,
+  appearActive,
   locale,
   productId,
   inWishlist = false,
@@ -51,11 +67,25 @@ export function ProductCard({
   const showWishlist =
     locale != null && productId != null && wishlistLabel != null;
   const showAddToCart = productId != null && addToCartLabel != null;
+  const appearStyle: CSSProperties | undefined =
+    appearIndex == null
+      ? undefined
+      : ({
+          "--product-appear-delay": `${Math.min(appearIndex, PRODUCT_CARD_APPEAR_MAX_INDEX) * PRODUCT_CARD_APPEAR_STAGGER_MS}ms`,
+          "--product-appear-duration": `${PRODUCT_CARD_APPEAR_DURATION_MS}ms`,
+        } as CSSProperties);
+  const appearClass =
+    appearIndex == null
+      ? ""
+      : (appearActive ?? true)
+        ? "animate-catalog-grid-in"
+        : "product-appear-pending";
 
   return (
     <article
       data-product-card
-      className="group relative flex h-full flex-col overflow-hidden rounded-[24px] bg-white transition hover:-translate-y-0.5"
+      className={`group relative flex h-full flex-col overflow-hidden rounded-[24px] bg-white transition hover:-translate-y-0.5 ${appearClass}`}
+      style={appearStyle}
     >
       <div
         data-product-fly-origin

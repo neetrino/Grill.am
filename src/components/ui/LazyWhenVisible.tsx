@@ -66,7 +66,7 @@ export function LazyWhenVisible({
       className={className}
       style={visible || minHeight == null ? undefined : { minHeight }}
     >
-      {visible ? children : null}
+      {visible ? <div className="page-enter">{children}</div> : null}
     </div>
   );
 }

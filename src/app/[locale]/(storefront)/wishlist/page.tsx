@@ -88,6 +88,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                 imageUrl={product.imageUrl}
                 inStock={product.stockOnHand > 0}
                 priority={index < 4}
+                appearIndex={index}
                 locale={rawLocale}
                 productId={product.id}
                 inWishlist

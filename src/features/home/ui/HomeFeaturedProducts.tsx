@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { ProductCard } from "@/features/products/ui/ProductCard";
@@ -58,9 +58,46 @@ export function HomeFeaturedProducts({
   isSignedIn,
   products,
 }: HomeFeaturedProductsProps) {
+  const sectionRef = useRef<HTMLElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [cardsRevealed, setCardsRevealed] = useState(false);
   const slides = chunkIntoSlides(products, PRODUCTS_PER_SLIDE);
+
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) {
+      return;
+    }
+
+    function reveal(): void {
+      setCardsRevealed(true);
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const frameId = window.requestAnimationFrame(reveal);
+      return () => window.cancelAnimationFrame(frameId);
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      const frameId = window.requestAnimationFrame(reveal);
+      return () => window.cancelAnimationFrame(frameId);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) {
+          return;
+        }
+        reveal();
+        observer.disconnect();
+      },
+      { threshold: 0.22, rootMargin: "0px 0px -10% 0px" },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   function goToSlide(slideIndex: number): void {
     const node = scrollerRef.current;
@@ -76,7 +113,10 @@ export function HomeFeaturedProducts({
   }
 
   return (
-    <section className="w-full overflow-hidden rounded-[30px] bg-brand-yellow-soft py-12 sm:py-16">
+    <section
+      ref={sectionRef}
+      className="w-full overflow-hidden rounded-[30px] bg-brand-yellow-soft py-12 sm:py-16"
+    >
       <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10">
         <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
           <div className="min-w-0">
@@ -111,7 +151,7 @@ export function HomeFeaturedProducts({
                 key={slideProducts[0]?.id ?? `slide-${slideIndex}`}
                 className="grid w-full shrink-0 snap-start grid-cols-4 gap-3 sm:gap-5 lg:gap-6 xl:gap-8"
               >
-                {slideProducts.map((product) => (
+                {slideProducts.map((product, index) => (
                   <ProductCard
                     key={product.id}
                     href={product.href}
@@ -123,6 +163,8 @@ export function HomeFeaturedProducts({
                     imageUrl={product.imageUrl}
                     inStock={product.inStock}
                     priority={false}
+                    appearIndex={slideIndex * PRODUCTS_PER_SLIDE + index}
+                    appearActive={cardsRevealed}
                     locale={locale}
                     productId={product.id}
                     inWishlist={product.inWishlist ?? false}

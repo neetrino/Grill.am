@@ -335,6 +335,83 @@ select:disabled {
   }
 }
 
+/* Soft page / section enter — used by storefront template + deferred islands.
+   End state uses transform: none so sticky descendants keep working. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes page-enter-slow {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.page-enter {
+  animation: page-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.page-enter--slow {
+  animation-name: page-enter-slow;
+  animation-duration: 920ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .page-enter--slow {
+    animation: none;
+  }
+}
+
+/* Catalog product grid — matches MaMarie staggered card appear. */
+@keyframes catalog-grid-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.product-appear-pending {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.animate-catalog-grid-in {
+  animation-name: catalog-grid-in;
+  animation-duration: var(--product-appear-duration, 560ms);
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--product-appear-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-appear-pending {
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-catalog-grid-in {
+    animation: none;
+  }
+}
+
 /* Skip paint work for offscreen storefront chrome (footer, deferred bands). */
 .lazy-section {
   content-visibility: auto;

@@ -226,6 +226,7 @@ export default async function ProductsPage({
                 imageUrl={product.imageUrl}
                 inStock={product.stockOnHand > 0}
                 priority={index < 4}
+                appearIndex={index}
                 locale={rawLocale}
                 productId={product.id}
                 inWishlist={wishlistIds.has(product.id)}
