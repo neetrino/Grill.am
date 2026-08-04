@@ -35,7 +35,7 @@ export function StoresPageView({
 
   if (addresses.length === 0) {
     return (
-      <div className="mx-auto flex min-h-[50vh] w-full max-w-7xl items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[50vh] w-full max-w-7xl items-center justify-center px-4 py-12">
         <div className="max-w-lg rounded-[15px] border border-gray-100 bg-white p-8 text-center shadow-[0_4px_15px_rgba(0,0,0,0.05)]">
           <h1 className="text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
             <span className="text-brand-red">{copy.titleLead}</span>{" "}
@@ -48,7 +48,7 @@ export function StoresPageView({
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 pb-10 pt-8 sm:px-6 sm:pb-12 sm:pt-12 lg:px-8 lg:pb-14 lg:pt-14">
+    <div className="mx-auto w-full max-w-7xl px-4 pb-10 pt-8 sm:px-6 lg:pb-14 lg:pt-12">
       <header className="mb-6 lg:mb-8">
         <h1 className="text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
           <span className="text-brand-red">{copy.titleLead}</span>{" "}

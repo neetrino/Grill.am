@@ -26,23 +26,17 @@ function isWhiteSurfacePath(pathname: string): boolean {
   if (page == null) {
     return true;
   }
-  return page === "about" || page === "contact";
-}
-
-function isStoresPath(pathname: string): boolean {
-  return /\/stores(?:\/|$)/.test(pathname);
+  return page === "about" || page === "contact" || page === "stores";
 }
 
 /**
  * Mobile: surface matches the page (white or gray) behind the bottom nav.
- * Desktop (`md+`): white by default so rounded footer corner reveals stay white.
- * Stores keeps a full gray wash (like about/contact white) so short iPad layouts
- * do not show a white gap above the footer.
+ * Desktop (`md+`): always white so rounded footer corner reveals stay white.
+ * Gray shop/profile bands still paint their own full-bleed roots.
  */
 export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
   const pathname = usePathname() ?? "";
   const isWhitePage = isWhiteSurfacePath(pathname);
-  const isStoresPage = isStoresPath(pathname);
   const mobileSurface = isWhitePage ? SURFACE_WHITE : SURFACE_GRAY;
 
   useEffect(() => {
@@ -50,13 +44,9 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
     const mq = window.matchMedia(DESKTOP_CHROME_MQ);
 
     function syncBody(): void {
-      if (mq.matches) {
-        document.body.style.backgroundColor = isStoresPage
-          ? SURFACE_GRAY
-          : SURFACE_WHITE;
-        return;
-      }
-      document.body.style.backgroundColor = mobileSurface;
+      document.body.style.backgroundColor = mq.matches
+        ? SURFACE_WHITE
+        : mobileSurface;
     }
 
     syncBody();
@@ -65,23 +55,15 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
       mq.removeEventListener("change", syncBody);
       document.body.style.backgroundColor = previous;
     };
-  }, [isStoresPage, mobileSurface]);
-
-  const surfaceClass = isStoresPage
-    ? "bg-[#f2f0f0]"
-    : isWhitePage
-      ? "bg-white"
-      : "bg-white max-md:bg-[#f2f0f0]";
+  }, [mobileSurface]);
 
   return (
     <div
-      className={`flex min-h-dvh flex-1 flex-col overflow-x-clip ${surfaceClass}`}
+      className={`flex min-h-dvh flex-1 flex-col overflow-x-clip bg-white ${
+        isWhitePage ? "" : "max-md:bg-[#f2f0f0]"
+      }`}
     >
-      <DesktopFluidFrame
-        className={`flex min-h-dvh flex-1 flex-col ${
-          isStoresPage ? "bg-[#f2f0f0]" : ""
-        }`}
-      >
+      <DesktopFluidFrame className="flex min-h-dvh flex-1 flex-col">
         {children}
       </DesktopFluidFrame>
     </div>

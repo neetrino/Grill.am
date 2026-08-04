@@ -9,14 +9,13 @@ type FooterCornerShellProps = {
 
 /**
  * Desktop footer sits on a wash that fills the rounded corner reveals.
- * Gray shells (profile / wishlist / stores) match page wash; elsewhere white.
+ * Gray shells (profile / wishlist) match page wash; elsewhere white.
  */
 export function FooterCornerShell({ children }: FooterCornerShellProps) {
   const pathname = usePathname() ?? "";
   const grayCorners =
     /\/profile(?:\/|$)/.test(pathname) ||
-    /\/wishlist(?:\/|$)/.test(pathname) ||
-    /\/stores(?:\/|$)/.test(pathname);
+    /\/wishlist(?:\/|$)/.test(pathname);
 
   return (
     <div
