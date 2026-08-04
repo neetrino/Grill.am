@@ -204,6 +204,16 @@ export function ProfileMobileMenu({
         </div>
       </nav>
 
+      <form action={logoutAction}>
+        <button
+          type="submit"
+          className={`flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-brand-red shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-colors hover:bg-red-50/60 ${PROFILE_CARD_CLASS}`}
+        >
+          <LogOut className="h-4 w-4" aria-hidden />
+          {dictionary.logout}
+        </button>
+      </form>
+
       <div className={`overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${PROFILE_CARD_CLASS}`}>
         {sheets.deleteAccount != null ? (
           <button
@@ -245,16 +255,6 @@ export function ProfileMobileMenu({
           </AppLink>
         )}
       </div>
-
-      <form action={logoutAction}>
-        <button
-          type="submit"
-          className={`flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-brand-red shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-colors hover:bg-red-50/60 ${PROFILE_CARD_CLASS}`}
-        >
-          <LogOut className="h-4 w-4" aria-hidden />
-          {dictionary.logout}
-        </button>
-      </form>
 
       <ProfileMobileSheet
         open={activeSheet != null && sheets[activeSheet] != null}

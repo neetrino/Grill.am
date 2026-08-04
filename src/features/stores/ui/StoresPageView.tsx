@@ -57,8 +57,8 @@ export function StoresPageView({
       </header>
 
       <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(280px,380px)_minmax(0,1fr)] lg:gap-6">
-        <section className={`${PANEL_CLASS} lg:h-[560px]`}>
-          <ul className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+        <section className={`${PANEL_CLASS} max-lg:max-h-[240px] lg:h-[560px]`}>
+          <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:space-y-3">
             {addresses.map((address, index) => {
               const isSelected = index === selectedIndex;
 
@@ -67,7 +67,7 @@ export function StoresPageView({
                   <button
                     type="button"
                     onClick={() => setSelectedIndex(index)}
-                    className={`relative flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition-colors ${
+                    className={`relative flex w-full items-center gap-2.5 rounded-xl border p-2.5 text-left transition-colors lg:gap-3 lg:rounded-2xl lg:p-3 ${
                       isSelected
                         ? "border-brand-red/40 bg-brand-red/5"
                         : "border-gray-200 bg-white hover:border-gray-300"
@@ -75,17 +75,17 @@ export function StoresPageView({
                   >
                     {isSelected ? (
                       <span
-                        className="absolute top-1/2 right-3 size-2.5 -translate-y-1/2 rounded-full bg-brand-red"
+                        className="absolute top-1/2 right-2.5 size-2 -translate-y-1/2 rounded-full bg-brand-red lg:right-3 lg:size-2.5"
                         aria-hidden
                       />
                     ) : null}
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-gray-100 bg-white">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-white lg:size-10 lg:rounded-xl">
                       <MapPin
-                        className="size-4 text-brand-red"
+                        className="size-3.5 text-brand-red lg:size-4"
                         aria-hidden
                       />
                     </span>
-                    <span className="pr-4 text-sm leading-snug font-medium text-gray-800">
+                    <span className="pr-3 text-[13px] leading-snug font-medium text-gray-800 lg:pr-4 lg:text-sm">
                       {address}
                     </span>
                   </button>

@@ -92,12 +92,6 @@ function buildNavItems(
       label: dictionary.password,
       icon: <Lock className="h-5 w-5" />,
     },
-    {
-      key: "deleteAccount",
-      href: `/${locale}/profile/delete-account`,
-      label: dictionary.deleteAccount,
-      icon: <Trash2 className="h-5 w-5" />,
-    },
   ];
 }
 
@@ -266,6 +260,31 @@ export function ProfileSidebarNav({
           </span>
         </button>
       </form>
+
+      <AppLink
+        href={`/${locale}/profile/delete-account`}
+        prefetchPolicy="intent"
+        className="mt-1 flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left transition-colors hover:bg-white/70"
+        aria-current={
+          pathname === `/${locale}/profile/delete-account` ||
+          pathname.startsWith(`/${locale}/profile/delete-account/`)
+            ? "page"
+            : undefined
+        }
+      >
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px]"
+          style={{
+            backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
+            color: PROFILE_SIDEBAR_ICON_TONE.foreground,
+          }}
+        >
+          <Trash2 className="h-5 w-5" />
+        </span>
+        <span className="text-sm font-semibold text-red-500">
+          {dictionary.deleteAccount}
+        </span>
+      </AppLink>
     </div>
   );
 }
