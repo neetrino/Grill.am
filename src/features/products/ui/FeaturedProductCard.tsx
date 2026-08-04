@@ -132,7 +132,6 @@ export function FeaturedProductCard({
             <AppLink
               href={href}
               prefetchPolicy={priority ? "intent" : "auto"}
-              className="hover:underline"
             >
               {title}
             </AppLink>

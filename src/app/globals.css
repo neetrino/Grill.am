@@ -96,6 +96,12 @@ body {
   font-family: var(--font-montserrat), ui-sans-serif, sans-serif;
 }
 
+/* Photos: no drag / blue selection highlight; surrounding text stays copyable. */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 /* ─── Global dropdown lists (checkout city picker style) ─── */
 :root {
   --dropdown-radius: 15px;
