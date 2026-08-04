@@ -102,6 +102,34 @@ function isItemActive(pathname: string, item: NavItem): boolean {
   return pathname === item.href || pathname.startsWith(`${item.href}/`);
 }
 
+function NavIcon({
+  active,
+  children,
+}: {
+  active: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <span
+      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px] ${
+        active
+          ? "bg-transparent text-brand-yellow [&>svg]:stroke-[2.75]"
+          : "[&>svg]:stroke-2"
+      }`}
+      style={
+        active
+          ? undefined
+          : {
+              backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
+              color: PROFILE_SIDEBAR_ICON_TONE.foreground,
+            }
+      }
+    >
+      {children}
+    </span>
+  );
+}
+
 export function ProfileSidebarNav({
   locale,
   dictionary,
@@ -109,17 +137,27 @@ export function ProfileSidebarNav({
 }: ProfileSidebarNavProps) {
   const pathname = usePathname();
   const items = buildNavItems(locale, dictionary);
-  const activeItem =
-    items.find((item) => isItemActive(pathname, item)) ?? items[0] ?? null;
+  const deleteAccountHref = `/${locale}/profile/delete-account`;
+  const deleteAccountActive =
+    pathname === deleteAccountHref ||
+    pathname.startsWith(`${deleteAccountHref}/`);
+
+  const activeHref = deleteAccountActive
+    ? deleteAccountHref
+    : (items.find((item) => isItemActive(pathname, item))?.href ??
+      items[0]?.href ??
+      "");
 
   const navRef = useRef<HTMLElement>(null);
   const linkRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const [indicator, setIndicator] = useState<IndicatorBox | null>(null);
   const [slideEnabled, setSlideEnabled] = useState(false);
 
-  const activeHref = activeItem?.href ?? "";
-
   useLayoutEffect(() => {
+    if (!activeHref) {
+      setIndicator(null);
+      return;
+    }
     const link = linkRefs.current.get(activeHref);
     if (!link) {
       return;
@@ -163,6 +201,14 @@ export function ProfileSidebarNav({
     };
   }, [activeHref, items.length]);
 
+  function registerLink(href: string, node: HTMLAnchorElement | null): void {
+    if (node) {
+      linkRefs.current.set(href, node);
+    } else {
+      linkRefs.current.delete(href);
+    }
+  }
+
   return (
     <div className="mt-6 min-h-0 flex-1 overflow-y-auto overscroll-contain border-t border-gray-100 pt-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <nav
@@ -191,42 +237,20 @@ export function ProfileSidebarNav({
         ) : null}
 
         {items.map((item) => {
-          const active = isItemActive(pathname, item);
+          const active = item.href === activeHref;
 
           return (
             <AppLink
               key={item.href}
               href={item.href}
               prefetchPolicy="intent"
-              ref={(node) => {
-                if (node) {
-                  linkRefs.current.set(item.href, node);
-                } else {
-                  linkRefs.current.delete(item.href);
-                }
-              }}
+              ref={(node) => registerLink(item.href, node)}
               className={`relative z-10 flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left ${
                 active ? "" : "hover:bg-white/70"
               }`}
               aria-current={active ? "page" : undefined}
             >
-              <span
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px] ${
-                  active
-                    ? "bg-transparent text-brand-yellow [&>svg]:stroke-[2.75]"
-                    : "[&>svg]:stroke-2"
-                }`}
-                style={
-                  active
-                    ? undefined
-                    : {
-                        backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
-                        color: PROFILE_SIDEBAR_ICON_TONE.foreground,
-                      }
-                }
-              >
-                {item.icon}
-              </span>
+              <NavIcon active={active}>{item.icon}</NavIcon>
               <span
                 className={`${styles.tabLabel} min-w-0 flex-1 text-sm ${
                   active
@@ -239,52 +263,50 @@ export function ProfileSidebarNav({
             </AppLink>
           );
         })}
-      </nav>
 
-      <form action={logoutAction} className="mt-2">
-        <button
-          type="submit"
-          className="flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left transition-colors hover:bg-white/70"
-        >
-          <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px]"
-            style={{
-              backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
-              color: PROFILE_SIDEBAR_ICON_TONE.foreground,
-            }}
+        <form action={logoutAction} className="relative z-10 mt-1">
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left transition-colors hover:bg-white/70"
           >
-            <LogOut className="h-5 w-5" />
-          </span>
-          <span className="text-sm font-semibold text-brand-red">
-            {dictionary.logout}
-          </span>
-        </button>
-      </form>
+            <span
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px]"
+              style={{
+                backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
+                color: PROFILE_SIDEBAR_ICON_TONE.foreground,
+              }}
+            >
+              <LogOut className="h-5 w-5" />
+            </span>
+            <span className="text-sm font-semibold text-brand-red">
+              {dictionary.logout}
+            </span>
+          </button>
+        </form>
 
-      <AppLink
-        href={`/${locale}/profile/delete-account`}
-        prefetchPolicy="intent"
-        className="mt-1 flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left transition-colors hover:bg-white/70"
-        aria-current={
-          pathname === `/${locale}/profile/delete-account` ||
-          pathname.startsWith(`/${locale}/profile/delete-account/`)
-            ? "page"
-            : undefined
-        }
-      >
-        <span
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px]"
-          style={{
-            backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
-            color: PROFILE_SIDEBAR_ICON_TONE.foreground,
-          }}
+        <AppLink
+          href={deleteAccountHref}
+          prefetchPolicy="intent"
+          ref={(node) => registerLink(deleteAccountHref, node)}
+          className={`relative z-10 mt-1 flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left ${
+            deleteAccountActive ? "" : "hover:bg-white/70"
+          }`}
+          aria-current={deleteAccountActive ? "page" : undefined}
         >
-          <Trash2 className="h-5 w-5" />
-        </span>
-        <span className="text-sm font-semibold text-red-500">
-          {dictionary.deleteAccount}
-        </span>
-      </AppLink>
+          <NavIcon active={deleteAccountActive}>
+            <Trash2 className="h-5 w-5" />
+          </NavIcon>
+          <span
+            className={`${styles.tabLabel} min-w-0 flex-1 text-sm ${
+              deleteAccountActive
+                ? "font-semibold text-brand-red"
+                : "font-medium text-gray-800"
+            }`}
+          >
+            {dictionary.deleteAccount}
+          </span>
+        </AppLink>
+      </nav>
     </div>
   );
 }
