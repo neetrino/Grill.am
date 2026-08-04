@@ -201,6 +201,29 @@ select:not([data-dropdown-unstyled]):disabled,
   background-color: #f9fafb !important;
 }
 
+/*
+ * iOS Safari auto-zooms focused fields when computed font-size is under 16px.
+ * Keep controls at 16px below `lg` so checkout/auth/search stay readable without zoom.
+ */
+@media (max-width: 1023px) {
+  input:not(
+    [type="button"],
+    [type="submit"],
+    [type="reset"],
+    [type="checkbox"],
+    [type="radio"],
+    [type="file"],
+    [type="image"],
+    [type="range"],
+    [type="color"],
+    [type="hidden"]
+  ),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 a[href],
 button:not(:disabled),
 [role="button"]:not([aria-disabled="true"]),
