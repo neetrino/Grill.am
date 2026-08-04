@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
   formatAdminMessage,
@@ -27,6 +26,7 @@ import {
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
 
@@ -138,14 +138,14 @@ export function BulkChangeOrderStatusForm({
             count: String(selected.size),
           })}
         </p>
-        <Button
+        <button
           type="button"
-          size="sm"
           disabled={isPending || selected.size === 0}
           onClick={deleteSelected}
+          className={ADMIN_BTN_PRIMARY_CLASS}
         >
           {isPending ? bulk.deleting : bulk.deleteSelected}
-        </Button>
+        </button>
         {error ? (
           <p className="w-full text-sm text-red-700">{error}</p>
         ) : null}

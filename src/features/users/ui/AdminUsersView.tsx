@@ -12,9 +12,8 @@ import {
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
-import {
-  ADMIN_BADGE,
-} from "@/features/admin/ui/status-badge";
+import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
+import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -179,10 +178,8 @@ export function AdminUsersView({
             count: String(selected.size),
           })}
         </p>
-        <Button
+        <button
           type="button"
-          size="sm"
-          variant="outline"
           disabled={isPending || selected.size === 0}
           onClick={() =>
             void (async () => {
@@ -205,9 +202,10 @@ export function AdminUsersView({
               });
             })()
           }
+          className={ADMIN_BTN_PRIMARY_CLASS}
         >
           {bulk.deleteSelected}
-        </Button>
+        </button>
       </Card>
 
       <Card className={ADMIN_TABLE_CARD}>
