@@ -33,9 +33,13 @@ export async function registerAction(
     return { error: "Unable to create account with those details." };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructured only to exclude confirmPassword from the persisted registration payload
-  const { password, confirmPassword: _confirmPassword, ...registration } =
-    parsed.data;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- exclude confirmPassword / acceptTerms from persisted payload
+  const {
+    password,
+    confirmPassword: _confirmPassword,
+    acceptTerms: _acceptTerms,
+    ...registration
+  } = parsed.data;
   const [user] = await getDb()
     .insert(users)
     .values({
@@ -43,6 +47,8 @@ export async function registerAction(
       ...registration,
       passwordHash: await hashPassword(password),
       passwordUpdatedAt: new Date(),
+      termsAcceptedAt: new Date(),
+      termsVersion: "1.0",
       // Temporary Phase 3 bypass until the verification provider is connected.
       emailVerifiedAt: new Date(),
       role: "CUSTOMER",

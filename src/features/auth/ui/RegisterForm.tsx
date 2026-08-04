@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { AppLink } from "@/components/ui/AppLink";
 import { type AuthActionState } from "@/features/auth/login-action";
 import { registerAction } from "@/features/auth/register-action";
+import { AuthTermsAgreement } from "@/features/auth/ui/AuthTermsAgreement";
 import {
   AUTH_BTN_PRIMARY_CLASS,
   AUTH_FIELD_CLASS,
@@ -71,21 +72,23 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         </label>
       </div>
 
-      <PasswordField
-        name="password"
-        label={dictionary.password}
-        showPasswordLabel={dictionary.showPassword}
-        hidePasswordLabel={dictionary.hidePassword}
-        autoComplete="new-password"
-      />
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <PasswordField
+          name="password"
+          label={dictionary.password}
+          showPasswordLabel={dictionary.showPassword}
+          hidePasswordLabel={dictionary.hidePassword}
+          autoComplete="new-password"
+        />
 
-      <PasswordField
-        name="confirmPassword"
-        label={dictionary.confirmPassword}
-        showPasswordLabel={dictionary.showPassword}
-        hidePasswordLabel={dictionary.hidePassword}
-        autoComplete="new-password"
-      />
+        <PasswordField
+          name="confirmPassword"
+          label={dictionary.confirmPassword}
+          showPasswordLabel={dictionary.showPassword}
+          hidePasswordLabel={dictionary.hidePassword}
+          autoComplete="new-password"
+        />
+      </div>
 
       {state.error ? (
         <p
@@ -95,6 +98,8 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
           {state.error}
         </p>
       ) : null}
+
+      <AuthTermsAgreement locale={locale} dictionary={dictionary} />
 
       <button type="submit" disabled={isPending} className={AUTH_BTN_PRIMARY_CLASS}>
         {isPending

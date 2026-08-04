@@ -21,6 +21,9 @@ export const registerSchema = z
     phone: z.string().trim().min(5).max(40),
     password: passwordSchema,
     confirmPassword: z.string().min(1),
+    acceptTerms: z.literal("on", {
+      message: "You must accept the terms to continue.",
+    }),
   })
   .refine((value) => value.password === value.confirmPassword, {
     message: "Passwords do not match.",
