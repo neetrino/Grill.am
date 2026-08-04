@@ -30,6 +30,8 @@ function PrimaryNavLinksInner({
 }: PrimaryNavLinksProps & { categorySlug: string | null }) {
   const pathname = usePathname();
   const productsPath = `/${locale}/products`;
+  const isOnProducts =
+    pathname === productsPath || pathname.startsWith(`${productsPath}/`);
   const isOnProductsList = pathname === productsPath;
 
   return (
@@ -45,6 +47,7 @@ function PrimaryNavLinksInner({
               allLabel={allCategoriesLabel}
               activeCategorySlug={categorySlug}
               isOnProductsList={isOnProductsList}
+              isMenuActive={isOnProducts}
             />
           );
         }

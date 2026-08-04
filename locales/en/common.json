@@ -13,7 +13,7 @@
     "home": "Home",
     "products": "Menu",
     "categories": "Categories",
-    "shop": "Shop",
+    "shop": "Stores",
     "blog": "Blog",
     "careers": "Careers",
     "cart": "Cart",
@@ -40,7 +40,7 @@
     "searchViewAll": "View all results"
   },
   "footer": {
-    "shop": "Shop",
+    "shop": "Stores",
     "description": "The most complete online food platform in Armenia. Fresh, tasty, fast.",
     "quickLinks": "Navigation",
     "support": "Support",

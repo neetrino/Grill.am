@@ -122,7 +122,7 @@ export function MobileBottomNav({
   const shopTab: NavTab = {
     id: "shop",
     href: `/${locale}/products`,
-    label: dictionary.nav.shop,
+    label: dictionary.nav.products,
     icon: ShopNavIcon,
     iconClassName: {
       idle: "size-6 min-[390px]:size-8",

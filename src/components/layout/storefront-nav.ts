@@ -26,7 +26,7 @@ export function getStorefrontNavItems(
     },
     {
       id: "shop",
-      href: `/${locale}/products`,
+      href: `/${locale}/stores`,
       label: dictionary.nav.shop,
     },
     { id: "about", href: `/${locale}/about`, label: dictionary.nav.about },
@@ -47,27 +47,22 @@ export function isStorefrontNavActive(
   pathname: string,
   item: StorefrontNavItem,
   locale: Locale,
-  options?: { categorySlug?: string | null },
+  _options?: { categorySlug?: string | null },
 ): boolean {
   const homeHref = `/${locale}`;
   const productsPath = `/${locale}/products`;
+  const storesPath = `/${locale}/stores`;
 
   if (item.id === "home") {
     return pathname === homeHref || pathname === `${homeHref}/`;
   }
 
   if (item.id === "menu") {
-    return pathname === productsPath && Boolean(options?.categorySlug);
+    return pathname === productsPath || pathname.startsWith(`${productsPath}/`);
   }
 
   if (item.id === "shop") {
-    if (pathname.startsWith(`${productsPath}/`)) {
-      return true;
-    }
-    if (pathname === productsPath) {
-      return !options?.categorySlug;
-    }
-    return false;
+    return pathname === storesPath || pathname.startsWith(`${storesPath}/`);
   }
 
   return pathname === item.href || pathname.startsWith(`${item.href}/`);
