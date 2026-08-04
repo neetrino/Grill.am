@@ -16,5 +16,21 @@
   },
   "benefits": ["Hourly wage", "Free meals", "Career growth"],
   "backToList": "Back to careers",
-  "applyHint": "Interested? Contact us and mention the position title."
+  "applyHint": "Interested? Fill in the form and send your application.",
+  "applyForm": {
+    "title": "Apply for this role",
+    "name": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Cover letter / message",
+    "cv": "CV / resume",
+    "cvHint": "PDF, DOC or DOCX, up to 5 MB.",
+    "cvChoose": "Choose file",
+    "cvRemove": "Remove file",
+    "cvRequired": "Please upload your CV.",
+    "cvInvalidType": "Only PDF, DOC, or DOCX files are allowed.",
+    "cvTooLarge": "CV must be 5 MB or smaller.",
+    "submit": "Send application",
+    "success": "Thank you! Your application has been received."
+  }
 }

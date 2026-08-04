@@ -1,14 +1,9 @@
-import {
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-  MapPin,
-  Tag,
-} from "lucide-react";
+import { Briefcase, ChevronLeft, MapPin, Tag } from "lucide-react";
 import Image from "next/image";
 
 import { AppLink } from "@/components/ui/AppLink";
 import type { StorefrontJobPosting } from "@/features/careers/application/queries";
+import { JobApplySection } from "@/features/careers/ui/JobApplySection";
 import {
   JobBenefitTags,
   JobMetaItem,
@@ -21,6 +16,8 @@ type JobPostingDetailProps = {
   posting: StorefrontJobPosting;
   locale: Locale;
   copy: Dictionary["careers"];
+  closeLabel: string;
+  cancelLabel: string;
   sanitizedDescription: string;
 };
 
@@ -28,10 +25,11 @@ export function JobPostingDetail({
   posting,
   locale,
   copy,
+  closeLabel,
+  cancelLabel,
   sanitizedDescription,
 }: JobPostingDetailProps) {
   const careersHref = `/${locale}/careers`;
-  const contactHref = `/${locale}/contact`;
   const employment = copy.employment[posting.employmentType];
   const location = posting.copy.location?.trim();
   const salary =
@@ -129,20 +127,14 @@ export function JobPostingDetail({
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-4 rounded-[20px] bg-brand-yellow py-5 pr-5 pl-7 shadow-[0_8px_28px_rgba(0,0,0,0.08)] sm:flex-row sm:items-center sm:justify-between sm:py-6 sm:pr-6 sm:pl-8">
-        <p className="text-base leading-relaxed font-bold text-black sm:text-lg">
-          {copy.applyHint}
-        </p>
-
-        <AppLink
-          href={contactHref}
-          prefetchPolicy="intent"
-          className="inline-flex h-12 shrink-0 items-center justify-center gap-1.5 self-end rounded-full bg-brand-red px-7 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red sm:self-auto"
-        >
-          {copy.apply}
-          <ChevronRight className="size-4" strokeWidth={2.5} aria-hidden />
-        </AppLink>
-      </div>
+      <JobApplySection
+        jobTitle={posting.copy.title}
+        applyLabel={copy.apply}
+        applyHint={copy.applyHint}
+        closeLabel={closeLabel}
+        cancelLabel={cancelLabel}
+        copy={copy.applyForm}
+      />
     </article>
   );
 }
