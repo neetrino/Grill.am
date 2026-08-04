@@ -21,6 +21,7 @@ import {
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteJobPostingAction } from "@/features/careers/application/manage-job";
 import type { AdminJobListItem } from "@/features/careers/application/queries";
+import { AdminCareersTabs } from "@/features/careers/ui/AdminCareersTabs";
 import { JobPostingDrawer } from "@/features/careers/ui/JobPostingDrawer";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -127,6 +128,13 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
           {copy.addPosition}
         </Button>
       </div>
+
+      <AdminCareersTabs
+        locale={locale}
+        active="postings"
+        postingsLabel={copy.tabs.postings}
+        applicationsLabel={copy.tabs.applications}
+      />
 
       <input
         value={query}

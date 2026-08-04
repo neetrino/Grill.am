@@ -29,6 +29,7 @@ export const CANONICAL_TABLES = [
   "payments",
   "reviews",
   "contact_messages",
+  "job_applications",
   "audit_logs",
   "outbox_events",
 ] as const;

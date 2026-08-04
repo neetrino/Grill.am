@@ -31,6 +31,10 @@
     "cvInvalidType": "Only PDF, DOC, or DOCX files are allowed.",
     "cvTooLarge": "CV must be 5 MB or smaller.",
     "submit": "Send application",
-    "success": "Thank you! Your application has been received."
+    "submitting": "Sending…",
+    "success": "Thank you! Your application has been received.",
+    "error": "Unable to submit your application. Please try again.",
+    "rateLimited": "Too many applications. Please try again later.",
+    "jobUnavailable": "This position is no longer accepting applications."
   }
 }

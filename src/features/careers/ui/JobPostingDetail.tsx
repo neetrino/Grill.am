@@ -128,6 +128,7 @@ export function JobPostingDetail({
       </div>
 
       <JobApplySection
+        jobPostingId={posting.id}
         jobTitle={posting.copy.title}
         applyLabel={copy.apply}
         applyHint={copy.applyHint}

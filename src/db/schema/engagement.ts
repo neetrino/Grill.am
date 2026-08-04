@@ -16,8 +16,10 @@ import {
   idColumn,
   updatedAtColumn,
 } from "@/db/schema/columns";
+import { jobPostings } from "@/db/schema/content";
 import {
   contactMessageStatusEnum,
+  jobApplicationStatusEnum,
   reviewModerationStatusEnum,
 } from "@/db/schema/enums";
 import { users } from "@/db/schema/identity";
@@ -82,5 +84,34 @@ export const contactMessages = pgTable(
       table.status,
       table.createdAt,
     ),
+  ],
+);
+
+export const jobApplications = pgTable(
+  "job_applications",
+  {
+    id: idColumn(),
+    jobPostingId: uuid("job_posting_id")
+      .notNull()
+      .references(() => jobPostings.id, { onDelete: "restrict" }),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone").notNull(),
+    message: text("message").notNull(),
+    status: jobApplicationStatusEnum("status").notNull().default("UNREAD"),
+    cvObjectKey: text("cv_object_key").notNull(),
+    cvFileName: text("cv_file_name").notNull(),
+    cvMimeType: text("cv_mime_type").notNull(),
+    cvByteSize: integer("cv_byte_size").notNull(),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+  },
+  (table) => [
+    index("job_applications_status_created_idx").on(
+      table.status,
+      table.createdAt,
+    ),
+    index("job_applications_job_posting_idx").on(table.jobPostingId),
+    check("job_applications_cv_byte_size_chk", sql`${table.cvByteSize} >= 0`),
   ],
 );

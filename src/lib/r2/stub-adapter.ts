@@ -10,6 +10,15 @@ import type { ObjectStorageAdapter } from "@/lib/r2/types";
 export function createStubObjectStorageAdapter(
   publicBaseUrl = "",
 ): ObjectStorageAdapter {
+  function buildPublicUrl(objectKey: string): string {
+    const key = objectKey.replace(/^\//, "");
+    const base = publicBaseUrl.replace(/\/$/, "");
+    if (!base) {
+      return `/${key}`;
+    }
+    return `${base}/${key}`;
+  }
+
   return {
     name: "stub-r2",
     async createPresignedUpload({ objectKey }) {
@@ -20,19 +29,19 @@ export function createStubObjectStorageAdapter(
         expiresAt: new Date(Date.now() + 15 * 60 * 1000),
       };
     },
+    async createPresignedDownload({ objectKey }) {
+      return {
+        objectKey,
+        downloadUrl: buildPublicUrl(objectKey),
+        expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+      };
+    },
     async putObject({ objectKey, body }) {
       const absolute = path.join(process.cwd(), "public", objectKey);
       await mkdir(path.dirname(absolute), { recursive: true });
       await writeFile(absolute, body);
     },
-    buildPublicUrl(objectKey) {
-      const key = objectKey.replace(/^\//, "");
-      const base = publicBaseUrl.replace(/\/$/, "");
-      if (!base) {
-        return `/${key}`;
-      }
-      return `${base}/${key}`;
-    },
+    buildPublicUrl,
     async deleteObject(objectKey) {
       const absolute = path.join(process.cwd(), "public", objectKey);
       try {
