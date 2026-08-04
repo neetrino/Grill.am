@@ -1,8 +1,10 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
+import { SegmentedControl } from "@/components/layout/SegmentedControl";
 import { AppLink } from "@/components/ui/AppLink";
 import { IconDropdown } from "@/components/ui/IconDropdown";
 import type { Locale } from "@/lib/i18n/config";
@@ -12,7 +14,18 @@ type LocaleSwitcherProps = {
   locale: Locale;
   label: string;
   menuPlacement?: "bottom" | "top";
+  /** Inline EN / РУС / ՀԱՅ control (mobile burger). */
+  variant?: "dropdown" | "segmented";
 };
+
+const localeShortLabels: Record<Locale, string> = {
+  en: "EN",
+  ru: "РУС",
+  hy: "ՀԱՅ",
+};
+
+/** Display order for segmented control: EN / РУС / ՀԱՅ. */
+const segmentedLocales: readonly Locale[] = ["en", "ru", "hy"];
 
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
   const segments = pathname.split("/");
@@ -28,8 +41,49 @@ export function LocaleSwitcher({
   locale,
   label,
   menuPlacement = "bottom",
+  variant = "dropdown",
 }: LocaleSwitcherProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [activeLocale, setActiveLocale] = useState(locale);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setActiveLocale(locale);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [locale]);
+
+  if (variant === "segmented") {
+    return (
+      <SegmentedControl
+        aria-label={label}
+        value={activeLocale}
+        options={segmentedLocales.map((item) => ({
+          value: item,
+          label: localeShortLabels[item],
+          href: replaceLocaleInPath(pathname, item),
+        }))}
+        renderOption={({ option, selected, className }) => (
+          <AppLink
+            href={option.href ?? `/${option.value}`}
+            hrefLang={option.value}
+            prefetchPolicy="intent"
+            aria-current={selected ? "page" : undefined}
+            className={className}
+            onClick={() => {
+              setActiveLocale(option.value);
+            }}
+            onMouseEnter={() => {
+              router.prefetch(option.href ?? `/${option.value}`);
+            }}
+          >
+            {option.label}
+          </AppLink>
+        )}
+      />
+    );
+  }
 
   return (
     <IconDropdown

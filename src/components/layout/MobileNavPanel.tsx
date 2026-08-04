@@ -1,8 +1,16 @@
 "use client";
 
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { createPortal } from "react-dom";
 
 import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
@@ -15,63 +23,194 @@ import type { StorefrontNavCategory } from "@/features/categories/storefront-nav
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import type { SessionUser } from "@/lib/auth/session";
 
 export type MobileNavPanelProps = {
   locale: Locale;
   currency: Currency;
   dictionary: Dictionary;
-  user: SessionUser | null;
   navItems: readonly StorefrontNavItem[];
   categories: readonly StorefrontNavCategory[];
   categorySlug: string | null;
+  isOpen: boolean;
+  menuId: string;
   onClose: () => void;
 };
 
+const MENU_EXIT_MS = 260;
+const MENU_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+const MENU_GAP_PX = 8;
+const MENU_INSET_PX = 12;
+
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
+
+function applyPanelOffset(panel: HTMLDivElement): void {
+  const header = document.querySelector("[data-site-header]");
+  const headerBottom =
+    header instanceof HTMLElement
+      ? Math.round(header.getBoundingClientRect().bottom)
+      : 90;
+  const top = headerBottom + MENU_GAP_PX;
+  panel.style.top = `${top}px`;
+  panel.style.maxHeight = `calc(100dvh - ${top}px - ${MENU_INSET_PX}px)`;
+}
+
+/**
+ * MaMarie-style mobile burger menu — dropdown panel under the header (not a side drawer).
+ */
 export function MobileNavPanel({
   locale,
   currency,
   dictionary,
-  user,
   navItems,
   categories,
   categorySlug,
+  isOpen,
+  menuId,
   onClose,
 }: MobileNavPanelProps) {
   const pathname = usePathname() ?? `/${locale}`;
-  const [categoriesOpen, setCategoriesOpen] = useState(true);
-  const year = new Date().getFullYear();
+  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const productsPath = `/${locale}/products`;
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm md:hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-label={dictionary.nav.navigation}
-      onClick={onClose}
-    >
-      <div
-        className="flex h-full min-h-screen w-1/2 min-w-[16rem] max-w-full flex-col bg-white shadow-2xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <p className="text-lg font-semibold text-gray-900">
-            {dictionary.nav.navigation}
-          </p>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-900"
-            aria-label={dictionary.nav.closeMenu}
-          >
-            <X className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </div>
+  const clearCloseTimer = useCallback(() => {
+    if (closeTimerRef.current != null) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
 
-        <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto text-sm font-semibold uppercase tracking-wide text-gray-800">
-          <div className="divide-y divide-gray-200">
-            {navItems.map((item) => {
+  useEffect(() => {
+    if (isOpen) {
+      clearCloseTimer();
+      const openFrame = requestAnimationFrame(() => {
+        setVisible(true);
+        setExpanded(false);
+        requestAnimationFrame(() => {
+          const panel = panelRef.current;
+          if (panel) {
+            applyPanelOffset(panel);
+          }
+          setExpanded(true);
+        });
+      });
+      return () => cancelAnimationFrame(openFrame);
+    }
+
+    if (!visible) {
+      return;
+    }
+
+    clearCloseTimer();
+    const closeFrame = requestAnimationFrame(() => {
+      setExpanded(false);
+    });
+    closeTimerRef.current = setTimeout(() => {
+      setVisible(false);
+      closeTimerRef.current = null;
+    }, MENU_EXIT_MS);
+
+    return () => {
+      cancelAnimationFrame(closeFrame);
+      clearCloseTimer();
+    };
+  }, [clearCloseTimer, isOpen, visible]);
+
+  useLayoutEffect(() => {
+    if (!visible) {
+      return;
+    }
+
+    const panel = panelRef.current;
+    if (!panel) {
+      return;
+    }
+
+    function onViewportChange(): void {
+      const node = panelRef.current;
+      if (node) {
+        applyPanelOffset(node);
+      }
+    }
+
+    onViewportChange();
+    window.addEventListener("resize", onViewportChange);
+    window.addEventListener("scroll", onViewportChange, { passive: true });
+    return () => {
+      window.removeEventListener("resize", onViewportChange);
+      window.removeEventListener("scroll", onViewportChange);
+    };
+  }, [visible]);
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose, visible]);
+
+  if (!mounted || !visible) {
+    return null;
+  }
+
+  return createPortal(
+    <div className="md:hidden" aria-hidden={!expanded}>
+      <button
+        type="button"
+        aria-label={dictionary.nav.closeMenu}
+        className="fixed inset-0 z-[40] border-0 bg-black/25 backdrop-blur-[8px] transition-[opacity,visibility] duration-[260ms]"
+        style={{
+          opacity: expanded ? 1 : 0,
+          visibility: expanded ? "visible" : "hidden",
+          pointerEvents: expanded ? "auto" : "none",
+          transitionTimingFunction: MENU_EASE,
+        }}
+        onClick={onClose}
+      />
+
+      <div
+        ref={panelRef}
+        id={menuId}
+        role="dialog"
+        aria-modal="true"
+        aria-label={dictionary.nav.navigation}
+        className="fixed right-3 left-3 z-[45] overflow-hidden rounded-[24px] bg-white px-5 shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition-[opacity,transform] duration-[260ms]"
+        style={{
+          opacity: expanded ? 1 : 0,
+          transform: expanded
+            ? "translateY(0) scale(1)"
+            : "translateY(-10px) scale(0.98)",
+          transitionTimingFunction: MENU_EASE,
+        }}
+      >
+        <nav
+          aria-label={dictionary.nav.navigation}
+          className="flex max-h-[inherit] flex-col overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <div className="flex flex-col py-3">
+            {navItems
+              .filter((item) => item.id !== "home" && item.id !== "shop")
+              .map((item) => {
               if (item.kind === "categories") {
                 const sectionActive =
                   pathname === productsPath && Boolean(categorySlug);
@@ -82,8 +221,8 @@ export function MobileNavPanel({
                       type="button"
                       className={
                         sectionActive || categoriesOpen
-                          ? "flex w-full items-center justify-between px-4 py-3 text-left text-brand-red hover:bg-gray-50"
-                          : "flex w-full items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
+                          ? "flex w-full items-center justify-between rounded-xl px-1 py-3.5 text-left text-base font-semibold text-brand-red"
+                          : "flex w-full items-center justify-between rounded-xl px-1 py-3.5 text-left text-base font-semibold text-[#171717]"
                       }
                       aria-expanded={categoriesOpen}
                       onClick={() => setCategoriesOpen((value) => !value)}
@@ -97,14 +236,14 @@ export function MobileNavPanel({
                       />
                     </button>
                     {categoriesOpen ? (
-                      <div className="border-t border-gray-100 bg-gray-50 normal-case">
+                      <div className="pb-1">
                         <AppLink
                           href={productsPath}
                           prefetchPolicy="intent"
                           className={
                             pathname === productsPath && !categorySlug
-                              ? "block px-6 py-2.5 text-brand-red"
-                              : "block px-6 py-2.5 text-gray-700 hover:bg-gray-100"
+                              ? "block rounded-xl px-3 py-2.5 text-sm font-semibold text-brand-red"
+                              : "block rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
                           }
                           onClick={onClose}
                         >
@@ -120,8 +259,8 @@ export function MobileNavPanel({
                               prefetchPolicy="intent"
                               className={
                                 active
-                                  ? "block px-6 py-2.5 text-brand-red"
-                                  : "block px-6 py-2.5 text-gray-700 hover:bg-gray-100"
+                                  ? "block rounded-xl px-3 py-2.5 text-sm font-semibold text-brand-red"
+                                  : "block rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
                               }
                               onClick={onClose}
                             >
@@ -147,8 +286,8 @@ export function MobileNavPanel({
                   aria-current={active ? "page" : undefined}
                   className={
                     active
-                      ? "flex items-center justify-between px-4 py-3 text-brand-red hover:bg-gray-50"
-                      : "flex items-center justify-between px-4 py-3 hover:bg-gray-50"
+                      ? "rounded-xl px-1 py-3.5 text-base font-semibold text-brand-red"
+                      : "rounded-xl px-1 py-3.5 text-base font-semibold text-[#171717] hover:bg-gray-50"
                   }
                   onClick={(event) => {
                     onClose();
@@ -156,76 +295,40 @@ export function MobileNavPanel({
                       return;
                     }
                     event.preventDefault();
-                    window.scrollTo({
-                      top: 0,
-                      left: 0,
-                      behavior: "smooth",
-                    });
+                    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
                   }}
                 >
                   {item.label}
                 </AppLink>
               );
             })}
+          </div>
 
-            {!user ? (
-              <>
-                <AppLink
-                  href={`/${locale}/login`}
-                  prefetchPolicy="intent"
-                  className="flex items-center justify-between px-4 py-3 normal-case hover:bg-gray-50"
-                  onClick={onClose}
-                >
-                  {dictionary.header.login}
-                </AppLink>
-                <AppLink
-                  href={`/${locale}/register`}
-                  prefetchPolicy="intent"
-                  className="flex items-center justify-between px-4 py-3 font-semibold normal-case text-gray-900 hover:bg-gray-900 hover:text-white"
-                  onClick={onClose}
-                >
-                  {dictionary.header.createAccount}
-                </AppLink>
-              </>
-            ) : (
-              <AppLink
-                href={`/${locale}/profile`}
-                prefetchPolicy="intent"
-                className="flex items-center justify-between px-4 py-3 normal-case hover:bg-gray-50"
-                onClick={onClose}
-              >
-                {dictionary.header.profile}
-              </AppLink>
-            )}
+          <div className="grid grid-cols-2 gap-3 border-t border-gray-100 py-4">
+            <div className="min-w-0 space-y-2">
+              <span className="text-xs font-medium tracking-wide text-gray-500">
+                {dictionary.header.language}
+              </span>
+              <LocaleSwitcher
+                locale={locale}
+                label={dictionary.header.language}
+                variant="segmented"
+              />
+            </div>
+            <div className="min-w-0 space-y-2">
+              <span className="text-xs font-medium tracking-wide text-gray-500">
+                {dictionary.header.currency}
+              </span>
+              <CurrencySwitcher
+                currency={currency}
+                label={dictionary.header.currency}
+                variant="segmented"
+              />
+            </div>
           </div>
         </nav>
-
-        <div className="shrink-0 space-y-3 overflow-visible border-t border-gray-200 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-xs font-medium tracking-wide text-gray-500">
-              {dictionary.header.language}
-            </span>
-            <LocaleSwitcher
-              locale={locale}
-              label={dictionary.header.language}
-              menuPlacement="top"
-            />
-          </div>
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-xs font-medium tracking-wide text-gray-500">
-              {dictionary.header.currency}
-            </span>
-            <CurrencySwitcher
-              currency={currency}
-              label={dictionary.header.currency}
-              menuPlacement="top"
-            />
-          </div>
-          <p className="pt-1 text-xs font-medium tracking-wide text-gray-500">
-            © {year} {dictionary.brand}
-          </p>
-        </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useId, useState } from "react";
 
 import { HeaderUserIcon } from "@/components/layout/HeaderIcons";
 import {
@@ -26,10 +27,13 @@ type MobileHeaderActionsProps = {
 };
 
 const actionButtonClassName =
-  "flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-red text-white transition hover:bg-brand-red-hot focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red";
+  "relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-red text-white transition hover:bg-brand-red-hot focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red";
+
+const MENU_ICON_MS = 280;
 
 /**
- * Figma mobile header `164:379` — red circular menu + profile actions.
+ * Figma mobile header `164:379` — red circular menu + profile.
+ * Burger morphs to X like MaMarie when the dropdown menu is open.
  */
 export function MobileHeaderActions({
   locale,
@@ -40,9 +44,8 @@ export function MobileHeaderActions({
   categories,
 }: MobileHeaderActionsProps) {
   const [open, setOpen] = useState(false);
-  const profileHref = user
-    ? `/${locale}/profile`
-    : `/${locale}/login`;
+  const menuId = `mobile-nav-${useId().replace(/:/g, "")}`;
+  const profileHref = user ? `/${locale}/profile` : `/${locale}/login`;
   const profileLabel = user
     ? dictionary.header.profile
     : dictionary.header.login;
@@ -52,9 +55,6 @@ export function MobileHeaderActions({
       return;
     }
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
     function handleEscape(event: KeyboardEvent): void {
       if (event.key === "Escape") {
         setOpen(false);
@@ -62,19 +62,17 @@ export function MobileHeaderActions({
     }
 
     document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleEscape);
-    };
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [open]);
 
   const panelProps: Omit<MobileNavPanelProps, "categorySlug"> = {
     locale,
     currency,
     dictionary,
-    user,
     navItems,
     categories,
+    isOpen: open,
+    menuId,
     onClose: () => setOpen(false),
   };
 
@@ -82,16 +80,40 @@ export function MobileHeaderActions({
     <div className="flex items-center gap-[11px] md:hidden">
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen((value) => !value)}
         className={actionButtonClassName}
-        aria-label={dictionary.nav.openMenu}
+        aria-label={
+          open ? dictionary.nav.closeMenu : dictionary.nav.openMenu
+        }
         aria-expanded={open}
+        aria-controls={menuId}
       >
-        <span className="flex w-6 flex-col gap-[5px]" aria-hidden>
+        <span
+          className="absolute flex w-6 flex-col gap-[5px] transition-[opacity,transform] ease-out"
+          style={{
+            opacity: open ? 0 : 1,
+            transform: open
+              ? "rotate(-90deg) scale(0.82)"
+              : "rotate(0deg) scale(1)",
+            transitionDuration: `${MENU_ICON_MS}ms`,
+          }}
+          aria-hidden
+        >
           <span className="h-0.5 w-full rounded bg-white" />
           <span className="h-0.5 w-full rounded bg-white" />
           <span className="h-0.5 w-full rounded bg-white" />
         </span>
+        <X
+          className="absolute size-6 text-white transition-[opacity,transform] ease-out"
+          style={{
+            opacity: open ? 1 : 0,
+            transform: open
+              ? "rotate(0deg) scale(1)"
+              : "rotate(90deg) scale(0.82)",
+            transitionDuration: `${MENU_ICON_MS}ms`,
+          }}
+          aria-hidden
+        />
       </button>
 
       <AppLink
@@ -103,13 +125,13 @@ export function MobileHeaderActions({
         <HeaderUserIcon className="block h-[30px] w-[30px] overflow-visible text-white" />
       </AppLink>
 
-      {open ? (
-        <Suspense
-          fallback={<MobileNavPanel {...panelProps} categorySlug={null} />}
-        >
-          <MobileNavPanelWithSearchParams {...panelProps} />
-        </Suspense>
-      ) : null}
+      <Suspense
+        fallback={
+          <MobileNavPanel {...panelProps} categorySlug={null} />
+        }
+      >
+        <MobileNavPanelWithSearchParams {...panelProps} />
+      </Suspense>
     </div>
   );
 }
