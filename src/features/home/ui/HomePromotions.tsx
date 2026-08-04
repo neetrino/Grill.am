@@ -84,7 +84,7 @@ function MobilePromoCard({
   const { amount, currency } = priceParts(product.priceFormatted);
 
   return (
-    <div className="relative h-[334px] min-h-[200px] overflow-hidden rounded-[24px] bg-[#171717] md:hidden">
+    <div className="relative h-[334px] min-h-[200px] overflow-hidden rounded-[24px] bg-[#171717]">
       {/*
         Figma `164:558` chicken — absolute box 146/-12 / 401×368 on 358 frame,
         then CSS `-scale-y-100 rotate-[-146.47deg]` around 337×218 clip.
@@ -187,18 +187,40 @@ export function HomePromotions({
   return (
     <section className="relative w-full py-5 md:py-10 lg:py-12">
       <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <MobilePromoCard
-          limitedOfferLabel={limitedOfferLabel}
-          eyebrow={eyebrow}
-          titleLead={titleLead}
-          titleAccent={titleAccent}
-          ctaLabel={ctaLabel}
-          onlyLabel={onlyLabel}
-          product={product}
-          linkHref={linkHref}
-        />
+        <div className="relative lg:hidden">
+          {slides.length > 1 ? (
+            <>
+              <button
+                type="button"
+                aria-label={prevLabel}
+                onClick={goPrev}
+                className="absolute top-1/2 left-0 z-20 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105 sm:size-12"
+              >
+                <ChevronLeft className="size-5 sm:size-6" aria-hidden />
+              </button>
+              <button
+                type="button"
+                aria-label={nextLabel}
+                onClick={goNext}
+                className="absolute top-1/2 right-0 z-20 flex size-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105 sm:size-12"
+              >
+                <ChevronRight className="size-5 sm:size-6" aria-hidden />
+              </button>
+            </>
+          ) : null}
+          <MobilePromoCard
+            limitedOfferLabel={limitedOfferLabel}
+            eyebrow={eyebrow}
+            titleLead={titleLead}
+            titleAccent={titleAccent}
+            ctaLabel={ctaLabel}
+            onlyLabel={onlyLabel}
+            product={product}
+            linkHref={linkHref}
+          />
+        </div>
 
-        <div className="relative mx-auto hidden w-full max-w-[1296px] md:block">
+        <div className="relative mx-auto hidden w-full max-w-[1296px] lg:block">
           {slides.length > 1 ? (
             <>
               <button
@@ -221,23 +243,23 @@ export function HomePromotions({
             </>
           ) : null}
 
-          <div className="relative h-auto min-h-[420px] overflow-hidden rounded-[30px] bg-[#ffc12c] sm:min-h-[480px] lg:h-[553px] lg:min-h-0">
-            <div className="relative z-10 flex h-full flex-col justify-center gap-2 px-6 pt-14 pb-10 sm:gap-2 sm:px-10 sm:pt-16 sm:pb-12 lg:max-w-[55%] lg:justify-center lg:gap-3 lg:px-14 lg:pt-0 lg:pb-0">
+          <div className="relative h-[553px] overflow-hidden rounded-[30px] bg-[#ffc12c]">
+            <div className="relative z-10 flex h-full max-w-[55%] flex-col justify-center gap-3 px-14">
               <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#f52516] px-4 py-1.5 text-xs font-black tracking-[1.44px] text-[#0d0d0d] uppercase">
                 <LimitedOfferFireIcon className="h-3.5 w-3.5 shrink-0" />
                 {limitedOfferLabel}
               </span>
 
-              <p className="text-[28px] leading-9 font-black tracking-[2.88px] text-[#0d0d0d] uppercase sm:text-[36px] sm:leading-9">
+              <p className="text-[36px] leading-9 font-black tracking-[2.88px] text-[#0d0d0d] uppercase">
                 {eyebrow}
               </p>
 
-              <h2 className="text-[48px] leading-none font-black tracking-[-2px] text-white uppercase sm:text-[64px] lg:text-[90px] lg:leading-[100px] lg:tracking-[-3.31px]">
+              <h2 className="text-[90px] leading-[100px] font-black tracking-[-3.31px] text-white uppercase">
                 {titleLead}{" "}
                 <span className="text-[#db0b20]">{titleAccent}</span>
               </h2>
 
-              <p className="text-base leading-7 text-black/65 sm:text-lg sm:leading-7">
+              <p className="text-lg leading-7 text-black/65">
                 <span className="block">{line1}</span>
                 <span className="block text-black">{line2}</span>
               </p>
@@ -251,7 +273,7 @@ export function HomePromotions({
               </AppLink>
             </div>
 
-            <div className="pointer-events-none absolute inset-y-[24px] right-[-4%] hidden w-[52%] lg:block">
+            <div className="pointer-events-none absolute inset-y-[24px] right-[-4%] w-[52%]">
               <div className="relative h-full w-full">
                 <Image
                   src={PROMO_CHICKEN}
@@ -263,18 +285,7 @@ export function HomePromotions({
               </div>
             </div>
 
-            {/* Chicken also on tablet when lg image is hidden */}
-            <div className="pointer-events-none relative mx-auto mt-2 h-[240px] w-full max-w-md lg:hidden">
-              <Image
-                src={PROMO_CHICKEN}
-                alt=""
-                fill
-                sizes="90vw"
-                className="object-contain"
-              />
-            </div>
-
-            <div className="absolute right-4 bottom-4 z-20 flex items-center gap-6 sm:right-8 sm:bottom-8 lg:right-[72px] lg:bottom-10">
+            <div className="absolute right-[72px] bottom-10 z-20 flex items-center gap-6">
               <div className="flex size-[112px] flex-col items-center justify-center rounded-full bg-[#db0b20]">
                 <span className="text-xs font-black tracking-[0.6px] text-[#ffc12c] uppercase">
                   {onlyLabel}
@@ -284,7 +295,7 @@ export function HomePromotions({
                   <span className="font-black text-[#ffc12c]">{currency}</span>
                 </span>
               </div>
-              <div className="hidden flex-col sm:flex">
+              <div className="flex flex-col">
                 <p className="text-sm leading-5 text-white line-through">
                   {wasLabel.replace("{price}", compareAtFormatted)}
                 </p>

@@ -34,6 +34,8 @@ const MENU_ICON_MS = 280;
 /**
  * Figma mobile header `164:379` — red circular menu + profile.
  * Burger morphs to X like MaMarie when the dropdown menu is open.
+ * Burger stays through tablet (`lg`); profile circle is phone-only — on iPad Mini
+ * profile lives in the bottom navbar instead.
  */
 export function MobileHeaderActions({
   locale,
@@ -77,11 +79,11 @@ export function MobileHeaderActions({
   };
 
   return (
-    <div className="flex items-center gap-[11px] md:hidden">
+    <div className="flex items-center gap-[11px]">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className={actionButtonClassName}
+        className={`${actionButtonClassName} lg:hidden`}
         aria-label={
           open ? dictionary.nav.closeMenu : dictionary.nav.openMenu
         }
@@ -120,7 +122,7 @@ export function MobileHeaderActions({
       <AppLink
         href={profileHref}
         prefetchPolicy="intent"
-        className={actionButtonClassName}
+        className={`${actionButtonClassName} md:hidden`}
         aria-label={profileLabel}
         onClick={() => setOpen(false)}
       >

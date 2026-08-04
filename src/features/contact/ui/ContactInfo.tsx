@@ -39,37 +39,46 @@ function InfoCard({
 export function ContactInfo({ copy }: ContactInfoProps) {
   return (
     <div className="flex h-full flex-col gap-4">
-      <InfoCard icon={<Phone className="size-5" aria-hidden />} title={copy.callTitle}>
-        <p className="mb-3 text-sm leading-relaxed text-gray-600">
-          {copy.callDescription}
-        </p>
-        <ul className="space-y-2">
-          {copy.storePhones.map((phone, index) => (
-            <li key={phone}>
-              <a
-                href={telHref(phone)}
-                className="text-base font-semibold text-brand-red transition hover:text-brand-red-hot"
-              >
-                {index === 0
-                  ? `${phone} (${copy.deliveryPhoneLabel})`
-                  : phone}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </InfoCard>
-
-      <InfoCard icon={<Mail className="size-5" aria-hidden />} title={copy.writeTitle}>
-        <p className="mb-3 text-sm leading-relaxed text-gray-600">
-          {copy.writeDescription}
-        </p>
-        <a
-          href={`mailto:${copy.storeEmail}`}
-          className="text-base font-semibold text-brand-red transition hover:text-brand-red-hot"
+      {/* iPad Mini: call + write side by side; stack again from lg beside the form */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1">
+        <InfoCard
+          icon={<Phone className="size-5" aria-hidden />}
+          title={copy.callTitle}
         >
-          {copy.storeEmail}
-        </a>
-      </InfoCard>
+          <p className="mb-3 text-sm leading-relaxed text-gray-600">
+            {copy.callDescription}
+          </p>
+          <ul className="space-y-2">
+            {copy.storePhones.map((phone, index) => (
+              <li key={phone}>
+                <a
+                  href={telHref(phone)}
+                  className="text-base font-semibold text-brand-red transition hover:text-brand-red-hot"
+                >
+                  {index === 0
+                    ? `${phone} (${copy.deliveryPhoneLabel})`
+                    : phone}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </InfoCard>
+
+        <InfoCard
+          icon={<Mail className="size-5" aria-hidden />}
+          title={copy.writeTitle}
+        >
+          <p className="mb-3 text-sm leading-relaxed text-gray-600">
+            {copy.writeDescription}
+          </p>
+          <a
+            href={`mailto:${copy.storeEmail}`}
+            className="text-base font-semibold text-brand-red transition hover:text-brand-red-hot"
+          >
+            {copy.storeEmail}
+          </a>
+        </InfoCard>
+      </div>
 
       <InfoCard
         icon={<MapPin className="size-5" aria-hidden />}

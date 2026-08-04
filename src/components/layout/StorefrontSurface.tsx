@@ -12,8 +12,8 @@ type StorefrontSurfaceProps = {
 
 const SURFACE_WHITE = "#ffffff";
 const SURFACE_GRAY = "#f2f0f0";
-/** Matches footer `md:block` / bottom nav `md:hidden`. */
-const DESKTOP_CHROME_MQ = "(min-width: 768px)";
+/** Matches footer `lg:block` / bottom nav `lg:hidden`. */
+const DESKTOP_CHROME_MQ = "(min-width: 1024px)";
 
 /** White page wash on home + marketing pages — matches content and mobile bottom gap. */
 function isWhiteSurfacePath(pathname: string): boolean {
@@ -31,7 +31,7 @@ function isWhiteSurfacePath(pathname: string): boolean {
 
 /**
  * Mobile: surface matches the page (white or gray) behind the bottom nav.
- * Desktop (`md+`): always white so rounded footer corner reveals stay white.
+ * Desktop (`lg+`): always white so rounded footer corner reveals stay white.
  * Gray shop/profile bands still paint their own full-bleed roots.
  */
 export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
@@ -60,7 +60,7 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
   return (
     <div
       className={`flex min-h-dvh flex-1 flex-col overflow-x-clip bg-white ${
-        isWhitePage ? "" : "max-md:bg-[#f2f0f0]"
+        isWhitePage ? "" : "max-lg:bg-[#f2f0f0]"
       }`}
     >
       <DesktopFluidFrame className="flex min-h-dvh flex-1 flex-col">

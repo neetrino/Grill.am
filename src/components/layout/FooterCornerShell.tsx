@@ -19,7 +19,7 @@ export function FooterCornerShell({ children }: FooterCornerShellProps) {
 
   return (
     <div
-      className={`mt-auto hidden md:block ${
+      className={`mt-auto hidden lg:block ${
         grayCorners ? "bg-[#f2f0f0]" : "bg-white"
       }`}
     >

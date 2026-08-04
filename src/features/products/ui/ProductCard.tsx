@@ -189,11 +189,11 @@ export function ProductCard({
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-2">
           <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="text-xl leading-5 font-extrabold text-[#0d0d0d] md:text-2xl">
+            <p className="text-base leading-5 font-extrabold text-[#0d0d0d] md:text-lg lg:text-2xl">
               {priceFormatted}
             </p>
             {onSale ? (
-              <p className="text-xs leading-5 font-extrabold text-[#bababa] line-through md:text-sm">
+              <p className="text-[11px] leading-5 font-extrabold text-[#bababa] line-through md:text-xs lg:text-sm">
                 {compareAtFormatted}
               </p>
             ) : null}

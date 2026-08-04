@@ -188,7 +188,7 @@ export function MobileNavPanel({
   }
 
   return createPortal(
-    <div className="md:hidden" aria-hidden={!expanded}>
+    <div className="lg:hidden" aria-hidden={!expanded}>
       <button
         type="button"
         aria-label={dictionary.nav.closeMenu}

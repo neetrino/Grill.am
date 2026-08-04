@@ -22,7 +22,7 @@ export function SiteHeaderTopBar({
   dictionary,
 }: SiteHeaderTopBarProps) {
   return (
-    <div className="relative z-20 hidden border-b border-gray-200 bg-white md:block">
+    <div className="relative z-20 hidden border-b border-gray-200 bg-white lg:block">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-3 py-3 text-sm text-gray-700 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
