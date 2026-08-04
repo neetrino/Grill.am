@@ -45,7 +45,6 @@ export function useDropdownPortalPosition(
 
   useLayoutEffect(() => {
     if (!active) {
-      setPosition(null);
       return;
     }
 
@@ -172,5 +171,7 @@ export function useDropdownPortalPosition(
     triggerRef,
   ]);
 
-  return position;
+  // Ignore stale measurements once inactive instead of resetting state
+  // synchronously inside the effect.
+  return active ? position : null;
 }

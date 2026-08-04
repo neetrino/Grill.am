@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState, type ReactNode } from "react";
+import { useState, useSyncExternalStore, type ReactNode } from "react";
 
 import type { CatalogFilter } from "@/features/products/schemas/catalog-list";
 import { CatalogSortBar } from "@/features/products/ui/CatalogSortBar";
@@ -39,6 +39,14 @@ function readStoredColumns(): CatalogGridColumns {
   }
 
   return window.matchMedia(LARGE_SCREEN_MQ).matches ? 4 : 3;
+}
+
+function subscribeToStoredColumnsNoop(): () => void {
+  return () => undefined;
+}
+
+function getStoredColumnsServerSnapshot(): CatalogGridColumns {
+  return 4;
 }
 
 function DotGridIcon({ size }: { size: 3 | 4 }) {
@@ -80,14 +88,20 @@ export function CatalogListingView({
   empty,
   children,
 }: CatalogListingViewProps) {
-  const [columns, setColumns] = useState<CatalogGridColumns>(4);
-
-  useLayoutEffect(() => {
-    setColumns(readStoredColumns());
-  }, []);
+  // Hydration-safe initial read of the persisted preference: renders `4`
+  // (matching SSR) until React syncs to the real client snapshot, without a
+  // synchronous setState inside an effect.
+  const storedColumns = useSyncExternalStore(
+    subscribeToStoredColumnsNoop,
+    readStoredColumns,
+    getStoredColumnsServerSnapshot,
+  );
+  const [columnsOverride, setColumnsOverride] =
+    useState<CatalogGridColumns | null>(null);
+  const columns = columnsOverride ?? storedColumns;
 
   function selectColumns(next: CatalogGridColumns): void {
-    setColumns(next);
+    setColumnsOverride(next);
     try {
       window.localStorage.setItem(STORAGE_KEY, String(next));
     } catch {

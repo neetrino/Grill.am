@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 type FeatureTone = "red" | "white" | "cream" | "yellow";
 
@@ -144,6 +144,20 @@ function FeatureCard({
 /** How much of the scooter stays visible in the intro (px from its right edge). */
 const INTRO_MOTO_PEEK_PX = 150;
 
+function subscribeToReducedMotion(callback: () => void): () => void {
+  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+  media.addEventListener("change", callback);
+  return () => media.removeEventListener("change", callback);
+}
+
+function getReducedMotionSnapshot(): boolean {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getReducedMotionServerSnapshot(): boolean {
+  return false;
+}
+
 export function HomeFeatures({
   titleLead,
   titleAccent,
@@ -155,21 +169,26 @@ export function HomeFeatures({
   const cardsRef = useRef<HTMLDivElement>(null);
   const motoRef = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot,
+  );
+  // Tracks the `reduceMotion` value last synced into `revealed`.
+  const [revealSyncedReduceMotion, setRevealSyncedReduceMotion] =
+    useState(reduceMotion);
   const [introTranslateX, setIntroTranslateX] = useState(0);
   const [revealedTranslateX, setRevealedTranslateX] = useState(0);
 
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduceMotion(media.matches);
-
-    function onChange(): void {
-      setReduceMotion(media.matches);
+  // Reveal immediately once reduced motion is detected — adjust state during
+  // render (React "adjusting state on prop change" pattern) instead of a
+  // synchronous setState inside an effect.
+  if (reduceMotion !== revealSyncedReduceMotion) {
+    setRevealSyncedReduceMotion(reduceMotion);
+    if (reduceMotion) {
+      setRevealed(true);
     }
-
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
+  }
 
   useEffect(() => {
     function measureTrackPositions(): void {
@@ -203,13 +222,11 @@ export function HomeFeatures({
   }, [items.length]);
 
   useEffect(() => {
-    const node = sectionRef.current;
-    if (!node) return;
-
     if (reduceMotion) {
-      setRevealed(true);
       return;
     }
+    const node = sectionRef.current;
+    if (!node) return;
 
     let started = false;
     let revealTimer: number | null = null;

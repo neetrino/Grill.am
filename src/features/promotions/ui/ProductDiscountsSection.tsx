@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
@@ -54,10 +54,16 @@ export function ProductDiscountsSection({
   const [drafts, setDrafts] = useState<Record<string, string>>(() =>
     draftsFromProducts(products),
   );
+  // Tracks the `products` prop identity last synced into `drafts`.
+  const [syncedProducts, setSyncedProducts] = useState(products);
 
-  useEffect(() => {
+  // Adjust state during render when the prop changes (React "adjusting
+  // state on prop change" pattern) instead of a synchronous setState inside
+  // an effect.
+  if (products !== syncedProducts) {
+    setSyncedProducts(products);
     setDrafts(draftsFromProducts(products));
-  }, [products]);
+  }
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);

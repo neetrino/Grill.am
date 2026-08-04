@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -40,12 +40,18 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
   const action = changePasswordAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [values, setValues] = useState(emptyForm);
+  // Tracks the `state.success` value last synced into `values`.
+  const [syncedSuccess, setSyncedSuccess] = useState(state.success);
 
-  useEffect(() => {
+  // Clear the form once the action reports success — adjust during render
+  // (React "adjusting state on prop change" pattern) instead of a
+  // synchronous setState inside an effect.
+  if (state.success !== syncedSuccess) {
+    setSyncedSuccess(state.success);
     if (state.success) {
       setValues(emptyForm);
     }
-  }, [state.success]);
+  }
 
   return (
     <Card className={`rounded-[15px] border-0 p-5 shadow-none ring-1 ring-gray-100/80 sm:p-7 lg:p-8 ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>

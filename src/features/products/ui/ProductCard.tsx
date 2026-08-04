@@ -57,6 +57,7 @@ export function ProductCard({
   priceFormatted,
   compareAtFormatted = null,
   discountPercent = null,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- reserved until per-product media replaces the shared placeholder image
   imageUrl: _imageUrl,
   inStock,
   priority = false,

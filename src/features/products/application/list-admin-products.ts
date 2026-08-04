@@ -259,6 +259,7 @@ export async function listAdminProducts(
 
 /** Active categories for the admin products filter dropdown (English titles). */
 export async function listAdminCategoryOptions(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for call-site symmetry with locale-aware admin list queries
   _locale: Locale,
 ): Promise<AdminCategoryOption[]> {
   const rows = await getDb()

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -57,10 +57,21 @@ export function PersonalInformationForm({
     email,
     phone,
   });
+  // Tracks the saved-profile props last synced into `values`.
+  const [synced, setSynced] = useState({ firstName, lastName, email, phone });
 
-  useEffect(() => {
+  // Adjust state during render when the saved profile changes (React
+  // "adjusting state on prop change" pattern) instead of a synchronous
+  // setState inside an effect.
+  if (
+    firstName !== synced.firstName ||
+    lastName !== synced.lastName ||
+    email !== synced.email ||
+    phone !== synced.phone
+  ) {
+    setSynced({ firstName, lastName, email, phone });
     setValues({ firstName, lastName, email, phone });
-  }, [firstName, lastName, email, phone]);
+  }
 
   function resetToSaved(): void {
     setValues({ firstName, lastName, email, phone });

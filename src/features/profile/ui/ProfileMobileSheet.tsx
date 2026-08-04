@@ -59,27 +59,30 @@ export function ProfileMobileSheet({
   const lastYRef = useRef(0);
   const lastTsRef = useRef(0);
   const velocityRef = useRef(0);
-  const closingRef = useRef(false);
+  // Tracks the `open` prop value last synced into mount/phase state.
+  const [openSynced, setOpenSynced] = useState(open);
 
-  useEffect(() => {
+  // Adjust mount/exit state during render when `open` flips (React
+  // "adjusting state on prop change" pattern) instead of a synchronous
+  // setState inside an effect. Only ever runs once per genuine `open`
+  // transition, so no re-entrancy guard is needed.
+  if (open !== openSynced) {
+    setOpenSynced(open);
     if (open) {
-      closingRef.current = false;
       setMounted(true);
       setPhase("enter");
       setDragY(0);
-      dragYRef.current = 0;
-      return;
+    } else if (mounted) {
+      setPhase("exit");
+      setDragY(0);
     }
+  }
 
-    if (!mounted || closingRef.current) {
-      return;
-    }
-
-    closingRef.current = true;
-    setPhase("exit");
-    setDragY(0);
-    dragYRef.current = 0;
-  }, [open, mounted]);
+  // Keeps the imperative drag-tracking ref in sync with `dragY`, including
+  // the render-time resets above (refs cannot be written during render).
+  useEffect(() => {
+    dragYRef.current = dragY;
+  }, [dragY]);
 
   useEffect(() => {
     if (!mounted) {
@@ -115,7 +118,6 @@ export function ProfileMobileSheet({
     }
     if (phase === "exit") {
       setMounted(false);
-      closingRef.current = false;
     }
   }
 

@@ -212,19 +212,21 @@ export function ConfirmDeleteModal({
 
   const actionsDisabled = confirming || isExiting;
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    setCached({
-      title,
-      message,
-      confirmText,
-      cancelText,
-      showCancel,
-      confirmTone,
-    });
-  }, [isOpen, title, message, confirmText, cancelText, showCancel, confirmTone]);
+  // While open, keep `cached` in sync with the latest content props so the
+  // exit animation still shows the last content once the caller closes the
+  // modal (e.g. nulls the title). Adjust during render instead of inside an
+  // effect (React "adjusting state on prop change" pattern).
+  if (
+    isOpen &&
+    (cached.title !== title ||
+      cached.message !== message ||
+      cached.confirmText !== confirmText ||
+      cached.cancelText !== cancelText ||
+      cached.showCancel !== showCancel ||
+      cached.confirmTone !== confirmTone)
+  ) {
+    setCached({ title, message, confirmText, cancelText, showCancel, confirmTone });
+  }
 
   useEffect(() => {
     if (!isVisible || actionsDisabled) {

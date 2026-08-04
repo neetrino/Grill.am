@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
@@ -75,16 +76,22 @@ export function AdminCategoriesView({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [ordered, setOrdered] = useState(categories);
+  // Tracks the `categories` prop identity last synced into `ordered`, so a
+  // new prop value (e.g. after router.refresh()) resets local drag order
+  // without a useEffect (React "adjusting state on prop change" pattern).
+  const [syncedCategories, setSyncedCategories] = useState(categories);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const orderedRef = useRef(ordered);
   const dragOriginRef = useRef<AdminCategoryListItem[] | null>(null);
   const persistedRef = useRef(false);
 
-  useEffect(() => {
+  if (categories !== syncedCategories) {
+    setSyncedCategories(categories);
     setOrdered(categories);
-    orderedRef.current = categories;
-  }, [categories]);
+  }
 
+  // Keeps `orderedRef` (read by drag handlers) in sync with `ordered`,
+  // including the render-time reset above.
   useEffect(() => {
     orderedRef.current = ordered;
   }, [ordered]);
@@ -264,12 +271,14 @@ export function AdminCategoriesView({
                         </button>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
-                        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded border border-dashed border-gray-300 bg-gray-50">
+                        <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded border border-dashed border-gray-300 bg-gray-50">
                           {category.imageUrl ? (
-                            <img
+                            <Image
                               src={category.imageUrl}
                               alt=""
-                              className="h-full w-full object-cover"
+                              fill
+                              sizes="40px"
+                              className="object-cover"
                             />
                           ) : (
                             <span className="text-gray-400">{common.dash}</span>

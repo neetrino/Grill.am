@@ -74,6 +74,8 @@ export function MobileNavPanel({
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  // Tracks the `isOpen` prop value last synced into `visible`/`expanded`.
+  const [openSynced, setOpenSynced] = useState(isOpen);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const productsPath = `/${locale}/products`;
@@ -85,11 +87,23 @@ export function MobileNavPanel({
     }
   }, []);
 
+  // Adjust state during render when `isOpen` flips true (React "adjusting
+  // state on prop change" pattern) instead of a synchronous setState inside
+  // an effect.
+  if (isOpen !== openSynced) {
+    setOpenSynced(isOpen);
+    if (isOpen) {
+      setVisible(true);
+      setExpanded(false);
+    }
+  }
+
   useEffect(() => {
     if (isOpen) {
       clearCloseTimer();
-      setVisible(true);
-      setExpanded(false);
+      if (!visible) {
+        return;
+      }
       const openFrame = requestAnimationFrame(() => {
         const panel = panelRef.current;
         if (panel) {

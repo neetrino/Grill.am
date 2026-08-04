@@ -2,7 +2,7 @@
 
 import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useSyncExternalStore, useTransition } from "react";
 
 import { addToCart } from "@/features/cart/cart";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
@@ -76,6 +76,10 @@ function formatDisplay(
   return formatMoneyAmount(converted.amount, currency, locale);
 }
 
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
+
 function formatReviewCount(count: number): string {
   if (count >= 1000) {
     const thousands = count / 1000;
@@ -118,17 +122,19 @@ export function ProductBuyBox({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const [livePricing, setLivePricing] = useState(false);
+  // Renders the server-formatted price until the client mounts, then
+  // switches to live client-computed pricing (currency/modifier reactive).
+  const livePricing = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
   const disabled = maxQty < 1;
   const optionsComplete = hasRequiredModifiersSelected(
     rawCustomization,
     modifiers,
   );
   const canAdd = !disabled && optionsComplete;
-
-  useEffect(() => {
-    setLivePricing(true);
-  }, []);
 
   const modifiersDelta = useMemo(
     () => computeModifiersDelta(rawCustomization, modifiers),

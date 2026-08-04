@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
@@ -79,8 +79,14 @@ export function AddCategoryDrawer({
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Tracks the `open`/`category` combo last synced into local draft state.
+  const [synced, setSynced] = useState({ open, category });
 
-  useEffect(() => {
+  // Reset (on close) or seed (on open / category change) local form state
+  // during render instead of a synchronous setState inside an effect.
+  if (open !== synced.open || category !== synced.category) {
+    setSynced({ open, category });
+
     if (!open) {
       setDraft(emptyDraft());
       setParentId("");
@@ -92,26 +98,25 @@ export function AddCategoryDrawer({
       });
       setRemoveExistingImage(false);
       setError(null);
-      return;
-    }
-
-    setDraft(draftFromTranslations(category?.translations));
-    if (category) {
-      setParentId(category.parentId ?? "");
-      setStatus(category.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE");
-      setImageFile(null);
-      setImagePreview(category.imageUrl);
-      setRemoveExistingImage(false);
-      setError(null);
     } else {
-      setParentId("");
-      setStatus("ACTIVE");
-      setImageFile(null);
-      setImagePreview(null);
-      setRemoveExistingImage(false);
-      setError(null);
+      setDraft(draftFromTranslations(category?.translations));
+      if (category) {
+        setParentId(category.parentId ?? "");
+        setStatus(category.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE");
+        setImageFile(null);
+        setImagePreview(category.imageUrl);
+        setRemoveExistingImage(false);
+        setError(null);
+      } else {
+        setParentId("");
+        setStatus("ACTIVE");
+        setImageFile(null);
+        setImagePreview(null);
+        setRemoveExistingImage(false);
+        setError(null);
+      }
     }
-  }, [open, category]);
+  }
 
   const displaySlug = draft.slugTouched
     ? draft.slug

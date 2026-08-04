@@ -108,6 +108,7 @@ export function ProductDrawerImages({
               key={image.key}
               className="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element -- previewUrl can be a blob: object URL (new uploads), which next/image cannot optimize */}
               <img
                 src={image.previewUrl}
                 alt=""

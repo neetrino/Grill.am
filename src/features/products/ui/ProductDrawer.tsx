@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
@@ -260,11 +260,30 @@ export function ProductDrawer({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   /** Prevents prop churn (e.g. categories refresh) from wiping in-progress locale drafts. */
-  const editorSessionKeyRef = useRef<string | null>(null);
+  const [editorSessionKey, setEditorSessionKey] = useState<string | null>(
+    null,
+  );
+  // Tracks the open/product/categories/locale combo last synced into state.
+  const [synced, setSynced] = useState({
+    open,
+    product,
+    initialCategories,
+    locale,
+  });
 
-  useEffect(() => {
+  // Reset (on close) or seed (on open / product / categories / locale
+  // change) local form state during render instead of a synchronous
+  // setState inside an effect.
+  if (
+    open !== synced.open ||
+    product !== synced.product ||
+    initialCategories !== synced.initialCategories ||
+    locale !== synced.locale
+  ) {
+    setSynced({ open, product, initialCategories, locale });
+
     if (!open) {
-      editorSessionKeyRef.current = null;
+      setEditorSessionKey(null);
       clearDrawerSnapshot();
       setActiveLocale(resolveInitialLocale(locale, undefined));
       setDrafts(draftsFromTranslations(undefined));
@@ -285,66 +304,65 @@ export function ProductDrawer({
       setSku("");
       setStockOnHand("");
       setError(null);
-      return;
-    }
-
-    setCategories(initialCategories);
-
-    const sessionKey = product?.id ?? "__new__";
-    if (editorSessionKeyRef.current === sessionKey) {
-      return;
-    }
-    editorSessionKeyRef.current = sessionKey;
-
-    const snapshot = readDrawerSnapshot(sessionKey);
-    if (snapshot) {
-      setActiveLocale(snapshot.activeLocale);
-      setDrafts(snapshot.drafts);
-      setSlug(snapshot.slug);
-      setSlugTouched(snapshot.slugTouched);
-      setCustomization(snapshot.customization);
-      setCategoryIds(snapshot.categoryIds);
-      setPriceAmount(snapshot.priceAmount);
-      setCompareAtAmount(snapshot.compareAtAmount);
-      setSku(snapshot.sku);
-      setStockOnHand(snapshot.stockOnHand);
-      if (product) {
-        setImages(imagesFromProduct(product));
-        setRemovedImageIds([]);
-      }
-      setError(null);
-      return;
-    }
-
-    setActiveLocale(resolveInitialLocale(locale, product?.translations));
-    setDrafts(draftsFromTranslations(product?.translations));
-    const sharedSlug = resolveSharedProductSlug(product?.translations);
-    setSlug(sharedSlug);
-    setSlugTouched(Boolean(sharedSlug));
-    if (product) {
-      setCustomization(product.customization ?? EMPTY_CUSTOMIZATION);
-      setImages(imagesFromProduct(product));
-      setRemovedImageIds([]);
-      setCategoryIds(product.categoryIds);
-      setPriceAmount(String(product.priceAmount));
-      setCompareAtAmount(
-        product.compareAtAmount != null ? String(product.compareAtAmount) : "",
-      );
-      setSku(product.sku);
-      setStockOnHand(String(product.stockOnHand));
-      setError(null);
     } else {
-      setCustomization(EMPTY_CUSTOMIZATION);
-      setImages([]);
-      setRemovedImageIds([]);
-      setCategoryIds([]);
-      setPriceAmount("");
-      setCompareAtAmount("");
-      setSku("");
-      setStockOnHand("");
-      setError(null);
+      setCategories(initialCategories);
+
+      const sessionKey = product?.id ?? "__new__";
+      if (editorSessionKey !== sessionKey) {
+        setEditorSessionKey(sessionKey);
+
+        const snapshot = readDrawerSnapshot(sessionKey);
+        if (snapshot) {
+          setActiveLocale(snapshot.activeLocale);
+          setDrafts(snapshot.drafts);
+          setSlug(snapshot.slug);
+          setSlugTouched(snapshot.slugTouched);
+          setCustomization(snapshot.customization);
+          setCategoryIds(snapshot.categoryIds);
+          setPriceAmount(snapshot.priceAmount);
+          setCompareAtAmount(snapshot.compareAtAmount);
+          setSku(snapshot.sku);
+          setStockOnHand(snapshot.stockOnHand);
+          if (product) {
+            setImages(imagesFromProduct(product));
+            setRemovedImageIds([]);
+          }
+          setError(null);
+        } else {
+          setActiveLocale(resolveInitialLocale(locale, product?.translations));
+          setDrafts(draftsFromTranslations(product?.translations));
+          const sharedSlug = resolveSharedProductSlug(product?.translations);
+          setSlug(sharedSlug);
+          setSlugTouched(Boolean(sharedSlug));
+          if (product) {
+            setCustomization(product.customization ?? EMPTY_CUSTOMIZATION);
+            setImages(imagesFromProduct(product));
+            setRemovedImageIds([]);
+            setCategoryIds(product.categoryIds);
+            setPriceAmount(String(product.priceAmount));
+            setCompareAtAmount(
+              product.compareAtAmount != null
+                ? String(product.compareAtAmount)
+                : "",
+            );
+            setSku(product.sku);
+            setStockOnHand(String(product.stockOnHand));
+            setError(null);
+          } else {
+            setCustomization(EMPTY_CUSTOMIZATION);
+            setImages([]);
+            setRemovedImageIds([]);
+            setCategoryIds([]);
+            setPriceAmount("");
+            setCompareAtAmount("");
+            setSku("");
+            setStockOnHand("");
+            setError(null);
+          }
+        }
+      }
     }
-  }, [open, product, initialCategories, locale]);
+  }
 
   useEffect(() => {
     if (!open) return;

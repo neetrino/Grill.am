@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Banknote } from "lucide-react";
 
@@ -33,11 +33,17 @@ export function MinimumOrderCard({
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Tracks the `initialAmount` prop value last synced into local state.
+  const [syncedInitialAmount, setSyncedInitialAmount] = useState(initialAmount);
 
-  useEffect(() => {
+  // Adjust state during render when the prop changes (React "adjusting
+  // state on prop change" pattern) instead of a synchronous setState inside
+  // an effect.
+  if (initialAmount !== syncedInitialAmount) {
+    setSyncedInitialAmount(initialAmount);
     setValue(initialAmount != null ? String(initialAmount) : "");
     setSaved(initialAmount);
-  }, [initialAmount]);
+  }
 
   function parseInput(): number | null | "invalid" {
     const trimmed = value.trim();

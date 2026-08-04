@@ -50,11 +50,18 @@ export function CheckoutProductsInOrder({
   const router = useRouter();
   const listRef = useRef<HTMLUListElement>(null);
   const [products, setProducts] = useState(initialProducts);
+  // Tracks the `initialProducts` prop identity last synced into `products`.
+  const [syncedInitialProducts, setSyncedInitialProducts] =
+    useState(initialProducts);
   const [pending, startTransition] = useTransition();
 
-  useEffect(() => {
+  // Adjust state during render when the prop changes (React "adjusting
+  // state on prop change" pattern) instead of a synchronous setState inside
+  // an effect.
+  if (initialProducts !== syncedInitialProducts) {
+    setSyncedInitialProducts(initialProducts);
     setProducts(initialProducts);
-  }, [initialProducts]);
+  }
 
   useEffect(() => {
     const list = listRef.current;

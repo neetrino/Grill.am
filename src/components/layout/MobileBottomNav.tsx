@@ -140,7 +140,6 @@ export function MobileBottomNav({
 
   useLayoutEffect(() => {
     if (!activeId) {
-      setIndicator(null);
       return;
     }
     const el = itemRefs.current.get(activeId);
@@ -220,7 +219,7 @@ export function MobileBottomNav({
         ref={trackRef}
         className="pointer-events-auto relative flex h-[60px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[71px] min-[390px]:px-3 min-[390px]:py-2"
       >
-        {indicator ? (
+        {indicator && activeId ? (
           <span
             aria-hidden
             className={`pointer-events-none absolute z-0 rounded-[70px] bg-brand-red ${

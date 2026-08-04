@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -95,29 +94,42 @@ export function CatalogFilters({
     index: number;
   } | null>(null);
 
-  useEffect(() => {
-    setMinDraft(
-      formatPriceLabel(
-        filters.minPrice ?? absoluteMin,
-        locale,
-        currencySymbol,
-      ),
-    );
-    setMaxDraft(
-      formatPriceLabel(
-        filters.maxPrice ?? absoluteMax,
-        locale,
-        currencySymbol,
-      ),
-    );
-  }, [
-    filters.minPrice,
-    filters.maxPrice,
+  // Tracks the price-input-relevant values last synced into the drafts.
+  const [syncedPriceInputs, setSyncedPriceInputs] = useState({
+    minPrice: filters.minPrice,
+    maxPrice: filters.maxPrice,
     absoluteMin,
     absoluteMax,
     locale,
     currencySymbol,
-  ]);
+  });
+
+  // Adjust drafts during render when any of these values change (React
+  // "adjusting state on prop change" pattern) instead of a synchronous
+  // setState inside an effect.
+  if (
+    filters.minPrice !== syncedPriceInputs.minPrice ||
+    filters.maxPrice !== syncedPriceInputs.maxPrice ||
+    absoluteMin !== syncedPriceInputs.absoluteMin ||
+    absoluteMax !== syncedPriceInputs.absoluteMax ||
+    locale !== syncedPriceInputs.locale ||
+    currencySymbol !== syncedPriceInputs.currencySymbol
+  ) {
+    setSyncedPriceInputs({
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+      absoluteMin,
+      absoluteMax,
+      locale,
+      currencySymbol,
+    });
+    setMinDraft(
+      formatPriceLabel(filters.minPrice ?? absoluteMin, locale, currencySymbol),
+    );
+    setMaxDraft(
+      formatPriceLabel(filters.maxPrice ?? absoluteMax, locale, currencySymbol),
+    );
+  }
 
   useLayoutEffect(() => {
     const pending = pendingCaretRef.current;

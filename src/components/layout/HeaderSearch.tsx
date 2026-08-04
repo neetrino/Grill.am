@@ -208,7 +208,7 @@ export function HeaderSearch({
             {visibleHits.length > 0 ? (
               <ul className="divide-y divide-gray-100 py-1">
                 {visibleHits.map((hit) => (
-                  <li key={hit.id} role="option">
+                  <li key={hit.id} role="option" aria-selected={false}>
                     <AppLink
                       href={hit.href}
                       prefetchPolicy="intent"

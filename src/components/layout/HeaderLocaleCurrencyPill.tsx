@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import {
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -80,12 +81,12 @@ export function HeaderLocaleCurrencyPill({
     lockTriggerWidth: true,
   });
 
-  function clearCloseTimer(): void {
+  const clearCloseTimer = useCallback((): void => {
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
     }
-  }
+  }, []);
 
   function openMenu(): void {
     clearCloseTimer();
@@ -96,7 +97,7 @@ export function HeaderLocaleCurrencyPill({
     });
   }
 
-  function closeMenu(): void {
+  const closeMenu = useCallback((): void => {
     clearCloseTimer();
     setOpen(false);
     setVisible(false);
@@ -104,7 +105,7 @@ export function HeaderLocaleCurrencyPill({
       setMounted(false);
       closeTimerRef.current = null;
     }, DROPDOWN_ANIMATION_MS);
-  }
+  }, [clearCloseTimer]);
 
   function toggleMenu(): void {
     if (open) {
@@ -116,7 +117,7 @@ export function HeaderLocaleCurrencyPill({
 
   useEffect(() => {
     return () => clearCloseTimer();
-  }, []);
+  }, [clearCloseTimer]);
 
   useEffect(() => {
     if (!open) {
@@ -150,7 +151,7 @@ export function HeaderLocaleCurrencyPill({
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown, true);
     };
-  }, [open]);
+  }, [open, closeMenu]);
 
   const selectedItemClassName =
     "flex w-full justify-center whitespace-nowrap rounded-lg bg-brand-red/15 px-2.5 py-1.5 text-center text-sm font-semibold text-brand-red transition-colors";

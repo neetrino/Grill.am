@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 
@@ -69,8 +69,14 @@ export function CouponDrawer({
   const [expiresAt, setExpiresAt] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Tracks the `open`/`coupon` combo last synced into local form state.
+  const [synced, setSynced] = useState({ open, coupon });
 
-  useEffect(() => {
+  // Reset (on close) or seed (on open with an existing coupon) local form
+  // state during render instead of a synchronous setState inside an effect.
+  if (open !== synced.open || coupon !== synced.coupon) {
+    setSynced({ open, coupon });
+
     if (!open) {
       setName("");
       setCode("");
@@ -79,10 +85,7 @@ export function CouponDrawer({
       setQuantity("1");
       setExpiresAt("");
       setError(null);
-      return;
-    }
-
-    if (coupon) {
+    } else if (coupon) {
       setName(coupon.code ?? "");
       setCode(coupon.code ?? "");
       setDiscountType(
@@ -95,7 +98,7 @@ export function CouponDrawer({
       setExpiresAt(toDateTimeLocal(coupon.endsAt));
       setError(null);
     }
-  }, [open, coupon]);
+  }
 
   const title = isEdit ? copy.editTitle : copy.newTitle;
 

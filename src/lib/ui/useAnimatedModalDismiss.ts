@@ -39,22 +39,23 @@ export function useAnimatedModalDismiss({
 }: UseAnimatedModalDismissOptions): UseAnimatedModalDismissResult {
   const [isMounted, setIsMounted] = useState(isOpen);
   const [isExiting, setIsExiting] = useState(false);
+  // Tracks the `isOpen` prop value last synced into mount/exit state.
+  const [openSynced, setOpenSynced] = useState(isOpen);
 
   useBodyScrollLock(lockBodyScroll && isMounted);
 
-  useEffect(() => {
+  // Adjust mount/exit state during render when `isOpen` flips (React
+  // "adjusting state on prop change" pattern) instead of a synchronous
+  // setState inside an effect.
+  if (isOpen !== openSynced) {
+    setOpenSynced(isOpen);
     if (isOpen) {
       setIsMounted(true);
       setIsExiting(false);
-      return;
+    } else if (isMounted) {
+      setIsExiting(true);
     }
-
-    if (!isMounted) {
-      return;
-    }
-
-    setIsExiting(true);
-  }, [isOpen, isMounted]);
+  }
 
   useEffect(() => {
     if (!isExiting) {
