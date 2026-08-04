@@ -6,11 +6,18 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { loginSchema } from "@/features/auth/schemas";
+import {
+  mapZodFieldErrors,
+  readAuthFormValues,
+  type AuthActionState,
+} from "@/features/auth/ui/auth-action-state";
 import { createSession } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
-export type AuthActionState = { error?: string };
+export type { AuthActionState } from "@/features/auth/ui/auth-action-state";
+
+const LOGIN_VALUE_KEYS = ["email", "password"] as const;
 
 function resolveSafeNextPath(locale: Locale, raw: FormDataEntryValue | null): string {
   if (typeof raw !== "string" || !raw.startsWith("/") || raw.startsWith("//")) {
@@ -24,6 +31,19 @@ function resolveSafeNextPath(locale: Locale, raw: FormDataEntryValue | null): st
   return raw;
 }
 
+function loginErrorState(
+  formData: FormData,
+  error: string,
+  fieldErrors: AuthActionState["fieldErrors"],
+): AuthActionState {
+  return {
+    error,
+    fieldErrors,
+    values: readAuthFormValues(formData, LOGIN_VALUE_KEYS),
+    formKey: Date.now(),
+  };
+}
+
 export async function loginAction(
   localeInput: string,
   _previousState: AuthActionState,
@@ -33,7 +53,11 @@ export async function loginAction(
   const locale: Locale = isLocale(localeInput) ? localeInput : defaultLocale;
 
   if (!parsed.success) {
-    return { error: "Invalid email or password." };
+    return loginErrorState(
+      formData,
+      "Invalid email or password.",
+      mapZodFieldErrors(parsed.error),
+    );
   }
 
   const [user] = await getDb()
@@ -46,7 +70,10 @@ export async function loginAction(
     : false;
 
   if (!user || !passwordMatches || user.status !== "ACTIVE") {
-    return { error: "Invalid email or password." };
+    return loginErrorState(formData, "Invalid email or password.", {
+      email: "Invalid",
+      password: "Invalid",
+    });
   }
 
   await getDb()

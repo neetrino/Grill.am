@@ -7,8 +7,8 @@ import { AppLink } from "@/components/ui/AppLink";
 import { loginAction, type AuthActionState } from "@/features/auth/login-action";
 import {
   AUTH_BTN_PRIMARY_CLASS,
-  AUTH_FIELD_CLASS,
   AUTH_LINK_CLASS,
+  authFieldClassName,
 } from "@/features/auth/ui/auth-ui";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
 import type { Locale } from "@/lib/i18n/config";
@@ -27,9 +27,16 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
   const resetSucceeded = searchParams.get("reset") === "1";
   const action = loginAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const values = state.values;
+  const fieldErrors = state.fieldErrors;
 
   return (
-    <form action={formAction} className="flex flex-col gap-5">
+    <form
+      key={state.formKey ?? "login"}
+      action={formAction}
+      className="flex flex-col gap-5"
+      noValidate
+    >
       {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
 
       {resetSucceeded ? (
@@ -48,7 +55,9 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
           name="email"
           type="email"
           autoComplete="email"
-          className={AUTH_FIELD_CLASS}
+          defaultValue={values?.email ?? ""}
+          aria-invalid={Boolean(fieldErrors?.email)}
+          className={authFieldClassName(Boolean(fieldErrors?.email))}
         />
       </label>
       <PasswordField
@@ -57,6 +66,8 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         showPasswordLabel={dictionary.showPassword}
         hidePasswordLabel={dictionary.hidePassword}
         autoComplete="current-password"
+        defaultValue={values?.password}
+        invalid={Boolean(fieldErrors?.password)}
       />
       <div className="flex justify-end">
         <AppLink
