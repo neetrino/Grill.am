@@ -21,7 +21,9 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import { deleteDeliveryLocationAction } from "@/features/delivery/application/manage-delivery";
@@ -120,9 +122,9 @@ export function AdminDeliveryView({
                 <tr>
                   <th className={ADMIN_TABLE_TH}>{copy.table.country}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.city}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.price}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.freeFrom}</th>
-                  <th className={ADMIN_TABLE_TH}>{common.actions}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.price}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.freeFrom}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{common.actions}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -134,10 +136,10 @@ export function AdminDeliveryView({
                         {location.city}
                       </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {formatMoneyAmount(location.priceAmount, "AMD", locale)}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {location.freeThresholdAmount != null
                         ? formatMoneyAmount(
                             location.freeThresholdAmount,
@@ -146,8 +148,8 @@ export function AdminDeliveryView({
                           )
                         : common.dash}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <div className="flex items-center gap-1">
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      <div className="inline-flex items-center justify-center gap-1">
                         <button
                           type="button"
                           onClick={() => openEdit(location)}

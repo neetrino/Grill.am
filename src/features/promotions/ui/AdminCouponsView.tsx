@@ -21,7 +21,9 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import {
@@ -122,12 +124,16 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
                 <tr>
                   <th className={ADMIN_TABLE_TH}>{copy.table.code}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.type}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.value}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.usageLimit}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.used}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.active}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.validUntil}</th>
-                  <th className={ADMIN_TABLE_TH}>{common.actions}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.value}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
+                    {copy.table.usageLimit}
+                  </th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.used}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.active}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
+                    {copy.table.validUntil}
+                  </th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{common.actions}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -141,30 +147,30 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
                     <td className={ADMIN_TABLE_TD}>
                       {typeLabel(promo.discountType)}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {valueLabel(promo.discountType, promo.discountValue)}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {promo.totalUsageLimit ?? common.dash}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>{promo.usedCount}</td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>{promo.usedCount}</td>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {promo.isActive ? (
                         <Check
-                          className="h-4 w-4 text-gray-900"
+                          className="mx-auto h-4 w-4 text-gray-900"
                           aria-label={common.active}
                         />
                       ) : (
                         <span className="text-gray-400">{common.dash}</span>
                       )}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       <span className="text-sm text-gray-700">
                         {formatValidUntil(promo.endsAt, locale, common.dash)}
                       </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <div className="flex items-center gap-1">
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      <div className="inline-flex items-center justify-center gap-1">
                         <button
                           type="button"
                           className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"

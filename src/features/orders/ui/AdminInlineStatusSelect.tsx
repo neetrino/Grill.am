@@ -229,7 +229,7 @@ export function AdminInlineStatusSelect({
                   <button
                     type="button"
                     disabled={isPending}
-                    className={dropdownOptionClass(selected)}
+                    className={`${dropdownOptionClass(selected)} uppercase`}
                     onClick={() => selectStatus(option.value)}
                   >
                     {optionDisplayLabel(option.value)}
@@ -248,7 +248,7 @@ export function AdminInlineStatusSelect({
         ref={triggerRef}
         type="button"
         disabled={disabled || isPending}
-        className={`inline-flex items-center gap-1 rounded-[15px] px-2 py-1 text-xs font-medium transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${badgeClassName}`}
+        className={`inline-flex items-center gap-1 rounded-[15px] px-2 py-1 text-xs font-medium uppercase transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${badgeClassName}`}
         aria-label={formatAdminMessage(dictionary.orders.changeStatusAria, {
           kind,
         })}
