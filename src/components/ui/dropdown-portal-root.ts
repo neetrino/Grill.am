@@ -56,18 +56,17 @@ export type FluidPortalBox = {
 /**
  * Maps a trigger's viewport rect into portal layout coordinates
  * (pre-zoom space when DesktopFluidFrame is active).
+ * Values are viewport-relative for `position: fixed` panels.
  */
 export function mapTriggerRectToPortalBox(rect: DOMRect): FluidPortalBox {
   if (isDesktopFluidActive()) {
-    const stage = document.querySelector(".desktop-fluid-stage");
-    if (stage instanceof HTMLElement) {
-      const scale = getDesktopLayoutScale();
-      const stageRect = stage.getBoundingClientRect();
+    const scale = getDesktopLayoutScale();
+    if (scale > 0) {
       return {
-        top: (rect.bottom - stageRect.top) / scale,
-        left: (rect.left - stageRect.left) / scale,
+        top: rect.bottom / scale,
+        left: rect.left / scale,
         width: rect.width / scale,
-        viewportWidth: stageRect.width / scale,
+        viewportWidth: window.innerWidth / scale,
       };
     }
   }

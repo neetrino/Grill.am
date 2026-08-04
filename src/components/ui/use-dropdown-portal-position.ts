@@ -26,8 +26,8 @@ type UseDropdownPortalPositionOptions = {
 
 /**
  * Positions a fixed portal dropdown under/above a trigger; tracks scroll/resize.
- * Inside DesktopFluidFrame, coordinates are layout-space (pre-zoom) relative
- * to the fluid stage so the panel matches site scale.
+ * Inside DesktopFluidFrame, coordinates are layout-space (visual / zoom) and
+ * viewport-relative so sticky header menus stay under the trigger after scroll.
  */
 export function useDropdownPortalPosition(
   active: boolean,
@@ -57,23 +57,23 @@ export function useDropdownPortalPosition(
 
       const rect = trigger.getBoundingClientRect();
       const fluid = isDesktopFluidActive();
-      const stage = fluid
-        ? document.querySelector(".desktop-fluid-stage")
-        : null;
       const scale = fluid ? getDesktopLayoutScale() : 1;
 
-      if (fluid && stage instanceof HTMLElement && scale > 0) {
-        const stageRect = stage.getBoundingClientRect();
+      // Portal panels use `position: fixed` (viewport). Inside DesktopFluidFrame
+      // CSS `zoom`, layout px = visual rect / scale. Do not subtract stageRect:
+      // that encodes scroll and pushes menus far below the sticky header.
+      if (fluid && scale > 0) {
         const pad = VIEWPORT_PADDING_PX / scale;
-        const stageWidth = stageRect.width / scale;
+        const viewportWidth = window.innerWidth / scale;
+        const viewportHeight = window.innerHeight / scale;
         const triggerWidth = rect.width / scale;
-        const triggerLeft = (rect.left - stageRect.left) / scale;
-        const triggerRight = (stageRect.right - rect.right) / scale;
-        const triggerTop = (rect.top - stageRect.top) / scale;
-        const triggerBottom = (rect.bottom - stageRect.top) / scale;
+        const triggerLeft = rect.left / scale;
+        const triggerRight = (window.innerWidth - rect.right) / scale;
+        const triggerTop = rect.top / scale;
+        const triggerBottom = rect.bottom / scale;
 
         const minWidth = matchTriggerWidth
-          ? Math.min(Math.max(triggerWidth, 0), stageWidth - pad * 2)
+          ? Math.min(Math.max(triggerWidth, 0), viewportWidth - pad * 2)
           : undefined;
         const maxWidth = lockTriggerWidth ? minWidth : undefined;
 
@@ -87,14 +87,14 @@ export function useDropdownPortalPosition(
                   pad,
                   Math.min(
                     triggerLeft,
-                    stageWidth - pad - (minWidth ?? 0),
+                    viewportWidth - pad - (minWidth ?? 0),
                   ),
                 ),
               };
 
         if (placement === "top") {
           setPosition({
-            bottom: stageRect.height / scale - triggerTop + gapPx,
+            bottom: viewportHeight - triggerTop + gapPx,
             ...horizontal,
             minWidth,
             maxWidth,

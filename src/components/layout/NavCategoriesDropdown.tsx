@@ -14,6 +14,7 @@ import {
   dropdownPanelStateClass,
   dropdownPortalStyle,
 } from "@/components/ui/dropdown-styles";
+import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -26,14 +27,9 @@ type NavCategoriesDropdownProps = {
   isOnProductsList: boolean;
 };
 
-type MenuPosition = {
-  top: number;
-  left: number;
-  minWidth: number;
-};
-
 const CLOSE_DELAY_MS = 120;
-const VIEWPORT_PADDING = 16;
+const NAV_MENU_GAP_PX = 8;
+const NAV_MENU_MIN_WIDTH_PX = 220;
 
 export function NavCategoriesDropdown({
   locale,
@@ -45,7 +41,6 @@ export function NavCategoriesDropdown({
 }: NavCategoriesDropdownProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -54,6 +49,10 @@ export function NavCategoriesDropdown({
   const productsPath = `/${locale}/products`;
   const triggerActive = isOnProductsList && Boolean(activeCategorySlug);
   const open = mounted && visible;
+  const menuPosition = useDropdownPortalPosition(mounted, triggerRef, {
+    matchTriggerWidth: true,
+    gapPx: NAV_MENU_GAP_PX,
+  });
 
   function clearCloseTimer(): void {
     if (closeTimerRef.current) {
@@ -86,41 +85,6 @@ export function NavCategoriesDropdown({
       return;
     }
 
-    function updatePosition(): void {
-      const trigger = triggerRef.current;
-      if (!trigger) {
-        return;
-      }
-      const rect = trigger.getBoundingClientRect();
-      const minWidth = Math.min(
-        Math.max(220, rect.width),
-        window.innerWidth - VIEWPORT_PADDING * 2,
-      );
-      const left = Math.max(
-        VIEWPORT_PADDING,
-        Math.min(rect.left, window.innerWidth - minWidth - VIEWPORT_PADDING),
-      );
-      setMenuPosition({
-        top: rect.bottom + 8,
-        left,
-        minWidth,
-      });
-    }
-
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted) {
-      return;
-    }
-
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") {
         clearCloseTimer();
@@ -133,6 +97,16 @@ export function NavCategoriesDropdown({
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [mounted]);
+
+  const portalStyle = menuPosition
+    ? dropdownPortalStyle({
+        ...menuPosition,
+        minWidth: Math.max(
+          menuPosition.minWidth ?? 0,
+          NAV_MENU_MIN_WIDTH_PX,
+        ),
+      })
+    : undefined;
 
   return (
     <div
@@ -169,7 +143,7 @@ export function NavCategoriesDropdown({
         />
       </button>
 
-      {mounted && menuPosition
+      {mounted && menuPosition && portalStyle
         ? createPortal(
             <div
               ref={menuRef}
@@ -177,7 +151,7 @@ export function NavCategoriesDropdown({
               role="menu"
               aria-label={label}
               className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-1.5 ${dropdownPanelStateClass(visible)}`}
-              style={dropdownPortalStyle(menuPosition)}
+              style={portalStyle}
               onMouseEnter={openMenu}
               onMouseLeave={scheduleClose}
             >
