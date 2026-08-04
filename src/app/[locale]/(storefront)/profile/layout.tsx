@@ -17,7 +17,7 @@ type ProfileLayoutProps = {
 
 /** Shared sticky band under the header for both profile columns. */
 const PROFILE_STICKY_BAND_CLASS =
-  "lg:sticky lg:top-[calc(var(--storefront-header-offset)+1.75rem)] lg:z-10 lg:h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] lg:max-h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] lg:self-start";
+  "lg:sticky lg:top-[calc(var(--storefront-header-offset)+1.75rem)] lg:z-10 lg:h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset)-3.5rem)] lg:max-h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset)-3.5rem)] lg:self-start";
 
 /**
  * Desktop: sidebar + content stay in the visible band; content scrolls inside.

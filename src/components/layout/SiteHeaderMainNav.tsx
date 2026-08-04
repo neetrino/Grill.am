@@ -204,7 +204,10 @@ export function SiteHeaderMainNav({
       if (!el) {
         return;
       }
-      const height = Math.ceil(el.getBoundingClientRect().height);
+      // offsetHeight is layout px (pre-zoom). getBoundingClientRect is visual
+      // and double-counts DesktopFluidFrame zoom on large screens, pushing
+      // sticky catalog rails too far down.
+      const height = Math.ceil(el.offsetHeight);
       document.documentElement.style.setProperty(
         STOREFRONT_HEADER_OFFSET_VAR,
         `${height}px`,

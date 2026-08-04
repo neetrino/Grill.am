@@ -67,6 +67,9 @@ function buildImageRemotePatterns(): NonNullable<
 }
 
 const nextConfig: NextConfig = {
+  // Allow LAN access in `next dev` (phone / other Mac via local IP).
+  // Without this, Next blocks `/_next/*` (JS/CSS/HMR) and the UI looks blank.
+  allowedDevOrigins: ["192.168.15.30"],
   turbopack: {
     root: projectRoot,
   },

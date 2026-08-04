@@ -18,6 +18,8 @@
   --storefront-header-offset: 9.5rem;
   /* Desktop canvas width; scaled to 100vw via DesktopFluidFrame. */
   --desktop-layout-design-width: 1440px;
+  /* 1 below lg; overwritten when the fluid frame zoom is active. */
+  --desktop-layout-scale: 1;
 }
 
 /* ─── Desktop fluid frame (proportional 100vw scale) ─── */

@@ -7,8 +7,8 @@ const NBSP = "\u00A0";
 
 /**
  * Formats money with deterministic separators/symbols per app locale.
- * Avoids Node vs browser ICU mismatches that break SSR hydration
- * (e.g. `hy` → `12 000 ֏` on server, `AMD 12,000` in some browsers).
+ * Avoids Node vs browser ICU mismatches that break SSR hydration.
+ * Storefront prices always use currency symbols (֏ / $ / ₽), never codes like AMD.
  */
 export function formatMoneyAmount(
   amount: bigint | number,
@@ -72,14 +72,12 @@ function formatMoneyDeterministic(
 
   switch (currency) {
     case "AMD":
-      if (locale === "en") return `AMD${NBSP}${number}`;
-      if (locale === "hy") return `${number}֏`;
-      return `${number}${NBSP}AMD`;
+      // Always the dram symbol on storefront prices (cards, cart, checkout).
+      return `${number}֏`;
     case "USD":
       if (locale === "en") return `$${number}`;
       return `${number}$`;
     case "RUB":
-      if (locale === "en") return `RUB${NBSP}${number}`;
       return `${number}₽`;
   }
 }
