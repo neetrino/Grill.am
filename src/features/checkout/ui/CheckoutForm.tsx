@@ -24,6 +24,7 @@ import {
 import {
   CHECKOUT_DELIVERY_CITY_PRIMARY,
   normalizeCheckoutDeliveryCity,
+  resolveCheckoutDeliveryCity,
 } from "@/features/checkout/domain/checkout-delivery-cities";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
@@ -100,6 +101,8 @@ type CheckoutFormProps = {
   defaultEmail: string;
   defaultPhone: string;
   defaultLine1: string;
+  /** City from the customer's default (Հիմնական) address when available. */
+  defaultCity: string;
   subtotalAmount: number;
   minimumOrderAmount: number | null;
   deliveryOptions: CheckoutDeliveryOption[];
@@ -120,6 +123,31 @@ function quoteDeliveryAmount(
   return option.priceAmount;
 }
 
+function resolveDefaultDeliveryRuleId(
+  deliveryOptions: CheckoutDeliveryOption[],
+  defaultCity: string,
+): string {
+  const preferredCity =
+    resolveCheckoutDeliveryCity(defaultCity) ?? CHECKOUT_DELIVERY_CITY_PRIMARY;
+  const preferredKey = normalizeCheckoutDeliveryCity(preferredCity);
+  const primaryKey = normalizeCheckoutDeliveryCity(
+    CHECKOUT_DELIVERY_CITY_PRIMARY,
+  );
+
+  return (
+    deliveryOptions.find(
+      (option) =>
+        normalizeCheckoutDeliveryCity(option.city) === preferredKey,
+    )?.id ??
+    deliveryOptions.find(
+      (option) =>
+        normalizeCheckoutDeliveryCity(option.city) === primaryKey,
+    )?.id ??
+    deliveryOptions[0]?.id ??
+    ""
+  );
+}
+
 export function CheckoutForm({
   locale,
   labels,
@@ -130,6 +158,7 @@ export function CheckoutForm({
   defaultEmail,
   defaultPhone,
   defaultLine1,
+  defaultCity,
   subtotalAmount,
   minimumOrderAmount,
   deliveryOptions,
@@ -137,16 +166,10 @@ export function CheckoutForm({
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => createId(), []);
-  const primaryCityKey = normalizeCheckoutDeliveryCity(
-    CHECKOUT_DELIVERY_CITY_PRIMARY,
+  const defaultRuleId = resolveDefaultDeliveryRuleId(
+    deliveryOptions,
+    defaultCity,
   );
-  const defaultRuleId =
-    deliveryOptions.find(
-      (option) =>
-        normalizeCheckoutDeliveryCity(option.city) === primaryCityKey,
-    )?.id ??
-    deliveryOptions[0]?.id ??
-    "";
   const [shippingMethod, setShippingMethod] = useState<"pickup" | "delivery">(
     deliveryOptions.length > 0 ? "delivery" : "pickup",
   );

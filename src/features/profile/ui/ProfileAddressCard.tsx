@@ -7,6 +7,7 @@ import { PROFILE_CARD_CLASS } from "@/features/profile/ui/profile-ui";
 
 type ProfileAddressCardProps = {
   address: CustomerAddressListItem;
+  cityLabel: string;
   disabled: boolean;
   labels: {
     defaultBadge: string;
@@ -21,6 +22,7 @@ type ProfileAddressCardProps = {
 
 export function ProfileAddressCard({
   address,
+  cityLabel,
   disabled,
   labels,
   onSetDefault,
@@ -87,7 +89,7 @@ export function ProfileAddressCard({
           </p>
         ) : null}
         <p className="text-xs leading-snug break-words text-gray-700 sm:text-sm">
-          {address.city}
+          {cityLabel}
         </p>
         {address.phone ? (
           <p className="text-xs leading-snug break-words text-gray-600 sm:text-sm">

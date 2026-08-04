@@ -1,5 +1,9 @@
 import { notFound } from "next/navigation";
 
+import {
+  CHECKOUT_DELIVERY_CITY_I18N_KEYS,
+  CHECKOUT_DELIVERY_CITY_VALUES,
+} from "@/features/checkout/domain/checkout-delivery-cities";
 import { listCustomerAddresses } from "@/features/profile/application/address-queries";
 import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView";
 import { requireUser } from "@/lib/auth/policies";
@@ -20,11 +24,16 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
   const dictionary = getDictionary(locale);
   const addressRows = await listCustomerAddresses(user.id);
   const copy = dictionary.profile.addressBook;
+  const cityOptions = CHECKOUT_DELIVERY_CITY_VALUES.map((city) => ({
+    value: city,
+    label: dictionary.checkout.deliveryCities[CHECKOUT_DELIVERY_CITY_I18N_KEYS[city]],
+  }));
 
   return (
     <ProfileAddressesView
       locale={locale}
       addresses={addressRows}
+      cityOptions={cityOptions}
       labels={{
         title: dictionary.profile.addresses,
         addNew: copy.addNew,
@@ -39,8 +48,7 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
         formEditTitle: copy.formEditTitle,
         line1: copy.line1,
         city: copy.city,
-        phone: copy.phone,
-        phonePlaceholder: copy.phonePlaceholder,
+        selectCity: dictionary.checkout.form.selectLocation,
         isDefault: copy.isDefault,
         cancel: dictionary.profile.cancel,
         add: copy.add,

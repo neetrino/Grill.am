@@ -6,6 +6,11 @@ import { useState, useTransition, type FormEvent } from "react";
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import {
+  CHECKOUT_DELIVERY_CITY_PRIMARY,
+  resolveCheckoutDeliveryCity,
+} from "@/features/checkout/domain/checkout-delivery-cities";
+import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
+import {
   createCustomerAddressAction,
   deleteCustomerAddressAction,
   setDefaultCustomerAddressAction,
@@ -24,16 +29,21 @@ import {
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
+type CityOption = {
+  value: string;
+  label: string;
+};
+
 type AddressFormState = {
   line1: string;
   city: string;
-  phone: string;
   isDefault: boolean;
 };
 
 type ProfileAddressesViewProps = {
   locale: string;
   addresses: CustomerAddressListItem[];
+  cityOptions: readonly CityOption[];
   labels: {
     title: string;
     addNew: string;
@@ -48,8 +58,7 @@ type ProfileAddressesViewProps = {
     formEditTitle: string;
     line1: string;
     city: string;
-    phone: string;
-    phonePlaceholder: string;
+    selectCity: string;
     isDefault: string;
     cancel: string;
     add: string;
@@ -60,14 +69,40 @@ type ProfileAddressesViewProps = {
 
 const emptyForm: AddressFormState = {
   line1: "",
-  city: "",
-  phone: "",
+  city: CHECKOUT_DELIVERY_CITY_PRIMARY,
   isDefault: false,
 };
+
+function resolveCityValue(
+  city: string,
+  cityOptions: readonly CityOption[],
+): string {
+  const resolved = resolveCheckoutDeliveryCity(city);
+  if (resolved) {
+    return resolved;
+  }
+  const byLabel = cityOptions.find((option) => option.label === city.trim());
+  return byLabel?.value ?? CHECKOUT_DELIVERY_CITY_PRIMARY;
+}
+
+function displayCityLabel(
+  city: string,
+  cityOptions: readonly CityOption[],
+): string {
+  const resolved = resolveCheckoutDeliveryCity(city);
+  if (resolved) {
+    return (
+      cityOptions.find((option) => option.value === resolved)?.label ?? city
+    );
+  }
+  const byLabel = cityOptions.find((option) => option.label === city.trim());
+  return byLabel?.label ?? city;
+}
 
 export function ProfileAddressesView({
   locale,
   addresses,
+  cityOptions,
   labels,
 }: ProfileAddressesViewProps) {
   const router = useRouter();
@@ -95,8 +130,7 @@ export function ProfileAddressesView({
     setEditingId(address.id);
     setForm({
       line1: address.line1,
-      city: address.city,
-      phone: address.phone,
+      city: resolveCityValue(address.city, cityOptions),
       isDefault: address.isDefaultShipping,
     });
     setShowForm(true);
@@ -214,19 +248,18 @@ export function ProfileAddressesView({
           <h2 className="text-base font-semibold text-gray-900">
             {editingId ? labels.formEditTitle : labels.formAddTitle}
           </h2>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              {labels.city}
-              <input
-                required
-                value={form.city}
-                onChange={(event) =>
-                  setForm((prev) => ({ ...prev, city: event.target.value }))
-                }
-                className={FIELD_CLASS}
-                autoComplete="address-level2"
-              />
-            </label>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 sm:items-end">
+            <CheckoutSelect
+              label={labels.city}
+              name="city"
+              required
+              value={form.city}
+              onChange={(city) => setForm((prev) => ({ ...prev, city }))}
+              disabled={isPending}
+              placeholder={labels.selectCity}
+              options={cityOptions}
+              className="w-full"
+            />
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.line1}
               <input
@@ -237,20 +270,6 @@ export function ProfileAddressesView({
                 }
                 className={FIELD_CLASS}
                 autoComplete="street-address"
-              />
-            </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700 sm:col-span-2">
-              {labels.phone}
-              <input
-                required
-                type="tel"
-                value={form.phone}
-                onChange={(event) =>
-                  setForm((prev) => ({ ...prev, phone: event.target.value }))
-                }
-                placeholder={labels.phonePlaceholder}
-                className={FIELD_CLASS}
-                autoComplete="tel"
               />
             </label>
           </div>
@@ -314,6 +333,7 @@ export function ProfileAddressesView({
             <ProfileAddressCard
               key={address.id}
               address={address}
+              cityLabel={displayCityLabel(address.city, cityOptions)}
               disabled={isPending}
               labels={{
                 defaultBadge: labels.defaultBadge,
