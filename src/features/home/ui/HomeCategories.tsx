@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type CategoryItem = {
   id: string;
@@ -24,10 +25,10 @@ type HomeCategoriesProps = {
 };
 
 const FALLBACK_IMAGES = [
-  "/assets/home/category-1.webp",
-  "/assets/home/category-2.webp",
-  "/assets/home/category-3.webp",
-  "/assets/home/category-4.webp",
+  staticAssetUrl("/assets/home/category-1.webp"),
+  staticAssetUrl("/assets/home/category-2.webp"),
+  staticAssetUrl("/assets/home/category-3.webp"),
+  staticAssetUrl("/assets/home/category-4.webp"),
 ] as const;
 
 export function HomeCategories({

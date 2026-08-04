@@ -13,6 +13,7 @@ import {
   getDiscountedProducts,
   getFeaturedProducts,
 } from "@/features/products/queries";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -192,25 +193,25 @@ export default async function HomePage({ params }: HomePageProps) {
           {
             title: dictionary.home.features.deliveryTitle,
             description: dictionary.home.features.deliveryDescription,
-            imageSrc: "/assets/home/feature-delivery.webp",
+            imageSrc: staticAssetUrl("/assets/home/feature-delivery.webp"),
             tone: "red",
           },
           {
             title: dictionary.home.features.qualityTitle,
             description: dictionary.home.features.qualityDescription,
-            imageSrc: "/assets/home/feature-fresh.webp",
+            imageSrc: staticAssetUrl("/assets/home/feature-fresh.webp"),
             tone: "white",
           },
           {
             title: dictionary.home.features.paymentTitle,
             description: dictionary.home.features.paymentDescription,
-            imageSrc: "/assets/home/feature-payment.webp",
+            imageSrc: staticAssetUrl("/assets/home/feature-payment.webp"),
             tone: "cream",
           },
           {
             title: dictionary.home.features.shippingTitle,
             description: dictionary.home.features.shippingDescription,
-            imageSrc: "/assets/home/feature-shipping.webp",
+            imageSrc: staticAssetUrl("/assets/home/feature-shipping.webp"),
             tone: "yellow",
           },
         ]}

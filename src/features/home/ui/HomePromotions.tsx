@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { LimitedOfferFireIcon } from "@/features/home/ui/LimitedOfferFireIcon";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type SpecialProduct = {
   title: string;
@@ -35,7 +36,7 @@ type HomePromotionsProps = {
 };
 
 /** Figma `164:559` grilled chicken for promo banners. */
-const PROMO_CHICKEN = "/assets/home/promo-banner-chicken.webp";
+const PROMO_CHICKEN = staticAssetUrl("/assets/home/promo-banner-chicken.webp");
 
 const FALLBACK_PRODUCT: SpecialProduct = {
   title: "Grill combo",

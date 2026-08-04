@@ -15,6 +15,7 @@ import type { StorefrontNavCategory } from "@/features/categories/storefront-nav
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type SiteHeaderMainNavProps = {
   locale: Locale;
@@ -320,7 +321,7 @@ export function SiteHeaderMainNav({
                     }}
                   >
                     <Image
-                      src="/assets/brand/logo.webp"
+                      src={staticAssetUrl("/assets/brand/logo.webp")}
                       alt={dictionary.brand}
                       fill
                       sizes="92px"

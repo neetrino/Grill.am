@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
+
 type AdminBrandLogoProps = {
   locale: string;
   brandName: string;
@@ -33,7 +35,7 @@ export function AdminBrandLogo({
       className={`${sizeClass} ${className}`.trim()}
     >
       <Image
-        src="/assets/brand/logo.webp"
+        src={staticAssetUrl("/assets/brand/logo.webp")}
         alt={brandName}
         fill
         sizes={compact ? "36px" : "92px"}

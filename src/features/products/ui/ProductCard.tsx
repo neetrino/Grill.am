@@ -9,9 +9,12 @@ import {
 } from "@/features/products/ui/FeaturedProductCard";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 /** Shared product-card photo until per-product media is ready. */
-export const PRODUCT_CARD_IMAGE = "/assets/products/product-card.webp";
+export const PRODUCT_CARD_IMAGE = staticAssetUrl(
+  "/assets/products/product-card.webp",
+);
 
 /** Stagger step for catalog grid appear (MaMarie products listing). */
 export const PRODUCT_CARD_APPEAR_STAGGER_MS = 70;

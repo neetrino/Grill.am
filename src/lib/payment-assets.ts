@@ -1,10 +1,12 @@
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
+
 /** Shared footer payment badge assets (SiteFooter + checkout). */
 export const FOOTER_PAYMENT_ASSETS = {
-  idram: "/assets/payments/footer-idram.webp",
-  mastercard: "/assets/payments/footer-mastercard.webp",
-  arca: "/assets/payments/footer-arca.webp",
-  visa: "/assets/payments/footer-visa.webp",
-  telcell: "/assets/payments/footer-telcell.webp",
+  idram: staticAssetUrl("/assets/payments/footer-idram.webp"),
+  mastercard: staticAssetUrl("/assets/payments/footer-mastercard.webp"),
+  arca: staticAssetUrl("/assets/payments/footer-arca.webp"),
+  visa: staticAssetUrl("/assets/payments/footer-visa.webp"),
+  telcell: staticAssetUrl("/assets/payments/footer-telcell.webp"),
 } as const;
 
 export type CheckoutCardBadge = {

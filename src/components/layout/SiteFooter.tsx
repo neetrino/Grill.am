@@ -4,6 +4,7 @@ import { Mail, Phone } from "lucide-react";
 import { FooterCornerShell } from "@/components/layout/FooterCornerShell";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import { FOOTER_PAYMENT_ASSETS } from "@/lib/payment-assets";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -106,7 +107,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             <div className="col-span-2 lg:col-span-1">
               <div className="relative h-[37px] w-[92px]">
                 <Image
-                  src="/assets/brand/logo-footer.webp"
+                  src={staticAssetUrl("/assets/brand/logo-footer.webp")}
                   alt={dictionary.brand}
                   fill
                   sizes="92px"

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import type { StorefrontHeroSlide } from "@/features/hero/application/queries";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type HomeHeroProps = {
   slides: StorefrontHeroSlide[];
@@ -14,7 +15,10 @@ type HomeHeroProps = {
   fallbackCtaHref: string;
 };
 
-const HERO_CHICKEN = "/assets/home/hero-chicken.webp";
+const HERO_CHICKEN = staticAssetUrl("/assets/home/hero-chicken.webp");
+const HERO_FLAME = staticAssetUrl("/assets/home/hero-flame.webp");
+const HERO_LOGO = staticAssetUrl("/assets/home/hero-logo.webp");
+const HERO_ACCENT = staticAssetUrl("/assets/home/hero-accent.webp");
 
 /**
  * Figma `165:1671` — white pill CTA (desktop).
@@ -105,7 +109,7 @@ function MobileHeroCard({
       <div className="relative min-h-[280px] overflow-hidden rounded-[24px] bg-brand-red">
         <div className="pointer-events-none absolute inset-0 opacity-30" aria-hidden>
           <Image
-            src="/assets/home/hero-flame.webp"
+            src={HERO_FLAME}
             alt=""
             fill
             sizes="100vw"
@@ -129,7 +133,7 @@ function MobileHeroCard({
         <div className="relative z-10 flex flex-col items-start px-5 pt-6 pb-5">
           <div className="relative h-[111px] w-full max-w-[280px]">
             <Image
-              src="/assets/home/hero-logo.webp"
+              src={HERO_LOGO}
               alt="Grill.am"
               fill
               priority
@@ -194,7 +198,7 @@ export function HomeHero({
           <div className="absolute inset-x-0 top-[-20%] h-[125%]">
             <div className="pointer-events-none absolute inset-[13.4%_-34.36%_2.18%_-37.43%] z-0">
               <Image
-                src="/assets/home/hero-flame.webp"
+                src={HERO_FLAME}
                 alt=""
                 fill
                 sizes="100vw"
@@ -204,7 +208,7 @@ export function HomeHero({
 
             <div className="pointer-events-none absolute inset-[26.53%_18.58%_50.76%_18.54%] z-[1]">
               <Image
-                src="/assets/home/hero-logo.webp"
+                src={HERO_LOGO}
                 alt="Grill.am"
                 fill
                 priority
@@ -215,7 +219,7 @@ export function HomeHero({
 
             <div className="pointer-events-none absolute inset-[19.68%_21.46%_62.07%_65.56%] z-[1]">
               <Image
-                src="/assets/home/hero-accent.webp"
+                src={HERO_ACCENT}
                 alt=""
                 fill
                 sizes="13vw"

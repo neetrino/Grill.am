@@ -6,8 +6,11 @@ import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const PRODUCT_CARD_IMAGE = "/assets/products/product-card.webp";
+const PRODUCT_CARD_IMAGE = staticAssetUrl(
+  "/assets/products/product-card.webp",
+);
 
 type FeaturedProductCardProps = {
   href: string;

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
+
 type FeatureTone = "red" | "white" | "cream" | "yellow";
 
 type FeatureItem = {
@@ -291,7 +293,7 @@ export function HomeFeatures({
               className="relative h-[200px] w-[150px] shrink-0 sm:h-[280px] sm:w-[210px] lg:h-[360px] lg:w-[280px]"
             >
               <Image
-                src="/assets/home/feature-scooter.webp"
+                src={staticAssetUrl("/assets/home/feature-scooter.webp")}
                 alt=""
                 fill
                 sizes="280px"
