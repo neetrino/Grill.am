@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -8,26 +8,34 @@ import {
   updateProfileAction,
   type UpdateProfileActionState,
 } from "@/features/auth/update-profile-action";
+import {
+  PROFILE_BTN_PRIMARY_CLASS,
+  PROFILE_BTN_SECONDARY_CLASS,
+  PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS,
+} from "@/features/profile/ui/profile-ui";
 
 const FIELD_CLASS =
-  "h-11 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
+  "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
 type PersonalInformationFormProps = {
   locale: string;
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   labels: {
     title: string;
     firstName: string;
     lastName: string;
     email: string;
+    phone: string;
     cancel: string;
     save: string;
     saving: string;
     firstNamePlaceholder: string;
     lastNamePlaceholder: string;
     emailPlaceholder: string;
+    phonePlaceholder: string;
   };
 };
 
@@ -38,6 +46,7 @@ export function PersonalInformationForm({
   firstName,
   lastName,
   email,
+  phone,
   labels,
 }: PersonalInformationFormProps) {
   const action = updateProfileAction.bind(null, locale);
@@ -46,20 +55,32 @@ export function PersonalInformationForm({
     firstName,
     lastName,
     email,
+    phone,
   });
+  // Tracks the saved-profile props last synced into `values`.
+  const [synced, setSynced] = useState({ firstName, lastName, email, phone });
 
-  useEffect(() => {
-    setValues({ firstName, lastName, email });
-  }, [firstName, lastName, email]);
+  // Adjust state during render when the saved profile changes (React
+  // "adjusting state on prop change" pattern) instead of a synchronous
+  // setState inside an effect.
+  if (
+    firstName !== synced.firstName ||
+    lastName !== synced.lastName ||
+    email !== synced.email ||
+    phone !== synced.phone
+  ) {
+    setSynced({ firstName, lastName, email, phone });
+    setValues({ firstName, lastName, email, phone });
+  }
 
   function resetToSaved(): void {
-    setValues({ firstName, lastName, email });
+    setValues({ firstName, lastName, email, phone });
   }
 
   return (
-    <Card className="rounded-2xl border border-gray-200/80 p-5 shadow-none sm:p-7 lg:p-8">
+    <Card className={`rounded-[15px] border-0 p-5 shadow-none ring-1 ring-gray-100/80 sm:p-7 lg:p-8 ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
       <div className="mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6">
-        <h1 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">
           {labels.title}
         </h1>
       </div>
@@ -105,21 +126,38 @@ export function PersonalInformationForm({
           </label>
         </div>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-          {labels.email}
-          <input
-            name="email"
-            type="email"
-            required
-            value={values.email}
-            onChange={(event) =>
-              setValues((prev) => ({ ...prev, email: event.target.value }))
-            }
-            placeholder={labels.emailPlaceholder}
-            className={FIELD_CLASS}
-            autoComplete="email"
-          />
-        </label>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            {labels.email}
+            <input
+              name="email"
+              type="email"
+              required
+              value={values.email}
+              onChange={(event) =>
+                setValues((prev) => ({ ...prev, email: event.target.value }))
+              }
+              placeholder={labels.emailPlaceholder}
+              className={FIELD_CLASS}
+              autoComplete="email"
+            />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            {labels.phone}
+            <input
+              name="phone"
+              type="tel"
+              required
+              value={values.phone}
+              onChange={(event) =>
+                setValues((prev) => ({ ...prev, phone: event.target.value }))
+              }
+              placeholder={labels.phonePlaceholder}
+              className={FIELD_CLASS}
+              autoComplete="tel"
+            />
+          </label>
+        </div>
 
         {state.error ? (
           <p className="text-sm text-red-700" role="alert">
@@ -132,11 +170,11 @@ export function PersonalInformationForm({
           </p>
         ) : null}
 
-        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4 sm:pt-4">
+        <div className="flex flex-row items-center gap-3 pt-2 sm:gap-4 sm:pt-4">
           <Button
             type="button"
             variant="outline"
-            className="h-11 w-full sm:w-auto"
+            className={`${PROFILE_BTN_SECONDARY_CLASS} min-w-0 flex-1 sm:flex-none`}
             onClick={resetToSaved}
             disabled={isPending}
           >
@@ -145,7 +183,7 @@ export function PersonalInformationForm({
           <Button
             type="submit"
             variant="primary"
-            className="h-11 w-full sm:w-auto"
+            className={`${PROFILE_BTN_PRIMARY_CLASS} min-w-0 flex-1 sm:flex-none`}
             disabled={isPending}
           >
             {isPending ? labels.saving : labels.save}

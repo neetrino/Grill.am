@@ -18,6 +18,7 @@ type CatalogActiveChipsProps = {
     minPriceChip: string;
     maxPriceChip: string;
     inStockChip: string;
+    onSaleChip: string;
     removeFilter: string;
   };
 };
@@ -83,6 +84,14 @@ export function CatalogActiveChips({
       key: "inStock",
       label: labels.inStockChip,
       href: catalogHref(locale, filters, { inStock: undefined, page: 1 }),
+    });
+  }
+
+  if (filters.onSale === true) {
+    chips.push({
+      key: "onSale",
+      label: labels.onSaleChip,
+      href: catalogHref(locale, filters, { onSale: undefined, page: 1 }),
     });
   }
 

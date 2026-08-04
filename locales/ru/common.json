@@ -1,9 +1,18 @@
 {
-  "brand": "White-Shop",
+  "brand": "Grill.am",
   "close": "Закрыть",
+  "buttons": {
+    "cancel": "Отмена",
+    "delete": "Удалить"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Подтвердите удаление",
+    "confirmDeleteMessage": "Вы уверены, что хотите удалить это? Это действие нельзя отменить."
+  },
   "nav": {
     "home": "Главная",
-    "products": "Товары",
+    "products": "Меню",
+    "categories": "Категории",
     "shop": "Магазин",
     "blog": "Блог",
     "careers": "Вакансии",
@@ -13,7 +22,8 @@
     "wishlist": "Избранное",
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
-    "navigation": "Навигация"
+    "navigation": "Навигация",
+    "allCategories": "Все"
   },
   "header": {
     "language": "Язык",
@@ -31,17 +41,26 @@
   },
   "footer": {
     "shop": "Магазин",
-    "description": "Профессиональный интернет-магазин для повседневных покупок.",
-    "quickLinks": "Быстрые ссылки",
+    "description": "Самая полная онлайн-платформа продуктов в Армении. Свежо, вкусно, быстро.",
+    "quickLinks": "Навигация",
+    "support": "Поддержка",
+    "hours": "Часы работы",
+    "hoursWeekdaysLabel": "Пн – Пт",
+    "hoursWeekdays": "09:00 – 22:00",
+    "hoursWeekendLabel": "Сб – Вс",
+    "hoursWeekend": "10:00 – 23:00",
+    "categories": "Категории",
+    "promotions": "Акции",
+    "bestsellers": "Хиты продаж",
+    "faq": "Частые вопросы",
     "legal": "Правовая информация",
     "privacyPolicy": "Политика конфиденциальности",
     "terms": "Условия и положения",
-    "refundPolicy": "Политика возврата",
+    "refundPolicy": "Доставка и возврат",
     "deliveryPolicy": "Политика доставки",
-    "contactInfo": "Контактная информация",
+    "contactInfo": "Контакты",
     "followUs": "Мы в соцсетях",
-    "rights": "Все права защищены",
-    "createdBy": "Создано NEETRINO IT COMPANY"
+    "addresses": "Адреса"
   },
   "popup": {
     "close": "Закрыть попап"

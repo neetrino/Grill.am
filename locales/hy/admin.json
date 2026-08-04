@@ -18,7 +18,8 @@
     "openMenu": "Մենյու",
     "expandSidebar": "Ընդարձակել մենյուն",
     "collapseSidebar": "Ծալել մենյուն",
-    "storeHome": "White Shop գլխավոր",
+    "brandName": "Grill.am",
+    "storeHome": "Grill.am գլխավոր",
     "closeMenu": "Փակել ադմին մենյուն",
     "toggleProductSubpages": "Ապրանքների ենթաէջերը"
   },
@@ -46,6 +47,8 @@
     "uploading": "Վերբեռնում…",
     "updating": "Թարմացում…",
     "deleting": "Ջնջում…",
+    "confirmDeleteTitle": "Հաստատել ջնջումը",
+    "confirmDelete": "Համոզվա՞ծ եք, որ ուզում եք ջնջել սա։ Հետարկել հնարավոր չէ։",
     "selectedCount": "Ընտրված է {count}",
     "deleteSelected": "Ջնջել ընտրվածները",
     "noResults": "Արդյունքներ չկան։",
@@ -73,7 +76,8 @@
     "dash": "—"
   },
   "dashboard": {
-    "welcome": "Բարի գալուստ ադմին վահանակ",
+    "welcomeLead": "Բարի գալուստ",
+    "welcomeAccent": "ադմին վահանակ",
     "users": "Օգտատերեր",
     "activeProducts": "Ակտիվ ապրանքներ",
     "ordersRange": "Պատվերներ (ժամանակահատված)",
@@ -105,6 +109,7 @@
     "editNamed": "Խմբագրել {title}",
     "duplicateNamed": "Կրկնօրինակել {title}",
     "deleteNamed": "Ջնջել {title}",
+    "confirmDelete": "Ջնջե՞լ այս ապրանքը։ Ադմին ցուցակից վերականգնել հնարավոր չէ։",
     "feature": "Դարձնել ընտրված",
     "unfeature": "Հանել ընտրվածից",
     "activate": "Ակտիվացնել",
@@ -153,7 +158,8 @@
     },
     "bulk": {
       "selectedCount": "Ընտրված է {count} ապրանք",
-      "deleteSelected": "Ջնջել ընտրվածները"
+      "deleteSelected": "Ջնջել ընտրվածները",
+      "confirmDelete": "Ջնջե՞լ ընտրված {count} ապրանքը։ Ադմին ցուցակից վերականգնել հնարավոր չէ։"
     },
     "form": {
       "title": "Անուն",
@@ -238,6 +244,7 @@
       "selectedCount": "Ընտրված է {count} պատվեր",
       "deleteSelected": "Ջնջել ընտրվածները",
       "deleting": "Ջնջում…",
+      "confirmDelete": "Արխիվացնե՞լ ընտրված {count} պատվերը։",
       "selectAtLeastOne": "Ընտրեք առնվազն մեկ պատվեր։",
       "deletedResult": "Ջնջված է {deleted}, բաց թողնված՝ {skipped}."
     },
@@ -345,7 +352,8 @@
     },
     "bulk": {
       "selectedCount": "Ընտրված է {count} օգտատեր",
-      "deleteSelected": "Ջնջել ընտրվածները"
+      "deleteSelected": "Ջնջել ընտրվածները",
+      "confirmDelete": "Անանունացնե՞լ ընտրված {count} օգտատիրոջը։ Հետարկել հնարավոր չէ։"
     },
     "detail": {
       "role": "Դեր",
@@ -415,6 +423,7 @@
     "reorderNamed": "Reorder {title}",
     "editNamed": "Edit {title}",
     "deleteNamed": "Delete {title}",
+    "confirmDelete": "Delete this category? This cannot be undone.",
     "table": {
       "categoryTitle": "Category Title",
       "category": "Category"
@@ -537,6 +546,7 @@
     "editNamed": "Խմբագրել {code}",
     "duplicateNamed": "Կրկնօրինակել {code}",
     "deleteNamed": "Ջնջել {code}",
+    "confirmDelete": "Ջնջե՞լ պրոմո կոդը {code}։ Հետարկել հնարավոր չէ։",
     "drawer": {
       "newTitle": "Նոր կուպոն",
       "editTitle": "Խմբագրել կուպոնը",
@@ -596,6 +606,7 @@
     "draft": "ՍԵՎԱԳԻՐ",
     "editNamed": "Խմբագրել {title}",
     "deleteNamed": "Ջնջել {title}",
+    "confirmDelete": "Ջնջե՞լ hero սլայդը «{title}»։ Հետարկել հնարավոր չէ։",
     "publish": "Հրապարակել սլայդը",
     "unpublish": "Հանել հրապարակումից",
     "modal": {
@@ -620,6 +631,7 @@
     "inactive": "ՈՉ ԱԿՏԻՎ",
     "edit": "Խմբագրել popup-ը",
     "deleteNamed": "Ջնջել popup {id}",
+    "confirmDelete": "Ջնջե՞լ այս popup-ը։ Հետարկել հնարավոր չէ։",
     "activate": "Ակտիվացնել popup-ը",
     "deactivate": "Ապաակտիվացնել popup-ը",
     "limitReached": "Առավելագույնը {max} popup։ Նոր ստեղծելու համար ջնջեք մեկը։",

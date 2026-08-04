@@ -33,6 +33,7 @@ export async function registerAction(
     return { error: "Unable to create account with those details." };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructured only to exclude confirmPassword from the persisted registration payload
   const { password, confirmPassword: _confirmPassword, ...registration } =
     parsed.data;
   const [user] = await getDb()

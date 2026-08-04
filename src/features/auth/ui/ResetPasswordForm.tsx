@@ -7,6 +7,10 @@ import {
   resetPasswordAction,
   type ResetPasswordActionState,
 } from "@/features/auth/reset-password-action";
+import {
+  AUTH_BTN_PRIMARY_CLASS,
+  AUTH_LINK_CLASS,
+} from "@/features/auth/ui/auth-ui";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -29,10 +33,10 @@ export function ResetPasswordForm({
 
   if (!token) {
     return (
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
         <p
           role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600"
+          className="rounded-[15px] border border-red-200 bg-red-50 p-3 text-sm text-red-600"
         >
           {dictionary.resetInvalidToken}
         </p>
@@ -40,7 +44,7 @@ export function ResetPasswordForm({
           <AppLink
             href={`/${locale}/forgot-password`}
             prefetchPolicy="intent"
-            className="font-medium text-gray-900 underline-offset-2 hover:underline"
+            className={AUTH_LINK_CLASS}
           >
             {dictionary.forgotPassword}
           </AppLink>
@@ -50,7 +54,7 @@ export function ResetPasswordForm({
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} className="flex flex-col gap-5">
       <input type="hidden" name="token" value={token} />
 
       <PasswordField
@@ -72,16 +76,13 @@ export function ResetPasswordForm({
       {state.error ? (
         <p
           role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600"
+          className="rounded-[15px] border border-red-200 bg-red-50 p-3 text-sm text-red-600"
         >
           {state.error}
         </p>
       ) : null}
 
-      <button
-        disabled={isPending}
-        className="h-10 rounded-lg bg-gray-900 px-4 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-60"
-      >
+      <button type="submit" disabled={isPending} className={AUTH_BTN_PRIMARY_CLASS}>
         {isPending
           ? dictionary.submittingResetPassword
           : dictionary.submitResetPassword}
@@ -91,7 +92,7 @@ export function ResetPasswordForm({
         <AppLink
           href={`/${locale}/login`}
           prefetchPolicy="intent"
-          className="font-medium text-gray-900 underline-offset-2 hover:underline"
+          className={AUTH_LINK_CLASS}
         >
           {dictionary.backToLogin}
         </AppLink>

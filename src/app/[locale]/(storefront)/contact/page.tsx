@@ -18,26 +18,31 @@ export default async function ContactPage({ params }: ContactPageProps) {
   }
 
   const dictionary = getDictionary(rawLocale);
+  const copy = dictionary.contact;
 
   return (
-    <div className="-mx-4 -my-10 bg-white sm:-mx-6 lg:-mx-8">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-          <ContactInfo copy={dictionary.contact} />
+    <div className="-my-10 bg-white">
+      <section>
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 pb-4 pt-10 sm:pb-6 sm:pt-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10 lg:pb-6 lg:pt-14">
+          <ContactInfo copy={copy} />
           <ContactForm
             copy={{
-              name: dictionary.contact.name,
-              email: dictionary.contact.email,
-              phone: dictionary.contact.phone,
-              message: dictionary.contact.message,
-              submit: dictionary.contact.submit,
-              success: dictionary.contact.success,
-              error: dictionary.contact.error,
+              formTitle: copy.formTitle,
+              name: copy.name,
+              email: copy.email,
+              phone: copy.phone,
+              subject: copy.subject,
+              message: copy.message,
+              submit: copy.submit,
+              privacyNote: copy.privacyNote,
+              success: copy.success,
+              error: copy.error,
             }}
           />
         </div>
-      </div>
-      <ContactMap title={dictionary.contact.mapTitle} />
+      </section>
+
+      <ContactMap title={copy.mapTitle} />
     </div>
   );
 }

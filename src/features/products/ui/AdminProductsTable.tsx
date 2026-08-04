@@ -4,8 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { Button } from "@/components/ui/Button";
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Card } from "@/components/ui/Card";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -14,13 +18,11 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
-import {
-  formatAdminMessage,
-  useAdminDictionary,
-} from "@/features/admin/ui/AdminDictionaryProvider";
+import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   duplicateProductAction,
   softDeleteProductsAction,
@@ -52,6 +54,7 @@ export function AdminProductsTable({
 }: AdminProductsTableProps) {
   const router = useRouter();
   const dictionary = useAdminDictionary();
+  const { confirmDelete } = useConfirmDelete();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -91,13 +94,25 @@ export function AdminProductsTable({
 
   function deleteSelected(): void {
     if (selected.size === 0) return;
-    runAction(async () => {
-      const result = await softDeleteProductsAction(locale, {
-        productIds: [...selected],
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: dictionary.common.confirmDeleteTitle,
+        message: formatAdminMessage(dictionary.products.bulk.confirmDelete, {
+          count: String(selected.size),
+        }),
+        confirmText: dictionary.common.delete,
+        cancelText: dictionary.common.cancel,
       });
-      if (!result.ok) throw new Error(result.error.message);
-      setSelected(new Set());
-    });
+      if (!accepted) return;
+
+      runAction(async () => {
+        const result = await softDeleteProductsAction(locale, {
+          productIds: [...selected],
+        });
+        if (!result.ok) throw new Error(result.error.message);
+        setSelected(new Set());
+      });
+    })();
   }
 
   return (
@@ -108,14 +123,14 @@ export function AdminProductsTable({
             count: String(selected.size),
           })}
         </p>
-        <Button
+        <button
           type="button"
-          size="sm"
           disabled={isPending || selected.size === 0}
           onClick={deleteSelected}
+          className={ADMIN_BTN_PRIMARY_CLASS}
         >
           {dictionary.products.bulk.deleteSelected}
-        </Button>
+        </button>
       </Card>
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
@@ -145,24 +160,26 @@ export function AdminProductsTable({
                       {dictionary.products.table.product}
                     </Link>
                   </th>
-                  <th className={ADMIN_TABLE_TH}>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
                     <Link href={sortLinks.stock} className="hover:text-gray-900">
                       {dictionary.products.table.stock}
                     </Link>
                   </th>
-                  <th className={ADMIN_TABLE_TH}>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
                     <Link href={sortLinks.price} className="hover:text-gray-900">
                       {dictionary.products.table.price}
                     </Link>
                   </th>
-                  <th className={ADMIN_TABLE_TH}>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
                     {dictionary.products.table.category}
                   </th>
-                  <th className={ADMIN_TABLE_TH}>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
                     {dictionary.products.table.featured}
                   </th>
-                  <th className={ADMIN_TABLE_TH}>{dictionary.common.actions}</th>
-                  <th className={ADMIN_TABLE_TH}>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
+                    {dictionary.common.actions}
+                  </th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
                     <Link
                       href={sortLinks.created}
                       className="hover:text-gray-900"
@@ -201,17 +218,30 @@ export function AdminProductsTable({
                       })
                     }
                     onDelete={() =>
-                      runAction(async () => {
-                        const result = await softDeleteProductsAction(locale, {
-                          productIds: [product.id],
+                      void (async () => {
+                        const accepted = await confirmDelete({
+                          title: dictionary.common.confirmDeleteTitle,
+                          message: dictionary.products.confirmDelete,
+                          confirmText: dictionary.common.delete,
+                          cancelText: dictionary.common.cancel,
                         });
-                        if (!result.ok) throw new Error(result.error.message);
-                        setSelected((prev) => {
-                          const next = new Set(prev);
-                          next.delete(product.id);
-                          return next;
+                        if (!accepted) return;
+
+                        runAction(async () => {
+                          const result = await softDeleteProductsAction(
+                            locale,
+                            {
+                              productIds: [product.id],
+                            },
+                          );
+                          if (!result.ok) throw new Error(result.error.message);
+                          setSelected((prev) => {
+                            const next = new Set(prev);
+                            next.delete(product.id);
+                            return next;
+                          });
                         });
-                      })
+                      })()
                     }
                     onVisibility={() =>
                       runAction(async () => {

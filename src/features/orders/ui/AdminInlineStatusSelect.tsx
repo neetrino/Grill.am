@@ -1,17 +1,28 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   useTransition,
 } from "react";
-import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
+import { createPortal } from "react-dom";
 
+import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
+
+import {
+  DROPDOWN_ANIMATION_MS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
+  dropdownOptionClass,
+  dropdownPanelStateClass,
+  dropdownPortalStyle,
+} from "@/components/ui/dropdown-styles";
+import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -37,12 +48,6 @@ import {
   adminPaymentStatusLabel,
 } from "@/features/orders/ui/admin-order-status-labels";
 
-type MenuPosition = {
-  top: number;
-  left: number;
-  minWidth: number;
-};
-
 type AdminInlineStatusSelectProps = {
   locale: string;
   orderNumber: string;
@@ -50,6 +55,10 @@ type AdminInlineStatusSelectProps = {
   value: string;
   disabled?: boolean;
 };
+
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
 
 export function AdminInlineStatusSelect({
   locale,
@@ -60,18 +69,27 @@ export function AdminInlineStatusSelect({
 }: AdminInlineStatusSelectProps) {
   const dictionary = useAdminDictionary();
   const router = useRouter();
+  const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [open, setOpen] = useState(false);
+  const [panelVisible, setPanelVisible] = useState(false);
+  const [panelExpanded, setPanelExpanded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [displayValue, setDisplayValue] = useState(value);
-  const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
+  const [syncedValue, setSyncedValue] = useState(value);
   const [isPending, startTransition] = useTransition();
   const rootRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLUListElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLUListElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
+  const menuPosition = useDropdownPortalPosition(panelVisible, triggerRef, {
+    matchTriggerWidth: true,
+  });
 
-  useEffect(() => {
+  if (value !== syncedValue) {
+    setSyncedValue(value);
     setDisplayValue(value);
-  }, [value]);
+  }
 
   const options =
     kind === "order"
@@ -94,24 +112,33 @@ export function AdminInlineStatusSelect({
       : adminPaymentStatusLabel(optionValue, dictionary.orders.paymentStatus);
   }
 
-  function updateMenuPosition(): void {
-    const trigger = rootRef.current;
-    if (!trigger) return;
-    const rect = trigger.getBoundingClientRect();
-    setMenuPosition({
-      top: rect.bottom + 4,
-      left: rect.left,
-      minWidth: Math.max(rect.width, 144),
-    });
-  }
-
-  useLayoutEffect(() => {
-    if (!open) {
-      setMenuPosition(null);
-      return;
+  const clearCloseTimer = useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
     }
-    updateMenuPosition();
-  }, [open]);
+  }, []);
+
+  const closeDropdown = useCallback(() => {
+    clearCloseTimer();
+    setOpen(false);
+    setPanelExpanded(false);
+    closeTimerRef.current = setTimeout(() => {
+      setPanelVisible(false);
+      closeTimerRef.current = null;
+    }, DROPDOWN_ANIMATION_MS);
+  }, [clearCloseTimer]);
+
+  const openDropdown = useCallback(() => {
+    clearCloseTimer();
+    setOpen(true);
+    setPanelVisible(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setPanelExpanded(true);
+      });
+    });
+  }, [clearCloseTimer]);
 
   useEffect(() => {
     if (!open) return;
@@ -120,43 +147,44 @@ export function AdminInlineStatusSelect({
       const target = event.target as Node;
       if (
         rootRef.current?.contains(target) ||
-        menuRef.current?.contains(target)
+        panelRef.current?.contains(target)
       ) {
         return;
       }
-      setOpen(false);
+      closeDropdown();
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") setOpen(false);
-    }
-
-    function handleReposition(): void {
-      updateMenuPosition();
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeDropdown();
     }
 
     document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("resize", handleReposition);
-    window.addEventListener("scroll", handleReposition, true);
+    document.addEventListener("keydown", handleKeyDown, true);
 
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("resize", handleReposition);
-      window.removeEventListener("scroll", handleReposition, true);
+      document.removeEventListener("keydown", handleKeyDown, true);
     };
-  }, [open]);
+  }, [closeDropdown, open]);
+
+  useEffect(() => {
+    return () => {
+      clearCloseTimer();
+    };
+  }, [clearCloseTimer]);
 
   function selectStatus(next: string): void {
     if (next === displayValue || isPending || disabled) {
-      setOpen(false);
+      closeDropdown();
       return;
     }
 
     const previous = displayValue;
     setDisplayValue(next);
-    setOpen(false);
+    closeDropdown();
 
     startTransition(async () => {
       setError(null);
@@ -181,19 +209,15 @@ export function AdminInlineStatusSelect({
     });
   }
 
-  const menu =
-    open && menuPosition
+  const panel =
+    canPortal && panelVisible && menuPosition
       ? createPortal(
           <ul
-            ref={menuRef}
+            ref={panelRef}
             id={menuId}
             role="listbox"
-            className="fixed z-[200] overflow-hidden rounded-md border border-gray-200 bg-white py-1 text-xs shadow-lg"
-            style={{
-              top: menuPosition.top,
-              left: menuPosition.left,
-              minWidth: menuPosition.minWidth,
-            }}
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-1 ${dropdownPanelStateClass(panelExpanded)}`}
+            style={dropdownPortalStyle(menuPosition)}
           >
             {options.map((option) => {
               const selected =
@@ -207,11 +231,7 @@ export function AdminInlineStatusSelect({
                   <button
                     type="button"
                     disabled={isPending}
-                    className={`flex w-full px-3 py-1.5 text-left ${
-                      selected
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-800 hover:bg-gray-100"
-                    }`}
+                    className={`${dropdownOptionClass(selected)} uppercase`}
                     onClick={() => selectStatus(option.value)}
                   >
                     {optionDisplayLabel(option.value)}
@@ -220,29 +240,41 @@ export function AdminInlineStatusSelect({
               );
             })}
           </ul>,
-          document.body,
+          getDropdownPortalRoot(),
         )
       : null;
 
   return (
     <div ref={rootRef} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         disabled={disabled || isPending}
-        className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium disabled:opacity-50 ${badgeClassName}`}
+        className={`inline-flex items-center gap-1 rounded-[15px] px-2 py-1 text-xs font-medium uppercase transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${badgeClassName}`}
         aria-label={formatAdminMessage(dictionary.orders.changeStatusAria, {
           kind,
         })}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={menuId}
-        onClick={() => setOpen((valueOpen) => !valueOpen)}
+        onClick={() => {
+          if (open) {
+            closeDropdown();
+            return;
+          }
+          openDropdown();
+        }}
       >
         <span>{currentLabel}</span>
-        <ChevronDown className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
+        <ChevronDown
+          className={`h-3 w-3 shrink-0 opacity-70 transition-transform duration-150 ${
+            open ? "rotate-180" : "rotate-0"
+          }`}
+          aria-hidden
+        />
       </button>
 
-      {menu}
+      {panel}
 
       {error ? (
         <p className="mt-1 whitespace-nowrap text-[10px] text-red-700">

@@ -1,18 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { X } from "lucide-react";
+import { useRef, useState, useTransition } from "react";
 
+import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
-  ADMIN_SELECT,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
+import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   createBlogPostAction,
   updateBlogPostAction,
@@ -24,6 +27,8 @@ import {
   type BlogTranslations,
 } from "@/features/blog/domain/blog-rules";
 import { locales, type Locale } from "@/lib/i18n/config";
+
+const BLOG_POST_DRAWER_FORM_ID = "blog-post-drawer-form";
 
 type LocaleDraft = {
   title: string;
@@ -120,25 +125,6 @@ export function BlogPostDrawer({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (!open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    function handleEscape(event: KeyboardEvent): void {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
   const draft = drafts[activeLocale];
   const drawerTitle = isEdit ? copy.editTitle : copy.addTitle;
 
@@ -150,32 +136,28 @@ export function BlogPostDrawer({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/40"
-      role="dialog"
-      aria-modal="true"
-      aria-label={drawerTitle}
-      onClick={onClose}
-    >
-      <div
-        className="flex h-full w-full max-w-lg flex-col bg-white shadow-2xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">{drawerTitle}</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={common.close}
+    <SideSheet
+      open={open}
+      onClose={onClose}
+      title={drawerTitle}
+      closeLabel={common.close}
+      footer={
+        <div className="border-t border-gray-100 px-5 py-4 lg:px-4">
+          <Button
+            type="submit"
+            form={BLOG_POST_DRAWER_FORM_ID}
+            className="w-full"
+            disabled={isPending}
           >
-            <X className="h-5 w-5" />
-          </button>
+            {isPending ? common.saving : common.save}
+          </Button>
         </div>
-
-        <form
-          className="flex min-h-0 flex-1 flex-col"
-          onSubmit={(event) => {
+      }
+    >
+      <form
+        id={BLOG_POST_DRAWER_FORM_ID}
+        className={`${ADMIN_FORM_STACK} gap-6`}
+        onSubmit={(event) => {
             event.preventDefault();
             const current = drafts[activeLocale];
             const slug = resolvedSlug(current);
@@ -223,15 +205,14 @@ export function BlogPostDrawer({
               router.refresh();
             });
           }}
-        >
-          <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5">
-            <AdminLocaleTabs
+      >
+        <AdminLocaleTabs
               activeLocale={activeLocale}
               onChange={setActiveLocale}
               disabled={isPending}
             />
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>
                 {copy.title} <span className="text-red-600">*</span>
               </span>
@@ -246,7 +227,7 @@ export function BlogPostDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{copy.excerpt}</span>
               <input
                 value={draft.excerpt}
@@ -258,7 +239,7 @@ export function BlogPostDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>
                 {copy.content} <span className="text-red-600">*</span>
               </span>
@@ -281,8 +262,8 @@ export function BlogPostDrawer({
               <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
                 {copy.common}
               </p>
-              <div className="space-y-4">
-                <label className="block">
+              <div className={ADMIN_FORM_STACK}>
+                <label className={ADMIN_FIELD}>
                   <span className={ADMIN_LABEL}>{copy.publicationDate}</span>
                   <input
                     type="date"
@@ -295,21 +276,18 @@ export function BlogPostDrawer({
                     {copy.publicationHint}
                   </span>
                 </label>
-                <label className="block">
-                  <span className={ADMIN_LABEL}>{copy.status}</span>
-                  <select
-                    value={status}
-                    onChange={(event) =>
-                      setStatus(event.target.value as BlogPostStatus)
-                    }
-                    className={ADMIN_SELECT}
-                    disabled={isPending}
-                  >
-                    <option value="DRAFT">{statusCopy.draft}</option>
-                    <option value="PUBLISHED">{statusCopy.published}</option>
-                    <option value="ARCHIVED">{statusCopy.archived}</option>
-                  </select>
-                </label>
+                <AdminSelect
+                  label={copy.status}
+                  placeholder={copy.status}
+                  options={[
+                    { value: "DRAFT", label: statusCopy.draft },
+                    { value: "PUBLISHED", label: statusCopy.published },
+                    { value: "ARCHIVED", label: statusCopy.archived },
+                  ]}
+                  value={status}
+                  disabled={isPending}
+                  onChange={(value) => setStatus(value as BlogPostStatus)}
+                />
               </div>
             </div>
 
@@ -320,7 +298,7 @@ export function BlogPostDrawer({
                   type="button"
                   disabled={isPending}
                   onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+                  className={ADMIN_BTN_DASHED_CLASS}
                 >
                   {imagePreview ? copy.changeImage : copy.uploadImage}
                 </button>
@@ -378,16 +356,8 @@ export function BlogPostDrawer({
               </p>
             </div>
 
-            {error ? <p className="text-sm text-red-700">{error}</p> : null}
-          </div>
-
-          <div className="border-t border-gray-200 px-5 py-4">
-            <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? common.saving : common.save}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+        {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      </form>
+    </SideSheet>
   );
 }

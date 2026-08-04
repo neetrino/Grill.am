@@ -5,7 +5,7 @@ export function orderStatusBadgeClass(status: string): string {
     return "bg-yellow-100 text-yellow-800";
   }
   if (normalized === "PROCESSING" || normalized === "SHIPPED") {
-    return "bg-blue-100 text-blue-800";
+    return "bg-brand-yellow/25 text-brand-ink";
   }
   if (normalized === "DELIVERED") {
     return "bg-green-100 text-green-800";

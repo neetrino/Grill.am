@@ -9,9 +9,10 @@ import {
   ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_SECTION_TITLE,
-  ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   createPromotionAction,
   updatePromotionAction,
@@ -75,6 +76,11 @@ export function PromotionForm({
   const common = dictionary.common;
   const router = useRouter();
   const [kind, setKind] = useState<PromotionKind>(initialKind);
+  const [productId, setProductId] = useState(defaults?.productId ?? "");
+  const [categoryId, setCategoryId] = useState(defaults?.categoryId ?? "");
+  const [discountType, setDiscountType] = useState<DiscountType>(
+    defaults?.discountType ?? "PERCENTAGE",
+  );
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -86,7 +92,9 @@ export function PromotionForm({
   }, [copy.createAutomatic, copy.createCoupon, copy.editTitle, kind, mode]);
 
   return (
-    <Card className="max-w-xl p-6">
+    <Card
+      className={`max-w-xl overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}
+    >
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
@@ -97,7 +105,9 @@ export function PromotionForm({
             code: String(formData.get("code") ?? "") || null,
             productId: String(formData.get("productId") ?? "") || null,
             categoryId: String(formData.get("categoryId") ?? "") || null,
-            discountType: String(formData.get("discountType")) as DiscountType,
+            discountType: String(
+              formData.get("discountType") ?? discountType,
+            ) as DiscountType,
             discountValue: Number(formData.get("discountValue")),
             maxDiscountAmount: String(formData.get("maxDiscountAmount") ?? "")
               ? Number(formData.get("maxDiscountAmount"))
@@ -141,19 +151,18 @@ export function PromotionForm({
       >
         <h2 className={ADMIN_SECTION_TITLE}>{title}</h2>
 
-        <label>
-          <span className={ADMIN_LABEL}>{copy.kind}</span>
-          <select
-            name="kind"
-            className={ADMIN_SELECT}
-            value={kind}
-            disabled={lockKind || isPending}
-            onChange={(event) => setKind(event.target.value as PromotionKind)}
-          >
-            <option value="COUPON">{copy.kindCoupon}</option>
-            <option value="AUTOMATIC">{copy.kindAutomatic}</option>
-          </select>
-        </label>
+        <AdminSelect
+          name="kind"
+          label={copy.kind}
+          placeholder={copy.kind}
+          options={[
+            { value: "COUPON", label: copy.kindCoupon },
+            { value: "AUTOMATIC", label: copy.kindAutomatic },
+          ]}
+          value={kind}
+          disabled={lockKind || isPending}
+          onChange={(value) => setKind(value as PromotionKind)}
+        />
 
         {kind === "COUPON" ? (
           <label>
@@ -169,55 +178,53 @@ export function PromotionForm({
           </label>
         ) : (
           <>
-            <label>
-              <span className={ADMIN_LABEL}>{copy.productTarget}</span>
-              <select
-                name="productId"
-                className={ADMIN_SELECT}
-                defaultValue={defaults?.productId ?? ""}
-                disabled={isPending}
-              >
-                <option value="">{common.none}</option>
-                {targets.products.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.sku} · {product.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              <span className={ADMIN_LABEL}>{copy.categoryTarget}</span>
-              <select
-                name="categoryId"
-                className={ADMIN_SELECT}
-                defaultValue={defaults?.categoryId ?? ""}
-                disabled={isPending}
-              >
-                <option value="">{common.none}</option>
-                {targets.categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.title}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <AdminSelect
+              name="productId"
+              label={copy.productTarget}
+              placeholder={common.none}
+              options={[
+                { value: "", label: common.none },
+                ...targets.products.map((product) => ({
+                  value: product.id,
+                  label: `${product.sku} · ${product.title}`,
+                })),
+              ]}
+              value={productId ?? ""}
+              disabled={isPending}
+              onChange={setProductId}
+            />
+            <AdminSelect
+              name="categoryId"
+              label={copy.categoryTarget}
+              placeholder={common.none}
+              options={[
+                { value: "", label: common.none },
+                ...targets.categories.map((category) => ({
+                  value: category.id,
+                  label: category.title,
+                })),
+              ]}
+              value={categoryId ?? ""}
+              disabled={isPending}
+              onChange={setCategoryId}
+            />
             <p className="text-xs text-gray-500">{copy.targetHint}</p>
           </>
         )}
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <label>
-            <span className={ADMIN_LABEL}>{copy.discountType}</span>
-            <select
-              name="discountType"
-              className={ADMIN_SELECT}
-              defaultValue={defaults?.discountType ?? "PERCENTAGE"}
-              disabled={isPending}
-            >
-              <option value="PERCENTAGE">{copy.typePercentage}</option>
-              <option value="FIXED">{copy.typeFixed}</option>
-            </select>
-          </label>
+          <AdminSelect
+            name="discountType"
+            label={copy.discountType}
+            placeholder={copy.discountType}
+            options={[
+              { value: "PERCENTAGE", label: copy.typePercentage },
+              { value: "FIXED", label: copy.typeFixed },
+            ]}
+            value={discountType}
+            disabled={isPending}
+            onChange={(value) => setDiscountType(value as DiscountType)}
+          />
           <label>
             <span className={ADMIN_LABEL}>{copy.discountValue}</span>
             <input
@@ -323,7 +330,7 @@ export function PromotionForm({
             name="allowStacking"
             defaultChecked={defaults?.allowStacking ?? false}
             disabled={isPending}
-            className="h-4 w-4 rounded border-gray-300"
+            className="h-4 w-4 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
           />
           {copy.allowStacking}
         </label>
@@ -333,7 +340,7 @@ export function PromotionForm({
             name="isActive"
             defaultChecked={defaults?.isActive ?? true}
             disabled={isPending}
-            className="h-4 w-4 rounded border-gray-300"
+            className="h-4 w-4 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
           />
           {copy.active}
         </label>

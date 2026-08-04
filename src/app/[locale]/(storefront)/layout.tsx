@@ -4,9 +4,11 @@ import { notFound } from "next/navigation";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { StorefrontScrollToTop } from "@/components/layout/StorefrontScrollToTop";
+import { StorefrontSurface } from "@/components/layout/StorefrontSurface";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveStorefrontPopup } from "@/features/popups/application/queries";
-import { SitePopupOverlay } from "@/features/popups/ui/SitePopupOverlay";
+import { SitePopupOverlayLazy } from "@/features/popups/ui/SitePopupOverlayLazy";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
@@ -38,13 +40,14 @@ export default async function StorefrontLayout({
   const activePopup = await getActiveStorefrontPopup();
 
   return (
-    <div className="flex min-h-dvh flex-1 flex-col bg-gray-50">
+    <StorefrontSurface>
+      <StorefrontScrollToTop />
       <SiteHeader
         locale={locale}
         currency={currency}
         dictionary={dictionary}
       />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 pb-24 sm:px-6 md:pb-10 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 pb-28 sm:px-6 md:pb-10 lg:px-8">
         <MaintenanceGate>{children}</MaintenanceGate>
       </main>
       <SiteFooter dictionary={dictionary} locale={locale} />
@@ -54,11 +57,11 @@ export default async function StorefrontLayout({
         dictionary={dictionary}
       />
       {activePopup ? (
-        <SitePopupOverlay
+        <SitePopupOverlayLazy
           imageUrl={activePopup.imageUrl}
           closeLabel={dictionary.popup.close}
         />
       ) : null}
-    </div>
+    </StorefrontSurface>
   );
 }

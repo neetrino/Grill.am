@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { listAdminUsers } from "@/features/users/application/queries";
 import { adminUsersFilterSchema } from "@/features/users/schemas/admin-users";
 import { AdminUsersView } from "@/features/users/ui/AdminUsersView";
@@ -56,7 +57,8 @@ export default async function AdminUsersPage({
     notFound();
   }
 
-  const common = getDictionary(locale).admin.common;
+  const admin = getDictionary(locale).admin;
+  const common = admin.common;
 
   const raw = await searchParams;
   const parsed = adminUsersFilterSchema.safeParse({
@@ -75,6 +77,10 @@ export default async function AdminUsersPage({
 
   return (
     <>
+      <div className="mb-6">
+        <AdminPageTitle>{admin.users.title}</AdminPageTitle>
+      </div>
+
       <AdminUsersView
         locale={locale}
         users={rows}

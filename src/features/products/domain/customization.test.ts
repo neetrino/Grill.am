@@ -4,6 +4,8 @@ import {
   canonicalizeModifiers,
   computeModifiersDelta,
   defaultModifiers,
+  hasRequiredModifiersSelected,
+  productRequiresConfiguration,
   selectionKeyFromModifiers,
   unitAmountWithModifiers,
   validateModifiers,
@@ -54,6 +56,58 @@ const sample: ProductCustomization = {
 };
 
 describe("product customization domain", () => {
+  it("flags products with option groups, addons, or exclusions for PDP", () => {
+    expect(productRequiresConfiguration(sample)).toBe(true);
+    expect(productRequiresConfiguration(null)).toBe(false);
+    expect(
+      productRequiresConfiguration({
+        optionGroups: [],
+        addons: sample.addons,
+        exclusions: [],
+      }),
+    ).toBe(true);
+    expect(
+      productRequiresConfiguration({
+        optionGroups: [],
+        addons: [],
+        exclusions: [],
+      }),
+    ).toBe(false);
+  });
+
+  it("blocks add-to-cart until option groups are selected", () => {
+    expect(
+      hasRequiredModifiersSelected(sample, {
+        optionChoices: {},
+        addonIds: [],
+        exclusionIds: [],
+      }),
+    ).toBe(false);
+    expect(
+      hasRequiredModifiersSelected(sample, {
+        optionChoices: { [GROUP_ID]: CHOICE_A },
+        addonIds: [],
+        exclusionIds: [],
+      }),
+    ).toBe(true);
+    expect(
+      hasRequiredModifiersSelected(
+        {
+          ...sample,
+          optionGroups: sample.optionGroups.map((group) => ({
+            ...group,
+            required: false,
+          })),
+        },
+        {
+          optionChoices: {},
+          addonIds: [],
+          exclusionIds: [],
+        },
+      ),
+    ).toBe(false);
+  });
+
   it("defaults required option to the marked default choice", () => {
     expect(defaultModifiers(sample)).toEqual({
       optionChoices: { [GROUP_ID]: CHOICE_A },

@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import {
   ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminContactMessageById } from "@/features/contact/application/queries";
 import {
@@ -24,8 +24,8 @@ type AdminMessageDetailPageProps = {
 
 function contactStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
-  if (normalized === "UNREAD") return "bg-blue-100 text-blue-800";
-  if (normalized === "READ") return "bg-yellow-100 text-yellow-800";
+  if (normalized === "UNREAD") return "bg-brand-yellow/25 text-brand-ink";
+  if (normalized === "READ") return "bg-brand-cream text-brand-ink";
   if (normalized === "REPLIED") return "bg-green-100 text-green-800";
   if (normalized === "ARCHIVED") return "bg-gray-100 text-gray-800";
   return "bg-gray-100 text-gray-800";
@@ -79,7 +79,7 @@ export default async function AdminMessageDetailPage({
             {copy.title}
           </Link>
         </p>
-        <h1 className={ADMIN_PAGE_TITLE}>{message.subject}</h1>
+        <AdminPageTitle>{message.subject}</AdminPageTitle>
       </div>
 
       <Card className="mb-6 p-6">

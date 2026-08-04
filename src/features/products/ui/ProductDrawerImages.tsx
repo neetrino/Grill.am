@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 
 export type ProductDraftImage = {
   key: string;
@@ -81,7 +82,7 @@ export function ProductDrawerImages({
           type="button"
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
-          className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+          className={ADMIN_BTN_DASHED_CLASS}
         >
           {copy.upload}
         </button>
@@ -107,6 +108,7 @@ export function ProductDrawerImages({
               key={image.key}
               className="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element -- previewUrl can be a blob: object URL (new uploads), which next/image cannot optimize */}
               <img
                 src={image.previewUrl}
                 alt=""
@@ -119,7 +121,7 @@ export function ProductDrawerImages({
                     checked={image.isPrimary}
                     disabled={disabled}
                     onChange={() => setPrimary(image.key)}
-                    className="h-3.5 w-3.5 rounded border-gray-300"
+                    className="h-3.5 w-3.5 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
                   />
                   {copy.main}
                 </label>

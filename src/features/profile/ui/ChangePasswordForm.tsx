@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -8,9 +8,10 @@ import {
   changePasswordAction,
   type ChangePasswordActionState,
 } from "@/features/auth/change-password-action";
+import { PROFILE_BTN_PRIMARY_CLASS, PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS } from "@/features/profile/ui/profile-ui";
 
 const FIELD_CLASS =
-  "h-11 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
+  "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
 type ChangePasswordFormProps = {
   locale: string;
@@ -39,24 +40,30 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
   const action = changePasswordAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [values, setValues] = useState(emptyForm);
+  // Tracks the `state.success` value last synced into `values`.
+  const [syncedSuccess, setSyncedSuccess] = useState(state.success);
 
-  useEffect(() => {
+  // Clear the form once the action reports success — adjust during render
+  // (React "adjusting state on prop change" pattern) instead of a
+  // synchronous setState inside an effect.
+  if (state.success !== syncedSuccess) {
+    setSyncedSuccess(state.success);
     if (state.success) {
       setValues(emptyForm);
     }
-  }, [state.success]);
+  }
 
   return (
-    <Card className="rounded-2xl border border-gray-200/80 p-5 shadow-none sm:p-7 lg:p-8">
+    <Card className={`rounded-[15px] border-0 p-5 shadow-none ring-1 ring-gray-100/80 sm:p-7 lg:p-8 ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
       <div className="mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6">
-        <h1 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">
           {labels.title}
         </h1>
       </div>
 
       <form
         action={formAction}
-        className="mx-auto max-w-xl space-y-6 lg:mx-0 lg:max-w-2xl"
+        className="max-w-sm space-y-5"
       >
         <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
           {labels.currentPassword}
@@ -130,7 +137,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
           <Button
             type="submit"
             variant="primary"
-            className="h-11 w-full sm:w-auto"
+            className={`${PROFILE_BTN_PRIMARY_CLASS} w-full sm:w-auto`}
             disabled={isPending}
           >
             {isPending ? labels.changing : labels.change}

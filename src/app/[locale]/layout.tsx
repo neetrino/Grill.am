@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 
+import { LocaleClientProviders } from "@/components/providers/LocaleClientProviders";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type LocaleLayoutProps = {
   children: React.ReactNode;
@@ -22,10 +24,20 @@ export default async function LocaleLayout({
   }
 
   const locale: Locale = rawLocale;
+  const dictionary = getDictionary(locale);
 
   return (
-    <div lang={locale} className="flex min-h-dvh flex-1 flex-col bg-gray-50">
-      {children}
-    </div>
+    <LocaleClientProviders
+      confirmDeleteLabels={{
+        title: dictionary.dialogs.confirmDeleteTitle,
+        message: dictionary.dialogs.confirmDeleteMessage,
+        confirmText: dictionary.buttons.delete,
+        cancelText: dictionary.buttons.cancel,
+      }}
+    >
+      <div lang={locale} className="flex min-h-dvh flex-1 flex-col bg-gray-50">
+        {children}
+      </div>
+    </LocaleClientProviders>
   );
 }

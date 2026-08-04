@@ -23,6 +23,7 @@ import { formatMoneyAmount } from "@/lib/money/format";
 export type CartDrawerItemView = {
   id: string;
   title: string;
+  slug: string;
   quantity: number;
   imageUrl: string | null;
   unitPriceFormatted: string;
@@ -122,6 +123,7 @@ export async function getCartDrawerView(
     items.push({
       id: item.id,
       title: translation?.title ?? product.sku,
+      slug: translation?.slug ?? product.sku,
       quantity: item.quantity,
       imageUrl: images.get(product.id) ?? null,
       unitPriceFormatted: formatConvertedAmount(

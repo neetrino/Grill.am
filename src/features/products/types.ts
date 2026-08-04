@@ -24,6 +24,8 @@ export type CatalogProduct = {
   imageUrl: string | null;
   /** Primary (or first) category title for catalog cards. */
   categoryTitle: string | null;
+  /** When true, card CTA should open PDP instead of quick-adding. */
+  requiresConfiguration: boolean;
 };
 
 export type ProductGalleryImage = {
@@ -44,4 +46,5 @@ export type ProductDetail = CatalogProduct & {
   categories: ProductCategoryRef[];
   /** Raw customization catalog from the product row (null when unset). */
   customization: ProductCustomization | null;
+  isFeatured: boolean;
 };

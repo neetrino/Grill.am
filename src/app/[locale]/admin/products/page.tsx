@@ -7,6 +7,7 @@ import {
 } from "@/features/products/application/list-admin-products";
 import { listModifierCatalog } from "@/features/products/application/modifier-catalog";
 import { adminProductsFilterSchema } from "@/features/products/schemas/admin-list";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
 import { isLocale } from "@/lib/i18n/config";
@@ -119,10 +120,15 @@ export default async function AdminProductsPage({
     created: sortHref("created"),
   };
 
-  const common = getDictionary(locale).admin.common;
+  const admin = getDictionary(locale).admin;
+  const common = admin.common;
 
   return (
     <section>
+      <div className="mb-6">
+        <AdminPageTitle>{admin.menu.products}</AdminPageTitle>
+      </div>
+
       <AdminProductsFilters
         total={total}
         q={filters.q}

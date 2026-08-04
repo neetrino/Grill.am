@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
@@ -46,8 +46,14 @@ export function CategoryDiscountsSection({
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Tracks the `categories` prop identity last synced into `drafts`.
+  const [syncedCategories, setSyncedCategories] = useState(categories);
 
-  useEffect(() => {
+  // Adjust state during render when the prop changes (React "adjusting
+  // state on prop change" pattern) instead of a synchronous setState inside
+  // an effect.
+  if (categories !== syncedCategories) {
+    setSyncedCategories(categories);
     setDrafts(
       Object.fromEntries(
         categories.map((category) => [
@@ -58,7 +64,7 @@ export function CategoryDiscountsSection({
         ]),
       ),
     );
-  }, [categories]);
+  }
 
   const isDirty = useMemo(() => {
     return categories.some((category) => {

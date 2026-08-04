@@ -18,7 +18,8 @@
     "openMenu": "Меню",
     "expandSidebar": "Развернуть меню",
     "collapseSidebar": "Свернуть меню",
-    "storeHome": "Главная White Shop",
+    "brandName": "Grill.am",
+    "storeHome": "Главная Grill.am",
     "closeMenu": "Закрыть меню админки",
     "toggleProductSubpages": "Подстраницы товаров"
   },
@@ -46,6 +47,8 @@
     "uploading": "Загрузка файла…",
     "updating": "Обновление…",
     "deleting": "Удаление…",
+    "confirmDeleteTitle": "Подтвердите удаление",
+    "confirmDelete": "Вы уверены, что хотите удалить это? Отменить нельзя.",
     "selectedCount": "Выбрано {count}",
     "deleteSelected": "Удалить выбранные",
     "noResults": "Нет результатов.",
@@ -73,7 +76,8 @@
     "dash": "—"
   },
   "dashboard": {
-    "welcome": "Добро пожаловать в панель администратора",
+    "welcomeLead": "Добро пожаловать в",
+    "welcomeAccent": "панель администратора",
     "users": "Пользователи",
     "activeProducts": "Активные товары",
     "ordersRange": "Заказы (период)",
@@ -105,6 +109,7 @@
     "editNamed": "Редактировать {title}",
     "duplicateNamed": "Дублировать {title}",
     "deleteNamed": "Удалить {title}",
+    "confirmDelete": "Удалить этот товар? Из списка админки это нельзя отменить.",
     "feature": "Сделать избранным",
     "unfeature": "Убрать из избранного",
     "activate": "Активировать",
@@ -153,7 +158,8 @@
     },
     "bulk": {
       "selectedCount": "Выбрано товаров: {count}",
-      "deleteSelected": "Удалить выбранные"
+      "deleteSelected": "Удалить выбранные",
+      "confirmDelete": "Удалить выбранные товары ({count})? Из списка админки это нельзя отменить."
     },
     "form": {
       "title": "Название",
@@ -238,6 +244,7 @@
       "selectedCount": "Выбрано заказов: {count}",
       "deleteSelected": "Удалить выбранные",
       "deleting": "Удаление…",
+      "confirmDelete": "Архивировать выбранные заказы ({count})?",
       "selectAtLeastOne": "Выберите хотя бы один заказ.",
       "deletedResult": "Удалено {deleted}, пропущено {skipped}."
     },
@@ -345,7 +352,8 @@
     },
     "bulk": {
       "selectedCount": "Выбрано пользователей: {count}",
-      "deleteSelected": "Удалить выбранные"
+      "deleteSelected": "Удалить выбранные",
+      "confirmDelete": "Анонимизировать выбранных пользователей ({count})? Отменить нельзя."
     },
     "detail": {
       "role": "Роль",
@@ -415,6 +423,7 @@
     "reorderNamed": "Reorder {title}",
     "editNamed": "Edit {title}",
     "deleteNamed": "Delete {title}",
+    "confirmDelete": "Delete this category? This cannot be undone.",
     "table": {
       "categoryTitle": "Category Title",
       "category": "Category"
@@ -537,6 +546,7 @@
     "editNamed": "Редактировать {code}",
     "duplicateNamed": "Дублировать {code}",
     "deleteNamed": "Удалить {code}",
+    "confirmDelete": "Удалить промокод {code}? Отменить нельзя.",
     "drawer": {
       "newTitle": "Новый купон",
       "editTitle": "Редактировать купон",
@@ -596,6 +606,7 @@
     "draft": "ЧЕРНОВИК",
     "editNamed": "Редактировать {title}",
     "deleteNamed": "Удалить {title}",
+    "confirmDelete": "Удалить hero-слайд «{title}»? Отменить нельзя.",
     "publish": "Опубликовать слайд",
     "unpublish": "Снять с публикации",
     "modal": {
@@ -620,6 +631,7 @@
     "inactive": "НЕАКТИВЕН",
     "edit": "Редактировать попап",
     "deleteNamed": "Удалить попап {id}",
+    "confirmDelete": "Удалить этот попап? Отменить нельзя.",
     "activate": "Активировать попап",
     "deactivate": "Деактивировать попап",
     "limitReached": "Достигнут лимит {max} попапов. Удалите один, чтобы создать новый.",

@@ -1,15 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
-  ADMIN_SELECT,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -22,11 +16,9 @@ import {
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
+import { AdminMessagesFilters } from "@/features/contact/ui/AdminMessagesFilters";
 import { listAdminContactMessages } from "@/features/contact/application/queries";
-import {
-  CONTACT_STATUSES,
-  type ContactStatus,
-} from "@/features/contact/domain/contact-rules";
+import { type ContactStatus } from "@/features/contact/domain/contact-rules";
 import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -56,8 +48,8 @@ function fillTemplate(
 
 function contactStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
-  if (normalized === "UNREAD") return "bg-blue-100 text-blue-800";
-  if (normalized === "READ") return "bg-yellow-100 text-yellow-800";
+  if (normalized === "UNREAD") return "bg-brand-yellow/25 text-brand-ink";
+  if (normalized === "READ") return "bg-brand-cream text-brand-ink";
   if (normalized === "REPLIED") return "bg-green-100 text-green-800";
   if (normalized === "ARCHIVED") return "bg-gray-100 text-gray-800";
   return "bg-gray-100 text-gray-800";
@@ -115,44 +107,14 @@ export default async function AdminMessagesPage({
   return (
     <section>
       <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
           {countLabel}
           {statusFilterLabel ? ` · ${statusFilterLabel}` : ""}
         </p>
       </div>
 
-      <Card className="mb-6 p-4">
-        <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="min-w-[180px] flex-1">
-            <span className={ADMIN_LABEL}>{common.search}</span>
-            <input
-              name="q"
-              defaultValue={filters.q ?? ""}
-              placeholder={copy.searchPlaceholder}
-              className={ADMIN_INPUT}
-            />
-          </label>
-          <label className="min-w-[140px]">
-            <span className={ADMIN_LABEL}>{common.status}</span>
-            <select
-              name="status"
-              defaultValue={filters.status ?? ""}
-              className={ADMIN_SELECT}
-            >
-              <option value="">{common.all}</option>
-              {CONTACT_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {contactStatusLabel(status, copy.status)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <Button type="submit" size="sm">
-            {common.filter}
-          </Button>
-        </form>
-      </Card>
+      <AdminMessagesFilters q={filters.q} status={filters.status} />
 
       <Card className={ADMIN_TABLE_CARD}>
         {rows.length === 0 ? (

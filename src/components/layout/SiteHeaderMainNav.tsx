@@ -1,32 +1,41 @@
-import { AccountControls } from "@/components/layout/AccountControls";
+"use client";
+
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+
+import { HeaderLocaleCurrencyPill } from "@/components/layout/HeaderLocaleCurrencyPill";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
-import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
+import { PrimaryNavLinks } from "@/components/layout/PrimaryNavLinks";
+import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
+import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
+import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { AppLink } from "@/components/ui/AppLink";
-import { CartDrawer } from "@/features/cart/ui/CartDrawer";
-import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
+import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import type { SessionUser } from "@/lib/auth/session";
-
-type NavItem = {
-  href: string;
-  label: string;
-};
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type SiteHeaderMainNavProps = {
   locale: Locale;
   currency: Currency;
   dictionary: Dictionary;
-  user: SessionUser | null;
-  navItems: readonly NavItem[];
-  cartItemCount: number;
-  wishlistCount: number;
+  navItems: readonly StorefrontNavItem[];
+  categories: readonly StorefrontNavCategory[];
+  mobileNav: React.ReactNode;
+  desktopActions: React.ReactNode;
 };
 
-function navLinkClassName(): string {
-  return "rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:text-gray-900";
-}
+const TOP_REVEAL_Y = 8;
+/** Scroll down past this → close primary. */
+const HIDE_DELTA = 14;
+/** Scroll up past this → open primary. */
+const SHOW_DELTA = 14;
+/** Ignore opposite direction while the open/close animation runs. */
+const TOGGLE_LOCK_MS = 420;
+/** Live sticky header height for catalog sidebars and other sticky rails. */
+const STOREFRONT_HEADER_OFFSET_VAR = "--storefront-header-offset";
 
 function headerSearchLabels(dictionary: Dictionary) {
   return {
@@ -39,90 +48,343 @@ function headerSearchLabels(dictionary: Dictionary) {
   };
 }
 
+/**
+ * Primary nav hide-on-scroll.
+ *
+ * Design choices (after flicker regressions):
+ * - Refresh always starts open (no restore-collapse).
+ * - No scrollY compensation (it fought the user scroll and caused strong flicker).
+ * - No gesture settle / majority voting (double-fired with scrollend).
+ * - After each toggle, lock direction changes for TOGGLE_LOCK_MS.
+ * - overflow-anchor: none reduces browser scroll-anchoring jumps when height changes.
+ */
 export function SiteHeaderMainNav({
   locale,
   currency,
   dictionary,
-  user,
   navItems,
-  cartItemCount,
-  wishlistCount,
+  categories,
+  mobileNav,
+  desktopActions,
 }: SiteHeaderMainNavProps) {
   const searchLabels = headerSearchLabels(dictionary);
+  const pathname = usePathname();
+  const homeHref = `/${locale}`;
+  const isHomePage = pathname === homeHref || pathname === `${homeHref}/`;
+  const isProfileRoute =
+    pathname === `/${locale}/profile` ||
+    pathname.startsWith(`/${locale}/profile/`);
+
+  const [primaryHidden, setPrimaryHidden] = useState(false);
+  const [motionEnabled, setMotionEnabled] = useState(false);
+  const [routePathname, setRoutePathname] = useState(pathname);
+  const [scrollLocked, setScrollLocked] = useState(false);
+
+  const headerRootRef = useRef<HTMLDivElement>(null);
+  const lastScrollYRef = useRef(0);
+  const primaryHiddenRef = useRef(false);
+  const motionEnabledRef = useRef(false);
+  const toggleLockUntilRef = useRef(0);
+  const programmaticScrollRef = useRef(false);
+  const programmaticScrollTimerRef = useRef<number | null>(null);
+  const motionEnableTimerRef = useRef<number | null>(null);
+
+  if (routePathname !== pathname) {
+    setRoutePathname(pathname);
+    setPrimaryHidden(false);
+    setMotionEnabled(false);
+  }
+
+  function clearProgrammaticScrollTimer(): void {
+    if (programmaticScrollTimerRef.current != null) {
+      window.clearTimeout(programmaticScrollTimerRef.current);
+      programmaticScrollTimerRef.current = null;
+    }
+  }
+
+  function clearMotionEnableTimer(): void {
+    if (motionEnableTimerRef.current != null) {
+      window.clearTimeout(motionEnableTimerRef.current);
+      motionEnableTimerRef.current = null;
+    }
+  }
+
+  function armMotion(): void {
+    clearMotionEnableTimer();
+    motionEnableTimerRef.current = window.setTimeout(() => {
+      motionEnabledRef.current = true;
+      setMotionEnabled(true);
+      motionEnableTimerRef.current = null;
+    }, 50);
+  }
+
+  function setPrimaryHiddenState(nextHidden: boolean, animate: boolean): void {
+    if (primaryHiddenRef.current === nextHidden) {
+      return;
+    }
+
+    if (!animate) {
+      clearMotionEnableTimer();
+      motionEnabledRef.current = false;
+      setMotionEnabled(false);
+    } else if (!motionEnabledRef.current) {
+      motionEnabledRef.current = true;
+      setMotionEnabled(true);
+    }
+
+    primaryHiddenRef.current = nextHidden;
+    setPrimaryHidden(nextHidden);
+    toggleLockUntilRef.current = Date.now() + TOGGLE_LOCK_MS;
+
+    if (!animate) {
+      armMotion();
+    }
+  }
+
+  function unlockProgrammaticScroll(): void {
+    clearProgrammaticScrollTimer();
+    programmaticScrollRef.current = false;
+    lastScrollYRef.current = window.scrollY;
+    setScrollLocked(false);
+    armMotion();
+  }
+
+  function scrollHomeToTop(): void {
+    clearProgrammaticScrollTimer();
+    clearMotionEnableTimer();
+
+    programmaticScrollRef.current = true;
+    setScrollLocked(true);
+    motionEnabledRef.current = false;
+    setMotionEnabled(false);
+
+    if (primaryHiddenRef.current) {
+      primaryHiddenRef.current = false;
+      setPrimaryHidden(false);
+    }
+
+    if (window.scrollY <= TOP_REVEAL_Y) {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      programmaticScrollTimerRef.current = window.setTimeout(() => {
+        unlockProgrammaticScroll();
+      }, 100);
+      return;
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+
+    function onScrollEnd(): void {
+      window.removeEventListener("scrollend", onScrollEnd);
+      clearProgrammaticScrollTimer();
+      programmaticScrollTimerRef.current = window.setTimeout(() => {
+        unlockProgrammaticScroll();
+      }, 120);
+    }
+
+    window.addEventListener("scrollend", onScrollEnd, { once: true });
+    programmaticScrollTimerRef.current = window.setTimeout(() => {
+      window.removeEventListener("scrollend", onScrollEnd);
+      unlockProgrammaticScroll();
+    }, 1200);
+  }
+
+  useLayoutEffect(() => {
+    primaryHiddenRef.current = primaryHidden;
+    motionEnabledRef.current = motionEnabled;
+  }, [primaryHidden, motionEnabled]);
+
+  useLayoutEffect(() => {
+    const headerRoot = headerRootRef.current;
+    if (!headerRoot) {
+      return;
+    }
+
+    function publishHeaderOffset(): void {
+      const el = headerRootRef.current;
+      if (!el) {
+        return;
+      }
+      // offsetHeight is layout px (pre-zoom). getBoundingClientRect is visual
+      // and double-counts DesktopFluidFrame zoom on large screens, pushing
+      // sticky catalog rails too far down.
+      const height = Math.ceil(el.offsetHeight);
+      document.documentElement.style.setProperty(
+        STOREFRONT_HEADER_OFFSET_VAR,
+        `${height}px`,
+      );
+    }
+
+    publishHeaderOffset();
+    const observer = new ResizeObserver(publishHeaderOffset);
+    observer.observe(headerRoot);
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty(STOREFRONT_HEADER_OFFSET_VAR);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    lastScrollYRef.current = window.scrollY;
+    primaryHiddenRef.current = false;
+    toggleLockUntilRef.current = 0;
+    armMotion();
+    return () => {
+      clearMotionEnableTimer();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- route entry only
+  }, [pathname]);
+
+  useEffect(() => {
+    lastScrollYRef.current = window.scrollY;
+
+    function onScroll(): void {
+      const y = window.scrollY;
+
+      if (programmaticScrollRef.current) {
+        lastScrollYRef.current = y;
+        return;
+      }
+
+      const delta = y - lastScrollYRef.current;
+      lastScrollYRef.current = y;
+
+      if (y <= TOP_REVEAL_Y) {
+        setPrimaryHiddenState(false, motionEnabledRef.current);
+        return;
+      }
+
+      // While animating a previous toggle, only track position — no reverse flicker.
+      if (Date.now() < toggleLockUntilRef.current) {
+        return;
+      }
+
+      if (delta >= HIDE_DELTA) {
+        setPrimaryHiddenState(true, true);
+      } else if (delta <= -SHOW_DELTA) {
+        setPrimaryHiddenState(false, true);
+      }
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      clearMotionEnableTimer();
+      clearProgrammaticScrollTimer();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- listeners once; refs hold latest
+  }, []);
+
+  const allowMotion = motionEnabled && !scrollLocked;
+  const motionClass = allowMotion
+    ? "duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+    : "duration-0";
 
   return (
-    <header className="relative z-10 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm backdrop-blur-sm">
-      <div className="mx-auto max-w-7xl px-2 sm:px-4 md:px-6 lg:px-8">
-        <div className="flex flex-wrap items-center gap-2 py-4 sm:gap-4 md:py-3">
-          <div className="flex w-full items-center justify-between md:w-auto md:justify-start md:gap-0">
-            <AppLink
-              href={`/${locale}`}
-              prefetchPolicy="intent"
-              className="text-lg font-semibold tracking-tight text-gray-900"
-            >
-              {dictionary.brand}
-            </AppLink>
-
-            <div className="flex items-center gap-1 md:hidden">
-              <HeaderSearch
-                locale={locale}
-                currency={currency}
-                labels={searchLabels}
-              />
-              <MobileNavDrawer
-                locale={locale}
-                currency={currency}
-                dictionary={dictionary}
-                user={user}
-                navItems={navItems}
-              />
-            </div>
-          </div>
-
-          <nav
-            aria-label="Primary"
-            className="order-3 hidden w-full items-center justify-center gap-1 md:order-none md:flex md:flex-1"
+    <div
+      ref={headerRootRef}
+      data-site-header
+      className={`sticky top-0 z-50 bg-white [overflow-anchor:none] ${
+        isProfileRoute ? "max-md:hidden" : ""
+      }`}
+    >
+      <div
+        className={`grid transition-[grid-template-rows] ${motionClass} ${
+          primaryHidden ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
+        }`}
+        aria-hidden={primaryHidden}
+      >
+        <div className="min-h-0 overflow-hidden [overflow-anchor:none]">
+          <div
+            className={`origin-top transition-[opacity,transform] ${motionClass} ${
+              primaryHidden
+                ? "pointer-events-none -translate-y-2 opacity-0"
+                : "translate-y-0 opacity-100"
+            }`}
           >
-            {navItems.map((item) => (
-              <AppLink
-                key={item.href}
-                href={item.href}
-                prefetchPolicy="intent"
-                className={navLinkClassName()}
-              >
-                {item.label}
-              </AppLink>
-            ))}
-          </nav>
+            <header className="bg-white">
+              <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-10">
+                <div className="flex items-end justify-between gap-4 border-b border-black/7 py-3 md:items-center md:py-3">
+                  <AppLink
+                    href={homeHref}
+                    prefetchPolicy="intent"
+                    className="relative mb-0.5 block h-[37px] w-[92px] shrink-0 md:mb-0 md:h-9"
+                    onClick={(event) => {
+                      if (!isHomePage) {
+                        return;
+                      }
+                      event.preventDefault();
+                      scrollHomeToTop();
+                    }}
+                  >
+                    <Image
+                      src={staticAssetUrl("/assets/brand/logo.webp")}
+                      alt={dictionary.brand}
+                      fill
+                      sizes="92px"
+                      className="object-contain"
+                      priority
+                    />
+                  </AppLink>
 
-          <div className="ml-auto hidden items-center gap-2 md:flex">
+                  <nav
+                    aria-label="Primary"
+                    className="hidden flex-1 items-center justify-center gap-0.5 lg:flex"
+                  >
+                    <PrimaryNavLinks
+                      locale={locale}
+                      navItems={navItems}
+                      categories={categories}
+                      allCategoriesLabel={dictionary.nav.allCategories}
+                      onHomeActiveClick={scrollHomeToTop}
+                    />
+                  </nav>
+
+                  <div className="hidden items-center gap-6 text-base font-medium text-[#333] md:flex">
+                    <StorePhoneDropdown
+                      phones={dictionary.contact.storePhones}
+                      toggleLabel={dictionary.contact.callTitle}
+                      variant="header"
+                    />
+                    <StoreAddressDropdown
+                      addresses={dictionary.contact.storeAddresses}
+                      toggleLabel={dictionary.footer.addresses}
+                      variant="header"
+                    />
+                  </div>
+
+                  {mobileNav}
+                </div>
+              </div>
+            </header>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-b border-black/7 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] md:shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+        <div className="mx-auto flex max-w-[1440px] items-center gap-4 px-4 pt-4 pb-2 sm:px-8 sm:py-4 lg:px-10">
+          <div className="min-w-0 flex-1">
             <HeaderSearch
               locale={locale}
               currency={currency}
               labels={searchLabels}
             />
-            <AccountControls
-              locale={locale}
-              loginLabel={dictionary.header.login}
-              logoutLabel={dictionary.header.logout}
-              profileLabel={dictionary.header.profile}
-              adminLabel={dictionary.header.admin}
-              user={user}
-            />
-            <WishlistHeaderLink
-              locale={locale}
-              label={dictionary.nav.wishlist}
-              count={wishlistCount}
-            />
-            <CartDrawer
+          </div>
+
+          <div className="hidden shrink-0 items-center gap-4 md:flex">
+            {desktopActions}
+            <HeaderLocaleCurrencyPill
               locale={locale}
               currency={currency}
-              dictionary={dictionary}
-              itemCount={cartItemCount}
+              languageLabel={dictionary.header.language}
+              currencyLabel={dictionary.header.currency}
             />
           </div>
         </div>
       </div>
-    </header>
+    </div>
   );
 }

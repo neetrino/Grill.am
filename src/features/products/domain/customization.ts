@@ -163,10 +163,11 @@ export function validateModifiers(
 
   for (const group of config.optionGroups) {
     const choiceId = modifiers.optionChoices[group.id];
-    if (group.required && !choiceId) {
+    // Any option group must be chosen before add-to-cart (sauces / type / size).
+    if (!choiceId) {
       return { ok: false, error: "Required option is missing." };
     }
-    if (choiceId && !group.choices.some((choice) => choice.id === choiceId)) {
+    if (!group.choices.some((choice) => choice.id === choiceId)) {
       return { ok: false, error: "Invalid option choice." };
     }
   }
@@ -304,6 +305,36 @@ export function describeModifiers(
   }
 
   return lines;
+}
+
+/** True when the product has PDP choices (options / addons / exclusions). */
+export function productRequiresConfiguration(
+  customization: ProductCustomization | null,
+): boolean {
+  if (!customization) {
+    return false;
+  }
+  return (
+    customization.optionGroups.length > 0 ||
+    customization.addons.length > 0 ||
+    customization.exclusions.length > 0
+  );
+}
+
+/**
+ * True when every option group that must be picked has a choice.
+ * Any option group counts as must-pick (admin sauces/types live here too).
+ */
+export function hasRequiredModifiersSelected(
+  customization: ProductCustomization | null,
+  modifiers: CartModifiers,
+): boolean {
+  if (!customization) {
+    return true;
+  }
+  return customization.optionGroups.every((group) =>
+    Boolean(modifiers.optionChoices[group.id]),
+  );
 }
 
 /** Default selection: required groups pick default/first choice. */

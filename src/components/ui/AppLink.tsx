@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ComponentProps } from "react";
+import { forwardRef, type ComponentProps } from "react";
 
 /**
  * Selective prefetch for storefront navigation (TECH_CARD + docs/06).
@@ -16,17 +16,16 @@ type AppLinkProps = Omit<ComponentProps<typeof Link>, "prefetch"> & {
   prefetchPolicy?: AppLinkPrefetchPolicy;
 };
 
-export function AppLink({
-  prefetchPolicy = "auto",
-  ...props
-}: AppLinkProps) {
-  if (prefetchPolicy === "intent") {
-    return <Link {...props} prefetch />;
-  }
+export const AppLink = forwardRef<HTMLAnchorElement, AppLinkProps>(
+  function AppLink({ prefetchPolicy = "auto", ...props }, ref) {
+    if (prefetchPolicy === "intent") {
+      return <Link ref={ref} {...props} prefetch />;
+    }
 
-  if (prefetchPolicy === "none") {
-    return <Link {...props} prefetch={false} />;
-  }
+    if (prefetchPolicy === "none") {
+      return <Link ref={ref} {...props} prefetch={false} />;
+    }
 
-  return <Link {...props} prefetch="auto" />;
-}
+    return <Link ref={ref} {...props} prefetch="auto" />;
+  },
+);

@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_INPUT,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import { formatAdminMessage } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -67,6 +67,7 @@ export function AdminCategoriesView({
   // Categories admin is English-only (UI + titles), regardless of admin locale.
   const copy = enAdmin.categories;
   const common = enAdmin.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -75,16 +76,22 @@ export function AdminCategoriesView({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [ordered, setOrdered] = useState(categories);
+  // Tracks the `categories` prop identity last synced into `ordered`, so a
+  // new prop value (e.g. after router.refresh()) resets local drag order
+  // without a useEffect (React "adjusting state on prop change" pattern).
+  const [syncedCategories, setSyncedCategories] = useState(categories);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const orderedRef = useRef(ordered);
   const dragOriginRef = useRef<AdminCategoryListItem[] | null>(null);
   const persistedRef = useRef(false);
 
-  useEffect(() => {
+  if (categories !== syncedCategories) {
+    setSyncedCategories(categories);
     setOrdered(categories);
-    orderedRef.current = categories;
-  }, [categories]);
+  }
 
+  // Keeps `orderedRef` (read by drag handlers) in sync with `ordered`,
+  // including the render-time reset above.
   useEffect(() => {
     orderedRef.current = ordered;
   }, [ordered]);
@@ -100,15 +107,25 @@ export function AdminCategoriesView({
   }, [ordered, isFiltering, needle]);
 
   function handleDelete(categoryId: string): void {
-    startTransition(async () => {
-      setError(null);
-      const result = await deleteCategoryAction(locale, categoryId);
-      if (!result.ok) {
-        setError(result.error.message);
-        return;
-      }
-      router.refresh();
-    });
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: common.confirmDeleteTitle,
+        message: copy.confirmDelete,
+        confirmText: common.delete,
+        cancelText: common.cancel,
+      });
+      if (!accepted) return;
+
+      startTransition(async () => {
+        setError(null);
+        const result = await deleteCategoryAction(locale, categoryId);
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+        router.refresh();
+      });
+    })();
   }
 
   function persistCurrentOrder(): void {
@@ -151,7 +168,7 @@ export function AdminCategoriesView({
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
         <Button
           type="button"
           size="sm"
@@ -254,12 +271,14 @@ export function AdminCategoriesView({
                         </button>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
-                        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded border border-dashed border-gray-300 bg-gray-50">
+                        <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded border border-dashed border-gray-300 bg-gray-50">
                           {category.imageUrl ? (
-                            <img
+                            <Image
                               src={category.imageUrl}
                               alt=""
-                              className="h-full w-full object-cover"
+                              fill
+                              sizes="40px"
+                              className="object-cover"
                             />
                           ) : (
                             <span className="text-gray-400">{common.dash}</span>
@@ -329,7 +348,6 @@ export function AdminCategoriesView({
         open={drawerOpen}
         onClose={() => {
           setDrawerOpen(false);
-          setEditingCategory(null);
         }}
         categories={categories}
         category={editingCategory}

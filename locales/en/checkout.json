@@ -1,5 +1,7 @@
 {
   "title": "Checkout",
+  "titleLead": "Order",
+  "titleAccent": "checkout",
   "productsInOrder": "Products in your order",
   "itemsOne": "1 item",
   "itemsMany": "{count} items",
@@ -33,6 +35,19 @@
     "enterCity": "Enter City",
     "selectDeliveryLocation": "Select delivery location"
   },
+  "deliveryCities": {
+    "yerevan": "Yerevan",
+    "aragatsotn": "Aragatsotn",
+    "ararat": "Ararat",
+    "armavir": "Armavir",
+    "gegharkunik": "Gegharkunik",
+    "kotayk": "Kotayk",
+    "lori": "Lori",
+    "shirak": "Shirak",
+    "syunik": "Syunik",
+    "tavush": "Tavush",
+    "vayotsDzor": "Vayots Dzor"
+  },
   "payment": {
     "cashOnDelivery": "Cash on Delivery",
     "cashOnDeliveryDescription": "Pay cash when you receive your order",
@@ -43,8 +58,8 @@
     "cashChangeNoEligible": "Order total exceeds available banknotes — pay the exact amount",
     "idram": "Idram",
     "idramDescription": "Pay with Idram wallet or card",
-    "arca": "ArCa",
-    "arcaDescription": "Pay with ArCa card"
+    "arca": "By card",
+    "arcaDescription": ""
   },
   "coupon": {
     "title": "Have a coupon?",
@@ -62,7 +77,8 @@
   "buttons": {
     "placeOrder": "Place Order",
     "processing": "Processing...",
-    "continueShopping": "Continue Shopping"
+    "continueShopping": "Continue Shopping",
+    "goToShop": "Go to shop"
   },
   "errors": {
     "cartEmpty": "Cart is empty",
@@ -70,9 +86,14 @@
   },
   "success": {
     "title": "Order confirmed",
-    "body": "Order {orderNumber} was placed successfully. Your cart has been cleared.",
+    "titleLead": "Order",
+    "titleAccent": "confirmed",
+    "body": "Order {orderNumber} was placed successfully. Thank you for choosing us.",
+    "orderNumberLabel": "Order number",
+    "totalLabel": "Total:",
     "total": "Total: {amount}",
     "continueShopping": "Continue shopping",
-    "viewOrders": "View orders"
+    "viewOrders": "View orders",
+    "emailNote": "A confirmation will be sent to your e-mail address"
   }
 }

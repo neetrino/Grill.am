@@ -6,11 +6,9 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
-import {
-  ADMIN_LABEL,
-  ADMIN_SECTION_TITLE,
-  ADMIN_SELECT,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { updateUserStatusAction } from "@/features/users/application/update-user";
 import type { UserStatus } from "@/features/users/domain/user-lifecycle";
 import { adminUserStatusLabel } from "@/features/users/ui/admin-user-labels";
@@ -33,6 +31,7 @@ export function UpdateUserStatusForm({
   const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState(eligibleStatuses[0] ?? "");
   const [isPending, startTransition] = useTransition();
 
   if (eligibleStatuses.length === 0) {
@@ -41,20 +40,25 @@ export function UpdateUserStatusForm({
     );
   }
 
+  const statusOptions = eligibleStatuses.map((item) => ({
+    value: item,
+    label: adminUserStatusLabel(item, dictionary.users.statuses),
+  }));
+
   return (
-    <Card className="p-6">
+    <Card className={`overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}>
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const status = String(formData.get("status") ?? "") as UserStatus;
+          const nextStatus = String(formData.get("status") ?? "") as UserStatus;
 
           startTransition(async () => {
             setError(null);
             const result = await updateUserStatusAction(locale, {
               userId,
-              status,
+              status: nextStatus,
             });
             if (!result.ok) {
               setError(result.error.message);
@@ -71,22 +75,16 @@ export function UpdateUserStatusForm({
             {adminUserStatusLabel(currentStatus, dictionary.users.statuses)}
           </strong>
         </p>
-        <label>
-          <span className={ADMIN_LABEL}>{forms.newStatus}</span>
-          <select
-            name="status"
-            required
-            className={ADMIN_SELECT}
-            defaultValue={eligibleStatuses[0]}
-            disabled={isPending}
-          >
-            {eligibleStatuses.map((status) => (
-              <option key={status} value={status}>
-                {adminUserStatusLabel(status, dictionary.users.statuses)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <AdminSelect
+          name="status"
+          label={forms.newStatus}
+          placeholder={forms.newStatus}
+          required
+          options={statusOptions}
+          value={status}
+          disabled={isPending}
+          onChange={setStatus}
+        />
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={isPending}>
           {isPending ? common.updating : forms.updateStatus}

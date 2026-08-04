@@ -44,6 +44,7 @@ export type CatalogFilterCategory = {
 export type CatalogListResult = {
   products: CatalogProduct[];
   total: number;
+  allProductCount: number;
   pageSize: number;
   page: number;
   priceBoundsAmd: { min: number; max: number } | null;
@@ -134,6 +135,15 @@ async function buildWhere(
     conditions.push(gt(products.stockOnHand, 0));
   } else if (filters.inStock === false) {
     conditions.push(eq(products.stockOnHand, 0));
+  }
+
+  if (filters.onSale === true) {
+    conditions.push(
+      and(
+        sql`${products.compareAtAmount} IS NOT NULL`,
+        gt(products.compareAtAmount, products.priceAmount),
+      )!,
+    );
   }
 
   if (priceAmd.min != null) {
@@ -245,25 +255,31 @@ async function loadCatalogPage(
   const whereClause = await buildWhere(locale, filters, priceAmd);
   const offset = (filters.page - 1) * filters.pageSize;
 
-  const [[countRow], rows, filterCategories, boundsAmd] = await Promise.all([
-    getDb()
-      .select({ count: sql<number>`count(*)::int` })
-      .from(products)
-      .where(whereClause),
-    getDb()
-      .select()
-      .from(products)
-      .where(whereClause)
-      .orderBy(...buildOrderBy(filters.sort))
-      .limit(filters.pageSize)
-      .offset(offset),
-    loadFilterCategories(locale),
-    loadPriceBoundsAmd(),
-  ]);
+  const [[countRow], [allCountRow], rows, filterCategories, boundsAmd] =
+    await Promise.all([
+      getDb()
+        .select({ count: sql<number>`count(*)::int` })
+        .from(products)
+        .where(whereClause),
+      getDb()
+        .select({ count: sql<number>`count(*)::int` })
+        .from(products)
+        .where(activeCatalogWhere),
+      getDb()
+        .select()
+        .from(products)
+        .where(whereClause)
+        .orderBy(...buildOrderBy(filters.sort))
+        .limit(filters.pageSize)
+        .offset(offset),
+      loadFilterCategories(locale),
+      loadPriceBoundsAmd(),
+    ]);
 
   return {
     products: await withCatalogEnrichment(rows, locale),
     total: countRow?.count ?? 0,
+    allProductCount: allCountRow?.count ?? 0,
     pageSize: filters.pageSize,
     page: filters.page,
     priceBoundsAmd: boundsAmd,
@@ -297,6 +313,7 @@ export async function listCatalogProducts(
     String(filters.maxPrice ?? ""),
     filters.category.join(","),
     String(filters.inStock ?? ""),
+    String(filters.onSale ?? ""),
     filters.sort,
     String(filters.page),
     String(filters.pageSize),

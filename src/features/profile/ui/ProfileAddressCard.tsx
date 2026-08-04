@@ -1,7 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import { Pencil, Star, Trash2 } from "lucide-react";
+
 import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
+import { PROFILE_CARD_CLASS } from "@/features/profile/ui/profile-ui";
 
 type ProfileAddressCardProps = {
   address: CustomerAddressListItem;
@@ -25,57 +27,73 @@ export function ProfileAddressCard({
   onEdit,
   onDelete,
 }: ProfileAddressCardProps) {
+  const isDefault = address.isDefaultShipping;
+
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 lg:p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
-        <div className="min-w-0 flex-1 space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            {address.isDefaultShipping ? (
-              <span className="rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
-                {labels.defaultBadge}
-              </span>
-            ) : null}
-          </div>
-          <p className="text-sm text-gray-800 sm:text-base">{address.line1}</p>
-          <p className="text-sm text-gray-800 sm:text-base">{address.city}</p>
-          {address.phone ? (
-            <p className="text-sm text-gray-600 sm:text-base">{address.phone}</p>
-          ) : null}
+    <div className={`flex h-full flex-col p-3 sm:p-3.5 ${PROFILE_CARD_CLASS}`}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          {isDefault ? (
+            <span className="inline-flex rounded-full bg-[#e8f4fd] px-2 py-0.5 text-[11px] font-medium text-[#5281e1]">
+              {labels.defaultBadge}
+            </span>
+          ) : (
+            <p className="truncate text-sm leading-snug font-medium text-gray-900">
+              {address.line1}
+            </p>
+          )}
         </div>
-        <div className="flex flex-wrap gap-2 border-t border-gray-100 pt-4 lg:border-0 lg:pt-0">
-          {!address.isDefaultShipping ? (
-            <Button
+
+        <div className="flex shrink-0 items-center gap-1.5">
+          {!isDefault ? (
+            <button
               type="button"
-              variant="outline"
-              size="sm"
-              className="min-h-9 flex-1 sm:flex-initial"
               onClick={() => onSetDefault(address.id)}
               disabled={disabled}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-[#fff4d6] hover:text-brand-yellow disabled:opacity-50"
+              aria-label={labels.setDefault}
+              title={labels.setDefault}
             >
-              {labels.setDefault}
-            </Button>
+              <Star className="h-4 w-4" aria-hidden />
+            </button>
           ) : null}
-          <Button
+          <button
             type="button"
-            variant="outline"
-            size="sm"
-            className="min-h-9 flex-1 sm:flex-initial"
             onClick={() => onEdit(address)}
             disabled={disabled}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-[#fff4d6] hover:text-brand-yellow disabled:opacity-50"
+            aria-label={labels.edit}
+            title={labels.edit}
           >
-            {labels.edit}
-          </Button>
-          <Button
+            <Pencil className="h-4 w-4" aria-hidden />
+          </button>
+          <button
             type="button"
-            variant="outline"
-            size="sm"
-            className="min-h-9 flex-1 text-red-600 hover:border-red-300 hover:text-red-700 sm:flex-initial"
             onClick={() => onDelete(address.id)}
             disabled={disabled}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+            aria-label={labels.delete}
+            title={labels.delete}
           >
-            {labels.delete}
-          </Button>
+            <Trash2 className="h-4 w-4" aria-hidden />
+          </button>
         </div>
+      </div>
+
+      <div className="mt-1.5 min-w-0 space-y-1">
+        {isDefault ? (
+          <p className="text-sm leading-snug font-medium break-words text-gray-900">
+            {address.line1}
+          </p>
+        ) : null}
+        <p className="text-xs leading-snug break-words text-gray-700 sm:text-sm">
+          {address.city}
+        </p>
+        {address.phone ? (
+          <p className="text-xs leading-snug break-words text-gray-600 sm:text-sm">
+            {address.phone}
+          </p>
+        ) : null}
       </div>
     </div>
   );

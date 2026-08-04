@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 
+import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import type { TranslationsJson } from "@/db/schema";
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_TEXTAREA,
@@ -176,6 +178,7 @@ type DrawerDraftSnapshot = {
 };
 
 const DRAWER_SNAPSHOT_KEY = "grill:admin-product-drawer-draft";
+const PRODUCT_DRAWER_FORM_ID = "product-drawer-form";
 
 function readDrawerSnapshot(sessionKey: string): DrawerDraftSnapshot | null {
   if (typeof window === "undefined") return null;
@@ -257,28 +260,30 @@ export function ProductDrawer({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   /** Prevents prop churn (e.g. categories refresh) from wiping in-progress locale drafts. */
-  const editorSessionKeyRef = useRef<string | null>(null);
+  const [editorSessionKey, setEditorSessionKey] = useState<string | null>(
+    null,
+  );
+  // Tracks the open/product/categories/locale combo last synced into state.
+  const [synced, setSynced] = useState({
+    open,
+    product,
+    initialCategories,
+    locale,
+  });
 
-  useEffect(() => {
-    if (!open) return;
+  // Reset (on close) or seed (on open / product / categories / locale
+  // change) local form state during render instead of a synchronous
+  // setState inside an effect.
+  if (
+    open !== synced.open ||
+    product !== synced.product ||
+    initialCategories !== synced.initialCategories ||
+    locale !== synced.locale
+  ) {
+    setSynced({ open, product, initialCategories, locale });
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    function handleEscape(event: KeyboardEvent): void {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [open, onClose]);
-
-  useEffect(() => {
     if (!open) {
-      editorSessionKeyRef.current = null;
+      setEditorSessionKey(null);
       clearDrawerSnapshot();
       setActiveLocale(resolveInitialLocale(locale, undefined));
       setDrafts(draftsFromTranslations(undefined));
@@ -299,66 +304,65 @@ export function ProductDrawer({
       setSku("");
       setStockOnHand("");
       setError(null);
-      return;
-    }
-
-    setCategories(initialCategories);
-
-    const sessionKey = product?.id ?? "__new__";
-    if (editorSessionKeyRef.current === sessionKey) {
-      return;
-    }
-    editorSessionKeyRef.current = sessionKey;
-
-    const snapshot = readDrawerSnapshot(sessionKey);
-    if (snapshot) {
-      setActiveLocale(snapshot.activeLocale);
-      setDrafts(snapshot.drafts);
-      setSlug(snapshot.slug);
-      setSlugTouched(snapshot.slugTouched);
-      setCustomization(snapshot.customization);
-      setCategoryIds(snapshot.categoryIds);
-      setPriceAmount(snapshot.priceAmount);
-      setCompareAtAmount(snapshot.compareAtAmount);
-      setSku(snapshot.sku);
-      setStockOnHand(snapshot.stockOnHand);
-      if (product) {
-        setImages(imagesFromProduct(product));
-        setRemovedImageIds([]);
-      }
-      setError(null);
-      return;
-    }
-
-    setActiveLocale(resolveInitialLocale(locale, product?.translations));
-    setDrafts(draftsFromTranslations(product?.translations));
-    const sharedSlug = resolveSharedProductSlug(product?.translations);
-    setSlug(sharedSlug);
-    setSlugTouched(Boolean(sharedSlug));
-    if (product) {
-      setCustomization(product.customization ?? EMPTY_CUSTOMIZATION);
-      setImages(imagesFromProduct(product));
-      setRemovedImageIds([]);
-      setCategoryIds(product.categoryIds);
-      setPriceAmount(String(product.priceAmount));
-      setCompareAtAmount(
-        product.compareAtAmount != null ? String(product.compareAtAmount) : "",
-      );
-      setSku(product.sku);
-      setStockOnHand(String(product.stockOnHand));
-      setError(null);
     } else {
-      setCustomization(EMPTY_CUSTOMIZATION);
-      setImages([]);
-      setRemovedImageIds([]);
-      setCategoryIds([]);
-      setPriceAmount("");
-      setCompareAtAmount("");
-      setSku("");
-      setStockOnHand("");
-      setError(null);
+      setCategories(initialCategories);
+
+      const sessionKey = product?.id ?? "__new__";
+      if (editorSessionKey !== sessionKey) {
+        setEditorSessionKey(sessionKey);
+
+        const snapshot = readDrawerSnapshot(sessionKey);
+        if (snapshot) {
+          setActiveLocale(snapshot.activeLocale);
+          setDrafts(snapshot.drafts);
+          setSlug(snapshot.slug);
+          setSlugTouched(snapshot.slugTouched);
+          setCustomization(snapshot.customization);
+          setCategoryIds(snapshot.categoryIds);
+          setPriceAmount(snapshot.priceAmount);
+          setCompareAtAmount(snapshot.compareAtAmount);
+          setSku(snapshot.sku);
+          setStockOnHand(snapshot.stockOnHand);
+          if (product) {
+            setImages(imagesFromProduct(product));
+            setRemovedImageIds([]);
+          }
+          setError(null);
+        } else {
+          setActiveLocale(resolveInitialLocale(locale, product?.translations));
+          setDrafts(draftsFromTranslations(product?.translations));
+          const sharedSlug = resolveSharedProductSlug(product?.translations);
+          setSlug(sharedSlug);
+          setSlugTouched(Boolean(sharedSlug));
+          if (product) {
+            setCustomization(product.customization ?? EMPTY_CUSTOMIZATION);
+            setImages(imagesFromProduct(product));
+            setRemovedImageIds([]);
+            setCategoryIds(product.categoryIds);
+            setPriceAmount(String(product.priceAmount));
+            setCompareAtAmount(
+              product.compareAtAmount != null
+                ? String(product.compareAtAmount)
+                : "",
+            );
+            setSku(product.sku);
+            setStockOnHand(String(product.stockOnHand));
+            setError(null);
+          } else {
+            setCustomization(EMPTY_CUSTOMIZATION);
+            setImages([]);
+            setRemovedImageIds([]);
+            setCategoryIds([]);
+            setPriceAmount("");
+            setCompareAtAmount("");
+            setSku("");
+            setStockOnHand("");
+            setError(null);
+          }
+        }
+      }
     }
-  }, [open, product, initialCategories, locale]);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -419,8 +423,6 @@ export function ProductDrawer({
     }
   }
 
-  if (!open) return null;
-
   const draft = drafts[activeLocale];
   const form = dictionary.products.form;
   const drawerTitle = isEdit
@@ -428,32 +430,41 @@ export function ProductDrawer({
     : dictionary.products.addProduct;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/40"
-      role="dialog"
-      aria-modal="true"
-      aria-label={drawerTitle}
-      onClick={onClose}
-    >
-      <div
-        className="flex h-full w-[70%] flex-col bg-white shadow-2xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">{drawerTitle}</h2>
+    <SideSheet
+      open={open}
+      onClose={onClose}
+      title={drawerTitle}
+      closeLabel={dictionary.common.close}
+      desktopWidthPercent={48}
+      footer={
+        <div className="flex items-center gap-4 border-t border-gray-100 px-5 py-4 lg:px-4">
+          <Button
+            type="submit"
+            form={PRODUCT_DRAWER_FORM_ID}
+            disabled={isPending}
+          >
+            {isPending
+              ? isEdit
+                ? dictionary.common.saving
+                : dictionary.common.creating
+              : isEdit
+                ? dictionary.common.save
+                : dictionary.common.create}
+          </Button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={dictionary.common.close}
+            className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
-            <X className="h-5 w-5" />
+            {dictionary.common.cancel}
           </button>
         </div>
-
-        <form
-          className="flex min-h-0 flex-1 flex-col"
-          onSubmit={(event) => {
+      }
+    >
+      <form
+        id={PRODUCT_DRAWER_FORM_ID}
+        className={ADMIN_FORM_STACK}
+        onSubmit={(event) => {
             event.preventDefault();
             const localeCopies = buildLocaleCopies(drafts);
             if (Object.keys(localeCopies).length === 0) {
@@ -521,17 +532,16 @@ export function ProductDrawer({
               onClose();
               router.refresh();
             });
-          }}
-        >
-          <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-            <AdminLocaleTabs
+        }}
+      >
+        <AdminLocaleTabs
               activeLocale={activeLocale}
               onChange={setActiveLocale}
               disabled={isPending}
               filledLocales={filledLocalesFromDrafts(drafts)}
             />
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>
                 {form.title} <span className="text-red-600">*</span>
               </span>
@@ -546,7 +556,7 @@ export function ProductDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>
                 {form.slug} <span className="text-red-600">*</span>
               </span>
@@ -566,7 +576,7 @@ export function ProductDrawer({
               </span>
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{form.shortDescription}</span>
               <textarea
                 value={draft.shortDescription}
@@ -581,7 +591,7 @@ export function ProductDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{form.description}</span>
               <textarea
                 value={draft.description}
@@ -596,7 +606,7 @@ export function ProductDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{form.composition}</span>
               <textarea
                 value={draft.composition}
@@ -634,7 +644,7 @@ export function ProductDrawer({
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <label>
+              <label className={ADMIN_FIELD}>
                 <span className={ADMIN_LABEL}>
                   {form.price} <span className="text-red-600">*</span>
                 </span>
@@ -649,7 +659,7 @@ export function ProductDrawer({
                   disabled={isPending}
                 />
               </label>
-              <label>
+              <label className={ADMIN_FIELD}>
                 <span className={ADMIN_LABEL}>{form.compareAtPrice}</span>
                 <input
                   min={0}
@@ -664,7 +674,7 @@ export function ProductDrawer({
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <label>
+              <label className={ADMIN_FIELD}>
                 <span className={ADMIN_LABEL}>
                   {form.sku} <span className="text-red-600">*</span>
                 </span>
@@ -677,7 +687,7 @@ export function ProductDrawer({
                   disabled={isPending}
                 />
               </label>
-              <label>
+              <label className={ADMIN_FIELD}>
                 <span className={ADMIN_LABEL}>
                   {form.quantity} <span className="text-red-600">*</span>
                 </span>
@@ -694,29 +704,8 @@ export function ProductDrawer({
               </label>
             </div>
 
-            {error ? <p className="text-sm text-red-700">{error}</p> : null}
-          </div>
-
-          <div className="sticky bottom-0 flex items-center gap-4 border-t border-gray-200 bg-white px-5 py-4">
-            <Button type="submit" disabled={isPending}>
-              {isPending
-                ? isEdit
-                  ? dictionary.common.saving
-                  : dictionary.common.creating
-                : isEdit
-                  ? dictionary.common.save
-                  : dictionary.common.create}
-            </Button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-sm font-medium text-gray-600 hover:text-gray-900"
-            >
-              {dictionary.common.cancel}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      </form>
+    </SideSheet>
   );
 }

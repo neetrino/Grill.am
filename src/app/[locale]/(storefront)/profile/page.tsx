@@ -1,12 +1,22 @@
 import { notFound } from "next/navigation";
 
-import { AppLink } from "@/components/ui/AppLink";
+import { logoutAction } from "@/features/auth/logout-action";
+import { listCustomerOrders } from "@/features/orders/application/queries";
+import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
+import { listCustomerAddresses } from "@/features/profile/application/address-queries";
 import { getProfileDashboard } from "@/features/profile/application/dashboard-queries";
-import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
+import { ChangePasswordForm } from "@/features/profile/ui/ChangePasswordForm";
+import { DeleteAccountForm } from "@/features/profile/ui/DeleteAccountForm";
+import { PersonalInformationForm } from "@/features/profile/ui/PersonalInformationForm";
+import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView";
+import { ProfileDashboardView } from "@/features/profile/ui/ProfileDashboardView";
+import { ProfileMobileMenu } from "@/features/profile/ui/ProfileMobileMenu";
+import { PROFILE_SECTION_TITLE_CLASS } from "@/features/profile/ui/profile-ui";
+import { listCustomerCouponHistory } from "@/features/promotions/application/list-customer-coupon-history";
+import { CustomerPromoCodesView } from "@/features/promotions/ui/CustomerPromoCodesView";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { formatMoneyAmount } from "@/lib/money/format";
 
 type ProfilePageProps = {
   params: Promise<{ locale: string }>;
@@ -20,77 +30,186 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const user = await requireUser(locale);
   const dictionary = getDictionary(locale);
-  const { stats, recentOrders } = await getProfileDashboard(user.id);
+  const [{ stats, recentOrders }, addressRows, promoHistory, customerOrders] =
+    await Promise.all([
+      getProfileDashboard(user.id),
+      listCustomerAddresses(user.id),
+      listCustomerCouponHistory(user.id, 1),
+      listCustomerOrders(user.id, {
+        page: 1,
+        archived: "active",
+        status: undefined,
+        paymentStatus: undefined,
+        dateFrom: undefined,
+        dateTo: undefined,
+        q: undefined,
+      }),
+    ]);
+
+  const logoutWithLocale = logoutAction.bind(null, locale);
+  const dashboardProps = {
+    locale,
+    stats,
+    recentOrders,
+    dictionary: dictionary.profile,
+    adminDictionary: dictionary.admin,
+  } as const;
+
+  const addressCopy = dictionary.profile.addressBook;
+  const passwordCopy = dictionary.profile.passwordForm;
+  const deleteCopy = dictionary.profile.deleteAccountForm;
+  const promoCopy = dictionary.profile.promoCodes;
+  const profileCopy = dictionary.profile;
+  const ordersProfileCopy = {
+    reorder: profileCopy.reorder,
+    reordering: profileCopy.reordering,
+    reorderUnavailable: profileCopy.reorderUnavailable,
+    orderNumber: profileCopy.orderNumber,
+    item: profileCopy.item,
+    items: profileCopy.items,
+    placedOn: profileCopy.placedOn,
+    viewDetails: profileCopy.viewDetails,
+    noOrders: profileCopy.noOrders,
+    startShopping: profileCopy.startShopping,
+  } as const;
 
   return (
-    <section className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          {dictionary.profile.dashboard}
-        </h1>
-        <p className="mt-2 text-sm text-gray-600">
-          {dictionary.profile.welcome}, {user.firstName}.
-        </p>
+    <>
+      <ProfileMobileMenu
+        locale={locale}
+        user={user}
+        dictionary={dictionary.profile}
+        closeLabel={dictionary.profile.cancel}
+        logoutAction={logoutWithLocale}
+        sheets={{
+          dashboard: <ProfileDashboardView {...dashboardProps} />,
+          orders: (
+            <div className="space-y-6">
+              <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl`}>
+                {profileCopy.orders}
+              </h1>
+              <CustomerOrdersView
+                locale={locale}
+                orders={customerOrders.rows}
+                dictionary={dictionary.admin}
+                profileCopy={ordersProfileCopy}
+                layout="cards"
+              />
+            </div>
+          ),
+          promoCodes: (
+            <CustomerPromoCodesView
+              locale={locale}
+              rows={promoHistory.rows}
+              labels={{
+                title: promoCopy.title,
+                description: promoCopy.description,
+                code: promoCopy.code,
+                offer: promoCopy.offer,
+                saved: promoCopy.saved,
+                order: promoCopy.order,
+                status: promoCopy.status,
+                date: promoCopy.date,
+                empty: promoCopy.empty,
+                emptyHint: promoCopy.emptyHint,
+                pageCount: promoCopy.pageCount,
+              }}
+            />
+          ),
+          personal: (
+            <PersonalInformationForm
+              locale={locale}
+              firstName={user.firstName}
+              lastName={user.lastName}
+              email={user.email}
+              phone={user.phone ?? ""}
+              labels={{
+                title: dictionary.profile.personal,
+                firstName: dictionary.auth.firstName,
+                lastName: dictionary.auth.lastName,
+                email: dictionary.auth.email,
+                phone: dictionary.auth.phone,
+                cancel: dictionary.profile.cancel,
+                save: dictionary.profile.save,
+                saving: dictionary.profile.saving,
+                firstNamePlaceholder: dictionary.auth.firstName,
+                lastNamePlaceholder: dictionary.auth.lastName,
+                emailPlaceholder: dictionary.auth.email,
+                phonePlaceholder: addressCopy.phonePlaceholder,
+              }}
+            />
+          ),
+          addresses: (
+            <ProfileAddressesView
+              locale={locale}
+              addresses={addressRows}
+              labels={{
+                title: dictionary.profile.addresses,
+                addNew: addressCopy.addNew,
+                defaultBadge: addressCopy.defaultBadge,
+                setDefault: addressCopy.setDefault,
+                setDefaultConfirm: addressCopy.setDefaultConfirm,
+                edit: addressCopy.edit,
+                delete: addressCopy.delete,
+                deleteConfirm: addressCopy.deleteConfirm,
+                noAddresses: addressCopy.noAddresses,
+                formAddTitle: addressCopy.formAddTitle,
+                formEditTitle: addressCopy.formEditTitle,
+                line1: addressCopy.line1,
+                city: addressCopy.city,
+                phone: addressCopy.phone,
+                phonePlaceholder: addressCopy.phonePlaceholder,
+                isDefault: addressCopy.isDefault,
+                cancel: dictionary.profile.cancel,
+                add: addressCopy.add,
+                update: addressCopy.update,
+                saving: dictionary.profile.saving,
+              }}
+            />
+          ),
+          password: (
+            <ChangePasswordForm
+              locale={locale}
+              labels={{
+                title: dictionary.profile.password,
+                currentPassword: passwordCopy.currentPassword,
+                newPassword: passwordCopy.newPassword,
+                confirmPassword: passwordCopy.confirmPassword,
+                currentPasswordPlaceholder:
+                  passwordCopy.currentPasswordPlaceholder,
+                newPasswordPlaceholder: passwordCopy.newPasswordPlaceholder,
+                confirmPasswordPlaceholder:
+                  passwordCopy.confirmPasswordPlaceholder,
+                change: passwordCopy.change,
+                changing: passwordCopy.changing,
+              }}
+            />
+          ),
+          deleteAccount: (
+            <DeleteAccountForm
+              locale={locale}
+              labels={{
+                title: dictionary.profile.deleteAccount,
+                description: deleteCopy.description,
+                pointOrders: deleteCopy.pointOrders,
+                pointLogin: deleteCopy.pointLogin,
+                pointData: deleteCopy.pointData,
+                currentPassword: deleteCopy.currentPassword,
+                currentPasswordPlaceholder:
+                  deleteCopy.currentPasswordPlaceholder,
+                acknowledge: deleteCopy.acknowledge,
+                submit: deleteCopy.submit,
+                deleting: deleteCopy.deleting,
+                cancel: dictionary.profile.cancel,
+                confirmTitle: dictionary.dialogs.confirmDeleteTitle,
+              }}
+            />
+          ),
+        }}
+      />
+      <div className="hidden lg:block">
+        <ProfileDashboardView {...dashboardProps} />
       </div>
-
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <ProfileStatCard
-          label={dictionary.profile.totalOrders}
-          value={String(stats.totalOrders)}
-        />
-        <ProfileStatCard
-          label={dictionary.profile.pendingOrders}
-          value={String(stats.pendingOrders)}
-        />
-        <ProfileStatCard
-          label={dictionary.profile.completedOrders}
-          value={String(stats.completedOrders)}
-        />
-        <ProfileStatCard
-          label={dictionary.profile.totalSpent}
-          value={formatMoneyAmount(stats.totalSpent, "AMD", locale)}
-        />
-      </div>
-
-      <div className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-7">
-        <div className="mb-5 flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {dictionary.profile.recentOrders}
-          </h2>
-          <AppLink
-            href={`/${locale}/profile/orders`}
-            prefetchPolicy="intent"
-            className="text-sm font-semibold text-gray-700 underline-offset-2 hover:underline"
-          >
-            {dictionary.profile.viewAllOrders}
-          </AppLink>
-        </div>
-
-        {recentOrders.length === 0 ? (
-          <p className="text-sm text-gray-600">{dictionary.profile.noOrders}</p>
-        ) : (
-          <ul className="divide-y divide-gray-100">
-            {recentOrders.map((order) => (
-              <li
-                key={order.id}
-                className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div>
-                  <p className="font-medium text-gray-900">
-                    {dictionary.profile.orderNumber} {order.orderNumber}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {dictionary.profile.status}: {order.status}
-                  </p>
-                </div>
-                <p className="text-sm font-semibold text-gray-900">
-                  {formatMoneyAmount(order.totalAmount, "AMD", locale)}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </section>
+    </>
   );
 }

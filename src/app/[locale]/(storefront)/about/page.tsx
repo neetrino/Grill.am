@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { AboutHero } from "@/features/about/ui/AboutHero";
-import { AboutTeam } from "@/features/about/ui/AboutTeam";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -19,9 +18,8 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const dictionary = getDictionary(rawLocale);
 
   return (
-    <div className="-mx-4 -my-10 bg-white sm:-mx-6 lg:-mx-8">
+    <div className="-my-10 min-h-full bg-white">
       <AboutHero copy={dictionary.about} />
-      <AboutTeam copy={dictionary.about} />
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { AdminBrandLogo } from "@/features/admin/ui/AdminBrandLogo";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
 
@@ -18,7 +19,7 @@ export function AdminSidebarBrand({ locale }: AdminSidebarBrandProps) {
 
   return (
     <div
-      className={`flex shrink-0 border-b border-gray-200 pb-3 pt-2 ${
+      className={`flex shrink-0 border-b border-gray-200/80 pb-3 pt-2 ${
         collapsed
           ? "flex-col items-center gap-2 px-1"
           : "items-center gap-1 px-2"
@@ -27,23 +28,25 @@ export function AdminSidebarBrand({ locale }: AdminSidebarBrandProps) {
       {collapsed ? (
         <Link
           href={`/${locale}`}
-          className="flex h-9 w-9 items-center justify-center rounded-md text-sm font-bold text-gray-900 hover:bg-gray-50"
+          className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-brand-red text-sm font-bold text-white transition hover:bg-brand-red-hot"
           title={dictionary.menu.storeHome}
+          aria-label={dictionary.menu.storeHome}
         >
-          W
+          G
         </Link>
       ) : (
-        <Link
-          href={`/${locale}`}
-          className="min-w-0 flex-1 rounded-md px-2 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
-        >
-          White Shop
-        </Link>
+        <div className="min-w-0 flex-1 pl-4">
+          <AdminBrandLogo
+            locale={locale}
+            brandName={dictionary.menu.brandName}
+            storeHomeLabel={dictionary.menu.storeHome}
+          />
+        </div>
       )}
       <button
         type="button"
         onClick={toggleCollapsed}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-gray-200 text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[15px] border border-gray-200 text-gray-600 transition-colors hover:border-gray-300 hover:bg-brand-surface hover:text-gray-900"
         aria-expanded={!collapsed}
         aria-label={sidebarToggleLabel}
         title={sidebarToggleLabel}

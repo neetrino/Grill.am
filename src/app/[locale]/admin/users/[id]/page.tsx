@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import {
   ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
@@ -53,7 +53,7 @@ function userStatusBadgeClass(status: string): string {
 
 function userRoleBadgeClass(role: string): string {
   return role.toUpperCase() === "ADMIN"
-    ? "bg-blue-100 text-blue-800"
+    ? "bg-brand-red/10 text-brand-red"
     : "bg-gray-100 text-gray-800";
 }
 
@@ -94,9 +94,7 @@ export default async function AdminUserDetailPage({
             {copy.title}
           </Link>
         </p>
-        <h1 className={ADMIN_PAGE_TITLE}>
-          {user.firstName} {user.lastName}
-        </h1>
+        <AdminPageTitle>{`${user.firstName} ${user.lastName}`}</AdminPageTitle>
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{user.email}</p>
       </div>
 

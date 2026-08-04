@@ -60,20 +60,22 @@ export function ProductReviewsSection({
       </div>
 
       {reviews.length > 0 ? (
-        <ul className="flex w-full flex-col gap-3">
+        <ul className="flex w-full flex-col gap-2">
           {reviews.map((review) => (
             <li
               key={review.id}
-              className="w-full rounded-lg border border-gray-200 bg-white p-4"
+              className="w-full rounded-[15px] border border-gray-200 bg-white px-3 py-4"
             >
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-medium text-gray-900">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <p className="text-xs font-medium text-gray-900">
                   {review.authorName}
                 </p>
                 <RatingStars average={review.rating} size="sm" />
               </div>
               {review.comment ? (
-                <p className="mt-2 text-sm text-gray-600">{review.comment}</p>
+                <p className="mt-1.5 text-xs leading-5 text-gray-600">
+                  {review.comment}
+                </p>
               ) : null}
             </li>
           ))}

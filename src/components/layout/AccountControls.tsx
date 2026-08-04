@@ -1,7 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
-
+import { HeaderUserIcon } from "@/components/layout/HeaderIcons";
 import { AppLink } from "@/components/ui/AppLink";
 import { IconDropdown } from "@/components/ui/IconDropdown";
 import { logoutAction } from "@/features/auth/logout-action";
@@ -18,15 +17,10 @@ type AccountControlsProps = {
 };
 
 const menuItemClassName =
-  "block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900";
+  "block w-full px-4 py-2.5 text-left text-sm text-[#131313] transition-colors hover:bg-brand-yellow/15";
 
-function iconButtonClassName(active = false): string {
-  const base =
-    "inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors duration-150";
-  return active
-    ? `${base} bg-gray-100 text-gray-900 ring-1 ring-gray-200/90`
-    : `${base} text-gray-700 hover:text-gray-900`;
-}
+const triggerClassName =
+  "inline-flex h-[25px] w-[23px] shrink-0 items-center justify-center overflow-visible text-[#131313] transition-colors duration-150 hover:text-brand-red";
 
 export function AccountControls({
   locale,
@@ -37,16 +31,19 @@ export function AccountControls({
   user,
 }: AccountControlsProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
+  const icon = (
+    <HeaderUserIcon className="block h-[25px] w-[23px] overflow-visible" />
+  );
 
   if (!user) {
     return (
       <AppLink
         href={`/${locale}/login`}
         prefetchPolicy="intent"
-        className={iconButtonClassName()}
+        className={triggerClassName}
         aria-label={loginLabel}
       >
-        <User className="h-5 w-5" aria-hidden="true" />
+        {icon}
       </AppLink>
     );
   }
@@ -54,8 +51,9 @@ export function AccountControls({
   return (
     <IconDropdown
       label={profileLabel}
-      triggerClassName={iconButtonClassName()}
-      trigger={<User className="h-5 w-5" aria-hidden="true" />}
+      triggerClassName={triggerClassName}
+      menuAlign="right"
+      trigger={icon}
     >
       {user.role === "ADMIN" ? (
         <AppLink

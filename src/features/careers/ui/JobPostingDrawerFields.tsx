@@ -3,13 +3,16 @@
 import type { RefObject } from "react";
 
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
-  ADMIN_SELECT,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
+import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   normalizeJobSlug,
   type JobEmploymentType,
@@ -89,14 +92,14 @@ export function JobPostingDrawerFields({
   const common = dictionary.common;
 
   return (
-    <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5">
+    <>
       <AdminLocaleTabs
         activeLocale={activeLocale}
         onChange={onLocaleChange}
         disabled={disabled}
       />
 
-      <label className="block">
+      <label className={ADMIN_FIELD}>
         <span className={ADMIN_LABEL}>
           {copy.title} <span className="text-red-600">*</span>
         </span>
@@ -109,7 +112,7 @@ export function JobPostingDrawerFields({
         />
       </label>
 
-      <label className="block">
+      <label className={ADMIN_FIELD}>
         <span className={ADMIN_LABEL}>{copy.location}</span>
         <input
           value={draft.location}
@@ -120,7 +123,7 @@ export function JobPostingDrawerFields({
         />
       </label>
 
-      <label className="block">
+      <label className={ADMIN_FIELD}>
         <span className={ADMIN_LABEL}>{copy.summary}</span>
         <input
           value={draft.summary}
@@ -130,7 +133,7 @@ export function JobPostingDrawerFields({
         />
       </label>
 
-      <label className="block">
+      <label className={ADMIN_FIELD}>
         <span className={ADMIN_LABEL}>
           {copy.description} <span className="text-red-600">*</span>
         </span>
@@ -153,8 +156,8 @@ export function JobPostingDrawerFields({
         <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
           {copy.common}
         </p>
-        <div className="space-y-4">
-          <label className="block">
+        <div className={ADMIN_FORM_STACK}>
+          <label className={ADMIN_FIELD}>
             <span className={ADMIN_LABEL}>{copy.slug}</span>
             <input
               value={slugTouched ? slug : normalizeJobSlug(draft.title)}
@@ -168,43 +171,37 @@ export function JobPostingDrawerFields({
           </label>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.employmentType}</span>
-              <select
-                value={employmentType}
-                onChange={(event) =>
-                  onEmploymentTypeChange(
-                    event.target.value as JobEmploymentType,
-                  )
-                }
-                className={ADMIN_SELECT}
-                disabled={disabled}
-              >
-                <option value="FULL_TIME">{employment.fullTime}</option>
-                <option value="PART_TIME">{employment.partTime}</option>
-                <option value="CONTRACT">{employment.contract}</option>
-                <option value="INTERNSHIP">{employment.internship}</option>
-              </select>
-            </label>
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.status}</span>
-              <select
-                value={status}
-                onChange={(event) =>
-                  onStatusChange(event.target.value as JobPostingStatus)
-                }
-                className={ADMIN_SELECT}
-                disabled={disabled}
-              >
-                <option value="DRAFT">{statusCopy.draft}</option>
-                <option value="ACTIVE">{statusCopy.active}</option>
-                <option value="ARCHIVED">{statusCopy.archived}</option>
-              </select>
-            </label>
+            <AdminSelect
+              label={copy.employmentType}
+              placeholder={copy.employmentType}
+              options={[
+                { value: "FULL_TIME", label: employment.fullTime },
+                { value: "PART_TIME", label: employment.partTime },
+                { value: "CONTRACT", label: employment.contract },
+                { value: "INTERNSHIP", label: employment.internship },
+              ]}
+              value={employmentType}
+              disabled={disabled}
+              onChange={(value) =>
+                onEmploymentTypeChange(value as JobEmploymentType)
+              }
+            />
+            <AdminSelect
+              label={copy.status}
+              placeholder={copy.status}
+              options={[
+                { value: "DRAFT", label: statusCopy.draft },
+                { value: "ACTIVE", label: statusCopy.active },
+                { value: "ARCHIVED", label: statusCopy.archived },
+              ]}
+              value={status}
+              disabled={disabled}
+              onChange={(value) => onStatusChange(value as JobPostingStatus)}
+            />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{copy.salary}</span>
               <input
                 type="number"
@@ -217,27 +214,23 @@ export function JobPostingDrawerFields({
                 placeholder={copy.salaryOptional}
               />
             </label>
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.salaryCurrency}</span>
-              <select
-                value={salaryCurrency}
-                onChange={(event) =>
-                  onSalaryCurrencyChange(event.target.value as Currency)
-                }
-                className={ADMIN_SELECT}
-                disabled={disabled}
-              >
-                {currencies.map((currency) => (
-                  <option key={currency} value={currency}>
-                    {currency}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <AdminSelect
+              label={copy.salaryCurrency}
+              placeholder={copy.salaryCurrency}
+              options={currencies.map((currency) => ({
+                value: currency,
+                label: currency,
+              }))}
+              value={salaryCurrency}
+              disabled={disabled}
+              onChange={(value) =>
+                onSalaryCurrencyChange(value as Currency)
+              }
+            />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{copy.sortOrder}</span>
               <input
                 type="number"
@@ -248,7 +241,7 @@ export function JobPostingDrawerFields({
                 disabled={disabled}
               />
             </label>
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{copy.publishedDate}</span>
               <input
                 type="date"
@@ -272,7 +265,7 @@ export function JobPostingDrawerFields({
             type="button"
             disabled={disabled}
             onClick={onPickImage}
-            className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+            className={ADMIN_BTN_DASHED_CLASS}
           >
             {imagePreview ? copy.changeImage : common.upload}
           </button>
@@ -311,6 +304,6 @@ export function JobPostingDrawerFields({
       </div>
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-    </div>
+    </>
   );
 }

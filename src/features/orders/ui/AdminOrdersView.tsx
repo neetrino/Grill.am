@@ -49,8 +49,6 @@ export function AdminOrdersView({ locale, orders }: AdminOrdersViewProps) {
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setDetail(null);
-    setError(null);
   }
 
   return (

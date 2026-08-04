@@ -3,7 +3,7 @@ import "server-only";
 import { and, desc, eq } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { orderItems, orders, products, reviews, users } from "@/db/schema";
+import { orderItems, orders, reviews, users } from "@/db/schema";
 import {
   buildReviewAggregate,
   isReviewEligibleOrderStatus,

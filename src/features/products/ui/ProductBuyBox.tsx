@@ -1,18 +1,21 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState, useSyncExternalStore, useTransition } from "react";
 
 import { addToCart } from "@/features/cart/cart";
+import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
+import { notifyCartChanged } from "@/features/cart/cart-client-sync";
+import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import {
   computeModifiersDelta,
-  defaultModifiers,
+  hasRequiredModifiersSelected,
   type CartModifiers,
   type ProductCustomization,
   type StorefrontCustomization,
 } from "@/features/products/domain/customization";
-import { ProductModifierDropdowns } from "@/features/products/ui/ProductModifierDropdowns";
-import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
+import { ProductAddonChecklist } from "@/features/products/ui/ProductAddonChecklist";
 import type { Locale } from "@/lib/i18n/config";
 import { convertAmount } from "@/lib/money/convert";
 import type { Currency } from "@/lib/money/currency";
@@ -24,20 +27,18 @@ type ProductBuyBoxLabels = {
   decreaseQuantity: string;
   increaseQuantity: string;
   addToCart: string;
+  selectRequired: string;
   adding: string;
   outOfStock: string;
   added: string;
   error: string;
-  shortDescription: string;
-  composition: string;
   options: string;
   addons: string;
   exclusions: string;
-  selectAddon: string;
-  selectExclusion: string;
   removeModifier: string;
-  inStock: string;
-  sku: string;
+  orderSummary: string;
+  basePrice: string;
+  total: string;
 };
 
 type ProductBuyBoxProps = {
@@ -45,23 +46,18 @@ type ProductBuyBoxProps = {
   currency: Currency;
   fxRate: string;
   productId: string;
-  sku: string;
+  title: string;
   stockOnHand: number;
   baseUnitAmount: number;
   compareAtAmount: number | null;
-  discountPercent: number | null;
-  /** SSR-safe formatted base price (no modifiers). */
   initialPriceFormatted: string;
   initialCompareAtFormatted: string | null;
   shortDescription?: string;
-  composition?: string;
   description?: string;
   customization: StorefrontCustomization;
-  /** Raw catalog used for delta math (ids + amounts). */
   rawCustomization: ProductCustomization | null;
-  inWishlist: boolean;
-  isSignedIn: boolean;
-  wishlistLabel: string;
+  ratingAverage?: number | null;
+  ratingCount?: number | null;
   labels: ProductBuyBoxLabels;
 };
 
@@ -80,52 +76,81 @@ function formatDisplay(
   return formatMoneyAmount(converted.amount, currency, locale);
 }
 
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
+
+function formatReviewCount(count: number): string {
+  if (count >= 1000) {
+    const thousands = count / 1000;
+    const rounded =
+      thousands >= 10
+        ? String(Math.round(thousands))
+        : (Math.round(thousands * 10) / 10).toFixed(1).replace(/\.0$/, "");
+    return `(${rounded}k+)`;
+  }
+  return `(${count})`;
+}
+
 export function ProductBuyBox({
   locale,
   currency,
   fxRate,
   productId,
-  sku,
+  title,
   stockOnHand,
   baseUnitAmount,
   compareAtAmount,
-  discountPercent,
   initialPriceFormatted,
   initialCompareAtFormatted,
   shortDescription,
-  composition,
   description,
   customization,
   rawCustomization,
-  inWishlist,
-  isSignedIn,
-  wishlistLabel,
+  ratingAverage = null,
+  ratingCount = null,
   labels,
 }: ProductBuyBoxProps) {
+  const router = useRouter();
   const maxQty = Math.max(stockOnHand, 0);
-  const [modifiers, setModifiers] = useState<CartModifiers>(() =>
-    defaultModifiers(rawCustomization),
-  );
+  const [modifiers, setModifiers] = useState<CartModifiers>({
+    optionChoices: {},
+    addonIds: [],
+    exclusionIds: [],
+  });
   const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const [livePricing, setLivePricing] = useState(false);
+  // Renders the server-formatted price until the client mounts, then
+  // switches to live client-computed pricing (currency/modifier reactive).
+  const livePricing = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
   const disabled = maxQty < 1;
-  const inStock = maxQty > 0;
-
-  useEffect(() => {
-    setLivePricing(true);
-  }, []);
+  const optionsComplete = hasRequiredModifiersSelected(
+    rawCustomization,
+    modifiers,
+  );
+  const canAdd = !disabled && optionsComplete;
 
   const modifiersDelta = useMemo(
     () => computeModifiersDelta(rawCustomization, modifiers),
     [rawCustomization, modifiers],
   );
   const unitAmount = baseUnitAmount + modifiersDelta;
+  const lineAmount = unitAmount * Math.max(quantity, 1);
 
   const priceFormatted = livePricing
     ? formatDisplay(unitAmount, fxRate, currency, locale)
+    : initialPriceFormatted;
+  const lineFormatted = livePricing
+    ? formatDisplay(lineAmount, fxRate, currency, locale)
+    : initialPriceFormatted;
+  const baseFormatted = livePricing
+    ? formatDisplay(baseUnitAmount, fxRate, currency, locale)
     : initialPriceFormatted;
   const compareAtFormatted =
     compareAtAmount != null && compareAtAmount > unitAmount
@@ -179,12 +204,21 @@ export function ProductBuyBox({
   }
 
   function handleAdd(): void {
-    if (disabled || quantity < 1) return;
+    if (!canAdd || quantity < 1) return;
     setMessage(null);
     setError(null);
+
+    const flyOrigin = document.querySelector("[data-product-fly-origin]");
+    playCartFlyAnimation({
+      fromElement: flyOrigin,
+      imageUrl: PRODUCT_CARD_IMAGE,
+    });
+
     startTransition(async () => {
       try {
         await addToCart(productId, quantity, modifiers);
+        notifyCartChanged();
+        router.refresh();
         setMessage(labels.added);
       } catch {
         setError(labels.error);
@@ -192,107 +226,178 @@ export function ProductBuyBox({
     });
   }
 
+  const blurb = shortDescription || description;
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-baseline gap-3">
-        <p className="text-2xl font-semibold text-gray-900">{priceFormatted}</p>
-        {compareAtFormatted ? (
-          <p className="text-base text-gray-500 line-through">
-            {compareAtFormatted}
-          </p>
-        ) : null}
-        {discountPercent != null ? (
-          <span className="rounded bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
-            -{discountPercent}%
-          </span>
-        ) : null}
-      </div>
-
-      <div className="flex flex-wrap gap-3 text-sm text-gray-600">
-        <span>
-          {labels.sku}: {sku}
-        </span>
-        <span aria-hidden>·</span>
-        <span className={inStock ? "text-green-700" : "text-red-700"}>
-          {inStock ? labels.inStock : labels.outOfStock}
-        </span>
-      </div>
-
-      {shortDescription ? (
-        <div className="flex flex-col gap-1">
-          <h2 className="text-sm font-semibold text-gray-900">
-            {labels.shortDescription}
-          </h2>
-          <p className="text-base leading-relaxed text-gray-600">
-            {shortDescription}
-          </p>
-        </div>
-      ) : null}
-
-      {description && !shortDescription ? (
-        <p className="whitespace-pre-wrap text-base leading-relaxed text-gray-600">
-          {description}
-        </p>
-      ) : null}
-
-      {description && shortDescription ? (
-        <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
-          {description}
-        </p>
-      ) : null}
-
-      {composition ? (
-        <div className="flex flex-col gap-1">
-          <h2 className="text-sm font-semibold text-gray-900">
-            {labels.composition}
-          </h2>
-          <p className="whitespace-pre-wrap text-base leading-relaxed text-gray-600">
-            {composition}
-          </p>
-        </div>
-      ) : null}
-
-      {customization.optionGroups.length > 0 ? (
-        <fieldset className="flex flex-col gap-4">
-          <legend className="text-sm font-semibold text-gray-900">
-            {labels.options}
-          </legend>
-          {customization.optionGroups.map((group) => (
-            <div key={group.id} className="flex flex-col gap-2">
-              <p className="text-sm text-gray-700">
-                {group.label}
-                {group.required ? " *" : ""}
-              </p>
-              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={group.label}>
-                {group.choices.map((choice) => {
-                  const selected = modifiers.optionChoices[group.id] === choice.id;
-                  return (
-                    <button
-                      key={choice.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={selected}
-                      onClick={() => selectOption(group.id, choice.id)}
-                      className={`rounded-lg border px-3 py-2 text-sm transition ${
-                        selected
-                          ? "border-gray-900 bg-gray-900 text-white"
-                          : "border-gray-200 bg-white text-gray-800 hover:border-gray-400"
-                      }`}
-                    >
-                      {choice.label}
-                      {choice.priceDeltaAmount > 0 && livePricing
-                        ? ` (+${formatDisplay(choice.priceDeltaAmount, fxRate, currency, locale)})`
-                        : ""}
-                    </button>
-                  );
-                })}
-              </div>
+    <div className="flex flex-col gap-[25px]">
+      <section className="rounded-[30px] bg-white p-6">
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="text-2xl leading-[30px] font-bold text-[#101828]">
+            {title}
+          </h1>
+          {ratingAverage != null && ratingCount != null && ratingCount > 0 ? (
+            <div className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#fff7ed] px-3 py-1.5">
+              <Star
+                className="size-3.5 fill-brand-red text-brand-red"
+                aria-hidden
+              />
+              <span className="text-sm font-bold text-brand-red">
+                {ratingAverage.toFixed(1)}
+              </span>
+              <span className="text-xs text-[#99a1af]">
+                {formatReviewCount(ratingCount)}
+              </span>
             </div>
-          ))}
-        </fieldset>
-      ) : null}
+          ) : null}
+        </div>
 
-      <ProductModifierDropdowns
+        {blurb ? (
+          <p className="mt-3 text-sm leading-[22.75px] text-[#6a7282]">
+            {blurb}
+          </p>
+        ) : null}
+
+        {customization.optionGroups.length > 0 ? (
+          <fieldset className="mt-5 flex flex-col gap-4 border-b border-[#f3f4f6] pb-5">
+            <legend className="sr-only">{labels.options}</legend>
+            {customization.optionGroups.map((group) => (
+              <div key={group.id} className="flex flex-col gap-2">
+                <p className="text-xs font-medium tracking-[0.25px] text-[#99a1af] uppercase">
+                  {group.label}
+                  {group.required ? " *" : ""}
+                </p>
+                <div
+                  className="flex flex-wrap gap-2"
+                  role="radiogroup"
+                  aria-label={group.label}
+                >
+                  {group.choices.map((choice) => {
+                    const selected =
+                      modifiers.optionChoices[group.id] === choice.id;
+                    return (
+                      <button
+                        key={choice.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => selectOption(group.id, choice.id)}
+                        className={`rounded-full border px-3 py-2 text-sm transition ${
+                          selected
+                            ? "border-brand-red bg-brand-red text-white"
+                            : "border-[#e5e7eb] bg-white text-[#1e2939] hover:border-brand-red/40"
+                        }`}
+                      >
+                        {choice.label}
+                        {choice.priceDeltaAmount > 0 && livePricing
+                          ? ` (+${formatDisplay(choice.priceDeltaAmount, fxRate, currency, locale)})`
+                          : ""}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </fieldset>
+        ) : null}
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <p className="text-[30px] leading-9 font-bold text-brand-red">
+              {priceFormatted}
+            </p>
+            {compareAtFormatted ? (
+              <p className="text-base leading-6 text-[#99a1af] line-through">
+                {compareAtFormatted}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="inline-flex items-center gap-3 rounded-full bg-brand-red px-2 py-1.5">
+            <button
+              type="button"
+              aria-label={labels.decreaseQuantity}
+              disabled={disabled || quantity <= 1 || pending}
+              onClick={() => changeQuantity(quantity - 1)}
+              className="inline-flex size-8 items-center justify-center rounded-full bg-white/45 text-white transition hover:bg-white/60 disabled:opacity-40"
+            >
+              <Minus className="size-3.5" aria-hidden />
+            </button>
+            <span
+              className="min-w-6 text-center text-base font-bold text-white"
+              aria-label={labels.quantity}
+            >
+              {quantity}
+            </span>
+            <button
+              type="button"
+              aria-label={labels.increaseQuantity}
+              disabled={disabled || quantity >= maxQty || pending}
+              onClick={() => changeQuantity(quantity + 1)}
+              className="inline-flex size-8 items-center justify-center rounded-full bg-white text-brand-red transition hover:bg-white/90 disabled:opacity-40"
+            >
+              <Plus className="size-3.5" aria-hidden />
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-col gap-[22px]">
+          <button
+            type="button"
+            disabled={!canAdd || pending}
+            onClick={handleAdd}
+            className="inline-flex h-[53px] w-full items-center justify-center gap-3 rounded-[66px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <ShoppingCart
+              className="h-[21px] w-[22px] shrink-0 fill-white"
+              strokeWidth={1.2}
+              aria-hidden
+            />
+            <span>
+              {disabled
+                ? labels.outOfStock
+                : !optionsComplete
+                  ? labels.selectRequired
+                  : pending
+                    ? labels.adding
+                    : labels.addToCart}
+            </span>
+            {canAdd && !pending ? (
+              <span className="text-base font-black">{lineFormatted}</span>
+            ) : null}
+          </button>
+
+          <div>
+            <p className="text-xs font-semibold tracking-[0.6px] text-[#6b7280] uppercase">
+              {labels.orderSummary}
+            </p>
+            <dl className="mt-3 space-y-1.5 text-sm">
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-[#6b7280]">{labels.basePrice}</dt>
+                <dd className="font-medium text-[#101828]">{baseFormatted}</dd>
+              </div>
+              <div className="border-t border-[rgba(107,114,128,0.47)] pt-2.5">
+                <div className="flex items-center justify-between gap-3 text-base">
+                  <dt className="font-bold text-[#101828]">{labels.total}</dt>
+                  <dd className="font-bold text-[#101828]">{lineFormatted}</dd>
+                </div>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        {message ? (
+          <p className="mt-3 text-sm text-green-700" role="status">
+            {message}
+          </p>
+        ) : null}
+        {error ? (
+          <p className="mt-3 text-sm text-red-700" role="alert">
+            {error}
+          </p>
+        ) : null}
+      </section>
+
+      <ProductAddonChecklist
         addons={customization.addons}
         exclusions={customization.exclusions}
         selectedAddonIds={modifiers.addonIds}
@@ -304,77 +409,11 @@ export function ProductBuyBox({
         labels={{
           addons: labels.addons,
           exclusions: labels.exclusions,
-          selectAddon: labels.selectAddon,
-          selectExclusion: labels.selectExclusion,
           removeModifier: labels.removeModifier,
         }}
         onToggleAddon={toggleAddon}
         onToggleExclusion={toggleExclusion}
       />
-
-      <div className="mt-auto flex flex-col gap-3 pt-2">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="inline-flex items-center rounded-lg border border-gray-200 bg-white">
-            <button
-              type="button"
-              aria-label={labels.decreaseQuantity}
-              disabled={disabled || quantity <= 1 || pending}
-              onClick={() => changeQuantity(quantity - 1)}
-              className="flex h-11 w-11 items-center justify-center text-gray-700 transition hover:bg-gray-50 disabled:opacity-40"
-            >
-              <Minus className="h-4 w-4" aria-hidden />
-            </button>
-            <span
-              className="min-w-10 text-center text-base font-semibold text-gray-900"
-              aria-label={labels.quantity}
-            >
-              {quantity}
-            </span>
-            <button
-              type="button"
-              aria-label={labels.increaseQuantity}
-              disabled={disabled || quantity >= maxQty || pending}
-              onClick={() => changeQuantity(quantity + 1)}
-              className="flex h-11 w-11 items-center justify-center text-gray-700 transition hover:bg-gray-50 disabled:opacity-40"
-            >
-              <Plus className="h-4 w-4" aria-hidden />
-            </button>
-          </div>
-
-          <button
-            type="button"
-            disabled={disabled || pending}
-            onClick={handleAdd}
-            className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-gray-900 px-6 text-base font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:min-w-[12rem]"
-          >
-            {disabled
-              ? labels.outOfStock
-              : pending
-                ? labels.adding
-                : labels.addToCart}
-          </button>
-
-          <WishlistButton
-            locale={locale}
-            productId={productId}
-            initialInWishlist={inWishlist}
-            isSignedIn={isSignedIn}
-            label={wishlistLabel}
-            className="h-11 w-11 border border-gray-200 bg-white hover:bg-gray-50"
-          />
-        </div>
-
-        {message ? (
-          <p className="text-sm text-green-700" role="status">
-            {message}
-          </p>
-        ) : null}
-        {error ? (
-          <p className="text-sm text-red-700" role="alert">
-            {error}
-          </p>
-        ) : null}
-      </div>
     </div>
   );
 }

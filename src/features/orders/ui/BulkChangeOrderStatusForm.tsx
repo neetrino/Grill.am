@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { Button } from "@/components/ui/Button";
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Card } from "@/components/ui/Card";
 import {
   formatAdminMessage,
@@ -19,11 +19,14 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TD_CHECK,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
 
@@ -59,6 +62,7 @@ export function BulkChangeOrderStatusForm({
   const list = dictionary.orders.list;
   const bulk = dictionary.orders.bulk;
   const common = dictionary.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -91,27 +95,39 @@ export function BulkChangeOrderStatusForm({
       return;
     }
 
-    startTransition(async () => {
-      setError(null);
-      setMessage(null);
-      const result = await bulkArchiveOrdersAction(locale, {
-        orderNumbers: [...selected],
-      });
-
-      if (!result.ok) {
-        setError(result.error.message);
-        return;
-      }
-
-      setMessage(
-        formatAdminMessage(bulk.deletedResult, {
-          deleted: String(result.value.archived),
-          skipped: String(result.value.skipped),
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: common.confirmDeleteTitle,
+        message: formatAdminMessage(bulk.confirmDelete, {
+          count: String(selected.size),
         }),
-      );
-      setSelected(new Set());
-      router.refresh();
-    });
+        confirmText: common.delete,
+        cancelText: common.cancel,
+      });
+      if (!accepted) return;
+
+      startTransition(async () => {
+        setError(null);
+        setMessage(null);
+        const result = await bulkArchiveOrdersAction(locale, {
+          orderNumbers: [...selected],
+        });
+
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+
+        setMessage(
+          formatAdminMessage(bulk.deletedResult, {
+            deleted: String(result.value.archived),
+            skipped: String(result.value.skipped),
+          }),
+        );
+        setSelected(new Set());
+        router.refresh();
+      });
+    })();
   }
 
   return (
@@ -122,14 +138,14 @@ export function BulkChangeOrderStatusForm({
             count: String(selected.size),
           })}
         </p>
-        <Button
+        <button
           type="button"
-          size="sm"
           disabled={isPending || selected.size === 0}
           onClick={deleteSelected}
+          className={ADMIN_BTN_PRIMARY_CLASS}
         >
           {isPending ? bulk.deleting : bulk.deleteSelected}
-        </Button>
+        </button>
         {error ? (
           <p className="w-full text-sm text-red-700">{error}</p>
         ) : null}
@@ -155,9 +171,9 @@ export function BulkChangeOrderStatusForm({
                 </th>
                 <th className={ADMIN_TABLE_TH}>{list.order}</th>
                 <th className={ADMIN_TABLE_TH}>{list.customer}</th>
-                <th className={ADMIN_TABLE_TH}>{list.status}</th>
-                <th className={ADMIN_TABLE_TH}>{list.payment}</th>
-                <th className={ADMIN_TABLE_TH}>{list.total}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.status}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.payment}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.total}</th>
                 <th className={ADMIN_TABLE_TH}>{list.placed}</th>
               </tr>
             </thead>
@@ -194,25 +210,29 @@ export function BulkChangeOrderStatusForm({
                     <p className="text-sm text-gray-900">{order.contactName}</p>
                     <p className="text-xs text-gray-500">{order.contactEmail}</p>
                   </td>
-                  <td className={ADMIN_TABLE_TD}>
-                    <AdminInlineStatusSelect
-                      locale={locale}
-                      orderNumber={order.orderNumber}
-                      kind="order"
-                      value={order.status}
-                      disabled={isPending || order.isArchived}
-                    />
+                  <td className={ADMIN_TABLE_TD_CENTER}>
+                    <div className="flex justify-center">
+                      <AdminInlineStatusSelect
+                        locale={locale}
+                        orderNumber={order.orderNumber}
+                        kind="order"
+                        value={order.status}
+                        disabled={isPending || order.isArchived}
+                      />
+                    </div>
                   </td>
-                  <td className={ADMIN_TABLE_TD}>
-                    <AdminInlineStatusSelect
-                      locale={locale}
-                      orderNumber={order.orderNumber}
-                      kind="payment"
-                      value={order.paymentStatus}
-                      disabled={isPending || order.isArchived}
-                    />
+                  <td className={ADMIN_TABLE_TD_CENTER}>
+                    <div className="flex justify-center">
+                      <AdminInlineStatusSelect
+                        locale={locale}
+                        orderNumber={order.orderNumber}
+                        kind="payment"
+                        value={order.paymentStatus}
+                        disabled={isPending || order.isArchived}
+                      />
+                    </div>
                   </td>
-                  <td className={ADMIN_TABLE_TD}>
+                  <td className={ADMIN_TABLE_TD_CENTER}>
                     <span className="font-medium text-gray-900">
                       {formatMoney(order.totalAmount, order.baseCurrency)}
                     </span>

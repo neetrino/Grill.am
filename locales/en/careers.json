@@ -2,6 +2,9 @@
   "title": "Careers",
   "subtitle": "Open positions at our company.",
   "empty": "No open positions right now.",
+  "openBadge": "Open position",
+  "details": "Details",
+  "apply": "Apply",
   "salary": "Salary",
   "location": "Location",
   "employmentType": "Employment type",
@@ -11,6 +14,7 @@
     "CONTRACT": "Contract",
     "INTERNSHIP": "Internship"
   },
+  "benefits": ["Hourly wage", "Free meals", "Career growth"],
   "backToList": "Back to careers",
   "applyHint": "Interested? Contact us and mention the position title."
 }

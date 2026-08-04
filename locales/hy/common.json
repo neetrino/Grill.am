@@ -1,9 +1,18 @@
 {
-  "brand": "White-Shop",
+  "brand": "Grill.am",
   "close": "Փակել",
+  "buttons": {
+    "cancel": "Չեղարկել",
+    "delete": "Ջնջել"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Հաստատել ջնջումը",
+    "confirmDeleteMessage": "Համոզվա՞ծ եք, որ ուզում եք ջնջել սա։ Այս գործողությունը հնարավոր չէ հետարկել։"
+  },
   "nav": {
     "home": "Գլխավոր",
-    "products": "Ապրանքներ",
+    "products": "Մենյու",
+    "categories": "Կատեգորիաներ",
     "shop": "Խանութ",
     "blog": "Բլոգ",
     "careers": "Աշխատանք",
@@ -13,7 +22,8 @@
     "wishlist": "Ցանկեր",
     "openMenu": "Բացել մենյուն",
     "closeMenu": "Փակել մենյուն",
-    "navigation": "Նավիգացիա"
+    "navigation": "Նավիգացիա",
+    "allCategories": "Բոլորը"
   },
   "header": {
     "language": "Լեզու",
@@ -31,17 +41,26 @@
   },
   "footer": {
     "shop": "Խանութ",
-    "description": "Պրոֆեսիոնալ առցանց խանութ ամենօրյա գնումների համար։",
-    "quickLinks": "Արագ հղումներ",
+    "description": "Ամենաամբողջական առցանց սննդամթերքի հարթակ Հայաստանում։ Թարմ, համեղ, արագ։",
+    "quickLinks": "Նավիգացիա",
+    "support": "Աջակցություն",
+    "hours": "Աշխ. Ժամեր",
+    "hoursWeekdaysLabel": "Երկ – Ուրբ",
+    "hoursWeekdays": "09:00 – 22:00",
+    "hoursWeekendLabel": "Շաբ – Կիր",
+    "hoursWeekend": "10:00 – 23:00",
+    "categories": "Կատեգորիաներ",
+    "promotions": "Ակցիաներ",
+    "bestsellers": "Ամենավաճառվողներ",
+    "faq": "Հաճախ տրվող հարցեր",
     "legal": "Իրավական",
     "privacyPolicy": "Գաղտնիության քաղաքականություն",
     "terms": "Պայմաններ և դրույթներ",
-    "refundPolicy": "Վերադարձի քաղաքականություն",
+    "refundPolicy": "Առաքում և Վերադարձ",
     "deliveryPolicy": "Առաքման քաղաքականություն",
-    "contactInfo": "Կապի տվյալներ",
+    "contactInfo": "Կապ",
     "followUs": "Հետևեք մեզ",
-    "rights": "Բոլոր իրավունքները պաշտպանված են",
-    "createdBy": "Ստեղծված է NEETRINO IT COMPANY-ի կողմից"
+    "addresses": "Հասցեներ"
   },
   "popup": {
     "close": "Փակել popup-ը"

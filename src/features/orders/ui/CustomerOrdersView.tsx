@@ -6,8 +6,10 @@ import { AdminDictionaryProvider } from "@/features/admin/ui/AdminDictionaryProv
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
 import { reorderCustomerOrderAction } from "@/features/orders/application/reorder-order";
+import { CustomerOrdersCards } from "@/features/orders/ui/CustomerOrdersCards";
 import { CustomerOrdersTable } from "@/features/orders/ui/CustomerOrdersTable";
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import type { Locale } from "@/lib/i18n/config";
 import type { AdminDictionary, ProfileDictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerOrdersViewOrder = {
@@ -18,6 +20,7 @@ type CustomerOrdersViewOrder = {
   totalAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
+  itemsCount: number;
 };
 
 type CustomerOrdersViewProps = {
@@ -27,8 +30,22 @@ type CustomerOrdersViewProps = {
   dictionary: AdminDictionary;
   profileCopy: Pick<
     ProfileDictionary,
-    "reorder" | "reordering" | "reorderUnavailable"
+    | "reorder"
+    | "reordering"
+    | "reorderUnavailable"
+    | "orderNumber"
+    | "item"
+    | "items"
+    | "placedOn"
+    | "viewDetails"
+    | "noOrders"
+    | "startShopping"
   >;
+  /**
+   * `responsive` — cards below `lg`, table from `lg` up (orders page).
+   * `cards` — always cards (mobile profile sheet).
+   */
+  layout?: "responsive" | "cards";
 };
 
 export function CustomerOrdersView({
@@ -36,6 +53,7 @@ export function CustomerOrdersView({
   orders,
   dictionary,
   profileCopy,
+  layout = "responsive",
 }: CustomerOrdersViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
@@ -43,6 +61,16 @@ export function CustomerOrdersView({
   const [reorderError, setReorderError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isReordering, startReorderTransition] = useTransition();
+
+  const cardLabels = {
+    orderNumber: profileCopy.orderNumber,
+    item: profileCopy.item,
+    items: profileCopy.items,
+    placedOn: profileCopy.placedOn,
+    viewDetails: profileCopy.viewDetails,
+    noOrders: profileCopy.noOrders,
+    startShopping: profileCopy.startShopping,
+  };
 
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);
@@ -63,9 +91,6 @@ export function CustomerOrdersView({
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setDetail(null);
-    setError(null);
-    setReorderError(null);
   }
 
   function handleReorder(): void {
@@ -88,9 +113,27 @@ export function CustomerOrdersView({
     });
   }
 
+  const cards = (
+    <CustomerOrdersCards
+      locale={locale as Locale}
+      orders={orders}
+      labels={cardLabels}
+      onOpenOrder={openOrder}
+    />
+  );
+
   return (
     <>
-      <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} />
+      {layout === "cards" ? (
+        cards
+      ) : (
+        <>
+          <div className="lg:hidden">{cards}</div>
+          <div className="hidden lg:block">
+            <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} />
+          </div>
+        </>
+      )}
       <AdminDictionaryProvider dictionary={dictionary}>
         <OrderDetailsDrawer
           open={drawerOpen}

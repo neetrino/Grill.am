@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -11,9 +12,8 @@ import {
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
-import {
-  ADMIN_BADGE,
-} from "@/features/admin/ui/status-badge";
+import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
+import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -23,8 +23,10 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TD_CHECK,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
@@ -79,6 +81,7 @@ export function AdminUsersView({
   const table = copy.table;
   const bulk = copy.bulk;
   const common = dictionary.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -175,23 +178,34 @@ export function AdminUsersView({
             count: String(selected.size),
           })}
         </p>
-        <Button
+        <button
           type="button"
-          size="sm"
-          variant="outline"
           disabled={isPending || selected.size === 0}
           onClick={() =>
-            runAction(async () => {
-              const result = await bulkAnonymizeUsersAction(locale, {
-                userIds: [...selected],
+            void (async () => {
+              const accepted = await confirmDelete({
+                title: common.confirmDeleteTitle,
+                message: formatAdminMessage(bulk.confirmDelete, {
+                  count: String(selected.size),
+                }),
+                confirmText: common.delete,
+                cancelText: common.cancel,
               });
-              if (!result.ok) throw new Error(result.error.message);
-              setSelected(new Set());
-            })
+              if (!accepted) return;
+
+              runAction(async () => {
+                const result = await bulkAnonymizeUsersAction(locale, {
+                  userIds: [...selected],
+                });
+                if (!result.ok) throw new Error(result.error.message);
+                setSelected(new Set());
+              });
+            })()
           }
+          className={ADMIN_BTN_PRIMARY_CLASS}
         >
           {bulk.deleteSelected}
-        </Button>
+        </button>
       </Card>
 
       <Card className={ADMIN_TABLE_CARD}>
@@ -216,10 +230,10 @@ export function AdminUsersView({
                   </th>
                   <th className={ADMIN_TABLE_TH}>{table.user}</th>
                   <th className={ADMIN_TABLE_TH}>{table.contact}</th>
-                  <th className={ADMIN_TABLE_TH}>{table.orders}</th>
-                  <th className={ADMIN_TABLE_TH}>{table.roles}</th>
-                  <th className={ADMIN_TABLE_TH}>{table.status}</th>
-                  <th className={ADMIN_TABLE_TH}>{table.created}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{table.orders}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{table.roles}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{table.status}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{table.created}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -262,14 +276,14 @@ export function AdminUsersView({
                           {user.phone ?? common.dash}
                         </p>
                       </td>
-                      <td className={ADMIN_TABLE_TD}>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
                         <span className="font-medium text-gray-900">
                           {user.orderCount}
                         </span>
                       </td>
-                      <td className={ADMIN_TABLE_TD}>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
                         <span
-                          className={`${ADMIN_BADGE} ${
+                          className={`${ADMIN_BADGE} uppercase ${
                             user.role === "ADMIN"
                               ? "bg-blue-100 text-blue-800"
                               : "bg-sky-100 text-sky-800"
@@ -278,7 +292,7 @@ export function AdminUsersView({
                           {adminUserRoleLabel(user.role, copy.roles)}
                         </span>
                       </td>
-                      <td className={ADMIN_TABLE_TD}>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
                         <button
                           type="button"
                           role="switch"
@@ -298,7 +312,7 @@ export function AdminUsersView({
                               }
                             })
                           }
-                          className={`relative h-5 w-9 rounded-full transition-colors disabled:opacity-40 ${
+                          className={`relative mx-auto h-5 w-9 rounded-full transition-colors disabled:opacity-40 ${
                             isActive ? "bg-green-500" : "bg-gray-300"
                           }`}
                           aria-label={
@@ -316,7 +330,7 @@ export function AdminUsersView({
                           />
                         </button>
                       </td>
-                      <td className={ADMIN_TABLE_TD}>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
                         <span className="text-sm text-gray-600">
                           {formatCreated(user.createdAt)}
                         </span>

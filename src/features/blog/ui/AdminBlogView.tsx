@@ -4,16 +4,20 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2 } from "lucide-react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_INPUT,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
+import {
+  ADMIN_CONTENT_CARD_CLASS,
+  ADMIN_CONTENT_CARD_GRID,
+  ADMIN_CONTENT_CARD_STATUS_CLASS,
+} from "@/features/admin/ui/admin-ui";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteBlogPostAction } from "@/features/blog/application/manage-blog";
 import type { AdminBlogListItem } from "@/features/blog/application/queries";
@@ -35,6 +39,7 @@ function statusBadgeClass(status: string): string {
 export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.blog;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -73,28 +78,34 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setEditingPost(null);
   }
 
   function handleDelete(postId: string): void {
-    const confirmed = window.confirm(copy.confirmDelete);
-    if (!confirmed) return;
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: dictionary.common.confirmDeleteTitle,
+        message: copy.confirmDelete,
+        confirmText: dictionary.common.delete,
+        cancelText: dictionary.common.cancel,
+      });
+      if (!accepted) return;
 
-    startTransition(async () => {
-      setError(null);
-      const result = await deleteBlogPostAction(locale, { postId });
-      if (!result.ok) {
-        setError(result.error.message);
-        return;
-      }
-      router.refresh();
-    });
+      startTransition(async () => {
+        setError(null);
+        const result = await deleteBlogPostAction(locale, { postId });
+        if (!result.ok) {
+          setError(result.error.message);
+          return;
+        }
+        router.refresh();
+      });
+    })();
   }
 
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
         <Button type="button" size="sm" onClick={openCreate}>
           {copy.addPost}
         </Button>
@@ -110,95 +121,87 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
-      <div className="space-y-3">
-        {filtered.length === 0 ? (
-          <Card className="rounded-xl p-8">
-            <p className="text-center text-sm text-gray-600">
-              {posts.length === 0 ? copy.empty : copy.emptySearch}
-            </p>
-          </Card>
-        ) : (
-          filtered.map((post) => (
-            <Card
-              key={post.id}
-              className="rounded-xl border border-gray-200 p-4 shadow-sm"
-            >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 items-start gap-3">
-                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                    {post.coverUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={post.coverUrl}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-xs font-medium text-white/70">
-                        {copy.title}
-                      </div>
-                    )}
+      {filtered.length === 0 ? (
+        <Card className="rounded-[15px] p-8">
+          <p className="text-center text-sm text-gray-600">
+            {posts.length === 0 ? copy.empty : copy.emptySearch}
+          </p>
+        </Card>
+      ) : (
+        <div className={ADMIN_CONTENT_CARD_GRID}>
+          {filtered.map((post) => (
+            <Card key={post.id} className={ADMIN_CONTENT_CARD_CLASS}>
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
+                {post.coverUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={post.coverUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-xs font-medium text-white/70">
+                    {copy.title}
                   </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-gray-900">
-                      {post.title}
-                    </p>
-                    {post.excerpt ? (
-                      <p className="mt-0.5 line-clamp-1 text-sm text-gray-600">
-                        {post.excerpt}
-                      </p>
-                    ) : null}
-                    <p className="mt-1 text-xs text-gray-500">
-                      {post.path}
-                      {post.publishedAt ? ` · ${post.publishedAt}` : ""}
-                    </p>
+                )}
+                <span
+                  className={`${ADMIN_BADGE} ${ADMIN_CONTENT_CARD_STATUS_CLASS} ${statusBadgeClass(post.status)}`}
+                >
+                  {statusLabel(post.status)}
+                </span>
+              </div>
+              <div className="flex flex-1 flex-col gap-2 p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="min-w-0 flex-1 line-clamp-2 text-sm font-semibold text-gray-900">
+                    {post.title}
+                  </p>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => openEdit(post)}
+                      className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
+                      aria-label={formatAdminMessage(copy.editNamed, {
+                        title: post.title,
+                      })}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => handleDelete(post.id)}
+                      className="rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50"
+                      aria-label={formatAdminMessage(copy.deleteNamed, {
+                        title: post.title,
+                      })}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-1 sm:justify-end">
-                  <span
-                    className={`${ADMIN_BADGE} ${statusBadgeClass(post.status)}`}
-                  >
-                    {statusLabel(post.status)}
-                  </span>
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => openEdit(post)}
-                    className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
-                    aria-label={formatAdminMessage(copy.editNamed, {
-                      title: post.title,
-                    })}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => handleDelete(post.id)}
-                    className="rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50"
-                    aria-label={formatAdminMessage(copy.deleteNamed, {
-                      title: post.title,
-                    })}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+                {post.excerpt ? (
+                  <p className="line-clamp-2 text-sm text-gray-600">
+                    {post.excerpt}
+                  </p>
+                ) : null}
+                <p className="truncate text-xs text-gray-500">
+                  {post.path}
+                  {post.publishedAt ? ` · ${post.publishedAt}` : ""}
+                </p>
               </div>
             </Card>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {drawerOpen ? (
-        <BlogPostDrawer
-          key={editingPost?.id ?? "new"}
-          locale={locale}
-          open
-          onClose={closeDrawer}
-          post={editingPost}
-        />
-      ) : null}
+      <BlogPostDrawer
+        key={editingPost?.id ?? "new"}
+        locale={locale}
+        open={drawerOpen}
+        onClose={closeDrawer}
+        post={editingPost}
+      />
     </section>
   );
 }

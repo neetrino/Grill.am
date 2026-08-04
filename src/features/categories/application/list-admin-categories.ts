@@ -38,6 +38,7 @@ function translationForAdmin(
 
 /** Lists non-deleted categories for the admin categories table. */
 export async function listAdminCategories(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for call-site symmetry with locale-aware admin list queries
   _locale: Locale,
 ): Promise<AdminCategoryListItem[]> {
   const rows = await getDb()

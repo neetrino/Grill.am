@@ -21,7 +21,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
       "connect-src 'self' https:",
-      "frame-src 'self' https://www.google.com https://maps.google.com",
+      "frame-src 'self' https://www.google.com https://maps.google.com https://yandex.ru https://yandex.com https://*.yandex.ru https://*.yandex.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -67,6 +67,9 @@ function buildImageRemotePatterns(): NonNullable<
 }
 
 const nextConfig: NextConfig = {
+  // Allow LAN access in `next dev` (phone / other Mac via local IP).
+  // Without this, Next blocks `/_next/*` (JS/CSS/HMR) and the UI looks blank.
+  allowedDevOrigins: ["192.168.15.30"],
   turbopack: {
     root: projectRoot,
   },

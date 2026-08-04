@@ -1,16 +1,39 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { useId, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  useTransition,
+} from "react";
+import { createPortal } from "react-dom";
 
+import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
+
+import {
+  DROPDOWN_ANIMATION_MS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
+  dropdownPanelStateClass,
+  dropdownPortalStyle,
+} from "@/components/ui/dropdown-styles";
+import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import { createCategoryAction } from "@/features/categories/actions";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
+
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
 
 type ProductDrawerCategoriesProps = {
   locale: string;
@@ -31,12 +54,79 @@ export function ProductDrawerCategories({
 }: ProductDrawerCategoriesProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.products.categoriesForm;
+  const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const listId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [open, setOpen] = useState(false);
+  const [panelVisible, setPanelVisible] = useState(false);
+  const [panelExpanded, setPanelExpanded] = useState(false);
+  const menuPosition = useDropdownPortalPosition(panelVisible, triggerRef, {
+    matchTriggerWidth: true,
+    lockTriggerWidth: true,
+  });
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const clearCloseTimer = useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const closeDropdown = useCallback(() => {
+    clearCloseTimer();
+    setOpen(false);
+    setPanelExpanded(false);
+    closeTimerRef.current = setTimeout(() => {
+      setPanelVisible(false);
+      closeTimerRef.current = null;
+    }, DROPDOWN_ANIMATION_MS);
+  }, [clearCloseTimer]);
+
+  const openDropdown = useCallback(() => {
+    clearCloseTimer();
+    setOpen(true);
+    setPanelVisible(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setPanelExpanded(true);
+      });
+    });
+  }, [clearCloseTimer]);
+
+  useEffect(() => {
+    if (!open) return;
+    function handlePointerDown(event: MouseEvent): void {
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target) ||
+        panelRef.current?.contains(target)
+      ) {
+        return;
+      }
+      closeDropdown();
+    }
+    function handleKeyDown(event: KeyboardEvent): void {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeDropdown();
+    }
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, [closeDropdown, open]);
+
+  useEffect(() => () => clearCloseTimer(), [clearCloseTimer]);
 
   const selectedTitles = categories
     .filter((category) => selectedIds.includes(category.id))
@@ -80,63 +170,77 @@ export function ProductDrawerCategories({
       onSelectedChange([...selectedIds, created.id]);
       setNewTitle("");
       setShowAdd(false);
-      setOpen(true);
+      openDropdown();
     });
   }
 
   return (
     <div>
       <span className={ADMIN_LABEL}>{copy.title}</span>
-      <div className="mt-1">
+      <div ref={rootRef} className="relative mt-1">
         <button
+          ref={triggerRef}
           type="button"
           disabled={disabled || isPending}
           aria-expanded={open}
           aria-controls={listId}
-          onClick={() => setOpen((value) => !value)}
-          className={`${ADMIN_INPUT} flex items-center justify-between gap-2 text-left disabled:opacity-50`}
+          onClick={() => {
+            if (open) {
+              closeDropdown();
+              return;
+            }
+            openDropdown();
+          }}
+          className={`flex h-11 w-full items-center justify-between gap-3 rounded-[15px] border bg-white px-3 text-left transition-colors outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:cursor-not-allowed disabled:opacity-50 ${
+            open ? "border-brand-red" : "border-gray-200"
+          }`}
         >
           <span
-            className={`min-w-0 flex-1 truncate ${
+            className={`min-w-0 flex-1 truncate text-sm ${
               selectedTitles.length === 0 ? "text-gray-400" : "text-gray-900"
             }`}
           >
             {triggerLabel}
           </span>
           <ChevronDown
-            className={`h-4 w-4 shrink-0 text-gray-400 transition-transform ${
+            className={`h-4 w-4 shrink-0 text-gray-500 transition-transform duration-150 ${
               open ? "rotate-180" : ""
             }`}
             aria-hidden
           />
         </button>
 
-        {open ? (
-          <div
-            id={listId}
-            className="mt-1 max-h-40 space-y-2 overflow-y-auto rounded-xl border border-gray-200 px-3 py-2"
-          >
-            {categories.length === 0 ? (
-              <p className="text-sm text-gray-500">{copy.empty}</p>
-            ) : (
-              categories.map((category) => (
-                <label
-                  key={category.id}
-                  className="flex items-center gap-2 text-sm text-gray-800"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(category.id)}
-                    disabled={disabled || isPending}
-                    onChange={() => toggleCategory(category.id)}
-                    className="h-4 w-4 rounded border-gray-300"
-                  />
-                  <span>{category.title}</span>
-                </label>
-              ))
-            )}
-          </div>
-        ) : null}
+        {canPortal && panelVisible && menuPosition
+          ? createPortal(
+              <div
+                ref={panelRef}
+                id={listId}
+                className={`${DROPDOWN_PANEL_PORTAL_CLASS} max-h-40 space-y-2 px-3 py-2 ${dropdownPanelStateClass(panelExpanded)}`}
+                style={dropdownPortalStyle(menuPosition)}
+              >
+                {categories.length === 0 ? (
+                  <p className="text-sm text-gray-500">{copy.empty}</p>
+                ) : (
+                  categories.map((category) => (
+                    <label
+                      key={category.id}
+                      className="flex items-center gap-2 px-1 py-1 text-sm text-gray-800"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(category.id)}
+                        disabled={disabled || isPending}
+                        onChange={() => toggleCategory(category.id)}
+                        className="h-4 w-4 rounded border-gray-300 accent-brand-yellow text-brand-yellow focus:ring-brand-yellow"
+                      />
+                      <span>{category.title}</span>
+                    </label>
+                  ))
+                )}
+              </div>,
+              getDropdownPortalRoot(),
+            )
+          : null}
       </div>
 
       <div className="mt-2">
@@ -144,7 +248,7 @@ export function ProductDrawerCategories({
           type="button"
           disabled={disabled || isPending}
           onClick={() => setShowAdd((value) => !value)}
-          className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+          className={ADMIN_BTN_DASHED_CLASS}
         >
           {copy.addCategory}
         </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Percent } from "lucide-react";
 
@@ -34,11 +34,18 @@ export function GlobalDiscountCard({
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Tracks the `initialPercent` prop value last synced into local state.
+  const [syncedInitialPercent, setSyncedInitialPercent] =
+    useState(initialPercent);
 
-  useEffect(() => {
+  // Adjust state during render when the prop changes (React "adjusting
+  // state on prop change" pattern) instead of a synchronous setState inside
+  // an effect.
+  if (initialPercent !== syncedInitialPercent) {
+    setSyncedInitialPercent(initialPercent);
     setValue(initialPercent != null ? String(initialPercent) : "");
     setSaved(initialPercent);
-  }, [initialPercent]);
+  }
 
   function parseInput(): number | null | "invalid" {
     const trimmed = value.trim();

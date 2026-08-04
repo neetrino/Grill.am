@@ -21,6 +21,7 @@ import {
   formatCouponOffer,
   formatCouponSavings,
 } from "@/features/promotions/domain/format-coupon-offer";
+import { PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS } from "@/features/profile/ui/profile-ui";
 
 export type CustomerPromoCodesLabels = {
   title: string;
@@ -50,7 +51,7 @@ export function CustomerPromoCodesView({
   return (
     <section className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
           {labels.title}
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
@@ -58,7 +59,7 @@ export function CustomerPromoCodesView({
         </p>
       </header>
 
-      <Card className={ADMIN_TABLE_CARD}>
+      <Card className={`${ADMIN_TABLE_CARD} !rounded-[15px] shadow-none ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
         <div className={ADMIN_TABLE_OUTER_SCROLL}>
           <table className={ADMIN_TABLE}>
             <thead className={ADMIN_TABLE_THEAD}>

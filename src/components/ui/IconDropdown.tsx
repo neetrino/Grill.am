@@ -1,6 +1,25 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { createPortal } from "react-dom";
+
+import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
+
+import {
+  DROPDOWN_ANIMATION_MS,
+  DROPDOWN_PANEL_CLASS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
+  dropdownPanelStateClass,
+  dropdownPortalStyle,
+} from "@/components/ui/dropdown-styles";
+import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 
 type IconDropdownProps = {
   label: string;
@@ -9,7 +28,16 @@ type IconDropdownProps = {
   triggerClassName?: string;
   /** Where the menu opens relative to the trigger. Default: below. */
   menuPlacement?: "bottom" | "top";
+  /** Horizontal alignment of the panel under the trigger. Default: right. */
+  menuAlign?: "left" | "right";
 };
+
+/** Bridges the gap between trigger and panel so hover does not flicker. */
+const HOVER_CLOSE_DELAY_MS = 120;
+
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
 
 export function IconDropdown({
   label,
@@ -17,10 +45,81 @@ export function IconDropdown({
   children,
   triggerClassName,
   menuPlacement = "bottom",
+  menuAlign = "right",
 }: IconDropdownProps) {
+  const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const unmountTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
+  const menuPosition = useDropdownPortalPosition(mounted, triggerRef, {
+    matchTriggerWidth: false,
+    align: menuAlign,
+    placement: menuPlacement,
+  });
+
+  const clearCloseTimer = useCallback((): void => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const clearUnmountTimer = useCallback((): void => {
+    if (unmountTimerRef.current) {
+      clearTimeout(unmountTimerRef.current);
+      unmountTimerRef.current = null;
+    }
+  }, []);
+
+  const openMenu = useCallback((): void => {
+    clearCloseTimer();
+    clearUnmountTimer();
+    setOpen(true);
+    setMounted(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setVisible(true));
+    });
+  }, [clearCloseTimer, clearUnmountTimer]);
+
+  const closeMenu = useCallback((): void => {
+    clearCloseTimer();
+    clearUnmountTimer();
+    setOpen(false);
+    setVisible(false);
+    unmountTimerRef.current = setTimeout(() => {
+      setMounted(false);
+      unmountTimerRef.current = null;
+    }, DROPDOWN_ANIMATION_MS);
+  }, [clearCloseTimer, clearUnmountTimer]);
+
+  const scheduleClose = useCallback((): void => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => {
+      closeTimerRef.current = null;
+      closeMenu();
+    }, HOVER_CLOSE_DELAY_MS);
+  }, [clearCloseTimer, closeMenu]);
+
+  function toggleMenu(): void {
+    if (open) {
+      closeMenu();
+      return;
+    }
+    openMenu();
+  }
+
+  useEffect(() => {
+    return () => {
+      clearCloseTimer();
+      clearUnmountTimer();
+    };
+  }, [clearCloseTimer, clearUnmountTimer]);
 
   useEffect(() => {
     if (!open) {
@@ -28,29 +127,88 @@ export function IconDropdown({
     }
 
     function handlePointerDown(event: MouseEvent): void {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target) ||
+        panelRef.current?.contains(target)
+      ) {
+        return;
       }
+      closeMenu();
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        setOpen(false);
+      if (event.key !== "Escape") {
+        return;
       }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeMenu();
     }
 
     document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, true);
 
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
     };
-  }, [open]);
+  }, [open, closeMenu]);
+
+  const panel =
+    canPortal && mounted && menuPosition
+      ? createPortal(
+          <div
+            ref={panelRef}
+            id={menuId}
+            role="menu"
+            aria-label={label}
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} min-w-40 overflow-hidden ${dropdownPanelStateClass(visible)}`}
+            style={dropdownPortalStyle(menuPosition)}
+            onMouseEnter={openMenu}
+            onMouseLeave={scheduleClose}
+          >
+            <div
+              onClick={(event) => {
+                const target = event.target;
+                if (
+                  target instanceof Element &&
+                  target.closest("form, button[type='submit']")
+                ) {
+                  return;
+                }
+                closeMenu();
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") {
+                  return;
+                }
+                const target = event.target;
+                if (
+                  target instanceof Element &&
+                  target.closest("form, button[type='submit']")
+                ) {
+                  return;
+                }
+                closeMenu();
+              }}
+            >
+              {children}
+            </div>
+          </div>,
+          getDropdownPortalRoot(),
+        )
+      : null;
 
   return (
-    <div ref={rootRef} className={open ? "relative z-50" : "relative"}>
+    <div
+      ref={rootRef}
+      className="relative inline-flex items-center"
+      onMouseEnter={openMenu}
+      onMouseLeave={scheduleClose}
+    >
       <button
+        ref={triggerRef}
         type="button"
         className={
           triggerClassName ??
@@ -60,53 +218,16 @@ export function IconDropdown({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
-        onClick={() => setOpen((value) => !value)}
+        onClick={toggleMenu}
+        onFocus={openMenu}
       >
         {trigger}
       </button>
 
-      {open ? (
-        <div
-          id={menuId}
-          role="menu"
-          aria-label={label}
-          className={
-            menuPlacement === "top"
-              ? "absolute right-0 bottom-full z-[100] mb-2 min-w-40 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-2xl"
-              : "absolute top-full right-0 z-[100] mt-2 min-w-40 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-2xl"
-          }
-        >
-          <div
-            onClick={(event) => {
-              // Closing unmounts menu children. Form submits (e.g. logout)
-              // must finish first; the following redirect navigates away.
-              const target = event.target;
-              if (
-                target instanceof Element &&
-                target.closest("form, button[type='submit']")
-              ) {
-                return;
-              }
-              setOpen(false);
-            }}
-            onKeyDown={(event) => {
-              if (event.key !== "Enter" && event.key !== " ") {
-                return;
-              }
-              const target = event.target;
-              if (
-                target instanceof Element &&
-                target.closest("form, button[type='submit']")
-              ) {
-                return;
-              }
-              setOpen(false);
-            }}
-          >
-            {children}
-          </div>
-        </div>
-      ) : null}
+      {panel}
     </div>
   );
 }
+
+/** Re-export panel class for menus that compose custom children. */
+export { DROPDOWN_PANEL_CLASS };

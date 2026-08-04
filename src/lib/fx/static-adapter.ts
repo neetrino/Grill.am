@@ -1,6 +1,5 @@
 import { DEFAULT_RATES_FROM_AMD, type RatesFromAmd } from "@/lib/fx/default-rates";
 import type { ExchangeRateAdapter, ExchangeRateQuote } from "@/lib/fx/types";
-import type { Currency } from "@/lib/money/currency";
 
 export type StaticExchangeRateAdapterOptions = {
   /** Loads admin-maintained rates; defaults used when omitted. */

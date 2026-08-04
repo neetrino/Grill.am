@@ -6,6 +6,7 @@ import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status";
 import { CustomerOrdersFilters } from "@/features/orders/ui/CustomerOrdersFilters";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
+import { PROFILE_SECTION_TITLE_CLASS } from "@/features/profile/ui/profile-ui";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -76,33 +77,43 @@ export default async function OrdersPage({
 
   const { rows, total, pageSize } = await listCustomerOrders(user.id, filters);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const profileCopy = dictionary.profile;
 
   return (
     <section className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-        {dictionary.profile.orders}
+      <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl`}>
+        {profileCopy.orders}
       </h1>
 
-      <CustomerOrdersFilters
-        total={total}
-        status={filters.status}
-        paymentStatus={filters.paymentStatus}
-        q={filters.q}
-      />
+      <div className="hidden lg:block">
+        <CustomerOrdersFilters
+          total={total}
+          status={filters.status}
+          paymentStatus={filters.paymentStatus}
+          q={filters.q}
+        />
+      </div>
 
       <CustomerOrdersView
         locale={locale}
         orders={rows}
         dictionary={dictionary.admin}
         profileCopy={{
-          reorder: dictionary.profile.reorder,
-          reordering: dictionary.profile.reordering,
-          reorderUnavailable: dictionary.profile.reorderUnavailable,
+          reorder: profileCopy.reorder,
+          reordering: profileCopy.reordering,
+          reorderUnavailable: profileCopy.reorderUnavailable,
+          orderNumber: profileCopy.orderNumber,
+          item: profileCopy.item,
+          items: profileCopy.items,
+          placedOn: profileCopy.placedOn,
+          viewDetails: profileCopy.viewDetails,
+          noOrders: profileCopy.noOrders,
+          startShopping: profileCopy.startShopping,
         }}
       />
 
       {totalPages > 1 ? (
-        <nav className="flex items-center gap-3 text-sm text-gray-700">
+        <nav className="flex items-center justify-center gap-3 text-sm text-gray-700 lg:justify-start">
           {filters.page > 1 ? (
             <Link
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page - 1)}`}

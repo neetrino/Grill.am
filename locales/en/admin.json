@@ -18,7 +18,8 @@
     "openMenu": "Menu",
     "expandSidebar": "Expand sidebar",
     "collapseSidebar": "Collapse sidebar",
-    "storeHome": "White Shop home",
+    "brandName": "Grill.am",
+    "storeHome": "Grill.am home",
     "closeMenu": "Close admin menu",
     "toggleProductSubpages": "Toggle product subpages"
   },
@@ -46,6 +47,8 @@
     "uploading": "Uploading…",
     "updating": "Updating…",
     "deleting": "Deleting…",
+    "confirmDeleteTitle": "Confirm delete",
+    "confirmDelete": "Are you sure you want to delete this? This cannot be undone.",
     "selectedCount": "Selected {count}",
     "deleteSelected": "Delete Selected",
     "noResults": "No results.",
@@ -73,7 +76,8 @@
     "dash": "—"
   },
   "dashboard": {
-    "welcome": "Welcome to the admin dashboard",
+    "welcomeLead": "Welcome to the",
+    "welcomeAccent": "admin dashboard",
     "users": "Users",
     "activeProducts": "Active products",
     "ordersRange": "Orders (range)",
@@ -105,6 +109,7 @@
     "editNamed": "Edit {title}",
     "duplicateNamed": "Duplicate {title}",
     "deleteNamed": "Delete {title}",
+    "confirmDelete": "Delete this product? This cannot be undone from the admin list.",
     "feature": "Feature product",
     "unfeature": "Unfeature product",
     "activate": "Activate product",
@@ -153,7 +158,8 @@
     },
     "bulk": {
       "selectedCount": "Selected {count} product(s)",
-      "deleteSelected": "Delete Selected"
+      "deleteSelected": "Delete Selected",
+      "confirmDelete": "Delete {count} selected product(s)? This cannot be undone from the admin list."
     },
     "form": {
       "title": "Title",
@@ -238,6 +244,7 @@
       "selectedCount": "Selected {count} order(s)",
       "deleteSelected": "Delete selected",
       "deleting": "Deleting…",
+      "confirmDelete": "Archive {count} selected order(s)?",
       "selectAtLeastOne": "Select at least one order.",
       "deletedResult": "Deleted {deleted}, skipped {skipped}."
     },
@@ -345,7 +352,8 @@
     },
     "bulk": {
       "selectedCount": "Selected {count} user(s)",
-      "deleteSelected": "Delete Selected"
+      "deleteSelected": "Delete Selected",
+      "confirmDelete": "Anonymize {count} selected user(s)? This cannot be undone."
     },
     "detail": {
       "role": "Role",
@@ -415,6 +423,7 @@
     "reorderNamed": "Reorder {title}",
     "editNamed": "Edit {title}",
     "deleteNamed": "Delete {title}",
+    "confirmDelete": "Delete this category? This cannot be undone.",
     "table": {
       "categoryTitle": "Category Title",
       "category": "Category"
@@ -537,6 +546,7 @@
     "editNamed": "Edit {code}",
     "duplicateNamed": "Duplicate {code}",
     "deleteNamed": "Delete {code}",
+    "confirmDelete": "Delete promo code {code}? This cannot be undone.",
     "drawer": {
       "newTitle": "New coupon",
       "editTitle": "Edit coupon",
@@ -596,6 +606,7 @@
     "draft": "DRAFT",
     "editNamed": "Edit {title}",
     "deleteNamed": "Delete {title}",
+    "confirmDelete": "Delete hero slide “{title}”? This cannot be undone.",
     "publish": "Publish slide",
     "unpublish": "Unpublish slide",
     "modal": {
@@ -620,6 +631,7 @@
     "inactive": "INACTIVE",
     "edit": "Edit popup",
     "deleteNamed": "Delete popup {id}",
+    "confirmDelete": "Delete this popup? This cannot be undone.",
     "activate": "Activate popup",
     "deactivate": "Deactivate popup",
     "limitReached": "Maximum of {max} popups reached. Delete one to create another.",

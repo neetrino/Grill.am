@@ -5,6 +5,11 @@ import { useSearchParams } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { loginAction, type AuthActionState } from "@/features/auth/login-action";
+import {
+  AUTH_BTN_PRIMARY_CLASS,
+  AUTH_FIELD_CLASS,
+  AUTH_LINK_CLASS,
+} from "@/features/auth/ui/auth-ui";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -16,9 +21,6 @@ type LoginFormProps = {
   dictionary: Dictionary["auth"];
 };
 
-const fieldClassName =
-  "h-10 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
-
 export function LoginForm({ locale, dictionary }: LoginFormProps) {
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next");
@@ -27,13 +29,13 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialState);
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} className="flex flex-col gap-5">
       {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
 
       {resetSucceeded ? (
         <p
           role="status"
-          className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700"
+          className="rounded-[15px] border border-green-200 bg-green-50 p-3 text-sm text-green-700"
         >
           {dictionary.resetPasswordSuccess}
         </p>
@@ -46,7 +48,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
           name="email"
           type="email"
           autoComplete="email"
-          className={fieldClassName}
+          className={AUTH_FIELD_CLASS}
         />
       </label>
       <PasswordField
@@ -60,7 +62,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         <AppLink
           href={`/${locale}/forgot-password`}
           prefetchPolicy="intent"
-          className="text-sm font-medium text-gray-700 underline-offset-2 hover:text-gray-900 hover:underline"
+          className={`text-sm ${AUTH_LINK_CLASS}`}
         >
           {dictionary.forgotPassword}
         </AppLink>
@@ -68,22 +70,19 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
       {state.error ? (
         <p
           role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600"
+          className="rounded-[15px] border border-red-200 bg-red-50 p-3 text-sm text-red-600"
         >
           {state.error}
         </p>
       ) : null}
-      <button
-        disabled={isPending}
-        className="h-10 rounded-lg bg-gray-900 px-4 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-60"
-      >
+      <button type="submit" disabled={isPending} className={AUTH_BTN_PRIMARY_CLASS}>
         {isPending ? "…" : dictionary.submitLogin}
       </button>
       <p className="text-center text-sm text-gray-600">
         <AppLink
           href={`/${locale}/register`}
           prefetchPolicy="intent"
-          className="font-medium text-gray-900 underline-offset-2 hover:underline"
+          className={AUTH_LINK_CLASS}
         >
           {dictionary.submitRegister}
         </AppLink>

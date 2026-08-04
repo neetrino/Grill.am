@@ -12,7 +12,7 @@ import {
   products,
 } from "@/db/schema";
 import { resolveCategorySubtreeIds } from "@/features/categories/application/resolve-category-subtree-ids";
-import { parseProductCustomization } from "@/features/products/domain/customization";
+import { parseProductCustomization, productRequiresConfiguration } from "@/features/products/domain/customization";
 import { resolveProductTranslation } from "@/features/products/domain/resolve-translation";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type {
@@ -67,6 +67,9 @@ function toCatalogProduct(
     translation,
     imageUrl,
     categoryTitle: null,
+    requiresConfiguration: productRequiresConfiguration(
+      parseProductCustomization(product.customization),
+    ),
   };
 }
 
@@ -525,6 +528,7 @@ async function loadProductDetailBySlug(
     images: gallery,
     categories: productCats,
     customization: parseProductCustomization(row.customization),
+    isFeatured: row.isFeatured,
   };
 }
 

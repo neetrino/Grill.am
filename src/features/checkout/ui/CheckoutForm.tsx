@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 
-import { Card } from "@/components/ui/Card";
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
 import { createOrderAction } from "@/features/checkout/create-order";
@@ -17,13 +16,25 @@ import { CheckoutCodCashChange } from "@/features/checkout/ui/CheckoutCodCashCha
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
+import {
+  CHECKOUT_ALERT_CLASS,
+  CHECKOUT_PRIMARY_BUTTON_CLASS,
+  CHECKOUT_SECTION_CARD_CLASS,
+} from "@/features/checkout/ui/checkout-ui";
+import {
+  CHECKOUT_DELIVERY_CITY_PRIMARY,
+  normalizeCheckoutDeliveryCity,
+} from "@/features/checkout/domain/checkout-delivery-cities";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
+import { createId } from "@/lib/id";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type CheckoutLabels = {
   title: string;
+  titleLead: string;
+  titleAccent: string;
   productsInOrder: string;
   itemsOne: string;
   itemsMany: string;
@@ -74,6 +85,7 @@ type CheckoutLabels = {
   placeOrder: string;
   processing: string;
   continueShopping: string;
+  goToShop: string;
   cartEmpty: string;
   minimumOrder: string;
 };
@@ -124,8 +136,17 @@ export function CheckoutForm({
   hasItems,
 }: CheckoutFormProps) {
   const router = useRouter();
-  const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
-  const defaultRuleId = deliveryOptions[0]?.id ?? "";
+  const idempotencyKey = useMemo(() => createId(), []);
+  const primaryCityKey = normalizeCheckoutDeliveryCity(
+    CHECKOUT_DELIVERY_CITY_PRIMARY,
+  );
+  const defaultRuleId =
+    deliveryOptions.find(
+      (option) =>
+        normalizeCheckoutDeliveryCity(option.city) === primaryCityKey,
+    )?.id ??
+    deliveryOptions[0]?.id ??
+    "";
   const [shippingMethod, setShippingMethod] = useState<"pickup" | "delivery">(
     deliveryOptions.length > 0 ? "delivery" : "pickup",
   );
@@ -154,19 +175,16 @@ export function CheckoutForm({
         id: "cash_on_delivery" as const,
         name: labels.cashOnDelivery,
         description: labels.cashOnDeliveryDescription,
-        logoSrc: null,
       },
       {
         id: "idram" as const,
         name: labels.idram,
         description: labels.idramDescription,
-        logoSrc: "/assets/payments/idram.svg",
       },
       {
         id: "arca" as const,
         name: labels.arca,
         description: labels.arcaDescription,
-        logoSrc: "/assets/payments/arca.svg",
       },
     ],
     [
@@ -253,17 +271,22 @@ export function CheckoutForm({
 
   if (!hasItems) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
-        <Card className="rounded-2xl border border-gray-200/80 p-6 text-center shadow-none">
-          <p className="mb-4 text-gray-600">{labels.cartEmpty}</p>
-          <Link
-            href={productsHref}
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-gray-900 px-4 text-sm font-medium text-white hover:bg-gray-800"
-          >
-            {labels.continueShopping}
-          </Link>
-        </Card>
+      <div className="storefront-bleed bg-[#f1f1f3] lg:bg-white">
+        <div className="mx-auto w-full max-w-[1024px] px-4 pt-6 pb-16 sm:px-6 lg:px-6 lg:pt-8 lg:pb-12">
+          <h1 className="mb-6 text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
+            <span className="text-brand-red">{labels.titleLead}</span>{" "}
+            <span className="text-brand-yellow">{labels.titleAccent}</span>
+          </h1>
+          <div className={`${CHECKOUT_SECTION_CARD_CLASS} text-center`}>
+            <p className="mb-4 text-gray-600">{labels.cartEmpty}</p>
+            <Link
+              href={productsHref}
+              className={`${CHECKOUT_PRIMARY_BUTTON_CLASS} mx-auto max-w-xs`}
+            >
+              {labels.continueShopping}
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -315,83 +338,103 @@ export function CheckoutForm({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
+    <div className="storefront-bleed bg-[#f1f1f3] lg:bg-white">
+      <div className="mx-auto w-full max-w-[1024px] px-4 pt-6 pb-16 sm:px-6 lg:px-6 lg:pt-8 lg:pb-12">
+        <h1 className="mb-6 text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
+          <span className="text-brand-red">{labels.titleLead}</span>{" "}
+          <span className="text-brand-yellow">{labels.titleAccent}</span>
+        </h1>
 
-      <CheckoutProductsInOrder
-        products={orderProducts}
-        title={labels.productsInOrder}
-        itemsOneLabel={labels.itemsOne}
-        itemsManyLabel={labels.itemsMany}
-        removeItemLabel={labels.removeItem}
-        onCartChanged={clearAppliedCoupon}
-      />
+        <CheckoutProductsInOrder
+          products={orderProducts}
+          title={labels.productsInOrder}
+          itemsOneLabel={labels.itemsOne}
+          itemsManyLabel={labels.itemsMany}
+          removeItemLabel={labels.removeItem}
+          onCartChanged={clearAppliedCoupon}
+        />
 
-      <form onSubmit={onSubmit}>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <CheckoutDetailsSections
-            labels={labels}
-            pending={pending}
-            shippingMethod={shippingMethod}
-            onShippingMethodChange={setShippingMethod}
-            deliveryOptions={deliveryOptions}
-            deliveryRuleId={deliveryRuleId}
-            onDeliveryRuleChange={setDeliveryRuleId}
-            paymentMethod={paymentMethod}
-            onPaymentMethodChange={onPaymentMethodChange}
-            paymentOptions={paymentOptions}
-            cashOnDeliveryExtra={
-              <CheckoutCodCashChange
-                title={labels.cashChangeTitle}
-                description={labels.cashChangeDescription}
-                exactLabel={labels.cashChangeExact}
-                changeHintLabel={labels.cashChangeHint}
-                noEligibleLabel={labels.cashChangeNoEligible}
-                orderTotalAmount={totalAmount}
-                formatMoney={formatMoney}
-                value={resolvedCashTendered}
-                onChange={setCashTenderedAmount}
-                disabled={pending}
-              />
-            }
-            defaultFirstName={defaultFirstName}
-            defaultLastName={defaultLastName}
-            defaultEmail={defaultEmail}
-            defaultPhone={defaultPhone}
-            defaultLine1={defaultLine1}
-          />
+        {minimumOrderMessage ? (
+          <div
+            role="alert"
+            className={`mb-6 flex flex-col gap-3 border border-red-200 bg-red-50 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${CHECKOUT_ALERT_CLASS}`}
+          >
+            <p className="text-sm text-red-600">{minimumOrderMessage}</p>
+            <Link
+              href={productsHref}
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-full bg-brand-red px-4 text-sm font-semibold whitespace-nowrap text-white transition hover:bg-brand-red-hot"
+            >
+              {labels.goToShop}
+            </Link>
+          </div>
+        ) : null}
 
-          <CheckoutOrderSummary
-            title={labels.orderSummary}
-            couponTitle={labels.couponTitle}
-            couponPlaceholder={labels.couponPlaceholder}
-            couponApplyLabel={labels.couponApply}
-            couponApplyingLabel={labels.couponApplying}
-            discountLabel={labels.discount}
-            subtotalLabel={labels.subtotal}
-            shippingLabel={labels.shipping}
-            taxLabel={labels.tax}
-            totalLabel={labels.total}
-            subtotalFormatted={formatMoney(subtotalAmount)}
-            shippingFormatted={shippingFormatted}
-            taxFormatted={formatMoney(0)}
-            discountFormatted={
-              discountAmount > 0 ? formatMoney(discountAmount) : null
-            }
-            totalFormatted={formatMoney(totalAmount)}
-            couponDraft={couponDraft}
-            onCouponDraftChange={onCouponDraftChange}
-            onApplyCoupon={onApplyCoupon}
-            couponError={couponError}
-            isApplyingCoupon={applyingCoupon}
-            error={error ?? minimumOrderMessage}
-            isSubmitting={pending}
-            canPlaceOrder={meetsMinimum}
-            placeOrderLabel={labels.placeOrder}
-            processingLabel={labels.processing}
-          />
-        </div>
-      </form>
+        <form onSubmit={onSubmit} suppressHydrationWarning>
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <CheckoutDetailsSections
+              labels={labels}
+              pending={pending}
+              shippingMethod={shippingMethod}
+              onShippingMethodChange={setShippingMethod}
+              deliveryOptions={deliveryOptions}
+              deliveryRuleId={deliveryRuleId}
+              onDeliveryRuleChange={setDeliveryRuleId}
+              paymentMethod={paymentMethod}
+              onPaymentMethodChange={onPaymentMethodChange}
+              paymentOptions={paymentOptions}
+              cashOnDeliveryExtra={
+                <CheckoutCodCashChange
+                  title={labels.cashChangeTitle}
+                  description={labels.cashChangeDescription}
+                  exactLabel={labels.cashChangeExact}
+                  changeHintLabel={labels.cashChangeHint}
+                  noEligibleLabel={labels.cashChangeNoEligible}
+                  orderTotalAmount={totalAmount}
+                  formatMoney={formatMoney}
+                  value={resolvedCashTendered}
+                  onChange={setCashTenderedAmount}
+                  disabled={pending}
+                />
+              }
+              defaultFirstName={defaultFirstName}
+              defaultLastName={defaultLastName}
+              defaultEmail={defaultEmail}
+              defaultPhone={defaultPhone}
+              defaultLine1={defaultLine1}
+            />
+
+            <CheckoutOrderSummary
+              title={labels.orderSummary}
+              couponTitle={labels.couponTitle}
+              couponPlaceholder={labels.couponPlaceholder}
+              couponApplyLabel={labels.couponApply}
+              couponApplyingLabel={labels.couponApplying}
+              discountLabel={labels.discount}
+              subtotalLabel={labels.subtotal}
+              shippingLabel={labels.shipping}
+              taxLabel={labels.tax}
+              totalLabel={labels.total}
+              subtotalFormatted={formatMoney(subtotalAmount)}
+              shippingFormatted={shippingFormatted}
+              taxFormatted={null}
+              discountFormatted={
+                discountAmount > 0 ? formatMoney(discountAmount) : null
+              }
+              totalFormatted={formatMoney(totalAmount)}
+              couponDraft={couponDraft}
+              onCouponDraftChange={onCouponDraftChange}
+              onApplyCoupon={onApplyCoupon}
+              couponError={couponError}
+              isApplyingCoupon={applyingCoupon}
+              error={error}
+              isSubmitting={pending}
+              canPlaceOrder={meetsMinimum}
+              placeOrderLabel={labels.placeOrder}
+              processingLabel={labels.processing}
+            />
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

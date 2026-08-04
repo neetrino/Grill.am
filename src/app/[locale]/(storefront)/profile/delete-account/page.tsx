@@ -36,6 +36,8 @@ export default async function DeleteAccountPage({
           acknowledge: copy.acknowledge,
           submit: copy.submit,
           deleting: copy.deleting,
+          cancel: dictionary.profile.cancel,
+          confirmTitle: dictionary.dialogs.confirmDeleteTitle,
         }}
       />
     </section>

@@ -20,6 +20,7 @@ export {
   listCustomerOrders,
   type AdminOrderDetail,
   type AdminOrderListItem,
+  type CustomerOrderListItem,
   type DashboardMetrics,
 } from "@/features/orders/application/queries";
 export {

@@ -1,7 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import {
+  CHECKOUT_ALERT_CLASS,
+  CHECKOUT_ORDER_SUMMARY_WRAP_CLASS,
+  CHECKOUT_PRIMARY_BUTTON_CLASS,
+  CHECKOUT_SECTION_CARD_CLASS,
+  CHECKOUT_SECTION_TITLE_CLASS,
+} from "@/features/checkout/ui/checkout-ui";
 
 type CheckoutOrderSummaryProps = {
   title: string;
@@ -16,7 +21,7 @@ type CheckoutOrderSummaryProps = {
   totalLabel: string;
   subtotalFormatted: string;
   shippingFormatted: string;
-  taxFormatted: string;
+  taxFormatted: string | null;
   discountFormatted: string | null;
   totalFormatted: string;
   couponDraft: string;
@@ -59,13 +64,31 @@ export function CheckoutOrderSummary({
   processingLabel,
 }: CheckoutOrderSummaryProps) {
   return (
-    <div>
-      <Card className="sticky top-4 rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">{title}</h2>
+    <div className={CHECKOUT_ORDER_SUMMARY_WRAP_CLASS}>
+      <section
+        className={CHECKOUT_SECTION_CARD_CLASS}
+        aria-labelledby="checkout-order-summary-heading"
+      >
+        <h2
+          id="checkout-order-summary-heading"
+          className={CHECKOUT_SECTION_TITLE_CLASS}
+        >
+          {title}
+        </h2>
 
-        <div className="mb-6 rounded-xl border border-gray-200 p-4">
-          <p className="mb-3 text-sm text-gray-700">{couponTitle}</p>
-          <div className="flex gap-2">
+        <div className="mt-5 rounded-[15px] border border-gray-200 p-4">
+          <div className="mb-3 flex items-center justify-between gap-3 sm:mb-0 sm:block">
+            <p className="text-sm text-gray-700 sm:mb-3">{couponTitle}</p>
+            <button
+              type="button"
+              disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
+              onClick={onApplyCoupon}
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white px-3 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:hidden"
+            >
+              {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
             <input
               type="text"
               name="couponCodeDraft"
@@ -80,18 +103,21 @@ export function CheckoutOrderSummary({
               placeholder={couponPlaceholder}
               autoComplete="off"
               disabled={isSubmitting || isApplyingCoupon}
-              className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              size={Math.max(couponPlaceholder.length, 8)}
+              className="h-11 max-w-full max-sm:!w-full rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50"
+              style={{
+                width: `calc(${Math.max(couponPlaceholder.length, 8)}ch + 1.5rem)`,
+              }}
+              suppressHydrationWarning
             />
-            <Button
+            <button
               type="button"
-              variant="secondary"
-              size="md"
-              className="h-11 shrink-0 rounded-lg px-4 text-sm"
               disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
               onClick={onApplyCoupon}
+              className="hidden h-11 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white px-4 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:inline-flex"
             >
               {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
-            </Button>
+            </button>
           </div>
           {couponError ? (
             <p className="mt-2 text-sm text-red-600" role="alert">
@@ -100,49 +126,56 @@ export function CheckoutOrderSummary({
           ) : null}
         </div>
 
-        <div className="mb-6 space-y-4">
-          <div className="flex justify-between text-gray-600">
+        <div className="mt-5 space-y-3 text-sm text-gray-600">
+          <div className="flex justify-between gap-3">
             <span>{subtotalLabel}</span>
-            <span>{subtotalFormatted}</span>
+            <span className="font-medium text-gray-900">{subtotalFormatted}</span>
           </div>
           {discountFormatted ? (
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between gap-3">
               <span>{discountLabel}</span>
-              <span className="text-emerald-700">-{discountFormatted}</span>
+              <span className="font-medium text-emerald-700">
+                -{discountFormatted}
+              </span>
             </div>
           ) : null}
-          <div className="flex justify-between text-gray-600">
+          <div className="flex justify-between gap-3">
             <span>{shippingLabel}</span>
-            <span className="text-right">{shippingFormatted}</span>
+            <span className="text-right font-medium text-gray-900">
+              {shippingFormatted}
+            </span>
           </div>
-          <div className="flex justify-between text-gray-600">
-            <span>{taxLabel}</span>
-            <span>{taxFormatted}</span>
-          </div>
-          <div className="border-t border-gray-200 pt-4">
-            <div className="flex justify-between text-lg font-bold text-gray-900">
-              <span>{totalLabel}</span>
-              <span>{totalFormatted}</span>
+          {taxFormatted ? (
+            <div className="flex justify-between gap-3">
+              <span>{taxLabel}</span>
+              <span className="font-medium text-gray-900">{taxFormatted}</span>
             </div>
+          ) : null}
+        </div>
+
+        <div className="mt-4 border-t border-dashed border-gray-300 pt-4">
+          <div className="flex justify-between gap-3 text-base font-bold text-gray-900 sm:text-lg">
+            <span>{totalLabel}</span>
+            <span>{totalFormatted}</span>
           </div>
         </div>
 
         {error ? (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
+          <div
+            className={`mt-4 border border-red-200 bg-red-50 p-3 ${CHECKOUT_ALERT_CLASS}`}
+          >
             <p className="text-sm text-red-600">{error}</p>
           </div>
         ) : null}
 
-        <Button
+        <button
           type="submit"
-          variant="primary"
-          size="lg"
-          className="h-12 w-full"
+          className={`${CHECKOUT_PRIMARY_BUTTON_CLASS} mt-6`}
           disabled={isSubmitting || !canPlaceOrder}
         >
           {isSubmitting ? processingLabel : placeOrderLabel}
-        </Button>
-      </Card>
+        </button>
+      </section>
     </div>
   );
 }

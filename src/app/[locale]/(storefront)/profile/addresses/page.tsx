@@ -30,6 +30,7 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
         addNew: copy.addNew,
         defaultBadge: copy.defaultBadge,
         setDefault: copy.setDefault,
+        setDefaultConfirm: copy.setDefaultConfirm,
         edit: copy.edit,
         delete: copy.delete,
         deleteConfirm: copy.deleteConfirm,

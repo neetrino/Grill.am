@@ -1,0 +1,52 @@
+.indicator {
+  transition-property: left, top, width, height;
+  transition-duration: var(--bottom-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.indicatorInstant {
+  transition-duration: 0ms;
+}
+
+.tab {
+  transition-property: width, color, background-color;
+  transition-duration: var(--bottom-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tabLabel {
+  max-width: 4.5rem;
+  overflow: hidden;
+  opacity: 1;
+  transition-property: opacity, max-width, padding;
+  transition-duration: var(--bottom-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 390px) {
+  .tabLabel {
+    max-width: 5.5rem;
+  }
+}
+
+.tabLabelHidden {
+  max-width: 0;
+  opacity: 0;
+  padding-right: 0;
+  pointer-events: none;
+}
+
+.tabIcon {
+  transition-property: width, height;
+  transition-duration: var(--bottom-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator,
+  .tab,
+  .tabLabel,
+  .tabIcon {
+    transition: none;
+  }
+}

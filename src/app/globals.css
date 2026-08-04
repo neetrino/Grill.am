@@ -1,12 +1,69 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f9fafb;
-  --foreground: #111827;
-  --muted: #4b5563;
-  --border: #e5e7eb;
-  --accent: #111827;
-  --accent-foreground: #f9fafb;
+  --background: #ffffff;
+  --foreground: #171717;
+  --muted: #5f5f5f;
+  --border: rgba(0, 0, 0, 0.07);
+  --accent: #db0b20;
+  --accent-foreground: #ffffff;
+  --brand-red: #db0b20;
+  --brand-red-hot: #f52516;
+  --brand-yellow: #ffc12c;
+  --brand-yellow-soft: #ffd163;
+  --brand-cream: #f4ead3;
+  --brand-ink: #071014;
+  --brand-surface: #f4f4f4;
+  /* Expanded sticky header; JS updates as primary nav collapses on scroll. */
+  --storefront-header-offset: 9.5rem;
+  /* Desktop canvas width; scaled to 100vw via DesktopFluidFrame. */
+  --desktop-layout-design-width: 1440px;
+  /* 1 below lg; overwritten when the fluid frame zoom is active. */
+  --desktop-layout-scale: 1;
+}
+
+/* ─── Desktop fluid frame (proportional 100vw scale) ─── */
+@media (min-width: 1024px) {
+  :root {
+    --desktop-layout-scale: calc(100vw / var(--desktop-layout-design-width));
+  }
+
+  .desktop-fluid-frame {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    overflow-x: clip;
+  }
+
+  .desktop-fluid-frame--allow-overflow,
+  .desktop-fluid-frame--allow-overflow .desktop-fluid-stage {
+    overflow: visible;
+  }
+
+  .desktop-fluid-stage {
+    width: var(--desktop-layout-design-width);
+    flex-shrink: 0;
+    zoom: var(--desktop-layout-scale);
+  }
+}
+
+/*
+ * Escape padded/max-width main to the viewport (mobile) or fluid stage (desktop).
+ * Prefer this over raw `w-screen` / `100vw` inside DesktopFluidFrame.
+ */
+.storefront-bleed {
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+@media (min-width: 1024px) {
+  .storefront-bleed {
+    width: var(--desktop-layout-design-width);
+    max-width: var(--desktop-layout-design-width);
+    margin-left: calc(50% - (var(--desktop-layout-design-width) / 2));
+  }
 }
 
 @theme inline {
@@ -16,12 +73,494 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-brand-red: var(--brand-red);
+  --color-brand-red-hot: var(--brand-red-hot);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-yellow-soft: var(--brand-yellow-soft);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-surface: var(--brand-surface);
+  --font-sans: var(--font-montserrat);
+  --font-display: var(--font-display);
+  --font-mirage: var(--font-mirage-bold);
   --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scrollbar-gutter: stable;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, sans-serif;
+  font-family: var(--font-montserrat), ui-sans-serif, sans-serif;
+}
+
+/* Photos: no drag / blue selection highlight; surrounding text stays copyable. */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* ─── Global dropdown lists (checkout city picker style) ─── */
+:root {
+  --dropdown-radius: 15px;
+  --dropdown-gap: 6px;
+  --dropdown-max-height: 220px;
+  --dropdown-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --dropdown-anim-ms: 150ms;
+  --dropdown-border: #f3f4f6;
+  --dropdown-option-hover: #f9fafb;
+}
+
+.dropdown-panel {
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--dropdown-radius);
+  background: #ffffff;
+  box-shadow: var(--dropdown-shadow);
+  transform-origin: top center;
+  transition:
+    opacity var(--dropdown-anim-ms) ease-out,
+    transform var(--dropdown-anim-ms) ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-panel {
+    transition: none;
+  }
+}
+
+.dropdown-panel--anchored {
+  position: absolute;
+  top: calc(100% + var(--dropdown-gap));
+  left: 0;
+  z-index: 50;
+  width: max-content;
+  min-width: 100%;
+  max-height: var(--dropdown-max-height);
+}
+
+.dropdown-panel--portal {
+  position: fixed;
+  top: var(--dropdown-top, auto);
+  bottom: var(--dropdown-bottom, auto);
+  left: var(--dropdown-left, auto);
+  right: var(--dropdown-right, auto);
+  z-index: 400;
+  width: max-content;
+  min-width: var(--dropdown-min-width, auto);
+  max-width: var(--dropdown-max-width, none);
+  max-height: var(--dropdown-max-height);
+}
+
+.dropdown-option {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #1f2937;
+  white-space: nowrap;
+  transition: background-color var(--dropdown-anim-ms) ease-out;
+}
+
+.dropdown-option:hover {
+  background: var(--dropdown-option-hover);
+}
+
+.dropdown-option--selected {
+  background: var(--dropdown-option-hover);
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Native <select> + select-like triggers — checkout city picker look.
+   !important beats leftover utility classes (e.g. old admin rounded-md). */
+select:not([data-dropdown-unstyled]),
+.dropdown-native {
+  height: 2.75rem;
+  width: 100%;
+  border-radius: var(--dropdown-radius) !important;
+  border: 1px solid #e5e7eb !important;
+  background-color: #ffffff !important;
+  padding: 0 0.75rem !important;
+  color: #111827;
+  outline: none !important;
+  box-shadow: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+select:not([data-dropdown-unstyled]):focus,
+.dropdown-native:focus {
+  border-color: color-mix(in srgb, var(--brand-red) 40%, transparent) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-red) 15%, transparent) !important;
+}
+
+select:not([data-dropdown-unstyled]):disabled,
+.dropdown-native:disabled {
+  background-color: #f9fafb !important;
+}
+
+/*
+ * iOS Safari auto-zooms focused fields when computed font-size is under 16px.
+ * Keep controls at 16px below `lg` so checkout/auth/search stay readable without zoom.
+ */
+@media (max-width: 1023px) {
+  input:not(
+    [type="button"],
+    [type="submit"],
+    [type="reset"],
+    [type="checkbox"],
+    [type="radio"],
+    [type="file"],
+    [type="image"],
+    [type="range"],
+    [type="color"],
+    [type="hidden"]
+  ),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+a[href],
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+[role="link"],
+[role="tab"],
+[role="menuitem"],
+[role="option"],
+[role="switch"],
+[role="checkbox"],
+[role="radio"],
+summary,
+label[for],
+label:has(:is(input, select):not(:disabled)),
+select:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="submit"]:not(:disabled),
+input[type="reset"]:not(:disabled),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+input[type="file"]:not(:disabled) {
+  cursor: pointer;
+}
+
+/* Native checkboxes — brand yellow checked fill */
+input[type="checkbox"] {
+  accent-color: var(--brand-yellow);
+}
+
+button:disabled,
+[aria-disabled="true"],
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
+/* Why choose us: intro shift is set inline from measured cards/moto widths */
+.home-why-track {
+  will-change: transform;
+  transition: transform 1.35s cubic-bezier(0.45, 0.05, 0.2, 1);
+}
+
+@keyframes home-why-float-a {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes home-why-float-b {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(12px);
+  }
+  70% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes home-why-float-c {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-10px);
+  }
+  65% {
+    transform: translateY(14px);
+  }
+}
+
+@keyframes home-why-float-d {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(18px);
+  }
+  80% {
+    transform: translateY(-6px);
+  }
+}
+
+.home-why-float-a {
+  animation: home-why-float-a 2.4s ease-in-out infinite;
+}
+
+.home-why-float-b {
+  animation: home-why-float-b 3.1s ease-in-out infinite;
+}
+
+.home-why-float-c {
+  animation: home-why-float-c 2.7s ease-in-out infinite;
+}
+
+.home-why-float-d {
+  animation: home-why-float-d 3.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-why-track {
+    transition: none !important;
+  }
+
+  .home-why-float-a,
+  .home-why-float-b,
+  .home-why-float-c,
+  .home-why-float-d {
+    animation: none !important;
+  }
+}
+
+/* Centered app modals — MaMarie / Mobee confirm dialog motion */
+@keyframes app-modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes app-modal-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes app-modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes app-modal-panel-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+.animate-app-modal-backdrop-in {
+  animation: app-modal-backdrop-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-app-modal-backdrop-out {
+  animation: app-modal-backdrop-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-app-modal-panel-in {
+  animation: app-modal-panel-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-app-modal-panel-out {
+  animation: app-modal-panel-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Profile mobile tab sheet — MaMarie tokens (300ms / 72vh panel) */
+@keyframes profile-sheet-in {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes profile-sheet-out {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+@keyframes profile-sheet-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes profile-sheet-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-profile-sheet-in {
+  animation: profile-sheet-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.animate-profile-sheet-out {
+  animation: profile-sheet-out 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.animate-profile-sheet-backdrop-in {
+  animation: profile-sheet-backdrop-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-profile-sheet-backdrop-out {
+  animation: profile-sheet-backdrop-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.profile-mobile-tab-sheet-scroll {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-app-modal-backdrop-in,
+  .animate-app-modal-backdrop-out,
+  .animate-app-modal-panel-in,
+  .animate-app-modal-panel-out {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .animate-profile-sheet-in,
+  .animate-profile-sheet-out,
+  .animate-profile-sheet-backdrop-in,
+  .animate-profile-sheet-backdrop-out {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Soft page / section enter — used by storefront template + deferred islands.
+   End state uses transform: none so sticky descendants keep working. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes page-enter-slow {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.page-enter {
+  animation: page-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.page-enter--slow {
+  animation-name: page-enter-slow;
+  animation-duration: 920ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .page-enter--slow {
+    animation: none;
+  }
+}
+
+/* Catalog product grid — matches MaMarie staggered card appear. */
+@keyframes catalog-grid-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.product-appear-pending {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.animate-catalog-grid-in {
+  animation-name: catalog-grid-in;
+  animation-duration: var(--product-appear-duration, 560ms);
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--product-appear-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-appear-pending {
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-catalog-grid-in {
+    animation: none;
+  }
+}
+
+/* Skip paint work for offscreen storefront chrome (footer, deferred bands). */
+.lazy-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
 }

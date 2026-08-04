@@ -1,9 +1,18 @@
 {
-  "brand": "White-Shop",
+  "brand": "Grill.am",
   "close": "Close",
+  "buttons": {
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Confirm delete",
+    "confirmDeleteMessage": "Are you sure you want to delete this? This action cannot be undone."
+  },
   "nav": {
     "home": "Home",
-    "products": "Products",
+    "products": "Menu",
+    "categories": "Categories",
     "shop": "Shop",
     "blog": "Blog",
     "careers": "Careers",
@@ -13,7 +22,8 @@
     "wishlist": "Wishlist",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "navigation": "Navigation"
+    "navigation": "Navigation",
+    "allCategories": "All"
   },
   "header": {
     "language": "Language",
@@ -31,17 +41,26 @@
   },
   "footer": {
     "shop": "Shop",
-    "description": "Professional e-commerce storefront for everyday shopping.",
-    "quickLinks": "Quick Links",
+    "description": "The most complete online food platform in Armenia. Fresh, tasty, fast.",
+    "quickLinks": "Navigation",
+    "support": "Support",
+    "hours": "Working Hours",
+    "hoursWeekdaysLabel": "Mon – Fri",
+    "hoursWeekdays": "09:00 – 22:00",
+    "hoursWeekendLabel": "Sat – Sun",
+    "hoursWeekend": "10:00 – 23:00",
+    "categories": "Categories",
+    "promotions": "Promotions",
+    "bestsellers": "Bestsellers",
+    "faq": "FAQ",
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",
     "terms": "Terms & Conditions",
-    "refundPolicy": "Refund Policy",
+    "refundPolicy": "Delivery & Returns",
     "deliveryPolicy": "Delivery Policy",
-    "contactInfo": "Contact Information",
+    "contactInfo": "Contact",
     "followUs": "Follow us",
-    "rights": "All Rights Reserved",
-    "createdBy": "Created by NEETRINO IT COMPANY"
+    "addresses": "Addresses"
   },
   "popup": {
     "close": "Close popup"

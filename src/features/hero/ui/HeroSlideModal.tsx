@@ -1,23 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 
+import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import type { HeroTranslationsJson } from "@/db/schema";
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
+import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   createHeroSlideAction,
   updateHeroSlideAction,
 } from "@/features/hero/application/manage-hero";
 import type { AdminHeroSlideListItem } from "@/features/hero/application/queries";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+
+const HERO_SLIDE_FORM_ID = "hero-slide-form";
 
 type LocaleDraft = {
   title: string;
@@ -75,29 +80,11 @@ export function HeroSlideModal({
   onClose,
   slide = null,
 }: HeroSlideModalProps) {
-  useEffect(() => {
-    if (!open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    function handleEscape(event: KeyboardEvent): void {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
   return (
     <HeroSlideDrawerForm
       key={slide?.id ?? "create"}
       locale={locale}
+      open={open}
       onClose={onClose}
       slide={slide}
     />
@@ -106,12 +93,14 @@ export function HeroSlideModal({
 
 type HeroSlideDrawerFormProps = {
   locale: string;
+  open: boolean;
   onClose: () => void;
   slide: AdminHeroSlideListItem | null;
 };
 
 function HeroSlideDrawerForm({
   locale,
+  open,
   onClose,
   slide,
 }: HeroSlideDrawerFormProps) {
@@ -146,180 +135,163 @@ function HeroSlideDrawerForm({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/40"
-      role="dialog"
-      aria-modal="true"
-      aria-label={modalTitle}
-      onClick={onClose}
-    >
-      <div
-        className="flex h-full w-full max-w-lg flex-col bg-white shadow-2xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">{modalTitle}</h2>
+    <SideSheet
+      open={open}
+      onClose={onClose}
+      title={modalTitle}
+      closeLabel={common.close}
+      footer={
+        <div className="flex items-center gap-4 border-t border-gray-100 px-5 py-4 lg:px-4">
+          <Button
+            type="submit"
+            form={HERO_SLIDE_FORM_ID}
+            disabled={isPending || !draft.title.trim()}
+          >
+            {isPending
+              ? isEdit
+                ? common.saving
+                : common.creating
+              : isEdit
+                ? common.edit
+                : common.create}
+          </Button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={common.close}
+            className="whitespace-nowrap text-sm font-medium text-gray-600 hover:text-gray-900"
           >
-            <X className="h-5 w-5" />
+            {common.cancel}
           </button>
         </div>
+      }
+    >
+      <form
+        id={HERO_SLIDE_FORM_ID}
+        className={ADMIN_FORM_STACK}
+        onSubmit={(event) => {
+          event.preventDefault();
+          const current = drafts[activeLocale];
+          const formData = new FormData();
+          formData.set("editingLocale", activeLocale);
+          formData.set("title", current.title.trim());
+          formData.set("subtitle", current.subtitle.trim());
+          if (imageFile) {
+            formData.set("image", imageFile);
+          }
+          if (removeExistingImage) {
+            formData.set("removeImage", "1");
+          }
 
-        <form
-          className="flex min-h-0 flex-1 flex-col"
-          onSubmit={(event) => {
-            event.preventDefault();
-            const current = drafts[activeLocale];
-            const formData = new FormData();
-            formData.set("editingLocale", activeLocale);
-            formData.set("title", current.title.trim());
-            formData.set("subtitle", current.subtitle.trim());
-            if (imageFile) {
-              formData.set("image", imageFile);
+          startTransition(async () => {
+            setError(null);
+            const result =
+              isEdit && slide
+                ? await updateHeroSlideAction(locale, slide.id, formData)
+                : await createHeroSlideAction(locale, formData);
+
+            if (!result.ok) {
+              setError(result.error.message);
+              return;
             }
-            if (removeExistingImage) {
-              formData.set("removeImage", "1");
+
+            onClose();
+            router.refresh();
+          });
+        }}
+      >
+        <AdminLocaleTabs
+          activeLocale={activeLocale}
+          onChange={setActiveLocale}
+          disabled={isPending}
+        />
+
+        <label className={ADMIN_FIELD}>
+          <span className={ADMIN_LABEL}>{copy.title}</span>
+          <input
+            required
+            value={draft.title}
+            onChange={(event) => updateDraft({ title: event.target.value })}
+            className={ADMIN_INPUT}
+            disabled={isPending}
+          />
+        </label>
+
+        <label className={ADMIN_FIELD}>
+          <span className={ADMIN_LABEL}>{copy.subtitle}</span>
+          <input
+            value={draft.subtitle}
+            onChange={(event) =>
+              updateDraft({ subtitle: event.target.value })
             }
+            className={ADMIN_INPUT}
+            disabled={isPending}
+          />
+        </label>
 
-            startTransition(async () => {
-              setError(null);
-              const result =
-                isEdit && slide
-                  ? await updateHeroSlideAction(locale, slide.id, formData)
-                  : await createHeroSlideAction(locale, formData);
-
-              if (!result.ok) {
-                setError(result.error.message);
-                return;
-              }
-
-              onClose();
-              router.refresh();
-            });
-          }}
-        >
-          <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-            <AdminLocaleTabs
-              activeLocale={activeLocale}
-              onChange={setActiveLocale}
-              disabled={isPending}
-            />
-
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.title}</span>
-              <input
-                required
-                value={draft.title}
-                onChange={(event) => updateDraft({ title: event.target.value })}
-                className={ADMIN_INPUT}
-                disabled={isPending}
-              />
-            </label>
-
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.subtitle}</span>
-              <input
-                value={draft.subtitle}
-                onChange={(event) =>
-                  updateDraft({ subtitle: event.target.value })
-                }
-                className={ADMIN_INPUT}
-                disabled={isPending}
-              />
-            </label>
-
-            <div>
-              <span className={ADMIN_LABEL}>{copy.uploadImage}</span>
-              <div className="mt-1 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  disabled={isPending}
-                  onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
-                >
-                  {imagePreview ? copy.changeImage : copy.uploadButton}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  className="hidden"
-                  disabled={isPending}
-                  onChange={(event) => {
-                    const file = event.target.files?.[0] ?? null;
-                    event.target.value = "";
-                    setImagePreview((current) => {
-                      if (current?.startsWith("blob:")) {
-                        URL.revokeObjectURL(current);
-                      }
-                      return file ? URL.createObjectURL(file) : null;
-                    });
-                    setImageFile(file);
-                    setRemoveExistingImage(false);
-                  }}
-                />
-                {imagePreview ? (
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => {
-                      setImageFile(null);
-                      setImagePreview((current) => {
-                        if (current?.startsWith("blob:")) {
-                          URL.revokeObjectURL(current);
-                        }
-                        return null;
-                      });
-                      if (isEdit && slide?.imageUrl) {
-                        setRemoveExistingImage(true);
-                      }
-                    }}
-                    className="text-sm font-medium text-gray-600 hover:text-red-600"
-                  >
-                    {common.remove}
-                  </button>
-                ) : null}
-              </div>
-              {imagePreview ? (
-                // eslint-disable-next-line @next/next/no-img-element -- local blob/admin preview
-                <img
-                  src={imagePreview}
-                  alt=""
-                  className="mt-3 h-28 w-28 rounded-xl border border-gray-200 object-cover"
-                />
-              ) : null}
-            </div>
-
-            {error ? <p className="text-sm text-red-700">{error}</p> : null}
-          </div>
-
-          <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
-            <Button
-              type="submit"
-              disabled={isPending || !draft.title.trim()}
-            >
-              {isPending
-                ? isEdit
-                  ? common.saving
-                  : common.creating
-                : isEdit
-                  ? common.edit
-                  : common.create}
-            </Button>
+        <div>
+          <span className={ADMIN_LABEL}>{copy.uploadImage}</span>
+          <div className="mt-1 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={onClose}
-              className="whitespace-nowrap text-sm font-medium text-gray-600 hover:text-gray-900"
+              disabled={isPending}
+              onClick={() => fileInputRef.current?.click()}
+              className={ADMIN_BTN_DASHED_CLASS}
             >
-              {common.cancel}
+              {imagePreview ? copy.changeImage : copy.uploadButton}
             </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              disabled={isPending}
+              onChange={(event) => {
+                const file = event.target.files?.[0] ?? null;
+                event.target.value = "";
+                setImagePreview((current) => {
+                  if (current?.startsWith("blob:")) {
+                    URL.revokeObjectURL(current);
+                  }
+                  return file ? URL.createObjectURL(file) : null;
+                });
+                setImageFile(file);
+                setRemoveExistingImage(false);
+              }}
+            />
+            {imagePreview ? (
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => {
+                  setImageFile(null);
+                  setImagePreview((current) => {
+                    if (current?.startsWith("blob:")) {
+                      URL.revokeObjectURL(current);
+                    }
+                    return null;
+                  });
+                  if (isEdit && slide?.imageUrl) {
+                    setRemoveExistingImage(true);
+                  }
+                }}
+                className="text-sm font-medium text-gray-600 hover:text-red-600"
+              >
+                {common.remove}
+              </button>
+            ) : null}
           </div>
-        </form>
-      </div>
-    </div>
+          {imagePreview ? (
+            // eslint-disable-next-line @next/next/no-img-element -- local blob/admin preview
+            <img
+              src={imagePreview}
+              alt=""
+              className="mt-3 h-28 w-28 rounded-xl border border-gray-200 object-cover"
+            />
+          ) : null}
+        </div>
+
+        {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      </form>
+    </SideSheet>
   );
 }

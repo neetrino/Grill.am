@@ -6,6 +6,7 @@ export const submitContactSchema = z.object({
   name: z.string().trim().min(1).max(120),
   email: z.string().trim().email().max(254),
   phone: z.string().trim().max(40).optional(),
+  subject: z.string().trim().max(160).optional(),
   message: z.string().trim().min(10).max(5000),
   /** Honeypot — must stay empty for humans. */
   companyWebsite: z.string().max(200).optional(),

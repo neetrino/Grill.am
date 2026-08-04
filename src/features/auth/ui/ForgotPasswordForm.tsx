@@ -7,6 +7,11 @@ import {
   forgotPasswordAction,
   type ForgotPasswordActionState,
 } from "@/features/auth/forgot-password-action";
+import {
+  AUTH_BTN_PRIMARY_CLASS,
+  AUTH_FIELD_CLASS,
+  AUTH_LINK_CLASS,
+} from "@/features/auth/ui/auth-ui";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -17,9 +22,6 @@ type ForgotPasswordFormProps = {
   dictionary: Dictionary["auth"];
 };
 
-const fieldClassName =
-  "h-10 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
-
 export function ForgotPasswordForm({
   locale,
   dictionary,
@@ -28,7 +30,7 @@ export function ForgotPasswordForm({
   const [state, formAction, isPending] = useActionState(action, initialState);
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} className="flex flex-col gap-5">
       <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
         {dictionary.email}
         <input
@@ -36,14 +38,14 @@ export function ForgotPasswordForm({
           name="email"
           type="email"
           autoComplete="email"
-          className={fieldClassName}
+          className={AUTH_FIELD_CLASS}
         />
       </label>
 
       {state.error ? (
         <p
           role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600"
+          className="rounded-[15px] border border-red-200 bg-red-50 p-3 text-sm text-red-600"
         >
           {state.error}
         </p>
@@ -52,16 +54,13 @@ export function ForgotPasswordForm({
       {state.sent ? (
         <p
           role="status"
-          className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700"
+          className="rounded-[15px] border border-green-200 bg-green-50 p-3 text-sm text-green-700"
         >
           {dictionary.forgotPasswordSuccess}
         </p>
       ) : null}
 
-      <button
-        disabled={isPending}
-        className="h-10 rounded-lg bg-gray-900 px-4 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-60"
-      >
+      <button type="submit" disabled={isPending} className={AUTH_BTN_PRIMARY_CLASS}>
         {isPending
           ? dictionary.submittingForgotPassword
           : dictionary.submitForgotPassword}
@@ -71,7 +70,7 @@ export function ForgotPasswordForm({
         <AppLink
           href={`/${locale}/login`}
           prefetchPolicy="intent"
-          className="font-medium text-gray-900 underline-offset-2 hover:underline"
+          className={AUTH_LINK_CLASS}
         >
           {dictionary.backToLogin}
         </AppLink>

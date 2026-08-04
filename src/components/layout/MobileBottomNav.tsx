@@ -1,20 +1,25 @@
 "use client";
 
-import {
-  Heart,
-  Home,
-  ShoppingBag,
-  ShoppingCart,
-  User,
-} from "lucide-react";
+import { Heart, Home, ShoppingCart } from "lucide-react";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentType,
+  type CSSProperties,
+} from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { ShopNavIcon } from "@/components/layout/ShopNavIcon";
+import styles from "@/components/layout/MobileBottomNav.module.css";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+
+const BOTTOM_NAV_TRANSITION_MS = 380;
 
 type MobileBottomNavProps = {
   locale: Locale;
@@ -22,16 +27,31 @@ type MobileBottomNavProps = {
   dictionary: Dictionary;
   cartItemCount: number;
   wishlistCount: number;
-  isSignedIn: boolean;
 };
 
+type NavIcon = ComponentType<{
+  className?: string;
+  strokeWidth?: number;
+  "aria-hidden"?: boolean | "true" | "false";
+}>;
+
+type NavTabId = "home" | "shop" | "cart" | "wishlist";
+
 type NavTab = {
-  id: string;
+  id: Exclude<NavTabId, "cart">;
   href: string;
   label: string;
-  icon: LucideIcon;
-  match: (pathname: string) => boolean;
+  icon: NavIcon;
   badge?: number;
+  /** Overrides default inactive / active icon sizes. */
+  iconClassName?: { active: string; idle: string };
+};
+
+type IndicatorBox = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 };
 
 function isHomePath(pathname: string, locale: Locale): boolean {
@@ -42,81 +62,72 @@ function startsWithPath(pathname: string, base: string): boolean {
   return pathname === base || pathname.startsWith(`${base}/`);
 }
 
-function tabClassName(active: boolean): string {
-  return [
-    "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-medium transition-colors",
-    active ? "text-gray-900" : "text-gray-500 hover:text-gray-800",
-  ].join(" ");
-}
-
 function NavBadge({ count }: { count: number }) {
   if (count <= 0) {
     return null;
   }
 
   return (
-    <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gray-900 px-1 text-[9px] font-semibold text-white">
+    <span className="absolute -top-1.5 -right-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand-yellow px-1 text-[10px] font-bold leading-none text-[#171717]">
       {count > 99 ? "99+" : count}
     </span>
   );
 }
 
-function LinkTab({
-  tab,
-  active,
-}: {
-  tab: NavTab;
-  active: boolean;
-}) {
-  const Icon = tab.icon;
-
-  return (
-    <AppLink
-      href={tab.href}
-      prefetchPolicy="intent"
-      aria-current={active ? "page" : undefined}
-      className={tabClassName(active)}
-    >
-      <span className="relative inline-flex">
-        <Icon
-          className="h-5 w-5"
-          strokeWidth={active ? 2.25 : 1.75}
-          aria-hidden="true"
-        />
-        {tab.badge != null ? <NavBadge count={tab.badge} /> : null}
-      </span>
-      <span className="truncate">{tab.label}</span>
-    </AppLink>
-  );
+function tabClassName(active: boolean): string {
+  return active
+    ? `relative z-10 flex h-12 w-[100px] shrink-0 items-center gap-1 overflow-hidden rounded-[70px] bg-transparent px-1.5 text-[12px] font-medium text-white min-[390px]:h-14 min-[390px]:w-[118px] min-[390px]:px-2 min-[390px]:text-[13px] ${styles.tab}`
+    : `relative z-10 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-[#171717] min-[390px]:size-14 ${styles.tab}`;
 }
 
+/**
+ * Figma mobile bottom bar `164:604` — floating dark island.
+ * Active tab expands to the red pill + label; the pill slides between options.
+ */
 export function MobileBottomNav({
   locale,
   currency,
   dictionary,
   cartItemCount,
   wishlistCount,
-  isSignedIn,
 }: MobileBottomNavProps) {
   const pathname = usePathname() ?? `/${locale}`;
-  const profileHref = isSignedIn
-    ? `/${locale}/profile`
-    : `/${locale}/login`;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Map<NavTabId, HTMLElement>>(new Map());
+  const [indicator, setIndicator] = useState<IndicatorBox | null>(null);
+  const [slideEnabled, setSlideEnabled] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+
+  const homeActive = isHomePath(pathname, locale);
+  const shopActive = startsWithPath(pathname, `/${locale}/products`);
+  const wishlistActive = startsWithPath(pathname, `/${locale}/wishlist`);
+
+  const activeId: NavTabId | null = cartOpen
+    ? "cart"
+    : homeActive
+      ? "home"
+      : shopActive
+        ? "shop"
+        : wishlistActive
+          ? "wishlist"
+          : null;
 
   const homeTab: NavTab = {
     id: "home",
     href: `/${locale}`,
     label: dictionary.nav.home,
     icon: Home,
-    match: (path) => isHomePath(path, locale),
   };
 
   const shopTab: NavTab = {
     id: "shop",
     href: `/${locale}/products`,
     label: dictionary.nav.shop,
-    icon: ShoppingBag,
-    match: (path) => startsWithPath(path, `/${locale}/products`),
+    icon: ShopNavIcon,
+    iconClassName: {
+      idle: "size-6 min-[390px]:size-8",
+      active: "size-7 min-[390px]:size-9",
+    },
   };
 
   const wishlistTab: NavTab = {
@@ -124,28 +135,115 @@ export function MobileBottomNav({
     href: `/${locale}/wishlist`,
     label: dictionary.nav.wishlist,
     icon: Heart,
-    match: (path) => startsWithPath(path, `/${locale}/wishlist`),
     badge: wishlistCount,
   };
 
-  const profileTab: NavTab = {
-    id: "profile",
-    href: profileHref,
-    label: dictionary.header.profile,
-    icon: User,
-    match: (path) =>
-      startsWithPath(path, `/${locale}/profile`) ||
-      startsWithPath(path, `/${locale}/login`),
-  };
+  useLayoutEffect(() => {
+    if (!activeId) {
+      return;
+    }
+    const el = itemRefs.current.get(activeId);
+    if (!el) {
+      return;
+    }
+    setIndicator({
+      left: el.offsetLeft,
+      top: el.offsetTop,
+      width: el.offsetWidth,
+      height: el.offsetHeight,
+    });
+  }, [activeId]);
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      setSlideEnabled(true);
+    });
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const syncIndicator = (): void => {
+      if (!activeId) {
+        setIndicator(null);
+        return;
+      }
+      const el = itemRefs.current.get(activeId);
+      if (!el) {
+        return;
+      }
+      setIndicator({
+        left: el.offsetLeft,
+        top: el.offsetTop,
+        width: el.offsetWidth,
+        height: el.offsetHeight,
+      });
+    };
+
+    const observer = new ResizeObserver(syncIndicator);
+    observer.observe(track);
+    for (const el of itemRefs.current.values()) {
+      observer.observe(el);
+    }
+    return () => {
+      observer.disconnect();
+    };
+  }, [activeId]);
+
+  function registerItem(id: NavTabId, node: HTMLElement | null): void {
+    if (node) {
+      itemRefs.current.set(id, node);
+    } else {
+      itemRefs.current.delete(id);
+    }
+  }
 
   return (
     <nav
       aria-label={dictionary.nav.navigation}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm md:hidden"
+      data-mobile-bottom-nav
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(12px,env(safe-area-inset-bottom))] min-[390px]:px-8 md:hidden"
+      style={
+        {
+          "--bottom-nav-ms": `${BOTTOM_NAV_TRANSITION_MS}ms`,
+        } as CSSProperties
+      }
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-stretch">
-        <LinkTab tab={homeTab} active={homeTab.match(pathname)} />
-        <LinkTab tab={shopTab} active={shopTab.match(pathname)} />
+      <div
+        ref={trackRef}
+        className="pointer-events-auto relative flex h-[60px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[71px] min-[390px]:px-3 min-[390px]:py-2"
+      >
+        {indicator && activeId ? (
+          <span
+            aria-hidden
+            className={`pointer-events-none absolute z-0 rounded-[70px] bg-brand-red ${
+              slideEnabled ? styles.indicator : styles.indicatorInstant
+            }`}
+            style={{
+              left: indicator.left,
+              top: indicator.top,
+              width: indicator.width,
+              height: indicator.height,
+            }}
+          />
+        ) : null}
+
+        <PillTab
+          tab={homeTab}
+          active={activeId === "home"}
+          register={(node) => registerItem("home", node)}
+        />
+        <PillTab
+          tab={shopTab}
+          active={activeId === "shop"}
+          register={(node) => registerItem("shop", node)}
+        />
 
         <CartDrawer
           locale={locale}
@@ -159,31 +257,122 @@ export function MobileBottomNav({
             openDrawer,
             prefetchDrawerView,
           }) => (
-            <button
-              type="button"
-              onClick={openDrawer}
-              onPointerEnter={prefetchDrawerView}
-              onFocus={prefetchDrawerView}
-              aria-label={label}
-              aria-expanded={open}
-              className={tabClassName(open)}
-            >
-              <span className="relative inline-flex">
-                <ShoppingCart
-                  className="h-5 w-5"
-                  strokeWidth={open ? 2.25 : 1.75}
-                  aria-hidden="true"
-                />
-                <NavBadge count={badgeCount} />
-              </span>
-              <span className="truncate">{label}</span>
-            </button>
+            <CartPillButton
+              open={open}
+              active={activeId === "cart"}
+              badgeCount={badgeCount}
+              label={label}
+              openDrawer={openDrawer}
+              prefetchDrawerView={prefetchDrawerView}
+              onOpenChange={setCartOpen}
+              register={(node) => registerItem("cart", node)}
+            />
           )}
         />
 
-        <LinkTab tab={wishlistTab} active={wishlistTab.match(pathname)} />
-        <LinkTab tab={profileTab} active={profileTab.match(pathname)} />
+        <PillTab
+          tab={wishlistTab}
+          active={activeId === "wishlist"}
+          register={(node) => registerItem("wishlist", node)}
+        />
       </div>
     </nav>
+  );
+}
+
+function CartPillButton({
+  open,
+  active,
+  badgeCount,
+  label,
+  openDrawer,
+  prefetchDrawerView,
+  onOpenChange,
+  register,
+}: {
+  open: boolean;
+  active: boolean;
+  badgeCount: number;
+  label: string;
+  openDrawer: () => void;
+  prefetchDrawerView: () => void;
+  onOpenChange: (open: boolean) => void;
+  register: (node: HTMLButtonElement | null) => void;
+}) {
+  useEffect(() => {
+    onOpenChange(open);
+  }, [open, onOpenChange]);
+
+  return (
+    <button
+      ref={register}
+      type="button"
+      onClick={openDrawer}
+      onPointerEnter={prefetchDrawerView}
+      onFocus={prefetchDrawerView}
+      aria-label={label}
+      aria-expanded={open}
+      className={tabClassName(active)}
+    >
+      <span className="relative inline-flex shrink-0" data-cart-fly-target>
+        <ShoppingCart
+          className={`${styles.tabIcon} ${active ? "size-6 min-[390px]:size-[31px]" : "size-5 min-[390px]:size-6"}`}
+          strokeWidth={1.75}
+          aria-hidden
+        />
+        <NavBadge count={badgeCount} />
+      </span>
+      <span
+        className={`truncate pr-1 ${styles.tabLabel} ${
+          active ? "" : styles.tabLabelHidden
+        }`}
+        aria-hidden={!active}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+function PillTab({
+  tab,
+  active,
+  register,
+}: {
+  tab: NavTab;
+  active: boolean;
+  register: (node: HTMLAnchorElement | null) => void;
+}) {
+  const Icon = tab.icon;
+  const iconClassName = active
+    ? (tab.iconClassName?.active ?? "size-6 min-[390px]:size-[31px]")
+    : (tab.iconClassName?.idle ?? "size-5 min-[390px]:size-6");
+
+  return (
+    <AppLink
+      ref={register}
+      href={tab.href}
+      prefetchPolicy="intent"
+      aria-current={active ? "page" : undefined}
+      aria-label={tab.label}
+      className={tabClassName(active)}
+    >
+      <span className="relative inline-flex shrink-0">
+        <Icon
+          className={`${styles.tabIcon} ${iconClassName}`}
+          strokeWidth={tab.id === "shop" ? 1.35 : 1.75}
+          aria-hidden
+        />
+        {tab.badge != null ? <NavBadge count={tab.badge} /> : null}
+      </span>
+      <span
+        className={`truncate pr-1 ${styles.tabLabel} ${
+          active ? "" : styles.tabLabelHidden
+        }`}
+        aria-hidden={!active}
+      >
+        {tab.label}
+      </span>
+    </AppLink>
   );
 }

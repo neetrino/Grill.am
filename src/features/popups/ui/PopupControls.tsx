@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -29,6 +30,7 @@ export function PopupControls({
   const dictionary = useAdminDictionary();
   const copy = dictionary.popups;
   const common = dictionary.common;
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -47,8 +49,21 @@ export function PopupControls({
     });
   }
 
+  function onDelete(): void {
+    void (async () => {
+      const accepted = await confirmDelete({
+        title: common.confirmDeleteTitle,
+        message: copy.confirmDelete,
+        confirmText: common.delete,
+        cancelText: common.cancel,
+      });
+      if (!accepted) return;
+      run(() => deletePopupAction(locale, { popupId }));
+    })();
+  }
+
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex shrink-0 flex-col items-end gap-1">
       <div className="flex items-center gap-1">
         <button
           type="button"
@@ -62,9 +77,7 @@ export function PopupControls({
         <button
           type="button"
           disabled={isPending}
-          onClick={() =>
-            run(() => deletePopupAction(locale, { popupId }))
-          }
+          onClick={onDelete}
           className="rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50"
           aria-label={formatAdminMessage(copy.deleteNamed, { id: popupId })}
         >

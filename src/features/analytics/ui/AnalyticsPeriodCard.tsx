@@ -9,12 +9,14 @@ import {
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   ANALYTICS_PERIOD_PRESETS,
   formatAnalyticsDisplayDate,
   rangeForAnalyticsPeriod,
   type AnalyticsPeriodPreset,
 } from "@/features/analytics/domain/date-range";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 
 type AnalyticsPeriodCardProps = {
   locale: string;
@@ -94,8 +96,15 @@ export function AnalyticsPeriodCard({
     navigate(nextFrom, nextTo);
   }
 
+  const periodOptions = ANALYTICS_PERIOD_PRESETS.map((option) => ({
+    value: option,
+    label: periodLabel(option, copy),
+  }));
+
   return (
-    <Card className="mb-6 rounded-2xl p-5 sm:p-6">
+    <Card
+      className={`mb-6 overflow-visible !border-0 !shadow-none p-5 sm:p-6 ${ADMIN_CARD_CLASS}`}
+    >
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <h2 className="text-lg font-semibold text-gray-900">{copy.title}</h2>
         <p className="text-sm font-medium text-gray-500">
@@ -103,21 +112,16 @@ export function AnalyticsPeriodCard({
         </p>
       </div>
 
-      <label className="block max-w-md">
-        <span className={ADMIN_LABEL}>{copy.label}</span>
-        <select
-          className={ADMIN_INPUT}
+      <div className="max-w-md">
+        <AdminSelect
+          label={copy.label}
+          placeholder={copy.label}
+          options={periodOptions}
           value={selectedPreset}
           disabled={pending}
-          onChange={(event) => onPeriodChange(event.target.value)}
-        >
-          {ANALYTICS_PERIOD_PRESETS.map((option) => (
-            <option key={option} value={option}>
-              {periodLabel(option, copy)}
-            </option>
-          ))}
-        </select>
-      </label>
+          onChange={onPeriodChange}
+        />
+      </div>
 
       {selectedPreset === "custom" ? (
         <form

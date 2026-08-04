@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Montserrat } from "next/font/google";
+
+import { mirageBoldFree } from "@/lib/fonts/mirage-bold";
 
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 const geistMono = Geist_Mono({
@@ -15,10 +18,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "White Shop",
-    template: "%s · White Shop",
+    default: "Grill.am",
+    template: "%s · Grill.am",
   },
-  description: "Multilingual e-commerce storefront",
+  description: "Fresh grilled food delivery in Armenia",
+  icons: {
+    icon: [{ url: "/favicon.webp", type: "image/webp" }],
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +35,12 @@ export default function RootLayout({
   return (
     <html lang="hy" className="h-full" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col overflow-x-hidden antialiased`}
+        className={`${montserrat.variable} ${geistMono.variable} ${mirageBoldFree.variable} flex min-h-dvh flex-col overflow-x-hidden bg-white font-sans antialiased`}
+        style={
+          {
+            "--font-display": "var(--font-montserrat)",
+          } as React.CSSProperties
+        }
       >
         {children}
       </body>

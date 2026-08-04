@@ -2,16 +2,18 @@
 
 import { type ReactNode } from "react";
 
-import { Card } from "@/components/ui/Card";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
+import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
+import {
+  CHECKOUT_FIELD_CLASS,
+  CHECKOUT_OPTION_BASE_CLASS,
+  CHECKOUT_OPTION_DEFAULT_CLASS,
+  CHECKOUT_OPTION_SELECTED_CLASS,
+  CHECKOUT_SECTION_CARD_CLASS,
+  CHECKOUT_SECTION_TITLE_CLASS,
+} from "@/features/checkout/ui/checkout-ui";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
-
-const FIELD_CLASS =
-  "h-11 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200 disabled:bg-gray-50";
-
-const RADIO_SELECTED = "border-gray-900 bg-gray-50";
-const RADIO_IDLE = "border-gray-300 hover:bg-gray-50";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -39,7 +41,6 @@ type PaymentOption = {
   id: CheckoutPaymentMethod;
   name: string;
   description: string;
-  logoSrc: string | null;
 };
 
 type CheckoutDetailsSectionsProps = {
@@ -61,6 +62,12 @@ type CheckoutDetailsSectionsProps = {
   defaultLine1: string;
 };
 
+function optionClass(selected: boolean): string {
+  return `${CHECKOUT_OPTION_BASE_CLASS} ${
+    selected ? CHECKOUT_OPTION_SELECTED_CLASS : CHECKOUT_OPTION_DEFAULT_CLASS
+  }`;
+}
+
 export function CheckoutDetailsSections({
   labels,
   pending,
@@ -80,9 +87,9 @@ export function CheckoutDetailsSections({
   defaultLine1,
 }: CheckoutDetailsSectionsProps) {
   return (
-    <div className="space-y-6 lg:col-span-2">
-      <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">
+    <div className="flex flex-col gap-4">
+      <section className={CHECKOUT_SECTION_CARD_CLASS}>
+        <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
           {labels.contactInformation}
         </h2>
         <div className="space-y-4">
@@ -94,8 +101,9 @@ export function CheckoutDetailsSections({
                 required
                 defaultValue={defaultFirstName}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD_CLASS}
                 autoComplete="given-name"
+                suppressHydrationWarning
               />
             </label>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
@@ -105,8 +113,9 @@ export function CheckoutDetailsSections({
                 required
                 defaultValue={defaultLastName}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD_CLASS}
                 autoComplete="family-name"
+                suppressHydrationWarning
               />
             </label>
           </div>
@@ -119,8 +128,9 @@ export function CheckoutDetailsSections({
                 required
                 defaultValue={defaultEmail}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD_CLASS}
                 autoComplete="email"
+                suppressHydrationWarning
               />
             </label>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
@@ -132,32 +142,30 @@ export function CheckoutDetailsSections({
                 defaultValue={defaultPhone}
                 placeholder={labels.phonePlaceholder}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD_CLASS}
                 autoComplete="tel"
+                suppressHydrationWarning
               />
             </label>
           </div>
         </div>
-      </Card>
+      </section>
 
-      <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">
+      <section className={CHECKOUT_SECTION_CARD_CLASS}>
+        <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
           {labels.shippingMethod}
         </h2>
         <div className="space-y-3">
-          <label
-            className={`flex cursor-pointer items-center rounded-lg border-2 p-4 transition-all ${
-              shippingMethod === "pickup" ? RADIO_SELECTED : RADIO_IDLE
-            }`}
-          >
+          <label className={optionClass(shippingMethod === "pickup")}>
             <input
               type="radio"
               name="shippingMethod"
               value="pickup"
               checked={shippingMethod === "pickup"}
               onChange={() => onShippingMethodChange("pickup")}
-              className="mr-4"
+              className="mr-4 accent-brand-red"
               disabled={pending}
+              suppressHydrationWarning
             />
             <div className="flex-1">
               <div className="font-medium text-gray-900">{labels.storePickup}</div>
@@ -166,19 +174,16 @@ export function CheckoutDetailsSections({
               </div>
             </div>
           </label>
-          <label
-            className={`flex cursor-pointer items-center rounded-lg border-2 p-4 transition-all ${
-              shippingMethod === "delivery" ? RADIO_SELECTED : RADIO_IDLE
-            }`}
-          >
+          <label className={optionClass(shippingMethod === "delivery")}>
             <input
               type="radio"
               name="shippingMethod"
               value="delivery"
               checked={shippingMethod === "delivery"}
               onChange={() => onShippingMethodChange("delivery")}
-              className="mr-4"
+              className="mr-4 accent-brand-red"
               disabled={pending || deliveryOptions.length === 0}
+              suppressHydrationWarning
             />
             <div className="flex-1">
               <div className="font-medium text-gray-900">{labels.delivery}</div>
@@ -188,33 +193,31 @@ export function CheckoutDetailsSections({
             </div>
           </label>
         </div>
-      </Card>
+      </section>
 
       {shippingMethod === "delivery" ? (
-        <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-          <h2 className="mb-6 text-xl font-semibold text-gray-900">
+        <section className={CHECKOUT_SECTION_CARD_CLASS}>
+          <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
             {labels.shippingAddress}
           </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              {labels.deliveryLocation}
-              <select
+          <div className="flex flex-col gap-4 md:flex-row md:items-end">
+            <div className="w-full shrink-0 md:w-[150px]">
+              <CheckoutSelect
+                label={labels.deliveryLocation}
                 name="deliveryRuleId"
                 required
                 value={deliveryRuleId}
-                onChange={(event) => onDeliveryRuleChange(event.target.value)}
+                onChange={onDeliveryRuleChange}
                 disabled={pending || deliveryOptions.length === 0}
-                className={FIELD_CLASS}
-              >
-                <option value="">{labels.selectLocation}</option>
-                {deliveryOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                placeholder={labels.selectLocation}
+                options={deliveryOptions.map((option) => ({
+                  value: option.id,
+                  label: option.label,
+                }))}
+                className="w-full"
+              />
+            </div>
+            <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.address}
               <input
                 name="line1"
@@ -222,12 +225,13 @@ export function CheckoutDetailsSections({
                 defaultValue={defaultLine1}
                 placeholder={labels.addressPlaceholder}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD_CLASS}
                 autoComplete="street-address"
+                suppressHydrationWarning
               />
             </label>
           </div>
-        </Card>
+        </section>
       ) : null}
 
       <CheckoutPaymentMethods

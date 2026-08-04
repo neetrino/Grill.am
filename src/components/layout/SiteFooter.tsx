@@ -1,18 +1,34 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import Image from "next/image";
+import { Mail, Phone } from "lucide-react";
 
+import { FooterCornerShell } from "@/components/layout/FooterCornerShell";
+import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
+import { FOOTER_PAYMENT_ASSETS } from "@/lib/payment-assets";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import {
   FacebookIcon,
   InstagramIcon,
-  LinkedInIcon,
+  WhatsAppIcon,
 } from "@/components/layout/SocialIcons";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { telHref } from "@/lib/phone";
 
 type SiteFooterProps = {
   dictionary: Dictionary;
   locale: Locale;
 };
+
+const CONTACT_ICON_CLASS = "h-[15px] w-[15px] shrink-0 text-brand-yellow";
+
+const FOOTER_PAYMENT_METHODS = [
+  { src: FOOTER_PAYMENT_ASSETS.idram, alt: "Idram" },
+  { src: FOOTER_PAYMENT_ASSETS.mastercard, alt: "Mastercard" },
+  { src: FOOTER_PAYMENT_ASSETS.arca, alt: "ArCa" },
+  { src: FOOTER_PAYMENT_ASSETS.visa, alt: "Visa" },
+  { src: FOOTER_PAYMENT_ASSETS.telcell, alt: "Telcell" },
+] as const;
 
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   const year = new Date().getFullYear();
@@ -28,178 +44,205 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
       Icon: FacebookIcon,
     },
     {
-      href: dictionary.contact.social.linkedin,
-      label: "LinkedIn",
-      Icon: LinkedInIcon,
+      href: dictionary.contact.social.whatsapp,
+      label: "WhatsApp",
+      Icon: WhatsAppIcon,
+    },
+  ] as const;
+
+  const navLinks = [
+    {
+      href: `/${locale}/products`,
+      label: dictionary.footer.categories,
+    },
+    {
+      href: `/${locale}/products`,
+      label: dictionary.footer.promotions,
+    },
+    {
+      href: `/${locale}/products`,
+      label: dictionary.footer.bestsellers,
+    },
+    {
+      href: `/${locale}/about`,
+      label: dictionary.nav.about,
+    },
+    {
+      href: `/${locale}/contact`,
+      label: dictionary.nav.contact,
+    },
+  ] as const;
+
+  const supportLinks = [
+    {
+      href: `/${locale}/legal/delivery`,
+      label: dictionary.footer.refundPolicy,
+    },
+    {
+      href: `/${locale}/legal/terms`,
+      label: dictionary.footer.terms,
+    },
+    {
+      href: `/${locale}/legal/privacy`,
+      label: dictionary.footer.privacyPolicy,
+    },
+    {
+      href: `/${locale}/contact`,
+      label: dictionary.footer.faq,
     },
   ] as const;
 
   return (
-    <footer className="mt-auto hidden border-t border-gray-800 bg-black md:block">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">
-              {dictionary.footer.shop}
-            </h3>
-            <p className="text-sm text-gray-300">{dictionary.footer.description}</p>
-            <div className="mt-5">
-              <p className="mb-3 text-sm font-semibold text-white">
-                {dictionary.footer.followUs}
-              </p>
-              <div className="flex items-center gap-3">
-                {socialLinks.map(({ href, label, Icon }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-md text-gray-400 transition-colors hover:text-white"
-                    aria-label={label}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </a>
-                ))}
+    <FooterCornerShell>
+      <footer className="lazy-section relative w-full overflow-hidden rounded-tl-[50px] rounded-tr-[50px] bg-black">
+        <p
+          aria-hidden
+          className="pointer-events-none absolute bottom-[18px] left-[35px] z-0 translate-y-1/2 font-mirage text-[281px] leading-[230px] whitespace-nowrap text-white/25 uppercase opacity-40 select-none"
+        >
+          GRILL.AM
+        </p>
+
+        <div className="relative z-10 mx-auto max-w-[1440px] px-10 pt-[55px] pb-10">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[minmax(240px,1.6fr)_repeat(2,minmax(140px,1fr))_auto]">
+            <div className="col-span-2 lg:col-span-1">
+              <div className="relative h-[37px] w-[92px]">
+                <Image
+                  src={staticAssetUrl("/assets/brand/logo-footer.webp")}
+                  alt={dictionary.brand}
+                  fill
+                  sizes="92px"
+                  className="object-contain object-left"
+                />
               </div>
+              <p className="mt-[19.5px] mb-[22.75px] max-w-[280px] text-sm leading-[22.75px] text-white/50">
+                {dictionary.footer.description}
+              </p>
+              <div className="flex items-center gap-3 pt-6">
+                {socialLinks.map(({ href, label, Icon }) => {
+                  const isExternalHttp = href.startsWith("http");
+                  return (
+                    <a
+                      key={label}
+                      href={href}
+                      {...(isExternalHttp
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-white/8 text-white/60 transition hover:bg-white/15 hover:text-white"
+                      aria-label={label}
+                    >
+                      <Icon className="h-[18px] w-[18px]" />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
+                {dictionary.footer.quickLinks}
+              </h4>
+              <ul className="mt-[9px] space-y-3 text-sm text-white/50">
+                {navLinks.map(({ href, label }) => (
+                  <li key={label}>
+                    <AppLink
+                      href={href}
+                      prefetchPolicy="intent"
+                      className="transition hover:text-white"
+                    >
+                      {label}
+                    </AppLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="lg:-translate-x-[25px]">
+              <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
+                {dictionary.footer.support}
+              </h4>
+              <ul className="mt-6 space-y-4 text-sm text-white/60">
+                {supportLinks.map(({ href, label }) => (
+                  <li key={label}>
+                    <AppLink
+                      href={href}
+                      prefetchPolicy="intent"
+                      className="transition hover:text-white"
+                    >
+                      {label}
+                    </AppLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="justify-self-start lg:justify-self-end">
+              <h4 className="text-sm font-black tracking-[1.68px] text-white uppercase">
+                {dictionary.footer.contactInfo}
+              </h4>
+              <ul className="mt-5 space-y-4 text-sm text-white/60">
+                {dictionary.contact.storePhones.map((phone) => (
+                  <li key={phone} className="flex items-center gap-3">
+                    <Phone className={CONTACT_ICON_CLASS} aria-hidden />
+                    <a
+                      href={telHref(phone)}
+                      className="transition hover:text-white"
+                    >
+                      {phone}
+                    </a>
+                  </li>
+                ))}
+                <li className="flex items-center gap-3">
+                  <Mail className={CONTACT_ICON_CLASS} aria-hidden />
+                  <a
+                    href={`mailto:${dictionary.contact.storeEmail}`}
+                    className="transition hover:text-white"
+                  >
+                    {dictionary.contact.storeEmail}
+                  </a>
+                </li>
+                <li>
+                  <StoreAddressDropdown
+                    addresses={dictionary.contact.storeAddresses}
+                    toggleLabel={dictionary.footer.addresses}
+                    variant="footer"
+                  />
+                </li>
+              </ul>
             </div>
           </div>
 
-          <div>
-            <h4 className="mb-4 text-sm font-semibold text-white">
-              {dictionary.footer.quickLinks}
-            </h4>
-            <ul className="space-y-2">
-              <li>
-                <AppLink
-                  href={`/${locale}/products`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.nav.products}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/blog`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.nav.blog}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/careers`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.nav.careers}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/about`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.nav.about}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/contact`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.nav.contact}
-                </AppLink>
-              </li>
-            </ul>
-          </div>
+          <div className="relative z-10 mt-16 flex flex-col gap-6 pt-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-white">
+              {`Copyright © ${year} | All Rights Reserved | Created by `}
+              <a
+                href="https://neetrino.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold transition hover:text-white/80"
+              >
+                Neetrino IT Company
+              </a>
+            </p>
 
-          <div>
-            <h4 className="mb-4 text-sm font-semibold text-white">
-              {dictionary.footer.legal}
-            </h4>
-            <ul className="space-y-2">
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/privacy`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
+            <ul className="flex flex-wrap items-center gap-[11px]">
+              {FOOTER_PAYMENT_METHODS.map((payment) => (
+                <li
+                  key={payment.alt}
+                  className="relative h-[30px] w-[73px] overflow-hidden rounded-lg bg-white"
                 >
-                  {dictionary.footer.privacyPolicy}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/terms`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.footer.terms}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/refund`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.footer.refundPolicy}
-                </AppLink>
-              </li>
-              <li>
-                <AppLink
-                  href={`/${locale}/legal/delivery`}
-                  prefetchPolicy="intent"
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.footer.deliveryPolicy}
-                </AppLink>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-4 text-sm font-semibold text-white">
-              {dictionary.footer.contactInfo}
-            </h4>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-gray-400" />
-                <span className="text-sm text-gray-300">
-                  {dictionary.contact.storeAddress}
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-5 w-5 shrink-0 text-gray-400" />
-                <a
-                  href={`tel:${dictionary.contact.storePhone}`}
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.contact.storePhone}
-                </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="h-5 w-5 shrink-0 text-gray-400" />
-                <a
-                  href={`mailto:${dictionary.contact.storeEmail}`}
-                  className="text-sm text-gray-300 transition-colors hover:text-white"
-                >
-                  {dictionary.contact.storeEmail}
-                </a>
-              </li>
+                  <Image
+                    src={payment.src}
+                    alt={payment.alt}
+                    fill
+                    sizes="73px"
+                    className="object-contain p-1"
+                  />
+                </li>
+              ))}
             </ul>
           </div>
         </div>
-
-        <div className="mt-8 border-t border-gray-800 pt-8">
-          <p className="text-center text-sm text-gray-300 md:text-left">
-            {`Copyright © ${year} | ${dictionary.footer.rights}, ${dictionary.footer.createdBy}`}
-          </p>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </FooterCornerShell>
   );
 }

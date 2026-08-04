@@ -6,10 +6,8 @@ import {
   useId,
   useRef,
   useState,
-  useSyncExternalStore,
   useTransition,
 } from "react";
-import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
@@ -34,51 +32,30 @@ type HeaderSearchProps = {
   locale: Locale;
   currency: Currency;
   labels: HeaderSearchLabels;
+  className?: string;
 };
 
 const DEBOUNCE_MS = 250;
 
-function subscribeNoop(): () => void {
-  return () => undefined;
-}
-
-export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
-  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
-  const titleId = useId();
+export function HeaderSearch({
+  locale,
+  currency,
+  labels,
+  className,
+}: HeaderSearchProps) {
+  const listboxId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const requestIdRef = useRef(0);
 
-  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<HeaderSearchHit[]>([]);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [panelOpen, setPanelOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    if (!open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 20);
-
-    function handleEscape(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleEscape);
-      window.clearTimeout(focusTimer);
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-
     const normalized = normalizeHeaderSearchQuery(query);
     if (!normalized) {
       return;
@@ -108,28 +85,54 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     }, DEBOUNCE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [open, query, locale, currency]);
+  }, [query, locale, currency]);
 
-  function openSearch(): void {
-    setOpen(true);
-  }
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent): void {
+      const root = rootRef.current;
+      if (!root || !(event.target instanceof Node)) return;
+      if (!root.contains(event.target)) {
+        setPanelOpen(false);
+      }
+    }
 
-  function closeSearch(): void {
-    setOpen(false);
+    function handleEscape(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        setPanelOpen(false);
+        inputRef.current?.blur();
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  function clearSearch(): void {
+    requestIdRef.current += 1;
     setQuery("");
     setHits([]);
     setSearched(false);
     setError(null);
+    inputRef.current?.focus();
   }
 
   function handleQueryChange(value: string): void {
     setQuery(value);
+    setPanelOpen(true);
     if (!normalizeHeaderSearchQuery(value)) {
       requestIdRef.current += 1;
       setHits([]);
       setSearched(false);
       setError(null);
     }
+  }
+
+  function closePanel(): void {
+    setPanelOpen(false);
   }
 
   const normalizedQuery = normalizeHeaderSearchQuery(query);
@@ -141,138 +144,123 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     !isPending &&
     !error &&
     visibleHits.length === 0;
+  const showPanel = panelOpen;
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={openSearch}
-        aria-label={labels.search}
-        className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition-colors duration-150 hover:text-gray-900"
-      >
-        <Search className="h-5 w-5" aria-hidden="true" />
-      </button>
+    <div ref={rootRef} className={`relative ${className ?? ""}`}>
+      <label className="flex h-12 w-full items-center gap-3 rounded-full bg-brand-surface px-4 text-sm text-[rgba(33,43,54,0.46)] transition focus-within:bg-[#ececec] sm:h-[49px] sm:gap-2 sm:px-8">
+        <Search className="h-[18px] w-[18px] shrink-0 sm:h-5 sm:w-5" aria-hidden="true" />
+        <span className="sr-only">{labels.search}</span>
+        <input
+          ref={inputRef}
+          type="text"
+          role="combobox"
+          value={query}
+          onChange={(event) => handleQueryChange(event.target.value)}
+          onFocus={() => setPanelOpen(true)}
+          placeholder={labels.searchPlaceholder}
+          autoComplete="off"
+          aria-autocomplete="list"
+          aria-controls={listboxId}
+          aria-expanded={showPanel}
+          className="min-w-0 flex-1 bg-transparent text-base text-gray-900 outline-none placeholder:text-[rgba(33,43,54,0.46)] sm:text-sm"
+          // Chrome iOS injects __gcruniqueid before hydration.
+          suppressHydrationWarning
+        />
+        {query ? (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="rounded-lg p-1 text-gray-500 hover:bg-black/5 hover:text-gray-900"
+            aria-label={labels.close}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        ) : null}
+      </label>
 
-      {mounted && open
-        ? createPortal(
-            <div
-              className="fixed inset-0 z-[210] flex items-start justify-center bg-black/40 px-4 pt-[12vh] sm:pt-[16vh]"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby={titleId}
-              onClick={closeSearch}
-            >
-              <div
-                className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
-                onClick={(event) => event.stopPropagation()}
-              >
-                <div className="flex items-center gap-2 border-b border-gray-200 px-4 py-3">
-                  <Search
-                    className="h-5 w-5 shrink-0 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <h2 id={titleId} className="sr-only">
-                    {labels.search}
-                  </h2>
-                  <input
-                    ref={inputRef}
-                    type="search"
-                    value={query}
-                    onChange={(event) => handleQueryChange(event.target.value)}
-                    placeholder={labels.searchPlaceholder}
-                    autoComplete="off"
-                    className="min-w-0 flex-1 bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-400"
-                  />
-                  <button
-                    type="button"
-                    onClick={closeSearch}
-                    className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                    aria-label={labels.close}
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
+      {showPanel ? (
+        <div
+          id={listboxId}
+          role="listbox"
+          aria-label={labels.search}
+          className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[60] overflow-hidden rounded-2xl border border-black/8 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)]"
+        >
+          <div className="max-h-[min(24rem,50vh)] overflow-y-auto">
+            {!normalizedQuery ? (
+              <p className="px-4 py-6 text-center text-sm text-gray-500">
+                {labels.searchHint}
+              </p>
+            ) : null}
 
-                <div className="max-h-[min(24rem,50vh)] overflow-y-auto">
-                  {!normalizedQuery ? (
-                    <p className="px-4 py-8 text-center text-sm text-gray-500">
-                      {labels.searchHint}
-                    </p>
-                  ) : null}
+            {error ? (
+              <p className="px-4 py-6 text-center text-sm text-red-700">
+                {error}
+              </p>
+            ) : null}
 
-                  {error ? (
-                    <p className="px-4 py-8 text-center text-sm text-red-700">
-                      {error}
-                    </p>
-                  ) : null}
+            {showEmpty ? (
+              <p className="px-4 py-6 text-center text-sm text-gray-500">
+                {labels.searchNoResults}
+              </p>
+            ) : null}
 
-                  {showEmpty ? (
-                    <p className="px-4 py-8 text-center text-sm text-gray-500">
-                      {labels.searchNoResults}
-                    </p>
-                  ) : null}
-
-                  {visibleHits.length > 0 ? (
-                    <ul className="divide-y divide-gray-100 py-1">
-                      {visibleHits.map((hit) => (
-                        <li key={hit.id}>
-                          <AppLink
-                            href={hit.href}
-                            prefetchPolicy="intent"
-                            onClick={closeSearch}
-                            className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50 ${
-                              hit.inStock ? "" : "opacity-60"
-                            }`}
-                          >
-                            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                              {hit.imageUrl ? (
-                                <Image
-                                  src={hit.imageUrl}
-                                  alt=""
-                                  fill
-                                  sizes="48px"
-                                  className="object-cover"
-                                />
-                              ) : null}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-medium text-gray-900">
-                                {hit.title}
-                              </p>
-                              <p className="mt-0.5 text-sm text-gray-600">
-                                {hit.priceFormatted}
-                              </p>
-                            </div>
-                          </AppLink>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-
-                  {isPending && normalizedQuery ? (
-                    <p className="px-4 py-3 text-center text-xs text-gray-400">
-                      …
-                    </p>
-                  ) : null}
-                </div>
-
-                {normalizedQuery ? (
-                  <div className="border-t border-gray-200 px-4 py-3">
+            {visibleHits.length > 0 ? (
+              <ul className="divide-y divide-gray-100 py-1">
+                {visibleHits.map((hit) => (
+                  <li key={hit.id} role="option" aria-selected={false}>
                     <AppLink
-                      href={viewAllHref}
+                      href={hit.href}
                       prefetchPolicy="intent"
-                      onClick={closeSearch}
-                      className="block text-center text-sm font-medium text-gray-900 hover:underline"
+                      onClick={closePanel}
+                      className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50 ${
+                        hit.inStock ? "" : "opacity-60"
+                      }`}
                     >
-                      {labels.searchViewAll}
+                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                        {hit.imageUrl ? (
+                          <Image
+                            src={hit.imageUrl}
+                            alt=""
+                            fill
+                            sizes="48px"
+                            className="object-cover"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-gray-900">
+                          {hit.title}
+                        </p>
+                        <p className="mt-0.5 text-sm text-gray-600">
+                          {hit.priceFormatted}
+                        </p>
+                      </div>
                     </AppLink>
-                  </div>
-                ) : null}
-              </div>
-            </div>,
-            document.body,
-          )
-        : null}
-    </>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {isPending && normalizedQuery ? (
+              <p className="px-4 py-3 text-center text-xs text-gray-400">…</p>
+            ) : null}
+          </div>
+
+          {normalizedQuery ? (
+            <div className="border-t border-gray-200 px-4 py-3">
+              <AppLink
+                href={viewAllHref}
+                prefetchPolicy="intent"
+                onClick={closePanel}
+                className="block text-center text-sm font-medium text-gray-900 hover:underline"
+              >
+                {labels.searchViewAll}
+              </AppLink>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
   );
 }

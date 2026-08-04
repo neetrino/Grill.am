@@ -9,69 +9,80 @@ import {
 } from "@/features/products/schemas/catalog-list";
 
 type CatalogSortLabels = {
-  sortLabel: string;
-  newest: string;
-  priceAsc: string;
-  priceDesc: string;
   popular: string;
-  resultsCount: string;
+  newest: string;
+  onSale: string;
 };
 
 type CatalogSortBarProps = {
   locale: string;
   filters: CatalogFilter;
-  total: number;
   labels: CatalogSortLabels;
 };
 
-const SORT_OPTIONS: CatalogSort[] = [
-  "newest",
-  "price_asc",
-  "price_desc",
-  "popular",
-];
+type SortTabId = "popular" | "newest" | "onSale";
 
 export function CatalogSortBar({
   locale,
   filters,
-  total,
   labels,
 }: CatalogSortBarProps) {
   const router = useRouter();
 
-  const sortLabelMap: Record<CatalogSort, string> = {
-    newest: labels.newest,
-    price_asc: labels.priceAsc,
-    price_desc: labels.priceDesc,
-    popular: labels.popular,
-  };
+  const activeTab: SortTabId =
+    filters.onSale === true
+      ? "onSale"
+      : filters.sort === "popular"
+        ? "popular"
+        : "newest";
+
+  const tabs: Array<{
+    id: SortTabId;
+    label: string;
+    overrides: Partial<CatalogFilter>;
+  }> = [
+    {
+      id: "popular",
+      label: labels.popular,
+      overrides: { sort: "popular" as CatalogSort, onSale: undefined, page: 1 },
+    },
+    {
+      id: "newest",
+      label: labels.newest,
+      overrides: { sort: "newest" as CatalogSort, onSale: undefined, page: 1 },
+    },
+    {
+      id: "onSale",
+      label: labels.onSale,
+      overrides: { onSale: true, page: 1 },
+    },
+  ];
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm text-gray-600">
-        {labels.resultsCount.replace("{count}", String(total))}
-      </p>
-      <label className="flex items-center gap-2 text-sm text-gray-700">
-        <span className="whitespace-nowrap">{labels.sortLabel}</span>
-        <select
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-400"
-          value={filters.sort}
-          aria-label={labels.sortLabel}
-          onChange={(event) => {
-            const sort = event.target.value as CatalogSort;
-            const query = buildCatalogQuery(filters, { sort, page: 1 });
-            router.push(
-              query ? `/${locale}/products?${query}` : `/${locale}/products`,
-            );
-          }}
-        >
-          {SORT_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {sortLabelMap[option]}
-            </option>
-          ))}
-        </select>
-      </label>
+    <div className="flex flex-wrap items-center gap-2">
+      {tabs.map((tab) => {
+        const active = tab.id === activeTab;
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            aria-pressed={active}
+            onClick={() => {
+              const query = buildCatalogQuery(filters, tab.overrides);
+              router.push(
+                query ? `/${locale}/products?${query}` : `/${locale}/products`,
+              );
+            }}
+            className={`inline-flex h-[34px] items-center rounded-full px-4 text-sm font-semibold transition ${
+              active
+                ? "bg-brand-red text-white"
+                : "bg-white text-[#6b7280] hover:bg-[#fafafa]"
+            }`}
+          >
+            {tab.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
