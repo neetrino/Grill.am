@@ -3,7 +3,7 @@
  * can prepare change (`tendered − order total`).
  */
 export const COD_CASH_DENOMINATIONS = [
-  5_000, 10_000, 20_000, 50_000, 100_000,
+  1_000, 5_000, 10_000, 20_000, 50_000, 100_000,
 ] as const;
 
 export type CodCashDenomination = (typeof COD_CASH_DENOMINATIONS)[number];
