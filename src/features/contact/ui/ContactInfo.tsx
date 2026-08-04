@@ -70,9 +70,11 @@ export function ContactInfo({ copy }: ContactInfoProps) {
       </InfoCard>
 
       <InfoCard icon={<MapPin className="size-5" aria-hidden />} title={copy.hqTitle}>
-        <p className="mb-4 text-sm leading-relaxed text-gray-600">
-          {copy.hqDescription}
-        </p>
+        {copy.hqDescription ? (
+          <p className="mb-4 text-sm leading-relaxed text-gray-600">
+            {copy.hqDescription}
+          </p>
+        ) : null}
         <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {copy.storeAddresses.map((address) => (
             <li
