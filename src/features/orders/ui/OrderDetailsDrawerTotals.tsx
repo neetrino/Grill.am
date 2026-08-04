@@ -2,12 +2,17 @@
 
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
+import {
+  ORDER_DETAIL_CARD,
+  ORDER_DETAIL_SECTION_TITLE,
+} from "@/features/orders/ui/order-detail-card-classes";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 
 type OrderDetailsDrawerTotalsProps = {
   detail: AdminOrderDetailView;
 };
 
+/** Money summary card — subtotal, shipping, tax, total. */
 export function OrderDetailsDrawerTotals({
   detail,
 }: OrderDetailsDrawerTotalsProps) {
@@ -18,54 +23,52 @@ export function OrderDetailsDrawerTotals({
     ? drawer.freePickup
     : formatOrderDrawerMoney(detail.deliveryAmount, detail.baseCurrency);
 
-  const discountLabel =
-    detail.discountAmount > 0
-      ? `−${formatOrderDrawerMoney(detail.discountAmount, detail.baseCurrency)}`
-      : formatOrderDrawerMoney(0, detail.baseCurrency);
-
   return (
-    <div className="border-b border-gray-200 px-6 py-5">
-      <div className="space-y-3 text-sm">
+    <section className={ORDER_DETAIL_CARD}>
+      <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.summarySection}</h3>
+      <dl className="space-y-3 text-sm">
         <div className="flex items-center justify-between gap-4">
-          <span className="text-gray-600">{drawer.subtotal}</span>
-          <span className="font-medium text-gray-900">
+          <dt className="text-gray-600">{drawer.subtotal}</dt>
+          <dd className="font-medium tabular-nums text-gray-900">
             {formatOrderDrawerMoney(detail.subtotalAmount, detail.baseCurrency)}
-          </span>
+          </dd>
         </div>
 
         <div className="flex items-center justify-between gap-4">
-          <span className="text-gray-600">
-            {drawer.delivery}
-            {!detail.isPickup && detail.deliveryLabel
-              ? ` (${detail.deliveryLabel})`
-              : ""}
-          </span>
-          <span className="font-medium text-gray-900">{shippingLabel}</span>
+          <dt className="text-gray-600">{drawer.delivery}</dt>
+          <dd className="font-medium text-gray-900">{shippingLabel}</dd>
         </div>
 
         <div className="flex items-center justify-between gap-4">
-          <span className="text-gray-600">
-            {drawer.couponDiscount}
-            {detail.couponCode ? ` (${detail.couponCode})` : ""}
-          </span>
-          <span
-            className={`font-medium ${
-              detail.discountAmount > 0 ? "text-green-700" : "text-gray-900"
-            }`}
-          >
-            {discountLabel}
-          </span>
+          <dt className="text-gray-600">{drawer.tax}</dt>
+          <dd className="font-medium tabular-nums text-gray-900">
+            {formatOrderDrawerMoney(0, detail.baseCurrency)}
+          </dd>
         </div>
+
+        {detail.discountAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-gray-600">
+              {drawer.couponDiscount}
+              {detail.couponCode ? ` (${detail.couponCode})` : ""}
+            </dt>
+            <dd className="font-medium tabular-nums text-green-700">
+              −
+              {formatOrderDrawerMoney(
+                detail.discountAmount,
+                detail.baseCurrency,
+              )}
+            </dd>
+          </div>
+        ) : null}
 
         <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-3">
-          <span className="text-base font-semibold text-gray-900">
-            {drawer.total}
-          </span>
-          <span className="text-base font-semibold text-gray-900">
+          <dt className="text-base font-bold text-gray-900">{drawer.total}</dt>
+          <dd className="text-base font-bold tabular-nums text-gray-900">
             {formatOrderDrawerMoney(detail.totalAmount, detail.baseCurrency)}
-          </span>
+          </dd>
         </div>
-      </div>
-    </div>
+      </dl>
+    </section>
   );
 }

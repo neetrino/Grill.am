@@ -23,6 +23,8 @@ export type AdminOrderDetailItemView = {
 
 export type AdminOrderDetailView = {
   orderNumber: string;
+  /** ISO timestamp when the order was placed. */
+  placedAt: string;
   status: string;
   paymentStatus: string;
   contactName: string;
@@ -96,6 +98,7 @@ export function toAdminOrderDetailView(
 
   return {
     orderNumber: order.orderNumber,
+    placedAt: order.placedAt.toISOString(),
     status: order.status,
     paymentStatus: order.paymentStatus,
     contactName: order.contactName,
