@@ -122,6 +122,7 @@ export function MobileHeaderActions({
         prefetchPolicy="intent"
         className={actionButtonClassName}
         aria-label={profileLabel}
+        onClick={() => setOpen(false)}
       >
         <HeaderUserIcon className="block size-6 overflow-visible text-white" />
       </AppLink>
