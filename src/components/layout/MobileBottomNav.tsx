@@ -2,14 +2,24 @@
 
 import { Heart, Home, ShoppingCart } from "lucide-react";
 import { usePathname } from "next/navigation";
-import type { ComponentType } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentType,
+  type CSSProperties,
+} from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { ShopNavIcon } from "@/components/layout/ShopNavIcon";
+import styles from "@/components/layout/MobileBottomNav.module.css";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+
+const BOTTOM_NAV_TRANSITION_MS = 380;
 
 type MobileBottomNavProps = {
   locale: Locale;
@@ -25,14 +35,23 @@ type NavIcon = ComponentType<{
   "aria-hidden"?: boolean | "true" | "false";
 }>;
 
+type NavTabId = "home" | "shop" | "cart" | "wishlist";
+
 type NavTab = {
-  id: string;
+  id: Exclude<NavTabId, "cart">;
   href: string;
   label: string;
   icon: NavIcon;
   badge?: number;
   /** Overrides default inactive `size-6` / active `size-[31px]`. */
   iconClassName?: { active: string; idle: string };
+};
+
+type IndicatorBox = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 };
 
 function isHomePath(pathname: string, locale: Locale): boolean {
@@ -57,13 +76,13 @@ function NavBadge({ count }: { count: number }) {
 
 function tabClassName(active: boolean): string {
   return active
-    ? "relative flex h-14 min-w-[118px] shrink-0 items-center gap-1 rounded-[70px] bg-brand-red px-2 text-[13px] font-medium text-white transition-[min-width,background-color] duration-200"
-    : "relative flex size-14 shrink-0 items-center justify-center rounded-full bg-white text-[#171717] transition-[min-width,background-color] duration-200";
+    ? `relative z-10 flex h-14 w-[118px] shrink-0 items-center gap-1 overflow-hidden rounded-[70px] bg-transparent px-2 text-[13px] font-medium text-white ${styles.tab}`
+    : `relative z-10 flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-[#171717] ${styles.tab}`;
 }
 
 /**
  * Figma mobile bottom bar `164:604` — floating dark island.
- * Active tab expands to the red pill + label (same as Home).
+ * Active tab expands to the red pill + label; the pill slides between options.
  */
 export function MobileBottomNav({
   locale,
@@ -73,10 +92,25 @@ export function MobileBottomNav({
   wishlistCount,
 }: MobileBottomNavProps) {
   const pathname = usePathname() ?? `/${locale}`;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Map<NavTabId, HTMLElement>>(new Map());
+  const [indicator, setIndicator] = useState<IndicatorBox | null>(null);
+  const [slideEnabled, setSlideEnabled] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
 
   const homeActive = isHomePath(pathname, locale);
   const shopActive = startsWithPath(pathname, `/${locale}/products`);
   const wishlistActive = startsWithPath(pathname, `/${locale}/wishlist`);
+
+  const activeId: NavTabId | null = cartOpen
+    ? "cart"
+    : homeActive
+      ? "home"
+      : shopActive
+        ? "shop"
+        : wishlistActive
+          ? "wishlist"
+          : null;
 
   const homeTab: NavTab = {
     id: "home",
@@ -101,15 +135,113 @@ export function MobileBottomNav({
     badge: wishlistCount,
   };
 
+  useLayoutEffect(() => {
+    if (!activeId) {
+      setIndicator(null);
+      return;
+    }
+    const el = itemRefs.current.get(activeId);
+    if (!el) {
+      return;
+    }
+    setIndicator({
+      left: el.offsetLeft,
+      top: el.offsetTop,
+      width: el.offsetWidth,
+      height: el.offsetHeight,
+    });
+  }, [activeId]);
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      setSlideEnabled(true);
+    });
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const syncIndicator = (): void => {
+      if (!activeId) {
+        setIndicator(null);
+        return;
+      }
+      const el = itemRefs.current.get(activeId);
+      if (!el) {
+        return;
+      }
+      setIndicator({
+        left: el.offsetLeft,
+        top: el.offsetTop,
+        width: el.offsetWidth,
+        height: el.offsetHeight,
+      });
+    };
+
+    const observer = new ResizeObserver(syncIndicator);
+    observer.observe(track);
+    for (const el of itemRefs.current.values()) {
+      observer.observe(el);
+    }
+    return () => {
+      observer.disconnect();
+    };
+  }, [activeId]);
+
+  function registerItem(id: NavTabId, node: HTMLElement | null): void {
+    if (node) {
+      itemRefs.current.set(id, node);
+    } else {
+      itemRefs.current.delete(id);
+    }
+  }
+
   return (
     <nav
       aria-label={dictionary.nav.navigation}
       data-mobile-bottom-nav
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-8 pb-[max(12px,env(safe-area-inset-bottom))] md:hidden"
+      style={
+        {
+          "--bottom-nav-ms": `${BOTTOM_NAV_TRANSITION_MS}ms`,
+        } as CSSProperties
+      }
     >
-      <div className="pointer-events-auto flex h-[71px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-3 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
-        <PillTab tab={homeTab} active={homeActive} />
-        <PillTab tab={shopTab} active={shopActive} />
+      <div
+        ref={trackRef}
+        className="pointer-events-auto relative flex h-[71px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-3 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+      >
+        {indicator ? (
+          <span
+            aria-hidden
+            className={`pointer-events-none absolute z-0 rounded-[70px] bg-brand-red ${
+              slideEnabled ? styles.indicator : styles.indicatorInstant
+            }`}
+            style={{
+              left: indicator.left,
+              top: indicator.top,
+              width: indicator.width,
+              height: indicator.height,
+            }}
+          />
+        ) : null}
+
+        <PillTab
+          tab={homeTab}
+          active={activeId === "home"}
+          register={(node) => registerItem("home", node)}
+        />
+        <PillTab
+          tab={shopTab}
+          active={activeId === "shop"}
+          register={(node) => registerItem("shop", node)}
+        />
 
         <CartDrawer
           locale={locale}
@@ -123,35 +255,92 @@ export function MobileBottomNav({
             openDrawer,
             prefetchDrawerView,
           }) => (
-            <button
-              type="button"
-              onClick={openDrawer}
-              onPointerEnter={prefetchDrawerView}
-              onFocus={prefetchDrawerView}
-              aria-label={label}
-              aria-expanded={open}
-              className={tabClassName(open)}
-            >
-              <span className="relative inline-flex shrink-0" data-cart-fly-target>
-                <ShoppingCart
-                  className={open ? "size-[31px]" : "size-6"}
-                  strokeWidth={1.75}
-                  aria-hidden
-                />
-                <NavBadge count={badgeCount} />
-              </span>
-              {open ? <span className="truncate pr-1">{label}</span> : null}
-            </button>
+            <CartPillButton
+              open={open}
+              active={activeId === "cart"}
+              badgeCount={badgeCount}
+              label={label}
+              openDrawer={openDrawer}
+              prefetchDrawerView={prefetchDrawerView}
+              onOpenChange={setCartOpen}
+              register={(node) => registerItem("cart", node)}
+            />
           )}
         />
 
-        <PillTab tab={wishlistTab} active={wishlistActive} />
+        <PillTab
+          tab={wishlistTab}
+          active={activeId === "wishlist"}
+          register={(node) => registerItem("wishlist", node)}
+        />
       </div>
     </nav>
   );
 }
 
-function PillTab({ tab, active }: { tab: NavTab; active: boolean }) {
+function CartPillButton({
+  open,
+  active,
+  badgeCount,
+  label,
+  openDrawer,
+  prefetchDrawerView,
+  onOpenChange,
+  register,
+}: {
+  open: boolean;
+  active: boolean;
+  badgeCount: number;
+  label: string;
+  openDrawer: () => void;
+  prefetchDrawerView: () => void;
+  onOpenChange: (open: boolean) => void;
+  register: (node: HTMLButtonElement | null) => void;
+}) {
+  useEffect(() => {
+    onOpenChange(open);
+  }, [open, onOpenChange]);
+
+  return (
+    <button
+      ref={register}
+      type="button"
+      onClick={openDrawer}
+      onPointerEnter={prefetchDrawerView}
+      onFocus={prefetchDrawerView}
+      aria-label={label}
+      aria-expanded={open}
+      className={tabClassName(active)}
+    >
+      <span className="relative inline-flex shrink-0" data-cart-fly-target>
+        <ShoppingCart
+          className={`${styles.tabIcon} ${active ? "size-[31px]" : "size-6"}`}
+          strokeWidth={1.75}
+          aria-hidden
+        />
+        <NavBadge count={badgeCount} />
+      </span>
+      <span
+        className={`truncate pr-1 ${styles.tabLabel} ${
+          active ? "" : styles.tabLabelHidden
+        }`}
+        aria-hidden={!active}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+function PillTab({
+  tab,
+  active,
+  register,
+}: {
+  tab: NavTab;
+  active: boolean;
+  register: (node: HTMLAnchorElement | null) => void;
+}) {
   const Icon = tab.icon;
   const iconClassName = active
     ? (tab.iconClassName?.active ?? "size-[31px]")
@@ -159,6 +348,7 @@ function PillTab({ tab, active }: { tab: NavTab; active: boolean }) {
 
   return (
     <AppLink
+      ref={register}
       href={tab.href}
       prefetchPolicy="intent"
       aria-current={active ? "page" : undefined}
@@ -167,13 +357,20 @@ function PillTab({ tab, active }: { tab: NavTab; active: boolean }) {
     >
       <span className="relative inline-flex shrink-0">
         <Icon
-          className={iconClassName}
+          className={`${styles.tabIcon} ${iconClassName}`}
           strokeWidth={tab.id === "shop" ? 1.35 : 1.75}
           aria-hidden
         />
         {tab.badge != null ? <NavBadge count={tab.badge} /> : null}
       </span>
-      {active ? <span className="truncate pr-1">{tab.label}</span> : null}
+      <span
+        className={`truncate pr-1 ${styles.tabLabel} ${
+          active ? "" : styles.tabLabelHidden
+        }`}
+        aria-hidden={!active}
+      >
+        {tab.label}
+      </span>
     </AppLink>
   );
 }
