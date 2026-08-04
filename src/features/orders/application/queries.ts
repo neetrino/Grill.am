@@ -42,6 +42,11 @@ export type AdminOrderListItem = {
   isArchived: boolean;
 };
 
+/** Customer profile list row — includes line-item quantity for order cards. */
+export type CustomerOrderListItem = AdminOrderListItem & {
+  itemsCount: number;
+};
+
 export type AdminOrderDetail = {
   order: typeof orders.$inferSelect;
   items: Array<typeof orderItems.$inferSelect>;
@@ -131,12 +136,16 @@ export async function listAdminOrders(
 
 /**
  * Lists orders belonging to a single customer (profile surface).
- * Same shape as admin list rows; always scoped to `userId`.
+ * Same filters as admin list; always scoped to `userId`. Includes item counts for cards.
  */
 export async function listCustomerOrders(
   userId: string,
   filters: AdminOrdersFilter,
-): Promise<{ rows: AdminOrderListItem[]; total: number; pageSize: number }> {
+): Promise<{
+  rows: CustomerOrderListItem[];
+  total: number;
+  pageSize: number;
+}> {
   const baseWhere = buildOrderFilters(filters);
   const where = baseWhere
     ? and(eq(orders.userId, userId), baseWhere)
@@ -156,6 +165,16 @@ export async function listCustomerOrders(
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
+        itemsCount: sql<number>`
+          coalesce(
+            (
+              select sum(${orderItems.quantity})
+              from ${orderItems}
+              where ${orderItems.orderId} = ${orders.id}
+            ),
+            0
+          )
+        `.mapWith(Number),
       })
       .from(orders)
       .where(where)

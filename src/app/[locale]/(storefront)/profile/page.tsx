@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 
-import { AppLink } from "@/components/ui/AppLink";
 import { logoutAction } from "@/features/auth/logout-action";
+import { listCustomerOrders } from "@/features/orders/application/queries";
+import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
 import { listCustomerAddresses } from "@/features/profile/application/address-queries";
 import { getProfileDashboard } from "@/features/profile/application/dashboard-queries";
 import { ChangePasswordForm } from "@/features/profile/ui/ChangePasswordForm";
@@ -29,11 +30,20 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const user = await requireUser(locale);
   const dictionary = getDictionary(locale);
-  const [{ stats, recentOrders }, addressRows, promoHistory] =
+  const [{ stats, recentOrders }, addressRows, promoHistory, customerOrders] =
     await Promise.all([
       getProfileDashboard(user.id),
       listCustomerAddresses(user.id),
       listCustomerCouponHistory(user.id, 1),
+      listCustomerOrders(user.id, {
+        page: 1,
+        archived: "active",
+        status: undefined,
+        paymentStatus: undefined,
+        dateFrom: undefined,
+        dateTo: undefined,
+        q: undefined,
+      }),
     ]);
 
   const logoutWithLocale = logoutAction.bind(null, locale);
@@ -49,6 +59,19 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const passwordCopy = dictionary.profile.passwordForm;
   const deleteCopy = dictionary.profile.deleteAccountForm;
   const promoCopy = dictionary.profile.promoCodes;
+  const profileCopy = dictionary.profile;
+  const ordersProfileCopy = {
+    reorder: profileCopy.reorder,
+    reordering: profileCopy.reordering,
+    reorderUnavailable: profileCopy.reorderUnavailable,
+    orderNumber: profileCopy.orderNumber,
+    item: profileCopy.item,
+    items: profileCopy.items,
+    placedOn: profileCopy.placedOn,
+    viewDetails: profileCopy.viewDetails,
+    noOrders: profileCopy.noOrders,
+    startShopping: profileCopy.startShopping,
+  } as const;
 
   return (
     <>
@@ -61,18 +84,17 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         sheets={{
           dashboard: <ProfileDashboardView {...dashboardProps} />,
           orders: (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl`}>
-                {dictionary.profile.orders}
+                {profileCopy.orders}
               </h1>
-              <ProfileDashboardView {...dashboardProps} hideTitle />
-              <AppLink
-                href={`/${locale}/profile/orders`}
-                prefetchPolicy="intent"
-                className="inline-flex h-11 w-full items-center justify-center rounded-[15px] bg-brand-red text-sm font-semibold text-white transition hover:bg-brand-red-hot"
-              >
-                {dictionary.profile.viewAllOrders}
-              </AppLink>
+              <CustomerOrdersView
+                locale={locale}
+                orders={customerOrders.rows}
+                dictionary={dictionary.admin}
+                profileCopy={ordersProfileCopy}
+                layout="cards"
+              />
             </div>
           ),
           promoCodes: (
@@ -113,7 +135,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 firstNamePlaceholder: dictionary.auth.firstName,
                 lastNamePlaceholder: dictionary.auth.lastName,
                 emailPlaceholder: dictionary.auth.email,
-                phonePlaceholder: dictionary.profile.addresses.phonePlaceholder,
+                phonePlaceholder: addressCopy.phonePlaceholder,
               }}
             />
           ),

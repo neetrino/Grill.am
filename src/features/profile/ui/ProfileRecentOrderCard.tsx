@@ -43,7 +43,7 @@ export function ProfileRecentOrderCard({
           {status}
         </span>
       </div>
-      <p className="mt-2 text-lg leading-none font-bold text-gray-900 sm:text-xl">
+      <p className="mt-2 text-lg leading-none font-bold text-brand-red sm:text-xl">
         {totalLabel}
       </p>
 
@@ -66,9 +66,11 @@ export function ProfileRecentOrderCard({
       </div>
 
       <div className="mt-auto pt-5">
-        <span className="flex min-h-9 w-full items-center justify-between rounded-full bg-brand-red py-0.5 pr-0.5 pl-4 text-xs font-medium text-white">
-          <span className="flex-1 text-center">{viewDetailsLabel}</span>
-          <span className="flex h-7 w-7 shrink-0 -translate-x-0.5 items-center justify-center rounded-full bg-white text-brand-red">
+        <span className="flex min-h-9 w-full items-center gap-2 rounded-full bg-brand-red py-0.5 pr-0.5 pl-3 text-xs font-medium text-white">
+          <span className="min-w-0 flex-1 truncate text-center">
+            {viewDetailsLabel}
+          </span>
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-brand-red">
             →
           </span>
         </span>

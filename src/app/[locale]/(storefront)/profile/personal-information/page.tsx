@@ -40,7 +40,7 @@ export default async function PersonalInformationPage({
           firstNamePlaceholder: dictionary.auth.firstName,
           lastNamePlaceholder: dictionary.auth.lastName,
           emailPlaceholder: dictionary.auth.email,
-          phonePlaceholder: dictionary.profile.addresses.phonePlaceholder,
+          phonePlaceholder: dictionary.profile.addressBook.phonePlaceholder,
         }}
       />
     </section>
