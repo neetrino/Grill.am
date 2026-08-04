@@ -43,7 +43,7 @@ type NavTab = {
   label: string;
   icon: NavIcon;
   badge?: number;
-  /** Overrides default inactive `size-6` / active `size-[31px]`. */
+  /** Overrides default inactive / active icon sizes. */
   iconClassName?: { active: string; idle: string };
 };
 
@@ -76,8 +76,8 @@ function NavBadge({ count }: { count: number }) {
 
 function tabClassName(active: boolean): string {
   return active
-    ? `relative z-10 flex h-14 w-[118px] shrink-0 items-center gap-1 overflow-hidden rounded-[70px] bg-transparent px-2 text-[13px] font-medium text-white ${styles.tab}`
-    : `relative z-10 flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-[#171717] ${styles.tab}`;
+    ? `relative z-10 flex h-12 w-[100px] shrink-0 items-center gap-1 overflow-hidden rounded-[70px] bg-transparent px-1.5 text-[12px] font-medium text-white min-[390px]:h-14 min-[390px]:w-[118px] min-[390px]:px-2 min-[390px]:text-[13px] ${styles.tab}`
+    : `relative z-10 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-[#171717] min-[390px]:size-14 ${styles.tab}`;
 }
 
 /**
@@ -124,7 +124,10 @@ export function MobileBottomNav({
     href: `/${locale}/products`,
     label: dictionary.nav.shop,
     icon: ShopNavIcon,
-    iconClassName: { idle: "size-8", active: "size-9" },
+    iconClassName: {
+      idle: "size-6 min-[390px]:size-8",
+      active: "size-7 min-[390px]:size-9",
+    },
   };
 
   const wishlistTab: NavTab = {
@@ -206,7 +209,7 @@ export function MobileBottomNav({
     <nav
       aria-label={dictionary.nav.navigation}
       data-mobile-bottom-nav
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-8 pb-[max(12px,env(safe-area-inset-bottom))] md:hidden"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(12px,env(safe-area-inset-bottom))] min-[390px]:px-8 md:hidden"
       style={
         {
           "--bottom-nav-ms": `${BOTTOM_NAV_TRANSITION_MS}ms`,
@@ -215,7 +218,7 @@ export function MobileBottomNav({
     >
       <div
         ref={trackRef}
-        className="pointer-events-auto relative flex h-[71px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-3 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+        className="pointer-events-auto relative flex h-[60px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[71px] min-[390px]:px-3 min-[390px]:py-2"
       >
         {indicator ? (
           <span
@@ -314,7 +317,7 @@ function CartPillButton({
     >
       <span className="relative inline-flex shrink-0" data-cart-fly-target>
         <ShoppingCart
-          className={`${styles.tabIcon} ${active ? "size-[31px]" : "size-6"}`}
+          className={`${styles.tabIcon} ${active ? "size-6 min-[390px]:size-[31px]" : "size-5 min-[390px]:size-6"}`}
           strokeWidth={1.75}
           aria-hidden
         />
@@ -343,8 +346,8 @@ function PillTab({
 }) {
   const Icon = tab.icon;
   const iconClassName = active
-    ? (tab.iconClassName?.active ?? "size-[31px]")
-    : (tab.iconClassName?.idle ?? "size-6");
+    ? (tab.iconClassName?.active ?? "size-6 min-[390px]:size-[31px]")
+    : (tab.iconClassName?.idle ?? "size-5 min-[390px]:size-6");
 
   return (
     <AppLink
