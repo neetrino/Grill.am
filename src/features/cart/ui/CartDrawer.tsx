@@ -13,7 +13,11 @@ import { useRouter } from "next/navigation";
 import { DrawerCloseTab } from "@/components/drawer/DrawerCloseTab";
 import { AppLink } from "@/components/ui/AppLink";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
-import { notifyCartChanged } from "@/features/cart/cart-client-sync";
+import {
+  adjustLocalCartItemCount,
+  notifyCartChanged,
+  useCartItemCount,
+} from "@/features/cart/cart-client-sync";
 import { CartDrawerItemRow } from "@/features/cart/ui/CartDrawerItemRow";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
 import { useCartDrawerView } from "@/features/cart/ui/use-cart-drawer-view";
@@ -67,20 +71,14 @@ export function CartDrawer({
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);
-  const { view, viewIsCurrent, loading } = useCartDrawerView(
-    locale,
-    currency,
-    itemCount,
-  );
-  const [pending, startTransition] = useTransition();
+  const { view, loading, removeItemLocally, setQuantityLocally, restoreItemLocally } =
+    useCartDrawerView(locale, currency, itemCount);
+  const [, startTransition] = useTransition();
   const labels = dictionary.cartDrawer;
-  const currentView = viewIsCurrent ? view : null;
-  const badgeCount = currentView?.itemCount ?? itemCount;
+  const badgeCount = useCartItemCount(itemCount);
   const totalFormatted =
-    currentView?.totalFormatted ??
-    view?.totalFormatted ??
-    (itemCount > 0 ? "…" : "0.00");
-  const showInitialLoading = loading && (view?.items.length ?? 0) === 0;
+    view?.totalFormatted ?? (badgeCount > 0 ? "…" : "0.00");
+  const showInitialLoading = loading;
 
   useEffect(() => {
     if (!open) {
@@ -127,18 +125,46 @@ export function CartDrawer({
   }
 
   function changeQuantity(itemId: string, quantity: number): void {
+    if (quantity < 1) {
+      removeCartItem(itemId);
+      return;
+    }
+
+    const result = setQuantityLocally(itemId, quantity);
+    if (!result) {
+      return;
+    }
+    const delta = result.nextQuantity - result.previous.quantity;
+    adjustLocalCartItemCount(delta);
+
     startTransition(async () => {
-      await updateQuantity(itemId, quantity);
-      notifyCartChanged();
-      router.refresh();
+      try {
+        await updateQuantity(itemId, quantity);
+        notifyCartChanged();
+        router.refresh();
+      } catch {
+        restoreItemLocally(result.previous);
+        adjustLocalCartItemCount(-delta);
+      }
     });
   }
 
   function removeCartItem(itemId: string): void {
+    const removed = removeItemLocally(itemId);
+    if (!removed) {
+      return;
+    }
+    adjustLocalCartItemCount(-removed.quantity);
+
     startTransition(async () => {
-      await removeItem(itemId);
-      notifyCartChanged();
-      router.refresh();
+      try {
+        await removeItem(itemId);
+        notifyCartChanged();
+        router.refresh();
+      } catch {
+        restoreItemLocally(removed);
+        adjustLocalCartItemCount(removed.quantity);
+      }
     });
   }
 
@@ -182,9 +208,7 @@ export function CartDrawer({
                 </div>
               </div>
 
-              <div
-                className={`flex-1 overflow-y-auto px-6 py-4 ${pending || loading ? "opacity-70" : ""}`}
-              >
+              <div className="flex-1 overflow-y-auto px-6 py-4">
                 {showInitialLoading ? (
                   <p className="py-10 text-sm text-gray-500">{labels.loading}</p>
                 ) : !view || view.items.length === 0 ? (
@@ -201,7 +225,7 @@ export function CartDrawer({
                         <CartDrawerItemRow
                           item={item}
                           productHref={`/${locale}/products/${item.slug}`}
-                          pending={pending}
+                          pending={false}
                           removeLabel={labels.removeItem}
                           decreaseLabel={labels.decreaseQuantity}
                           increaseLabel={labels.increaseQuantity}

@@ -7,7 +7,11 @@ import { useTransition } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
-import { notifyCartChanged } from "@/features/cart/cart-client-sync";
+import {
+  adjustLocalCartItemCount,
+  notifyCartChanged,
+  useCartItemCount,
+} from "@/features/cart/cart-client-sync";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
 import { useCartDrawerView } from "@/features/cart/ui/use-cart-drawer-view";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
@@ -29,30 +33,58 @@ export function CatalogCartSidebar({
   initialItemCount,
 }: CatalogCartSidebarProps) {
   const router = useRouter();
-  const { view, viewIsCurrent, loading } = useCartDrawerView(
-    locale,
-    currency,
-    initialItemCount,
-  );
-  const [pending, startTransition] = useTransition();
-  const badgeCount = viewIsCurrent
-    ? (view?.itemCount ?? initialItemCount)
-    : initialItemCount;
-  const showInitialLoading = loading && (view?.items.length ?? 0) === 0;
+  const {
+    view,
+    loading,
+    removeItemLocally,
+    setQuantityLocally,
+    restoreItemLocally,
+  } = useCartDrawerView(locale, currency, initialItemCount);
+  const [, startTransition] = useTransition();
+  const badgeCount = useCartItemCount(initialItemCount);
+  const showInitialLoading = loading;
 
   function changeQuantity(itemId: string, quantity: number): void {
+    if (quantity < 1) {
+      removeCartItem(itemId);
+      return;
+    }
+
+    const result = setQuantityLocally(itemId, quantity);
+    if (!result) {
+      return;
+    }
+    const delta = result.nextQuantity - result.previous.quantity;
+    adjustLocalCartItemCount(delta);
+
     startTransition(async () => {
-      await updateQuantity(itemId, quantity);
-      notifyCartChanged();
-      router.refresh();
+      try {
+        await updateQuantity(itemId, quantity);
+        notifyCartChanged();
+        router.refresh();
+      } catch {
+        restoreItemLocally(result.previous);
+        adjustLocalCartItemCount(-delta);
+      }
     });
   }
 
   function removeCartItem(itemId: string): void {
+    const removed = removeItemLocally(itemId);
+    if (!removed) {
+      return;
+    }
+    adjustLocalCartItemCount(-removed.quantity);
+
     startTransition(async () => {
-      await removeItem(itemId);
-      notifyCartChanged();
-      router.refresh();
+      try {
+        await removeItem(itemId);
+        notifyCartChanged();
+        router.refresh();
+      } catch {
+        restoreItemLocally(removed);
+        adjustLocalCartItemCount(removed.quantity);
+      }
     });
   }
 
@@ -68,11 +100,7 @@ export function CatalogCartSidebar({
         </span>
       </div>
 
-      <div
-        className={`min-h-0 flex-1 overflow-y-auto px-5 ${
-          pending || loading ? "opacity-70" : ""
-        }`}
-      >
+      <div className="min-h-0 flex-1 overflow-y-auto px-5">
         {showInitialLoading ? (
           <p className="py-8 text-sm text-[#4a5565]">{labels.loading}</p>
         ) : !view || view.items.length === 0 ? (
@@ -119,7 +147,7 @@ export function CatalogCartSidebar({
                   <div className="flex shrink-0 items-center gap-1">
                     <button
                       type="button"
-                      disabled={pending || item.quantity <= 1}
+                      disabled={item.quantity <= 1}
                       aria-label={labels.decreaseQuantity}
                       onClick={() =>
                         changeQuantity(item.id, item.quantity - 1)
@@ -133,7 +161,6 @@ export function CatalogCartSidebar({
                     </span>
                     <button
                       type="button"
-                      disabled={pending}
                       aria-label={labels.increaseQuantity}
                       onClick={() =>
                         changeQuantity(item.id, item.quantity + 1)
@@ -146,7 +173,6 @@ export function CatalogCartSidebar({
 
                   <button
                     type="button"
-                    disabled={pending}
                     aria-label={labels.removeItem}
                     onClick={() => removeCartItem(item.id)}
                     className="shrink-0 text-[#99a1af] transition hover:text-brand-red disabled:opacity-40"
