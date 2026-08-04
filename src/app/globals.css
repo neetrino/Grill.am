@@ -334,3 +334,9 @@ select:disabled {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Skip paint work for offscreen storefront chrome (footer, deferred bands). */
+.lazy-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
+}

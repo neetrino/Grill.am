@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StorefrontScrollToTop } from "@/components/layout/StorefrontScrollToTop";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveStorefrontPopup } from "@/features/popups/application/queries";
-import { SitePopupOverlay } from "@/features/popups/ui/SitePopupOverlay";
+import { SitePopupOverlayLazy } from "@/features/popups/ui/SitePopupOverlayLazy";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
@@ -56,7 +56,7 @@ export default async function StorefrontLayout({
         dictionary={dictionary}
       />
       {activePopup ? (
-        <SitePopupOverlay
+        <SitePopupOverlayLazy
           imageUrl={activePopup.imageUrl}
           closeLabel={dictionary.popup.close}
         />

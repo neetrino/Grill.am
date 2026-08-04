@@ -2,10 +2,12 @@ import { notFound } from "next/navigation";
 
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
-import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
-import { HomeFeatures } from "@/features/home/ui/HomeFeatures";
 import { HomeHero } from "@/features/home/ui/HomeHero";
-import { HomePromotions } from "@/features/home/ui/HomePromotions";
+import {
+  HomeFeaturedProductsLazy,
+  HomeFeaturesLazy,
+  HomePromotionsLazy,
+} from "@/features/home/ui/lazy-home-sections";
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
 import {
   getDiscountedProducts,
@@ -127,7 +129,7 @@ export default async function HomePage({ params }: HomePageProps) {
         }))}
       />
 
-      <HomeFeaturedProducts
+      <HomeFeaturedProductsLazy
         locale={locale}
         titleLead={dictionary.home.featuredTitleLead}
         titleAccent={dictionary.home.featuredTitleAccent}
@@ -141,7 +143,7 @@ export default async function HomePage({ params }: HomePageProps) {
         products={featuredCards}
       />
 
-      <HomePromotions
+      <HomePromotionsLazy
         limitedOfferLabel={dictionary.home.specialLimitedOffer}
         eyebrow={dictionary.home.specialEyebrow}
         titleLead={dictionary.home.specialTitleLead}
@@ -182,7 +184,7 @@ export default async function HomePage({ params }: HomePageProps) {
         })}
       />
 
-      <HomeFeatures
+      <HomeFeaturesLazy
         titleLead={dictionary.home.whyChooseTitleLead}
         titleAccent={dictionary.home.whyChooseTitleAccent}
         compactTitle={locale === "ru"}

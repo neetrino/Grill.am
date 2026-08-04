@@ -119,19 +119,18 @@ export function HomeHero({
       {/* Crop empty red from Figma top; inner stage keeps 1440×1052 layout. */}
       <div className="relative mx-auto h-[clamp(400px,60vw,860px)] w-full max-w-[1440px] overflow-hidden">
         <div className="absolute inset-x-0 top-[-20%] h-[125%]">
-          {/* Flame background */}
+          {/* Flame background — decorative; lazy to keep LCP on logo + product. */}
           <div className="pointer-events-none absolute inset-[13.4%_-34.36%_2.18%_-37.43%] z-0">
             <Image
               src="/assets/home/hero-flame.webp"
               alt=""
               fill
-              priority
               sizes="100vw"
               className="object-contain"
             />
           </div>
 
-          {/* Grill.am wordmark */}
+          {/* Grill.am wordmark — LCP candidate */}
           <div className="pointer-events-none absolute inset-[26.53%_18.58%_50.76%_18.54%] z-[1]">
             <Image
               src="/assets/home/hero-logo.webp"
@@ -149,7 +148,6 @@ export function HomeHero({
               src="/assets/home/hero-accent.webp"
               alt=""
               fill
-              priority
               sizes="13vw"
               className="object-contain"
             />

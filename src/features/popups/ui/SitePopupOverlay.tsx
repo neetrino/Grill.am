@@ -65,6 +65,8 @@ export function SitePopupOverlay({
         <img
           src={imageUrl}
           alt=""
+          decoding="async"
+          fetchPriority="high"
           className="max-h-[90dvh] w-full rounded-lg object-contain shadow-2xl"
         />
       </div>

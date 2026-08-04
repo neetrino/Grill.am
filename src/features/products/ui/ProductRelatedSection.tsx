@@ -61,7 +61,7 @@ export async function ProductRelatedSection({
       </div>
 
       <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
-        {related.map((item, index) => {
+        {related.map((item) => {
           const price = formatPrice(item.priceAmount);
           const compareAt =
             item.compareAtAmount != null
@@ -79,7 +79,7 @@ export async function ProductRelatedSection({
               discountPercent={item.discountPercent}
               imageUrl={item.imageUrl}
               inStock={item.stockOnHand > 0}
-              priority={index < 2}
+              priority={false}
               locale={locale}
               productId={item.id}
               inWishlist={wishlistIds.has(item.id)}

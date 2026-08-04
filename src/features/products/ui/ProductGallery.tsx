@@ -230,7 +230,6 @@ export function ProductGallery({
                 fill
                 sizes="100vw"
                 className="object-contain"
-                priority
               />
             </div>
           </div>

@@ -146,6 +146,8 @@ export function ProductDiscountsSection({
                     <img
                       src={product.imageUrl}
                       alt=""
+                      loading="lazy"
+                      decoding="async"
                       className="h-12 w-12 shrink-0 rounded-md object-cover"
                     />
                   ) : (

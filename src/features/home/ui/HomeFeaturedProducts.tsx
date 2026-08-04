@@ -111,7 +111,7 @@ export function HomeFeaturedProducts({
                 key={slideProducts[0]?.id ?? `slide-${slideIndex}`}
                 className="grid w-full shrink-0 snap-start grid-cols-4 gap-3 sm:gap-5 lg:gap-6 xl:gap-8"
               >
-                {slideProducts.map((product, index) => (
+                {slideProducts.map((product) => (
                   <ProductCard
                     key={product.id}
                     href={product.href}
@@ -122,7 +122,7 @@ export function HomeFeaturedProducts({
                     discountPercent={product.discountPercent}
                     imageUrl={product.imageUrl}
                     inStock={product.inStock}
-                    priority={slideIndex === 0 && index < 4}
+                    priority={false}
                     locale={locale}
                     productId={product.id}
                     inWishlist={product.inWishlist ?? false}
