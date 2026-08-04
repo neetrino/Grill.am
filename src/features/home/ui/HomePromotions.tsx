@@ -187,24 +187,24 @@ export function HomePromotions({
   return (
     <section className="relative w-full py-5 md:py-10 lg:py-12">
       <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="relative lg:hidden">
+        <div className="relative overflow-visible lg:hidden">
           {slides.length > 1 ? (
             <>
               <button
                 type="button"
                 aria-label={prevLabel}
                 onClick={goPrev}
-                className="absolute top-1/2 left-0 z-20 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105 sm:size-12"
+                className="absolute top-1/2 left-0 z-20 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105 sm:size-10"
               >
-                <ChevronLeft className="size-5 sm:size-6" aria-hidden />
+                <ChevronLeft className="size-4 sm:size-5" aria-hidden />
               </button>
               <button
                 type="button"
                 aria-label={nextLabel}
                 onClick={goNext}
-                className="absolute top-1/2 right-0 z-20 flex size-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105 sm:size-12"
+                className="absolute top-1/2 right-0 z-20 flex size-8 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105 sm:size-10"
               >
-                <ChevronRight className="size-5 sm:size-6" aria-hidden />
+                <ChevronRight className="size-4 sm:size-5" aria-hidden />
               </button>
             </>
           ) : null}
