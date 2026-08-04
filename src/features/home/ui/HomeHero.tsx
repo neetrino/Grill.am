@@ -190,7 +190,7 @@ export function HomeHero({
       />
 
       <section className="relative hidden w-full overflow-hidden bg-brand-red md:block">
-        <div className="relative mx-auto h-[clamp(400px,60vw,860px)] w-full max-w-[1440px] overflow-hidden">
+        <div className="relative mx-auto h-[clamp(400px,60vw,860px)] w-full max-w-[1440px] overflow-hidden lg:h-[860px]">
           <div className="absolute inset-x-0 top-[-20%] h-[125%]">
             <div className="pointer-events-none absolute inset-[13.4%_-34.36%_2.18%_-37.43%] z-0">
               <Image

@@ -106,7 +106,7 @@ export default async function ProductsPage({
   };
 
   return (
-    <section className="relative -mt-10 mb-[-2.5rem] w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
+    <section className="storefront-bleed -mt-10 mb-[-2.5rem]">
       <div className="grid min-h-[calc(100dvh-12rem)] lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_288px]">
         <div className="hidden lg:block">
           <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh-var(--storefront-header-offset))] self-start">

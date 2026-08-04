@@ -16,6 +16,52 @@
   --brand-surface: #f4f4f4;
   /* Expanded sticky header; JS updates as primary nav collapses on scroll. */
   --storefront-header-offset: 9.5rem;
+  /* Desktop canvas width; scaled to 100vw via DesktopFluidFrame. */
+  --desktop-layout-design-width: 1440px;
+}
+
+/* ─── Desktop fluid frame (proportional 100vw scale) ─── */
+@media (min-width: 1024px) {
+  :root {
+    --desktop-layout-scale: calc(100vw / var(--desktop-layout-design-width));
+  }
+
+  .desktop-fluid-frame {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    overflow-x: clip;
+  }
+
+  .desktop-fluid-frame--allow-overflow,
+  .desktop-fluid-frame--allow-overflow .desktop-fluid-stage {
+    overflow: visible;
+  }
+
+  .desktop-fluid-stage {
+    width: var(--desktop-layout-design-width);
+    flex-shrink: 0;
+    zoom: var(--desktop-layout-scale);
+  }
+}
+
+/*
+ * Escape padded/max-width main to the viewport (mobile) or fluid stage (desktop).
+ * Prefer this over raw `w-screen` / `100vw` inside DesktopFluidFrame.
+ */
+.storefront-bleed {
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+@media (min-width: 1024px) {
+  .storefront-bleed {
+    width: var(--desktop-layout-design-width);
+    max-width: var(--desktop-layout-design-width);
+    margin-left: calc(50% - (var(--desktop-layout-design-width) / 2));
+  }
 }
 
 @theme inline {

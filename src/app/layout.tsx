@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="hy" className="h-full" suppressHydrationWarning>
       <body
-        className={`${montserrat.variable} ${geistMono.variable} ${mirageBoldFree.variable} flex min-h-dvh flex-col overflow-x-hidden bg-[#f2f0f0] font-sans antialiased`}
+        className={`${montserrat.variable} ${geistMono.variable} ${mirageBoldFree.variable} flex min-h-dvh flex-col overflow-x-hidden bg-white font-sans antialiased`}
         style={
           {
             "--font-display": "var(--font-montserrat)",

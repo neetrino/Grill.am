@@ -270,7 +270,7 @@ export function CheckoutForm({
 
   if (!hasItems) {
     return (
-      <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 bg-[#f1f1f3] lg:bg-white">
+      <div className="storefront-bleed bg-[#f1f1f3] lg:bg-white">
         <div className="mx-auto w-full max-w-[1024px] px-4 pt-6 pb-16 sm:px-6 lg:px-6 lg:pt-8 lg:pb-12">
           <h1 className="mb-6 text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
             <span className="text-brand-red">{labels.titleLead}</span>{" "}
@@ -337,7 +337,7 @@ export function CheckoutForm({
   }
 
   return (
-    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 bg-[#f1f1f3] lg:bg-white">
+    <div className="storefront-bleed bg-[#f1f1f3] lg:bg-white">
       <div className="mx-auto w-full max-w-[1024px] px-4 pt-6 pb-16 sm:px-6 lg:px-6 lg:pt-8 lg:pb-12">
         <h1 className="mb-6 text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
           <span className="text-brand-red">{labels.titleLead}</span>{" "}

@@ -105,7 +105,7 @@ export default async function HomePage({ params }: HomePageProps) {
   const promotionCards = toCards(discountedProducts);
 
   return (
-    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 -my-10 overflow-x-clip bg-white">
+    <div className="storefront-bleed -my-10 overflow-x-clip bg-white">
       <HomeHero
         slides={heroSlides}
         fallbackTitle={dictionary.home.title}

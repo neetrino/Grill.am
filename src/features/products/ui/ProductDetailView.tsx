@@ -56,7 +56,7 @@ export function ProductDetailView({
     : [];
 
   return (
-    <article className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 -mt-10 mb-[-2.5rem] bg-[#f2f0f0]">
+    <article className="storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0]">
       <div className="mx-auto w-full max-w-[1470px] px-4 pt-3 pb-16 sm:px-6 lg:px-[42px]">
         <CatalogBreadcrumbs
           backLabel={dictionary.catalog.back}
