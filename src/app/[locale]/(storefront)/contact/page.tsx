@@ -21,7 +21,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   const copy = dictionary.contact;
 
   return (
-    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 -my-10 bg-white">
+    <div className="-my-10 bg-white">
       <section>
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 pb-4 pt-10 sm:px-6 sm:pb-6 sm:pt-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10 lg:px-8 lg:pb-6 lg:pt-14">
           <ContactInfo copy={copy} />

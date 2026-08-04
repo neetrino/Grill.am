@@ -91,7 +91,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   ] as const;
 
   return (
-    <footer className="lazy-section relative mt-auto hidden overflow-hidden rounded-tl-[50px] rounded-tr-[50px] bg-black md:block">
+    <footer className="lazy-section relative mt-auto hidden w-full overflow-hidden rounded-tl-[50px] rounded-tr-[50px] bg-black md:block">
       <p
         aria-hidden
         className="pointer-events-none absolute bottom-[18px] left-[35px] z-0 translate-y-1/2 font-mirage text-[281px] leading-[230px] whitespace-nowrap text-white/25 uppercase opacity-40 select-none"

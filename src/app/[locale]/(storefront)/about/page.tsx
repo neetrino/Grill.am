@@ -18,7 +18,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const dictionary = getDictionary(rawLocale);
 
   return (
-    <div className="-mx-4 -my-10 bg-white sm:-mx-6 lg:-mx-8 xl:-mx-10">
+    <div className="-my-10 min-h-full bg-white">
       <AboutHero copy={dictionary.about} />
     </div>
   );

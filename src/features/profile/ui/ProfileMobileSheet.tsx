@@ -3,7 +3,6 @@
 import {
   useCallback,
   useEffect,
-  useId,
   useRef,
   useState,
   type AnimationEvent,
@@ -21,6 +20,7 @@ const SNAP_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 
 type ProfileMobileSheetProps = {
   open: boolean;
+  /** Accessible name for the dialog (not shown in the chrome). */
   title: string;
   closeLabel: string;
   onClose: () => void;
@@ -32,6 +32,7 @@ type SheetPhase = "enter" | "open" | "drag" | "exit";
 
 /**
  * MaMarie-style bottom sheet — CSS keyframe rise, swipe-down dismiss.
+ * Title lives in sheet content; chrome is handle-only.
  */
 export function ProfileMobileSheet({
   open,
@@ -41,7 +42,6 @@ export function ProfileMobileSheet({
   children,
   heightVh = 92,
 }: ProfileMobileSheetProps) {
-  const titleId = useId();
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<SheetPhase>("enter");
   const [dragY, setDragY] = useState(0);
@@ -202,7 +202,7 @@ export function ProfileMobileSheet({
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby={titleId}
+        aria-label={title}
         className={`relative flex w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.18)] will-change-transform ${sheetClassName}`}
         style={{
           height: `${heightVh}dvh`,
@@ -219,21 +219,15 @@ export function ProfileMobileSheet({
         onAnimationEnd={handleSheetAnimationEnd}
       >
         <div
-          className="flex shrink-0 touch-none flex-col items-center gap-2 px-5 pt-3 pb-2"
+          className="flex shrink-0 touch-none flex-col items-center px-5 pt-3 pb-2"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
         >
           <div className="h-1.5 w-12 rounded-full bg-gray-300" aria-hidden />
-          <h2
-            id={titleId}
-            className="w-full truncate text-center text-base font-bold text-gray-900"
-          >
-            {title}
-          </h2>
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-2 pb-[max(2rem,env(safe-area-inset-bottom))] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-1 pb-[max(2rem,env(safe-area-inset-bottom))] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {children}
         </div>
       </div>

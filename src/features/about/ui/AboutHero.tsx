@@ -50,7 +50,7 @@ function AboutSinceBadge({ label, year }: { label: string; year: string }) {
 export function AboutHero({ copy }: AboutHeroProps) {
   return (
     <section className="bg-white py-10 sm:py-12 md:py-14 lg:py-16">
-      <div className="mx-auto w-full max-w-[1440px] px-2 sm:px-3 lg:px-4">
+      <div className="mx-auto w-full max-w-[1440px]">
         <div className="mb-8 flex flex-col items-start gap-3 sm:mb-10">
           <span className="inline-flex w-fit items-center gap-2 rounded-full bg-brand-cream px-4 py-2 text-xs font-bold tracking-[0.14em] text-[#5c3d1e] uppercase sm:text-[13px]">
             <AboutFlameIcon className="size-3.5 text-[#e85a1c]" />

@@ -10,6 +10,7 @@ import { PersonalInformationForm } from "@/features/profile/ui/PersonalInformati
 import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView";
 import { ProfileDashboardView } from "@/features/profile/ui/ProfileDashboardView";
 import { ProfileMobileMenu } from "@/features/profile/ui/ProfileMobileMenu";
+import { PROFILE_SECTION_TITLE_CLASS } from "@/features/profile/ui/profile-ui";
 import { listCustomerCouponHistory } from "@/features/promotions/application/list-customer-coupon-history";
 import { CustomerPromoCodesView } from "@/features/promotions/ui/CustomerPromoCodesView";
 import { requireUser } from "@/lib/auth/policies";
@@ -58,11 +59,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         closeLabel={dictionary.profile.cancel}
         logoutAction={logoutWithLocale}
         sheets={{
-          dashboard: (
-            <ProfileDashboardView {...dashboardProps} hideTitle />
-          ),
+          dashboard: <ProfileDashboardView {...dashboardProps} />,
           orders: (
             <div className="space-y-4">
+              <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl`}>
+                {dictionary.profile.orders}
+              </h1>
               <ProfileDashboardView {...dashboardProps} hideTitle />
               <AppLink
                 href={`/${locale}/profile/orders`}
