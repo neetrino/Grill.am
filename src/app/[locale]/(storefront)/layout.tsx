@@ -5,6 +5,7 @@ import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StorefrontScrollToTop } from "@/components/layout/StorefrontScrollToTop";
+import { StorefrontSurface } from "@/components/layout/StorefrontSurface";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveStorefrontPopup } from "@/features/popups/application/queries";
 import { SitePopupOverlayLazy } from "@/features/popups/ui/SitePopupOverlayLazy";
@@ -39,7 +40,7 @@ export default async function StorefrontLayout({
   const activePopup = await getActiveStorefrontPopup();
 
   return (
-    <div className="flex min-h-dvh flex-1 flex-col bg-white">
+    <StorefrontSurface>
       <StorefrontScrollToTop />
       <SiteHeader
         locale={locale}
@@ -61,6 +62,6 @@ export default async function StorefrontLayout({
           closeLabel={dictionary.popup.close}
         />
       ) : null}
-    </div>
+    </StorefrontSurface>
   );
 }
