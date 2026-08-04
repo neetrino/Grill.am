@@ -84,7 +84,7 @@ const panelClassName =
 const footerClassName = "mt-auto border-t border-gray-100 bg-gray-50 p-3";
 
 const addButtonClassName =
-  "inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-md bg-gray-800 px-3 text-sm font-medium text-white hover:bg-gray-900 disabled:opacity-40";
+  "inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-[15px] bg-gray-800 px-4 text-sm font-medium text-white hover:bg-gray-900 disabled:opacity-40";
 
 const libraryChipClassName =
   "inline-flex max-w-full items-center truncate rounded-md border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 disabled:opacity-40";

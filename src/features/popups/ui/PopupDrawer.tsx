@@ -7,6 +7,7 @@ import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   createPopupAction,
   updatePopupAction,
@@ -135,7 +136,7 @@ function PopupDrawerForm({
               type="button"
               disabled={isPending}
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+              className={ADMIN_BTN_DASHED_CLASS}
             >
               {imagePreview ? copy.changeImage : copy.uploadButton}
             </button>

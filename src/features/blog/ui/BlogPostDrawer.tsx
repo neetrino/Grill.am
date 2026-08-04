@@ -13,6 +13,7 @@ import {
 import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
+import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   createBlogPostAction,
   updateBlogPostAction,
@@ -295,7 +296,7 @@ export function BlogPostDrawer({
                   type="button"
                   disabled={isPending}
                   onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+                  className={ADMIN_BTN_DASHED_CLASS}
                 >
                   {imagePreview ? copy.changeImage : copy.uploadImage}
                 </button>

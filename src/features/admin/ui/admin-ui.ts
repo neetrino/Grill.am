@@ -52,6 +52,10 @@ export const ADMIN_BTN_PRIMARY_CLASS =
 export const ADMIN_BTN_SECONDARY_CLASS =
   "inline-flex h-11 items-center justify-center rounded-[15px] border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-900 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
+/** Dashed upload / pick-file control — same height as `ADMIN_FIELD_CLASS`. */
+export const ADMIN_BTN_DASHED_CLASS =
+  "inline-flex h-11 items-center rounded-[15px] border border-dashed border-gray-300 px-4 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50";
+
 export const ADMIN_FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-sm text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
