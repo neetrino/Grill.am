@@ -8,8 +8,6 @@ import { CatalogSortBar } from "@/features/products/ui/CatalogSortBar";
 export type CatalogGridColumns = 3 | 4;
 
 const STORAGE_KEY = "grill.catalog.gridCols";
-/** Desktop grid toggle is `lg+`; match that for the default. */
-const LARGE_SCREEN_MQ = "(min-width: 1024px)";
 
 type CatalogListingViewProps = {
   locale: string;
@@ -38,7 +36,7 @@ function readStoredColumns(): CatalogGridColumns {
     // Ignore quota / private-mode failures.
   }
 
-  return window.matchMedia(LARGE_SCREEN_MQ).matches ? 4 : 3;
+  return 3;
 }
 
 function subscribeToStoredColumnsNoop(): () => void {
@@ -46,7 +44,7 @@ function subscribeToStoredColumnsNoop(): () => void {
 }
 
 function getStoredColumnsServerSnapshot(): CatalogGridColumns {
-  return 4;
+  return 3;
 }
 
 function DotGridIcon({ size }: { size: 3 | 4 }) {
@@ -88,7 +86,7 @@ export function CatalogListingView({
   empty,
   children,
 }: CatalogListingViewProps) {
-  // Hydration-safe initial read of the persisted preference: renders `4`
+  // Hydration-safe initial read of the persisted preference: renders `3`
   // (matching SSR) until React syncs to the real client snapshot, without a
   // synchronous setState inside an effect.
   const storedColumns = useSyncExternalStore(
