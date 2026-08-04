@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { AdminBrandLogo } from "@/features/admin/ui/AdminBrandLogo";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
@@ -23,14 +25,24 @@ export function AdminSidebarBrand({ locale }: AdminSidebarBrandProps) {
           : "items-center gap-1 px-2"
       }`}
     >
-      <div className={collapsed ? undefined : "min-w-0 flex-1"}>
-        <AdminBrandLogo
-          locale={locale}
-          brandName={dictionary.menu.brandName}
-          storeHomeLabel={dictionary.menu.storeHome}
-          compact={collapsed}
-        />
-      </div>
+      {collapsed ? (
+        <Link
+          href={`/${locale}`}
+          className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-brand-red text-sm font-bold text-white transition hover:bg-brand-red-hot"
+          title={dictionary.menu.storeHome}
+          aria-label={dictionary.menu.storeHome}
+        >
+          G
+        </Link>
+      ) : (
+        <div className="min-w-0 flex-1 pl-4">
+          <AdminBrandLogo
+            locale={locale}
+            brandName={dictionary.menu.brandName}
+            storeHomeLabel={dictionary.menu.storeHome}
+          />
+        </div>
+      )}
       <button
         type="button"
         onClick={toggleCollapsed}
