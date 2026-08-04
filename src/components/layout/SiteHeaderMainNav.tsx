@@ -353,6 +353,7 @@ export function SiteHeaderMainNav({
                       addresses={dictionary.contact.storeAddresses}
                       toggleLabel={dictionary.footer.addresses}
                       variant="header"
+                      locale={locale}
                     />
                   </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { MapPin } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { resolveStoreMapEmbedSrc } from "@/features/stores/yandex-map-embed";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -9,18 +9,29 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 type StoresPageViewProps = {
   addresses: readonly string[];
   copy: Dictionary["stores"];
+  initialSelectedIndex?: number | null;
 };
 
 const PANEL_CLASS =
   "flex min-h-0 flex-col overflow-hidden rounded-[15px] border border-gray-100 bg-white p-4 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:p-6";
 
 /** Storefront stores page — address list + official constructor map (zoom on select). */
-export function StoresPageView({ addresses, copy }: StoresPageViewProps) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+export function StoresPageView({
+  addresses,
+  copy,
+  initialSelectedIndex = null,
+}: StoresPageViewProps) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(
+    initialSelectedIndex,
+  );
   const mapSrc = useMemo(
     () => resolveStoreMapEmbedSrc(selectedIndex),
     [selectedIndex],
   );
+
+  useEffect(() => {
+    setSelectedIndex(initialSelectedIndex);
+  }, [initialSelectedIndex]);
 
   if (addresses.length === 0) {
     return (

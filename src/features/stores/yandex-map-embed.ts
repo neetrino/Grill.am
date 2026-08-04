@@ -116,6 +116,27 @@ export function getStoreAddresses(locale: Locale): readonly string[] {
   return GRILL_STORE_LOCATIONS.map((store) => store.address[locale]);
 }
 
+/** Resolve store list index from `?store=` id. */
+export function getStoreIndexById(storeId: string | null | undefined): number | null {
+  if (!storeId) {
+    return null;
+  }
+  const index = GRILL_STORE_LOCATIONS.findIndex((store) => store.id === storeId);
+  return index >= 0 ? index : null;
+}
+
+/** Storefront stores page href, optionally preselecting a branch. */
+export function buildStoresPageHref(
+  locale: Locale,
+  storeId?: string | null,
+): string {
+  const base = `/${locale}/stores`;
+  if (!storeId) {
+    return base;
+  }
+  return `${base}?store=${encodeURIComponent(storeId)}`;
+}
+
 /**
  * Same branded constructor map, panned/zoomed to a store.
  * Keeps Grill red food pins — does not switch to a different widget style.
