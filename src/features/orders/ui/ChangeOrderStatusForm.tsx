@@ -8,9 +8,10 @@ import { Card } from "@/components/ui/Card";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_LABEL,
-  ADMIN_SELECT,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import { changeOrderStatusAction } from "@/features/orders/application/change-order-status";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { adminOrderStatusLabel } from "@/features/orders/ui/admin-order-status-labels";
@@ -33,6 +34,7 @@ export function ChangeOrderStatusForm({
   const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [toStatus, setToStatus] = useState(eligibleStatuses[0] ?? "");
   const [isPending, startTransition] = useTransition();
 
   if (eligibleStatuses.length === 0) {
@@ -41,21 +43,26 @@ export function ChangeOrderStatusForm({
     );
   }
 
+  const statusOptions = eligibleStatuses.map((status) => ({
+    value: status,
+    label: adminOrderStatusLabel(status, dictionary.orders.status),
+  }));
+
   return (
-    <Card className="p-6">
+    <Card className={`overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}>
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const toStatus = String(formData.get("toStatus") ?? "");
+          const nextStatus = String(formData.get("toStatus") ?? "");
           const noteRaw = String(formData.get("note") ?? "").trim();
 
           startTransition(async () => {
             setError(null);
             const result = await changeOrderStatusAction(locale, {
               orderNumber,
-              toStatus: toStatus as OrderStatus,
+              toStatus: nextStatus as OrderStatus,
               note: noteRaw.length > 0 ? noteRaw : undefined,
             });
 
@@ -74,22 +81,16 @@ export function ChangeOrderStatusForm({
             {adminOrderStatusLabel(currentStatus, dictionary.orders.status)}
           </strong>
         </p>
-        <label>
-          <span className={ADMIN_LABEL}>{forms.newStatus}</span>
-          <select
-            name="toStatus"
-            required
-            className={ADMIN_SELECT}
-            defaultValue={eligibleStatuses[0]}
-            disabled={isPending}
-          >
-            {eligibleStatuses.map((status) => (
-              <option key={status} value={status}>
-                {adminOrderStatusLabel(status, dictionary.orders.status)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <CheckoutSelect
+          name="toStatus"
+          label={forms.newStatus}
+          placeholder={forms.newStatus}
+          required
+          options={statusOptions}
+          value={toStatus}
+          disabled={isPending}
+          onChange={setToStatus}
+        />
         <label>
           <span className={ADMIN_LABEL}>{forms.noteOptional}</span>
           <textarea

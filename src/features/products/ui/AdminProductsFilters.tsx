@@ -1,10 +1,14 @@
 "use client";
 
-import { ADMIN_INPUT, ADMIN_LABEL, ADMIN_SELECT } from "@/features/admin/ui/admin-form-classes";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+
+import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
+import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
 
 type AdminProductsFiltersProps = {
@@ -29,7 +33,47 @@ export function AdminProductsFilters({
   dir,
 }: AdminProductsFiltersProps) {
   const dictionary = useAdminDictionary();
+  const router = useRouter();
   const filters = dictionary.products.filters;
+  const [queryValue, setQueryValue] = useState(q ?? "");
+  const [skuValue, setSkuValue] = useState(sku ?? "");
+  const [categoryValue, setCategoryValue] = useState(categoryId ?? "");
+  const [stockValue, setStockValue] = useState(stock);
+
+  const categoryOptions = [
+    { value: "", label: filters.allCategories },
+    ...categories.map((category) => ({
+      value: category.id,
+      label: category.title,
+    })),
+  ];
+
+  const stockOptions = [
+    { value: "all", label: filters.allProducts },
+    { value: "in_stock", label: filters.inStock },
+    { value: "out_of_stock", label: filters.outOfStock },
+    { value: "low_stock", label: filters.lowStock },
+  ];
+
+  const pushFilters = useCallback(
+    (next: {
+      q: string;
+      sku: string;
+      categoryId: string;
+      stock: string;
+    }) => {
+      const params = new URLSearchParams();
+      params.set("sort", sort);
+      params.set("dir", dir);
+      if (next.q.trim()) params.set("q", next.q.trim());
+      if (next.sku.trim()) params.set("sku", next.sku.trim());
+      if (next.categoryId) params.set("categoryId", next.categoryId);
+      if (next.stock && next.stock !== "all") params.set("stock", next.stock);
+      const query = params.toString();
+      router.push(query ? `?${query}` : "?");
+    },
+    [dir, router, sort],
+  );
 
   return (
     <div className="mb-4">
@@ -39,19 +83,22 @@ export function AdminProductsFilters({
       <form
         method="get"
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
-        onChange={(event) => {
-          if (event.target instanceof HTMLSelectElement) {
-            event.currentTarget.requestSubmit();
-          }
+        onSubmit={(event) => {
+          event.preventDefault();
+          pushFilters({
+            q: queryValue,
+            sku: skuValue,
+            categoryId: categoryValue,
+            stock: stockValue,
+          });
         }}
       >
-        <input type="hidden" name="sort" value={sort} />
-        <input type="hidden" name="dir" value={dir} />
         <label>
           <span className={ADMIN_LABEL}>{filters.searchTitleSlug}</span>
           <input
             name="q"
-            defaultValue={q ?? ""}
+            value={queryValue}
+            onChange={(event) => setQueryValue(event.target.value)}
             placeholder={filters.searchTitleSlugPlaceholder}
             className={ADMIN_INPUT}
             aria-label={filters.searchTitleSlug}
@@ -61,42 +108,45 @@ export function AdminProductsFilters({
           <span className={ADMIN_LABEL}>{filters.searchSku}</span>
           <input
             name="sku"
-            defaultValue={sku ?? ""}
+            value={skuValue}
+            onChange={(event) => setSkuValue(event.target.value)}
             placeholder={filters.skuPlaceholder}
             className={ADMIN_INPUT}
             aria-label={filters.searchSku}
           />
         </label>
-        <label>
-          <span className={ADMIN_LABEL}>{filters.filterCategory}</span>
-          <select
-            name="categoryId"
-            defaultValue={categoryId ?? ""}
-            className={ADMIN_SELECT}
-            aria-label={filters.filterCategory}
-          >
-            <option value="">{filters.allCategories}</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.title}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <span className={ADMIN_LABEL}>{filters.filterStock}</span>
-          <select
-            name="stock"
-            defaultValue={stock}
-            className={ADMIN_SELECT}
-            aria-label={filters.filterStock}
-          >
-            <option value="all">{filters.allProducts}</option>
-            <option value="in_stock">{filters.inStock}</option>
-            <option value="out_of_stock">{filters.outOfStock}</option>
-            <option value="low_stock">{filters.lowStock}</option>
-          </select>
-        </label>
+        <CheckoutSelect
+          label={filters.filterCategory}
+          placeholder={filters.allCategories}
+          options={categoryOptions}
+          value={categoryValue}
+          onChange={(value) => {
+            setCategoryValue(value);
+            pushFilters({
+              q: queryValue,
+              sku: skuValue,
+              categoryId: value,
+              stock: stockValue,
+            });
+          }}
+        />
+        <CheckoutSelect
+          label={filters.filterStock}
+          placeholder={filters.allProducts}
+          options={stockOptions}
+          value={stockValue}
+          onChange={(value) => {
+            setStockValue(
+              value as "all" | "in_stock" | "out_of_stock" | "low_stock",
+            );
+            pushFilters({
+              q: queryValue,
+              sku: skuValue,
+              categoryId: categoryValue,
+              stock: value,
+            });
+          }}
+        />
       </form>
     </div>
   );

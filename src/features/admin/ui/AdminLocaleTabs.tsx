@@ -38,17 +38,17 @@ export function AdminLocaleTabs({
               type="button"
               disabled={disabled}
               onClick={() => onChange(loc)}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${
+              className={`inline-flex items-center gap-1.5 rounded-[15px] px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${
                 selected
-                  ? "bg-gray-900 text-white"
-                  : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                  ? "bg-brand-red text-white"
+                  : "border border-gray-200 bg-white text-gray-700 hover:bg-brand-surface"
               }`}
             >
               {localeLabels[loc]}
               {filled ? (
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    selected ? "bg-emerald-300" : "bg-emerald-500"
+                    selected ? "bg-brand-yellow" : "bg-emerald-500"
                   }`}
                   aria-hidden
                 />

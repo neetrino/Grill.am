@@ -8,6 +8,7 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
+import { AdminBrandLogo } from "@/features/admin/ui/AdminBrandLogo";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminMenuDrawer } from "@/features/admin/ui/AdminMenuDrawer";
 import { AdminSidebarBrand } from "@/features/admin/ui/AdminSidebarBrand";
@@ -17,6 +18,13 @@ import {
   ADMIN_SIDEBAR_MOBILE_DRAWER_WRAP,
   ADMIN_SIDEBAR_NAV,
 } from "@/features/admin/ui/admin-shell-classes";
+import {
+  ADMIN_NAV_ACTIVE_CLASS,
+  ADMIN_NAV_ICON_ACTIVE_CLASS,
+  ADMIN_NAV_ICON_INACTIVE_CLASS,
+  ADMIN_NAV_INACTIVE_CLASS,
+  ADMIN_NAV_ROW_BASE_CLASS,
+} from "@/features/admin/ui/admin-ui";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
 
 type AdminSidebarProps = {
@@ -50,13 +58,11 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
     <>
       <div className={ADMIN_SIDEBAR_MOBILE_DRAWER_WRAP}>
         <div className="flex items-center justify-between gap-3">
-          <Link
-            href={`/${locale}`}
-            className="min-w-0 shrink text-sm font-semibold text-gray-900"
-          >
-            {/* TODO: "White Shop" — no brand-name key in admin.json */}
-            White Shop
-          </Link>
+          <AdminBrandLogo
+            locale={locale}
+            brandName={dictionary.menu.brandName}
+            storeHomeLabel={dictionary.menu.storeHome}
+          />
           <AdminMenuDrawer locale={locale} pathname={pathname} />
         </div>
       </div>
@@ -79,20 +85,18 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
             }
 
             const isActive = isAdminTabActive(tab.href, pathname, locale);
-            const rowClasses = `flex w-full items-center rounded-md text-sm font-medium transition-all ${
+            const rowClasses = `${ADMIN_NAV_ROW_BASE_CLASS} ${
               collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
             } ${tab.isSubCategory && !collapsed ? "pl-12" : ""} ${
-              isActive
-                ? "bg-gray-900 text-white"
-                : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              isActive ? ADMIN_NAV_ACTIVE_CLASS : ADMIN_NAV_INACTIVE_CLASS
             }`;
 
             if (tab.id === "products" && !collapsed) {
               return (
                 <div
                   key={tab.id}
-                  className={`flex w-full min-w-0 overflow-hidden rounded-md ${
-                    isActive ? "bg-gray-900 text-white" : "bg-transparent"
+                  className={`flex w-full min-w-0 overflow-hidden rounded-[15px] ${
+                    isActive ? ADMIN_NAV_ACTIVE_CLASS : "bg-transparent"
                   }`}
                 >
                   <Link
@@ -100,12 +104,16 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
                     title={tab.label}
                     className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left text-sm font-medium transition-all ${
                       isActive
-                        ? "text-white hover:bg-gray-800"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        ? "text-brand-red hover:bg-brand-red/5"
+                        : ADMIN_NAV_INACTIVE_CLASS
                     }`}
                   >
                     <span
-                      className={`shrink-0 ${isActive ? "text-white" : "text-gray-500"}`}
+                      className={`shrink-0 ${
+                        isActive
+                          ? ADMIN_NAV_ICON_ACTIVE_CLASS
+                          : ADMIN_NAV_ICON_INACTIVE_CLASS
+                      }`}
                     >
                       {tab.icon}
                     </span>
@@ -122,7 +130,7 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
                     }}
                     className={`shrink-0 border-l px-2 py-3 transition-colors ${
                       isActive
-                        ? "border-white/25 text-white hover:bg-white/10"
+                        ? "border-brand-red/20 text-brand-red hover:bg-brand-red/5"
                         : "border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     }`}
                   >
@@ -153,7 +161,11 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
                 className={rowClasses}
               >
                 <span
-                  className={`shrink-0 ${isActive ? "text-white" : "text-gray-500"}`}
+                  className={`shrink-0 ${
+                    isActive
+                      ? ADMIN_NAV_ICON_ACTIVE_CLASS
+                      : ADMIN_NAV_ICON_INACTIVE_CLASS
+                  }`}
                 >
                   {tab.icon}
                 </span>

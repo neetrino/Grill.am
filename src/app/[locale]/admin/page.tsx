@@ -1,13 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Card } from "@/components/ui/Card";
 import { DashboardStatsGrid } from "@/features/admin/ui/DashboardStatsGrid";
 import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import {
   ADMIN_BADGE,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
+import {
+  ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
+  ADMIN_CARD_PADDED_CLASS,
+  ADMIN_CHIP_CREAM,
+  ADMIN_CHIP_RED,
+  ADMIN_CHIP_SURFACE,
+  ADMIN_CHIP_YELLOW,
+} from "@/features/admin/ui/admin-ui";
 import {
   defaultAnalyticsDateRange,
   formatPeriodDelta,
@@ -56,16 +64,16 @@ export default async function AdminPage({ params }: AdminPageProps) {
       href: "products/new",
       title: copy.addProduct,
       subtitle: copy.addProductHint,
-      iconBg: "bg-green-100",
-      iconColor: "text-green-600",
+      iconBg: ADMIN_CHIP_YELLOW.bg,
+      iconColor: ADMIN_CHIP_YELLOW.fg,
       iconPath: "M12 4v16m8-8H4",
     },
     {
       href: "orders",
       title: copy.manageOrders,
       subtitle: copy.manageOrdersHint,
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-600",
+      iconBg: ADMIN_CHIP_RED.bg,
+      iconColor: ADMIN_CHIP_RED.fg,
       iconPath:
         "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
     },
@@ -73,8 +81,8 @@ export default async function AdminPage({ params }: AdminPageProps) {
       href: "users",
       title: copy.manageUsers,
       subtitle: copy.manageUsersHint,
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-600",
+      iconBg: ADMIN_CHIP_CREAM.bg,
+      iconColor: ADMIN_CHIP_CREAM.fg,
       iconPath:
         "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
     },
@@ -82,8 +90,8 @@ export default async function AdminPage({ params }: AdminPageProps) {
       href: "settings",
       title: copy.settings,
       subtitle: copy.settingsHint,
-      iconBg: "bg-yellow-100",
-      iconColor: "text-yellow-600",
+      iconBg: ADMIN_CHIP_SURFACE.bg,
+      iconColor: ADMIN_CHIP_SURFACE.fg,
       iconPath:
         "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z",
     },
@@ -106,14 +114,14 @@ export default async function AdminPage({ params }: AdminPageProps) {
       />
 
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card className="p-6">
+        <div className={ADMIN_CARD_PADDED_CLASS}>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
               {copy.recentOrders}
             </h2>
             <Link
               href={`/${locale}/admin/orders`}
-              className="rounded-xl px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100"
+              className="rounded-[15px] px-3 py-1.5 text-sm font-medium text-brand-red hover:bg-brand-red/5"
             >
               {copy.viewAll}
             </Link>
@@ -123,7 +131,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
               <Link
                 key={order.id}
                 href={`/${locale}/admin/orders/${order.orderNumber}`}
-                className="block rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
+                className="block rounded-[15px] ring-1 ring-gray-100/80 p-4 transition-colors hover:bg-brand-surface/60"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -153,16 +161,16 @@ export default async function AdminPage({ params }: AdminPageProps) {
               </p>
             ) : null}
           </div>
-        </Card>
+        </div>
 
-        <Card className="p-6">
+        <div className={ADMIN_CARD_PADDED_CLASS}>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
               {copy.topProducts}
             </h2>
             <Link
               href={`/${locale}/admin/products`}
-              className="rounded-xl px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100"
+              className="rounded-[15px] px-3 py-1.5 text-sm font-medium text-brand-red hover:bg-brand-red/5"
             >
               {copy.viewAll}
             </Link>
@@ -171,9 +179,9 @@ export default async function AdminPage({ params }: AdminPageProps) {
             {metrics.topProducts.map((product, index) => (
               <div
                 key={product.productId}
-                className="flex items-center gap-4 rounded-lg border border-gray-200 p-3"
+                className="flex items-center gap-4 rounded-[15px] ring-1 ring-gray-100/80 p-3"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-gray-200 text-xs font-bold text-gray-500">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-yellow/25 text-xs font-bold text-brand-ink">
                   {index + 1}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -194,19 +202,19 @@ export default async function AdminPage({ params }: AdminPageProps) {
               </p>
             ) : null}
           </div>
-        </Card>
+        </div>
       </div>
 
-      <Card className="mb-8 p-6">
+      <div className={`${ADMIN_CARD_CLASS} mb-8 p-6`}>
         <h2 className="mb-4 text-xl font-semibold text-gray-900">
           {copy.quickActions}
         </h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {quickActions.map((action) => (
             <Link
               key={action.href}
               href={`/${locale}/admin/${action.href}`}
-              className="flex items-center gap-3 rounded-xl border border-gray-300 px-4 py-4 transition-colors hover:bg-gray-50"
+              className={`flex items-center gap-3 rounded-[15px] ring-1 ring-gray-200 px-4 py-4 hover:bg-brand-surface/60 ${ADMIN_CARD_HOVER_CLASS}`}
             >
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full ${action.iconBg}`}
@@ -232,7 +240,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
             </Link>
           ))}
         </div>
-      </Card>
+      </div>
     </section>
   );
 }

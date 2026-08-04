@@ -6,11 +6,9 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
-import {
-  ADMIN_LABEL,
-  ADMIN_SECTION_TITLE,
-  ADMIN_SELECT,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import { updateUserRoleAction } from "@/features/users/application/update-user";
 import {
   USER_ROLES,
@@ -36,20 +34,30 @@ export function UpdateUserRoleForm({
   const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const roleOptions = USER_ROLES.filter((role) => role !== currentRole).map(
+    (role) => ({
+      value: role,
+      label: adminUserRoleLabel(role, dictionary.users.roles),
+    }),
+  );
+  const [role, setRole] = useState(roleOptions[0]?.value ?? "");
   const [isPending, startTransition] = useTransition();
 
   return (
-    <Card className="p-6">
+    <Card className={`overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}>
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const role = String(formData.get("role") ?? "") as UserRole;
+          const nextRole = String(formData.get("role") ?? "") as UserRole;
 
           startTransition(async () => {
             setError(null);
-            const result = await updateUserRoleAction(locale, { userId, role });
+            const result = await updateUserRoleAction(locale, {
+              userId,
+              role: nextRole,
+            });
             if (!result.ok) {
               setError(result.error.message);
               return;
@@ -65,22 +73,16 @@ export function UpdateUserRoleForm({
             {adminUserRoleLabel(currentRole, dictionary.users.roles)}
           </strong>
         </p>
-        <label>
-          <span className={ADMIN_LABEL}>{forms.newRole}</span>
-          <select
-            name="role"
-            required
-            className={ADMIN_SELECT}
-            defaultValue={currentRole === "ADMIN" ? "CUSTOMER" : "ADMIN"}
-            disabled={disabled || isPending}
-          >
-            {USER_ROLES.filter((role) => role !== currentRole).map((role) => (
-              <option key={role} value={role}>
-                {adminUserRoleLabel(role, dictionary.users.roles)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <CheckoutSelect
+          name="role"
+          label={forms.newRole}
+          placeholder={forms.newRole}
+          required
+          options={roleOptions}
+          value={role}
+          disabled={disabled || isPending}
+          onChange={setRole}
+        />
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={disabled || isPending}>
           {isPending ? common.updating : forms.updateRole}

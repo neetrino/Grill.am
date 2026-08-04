@@ -53,7 +53,7 @@ function userStatusBadgeClass(status: string): string {
 
 function userRoleBadgeClass(role: string): string {
   return role.toUpperCase() === "ADMIN"
-    ? "bg-blue-100 text-blue-800"
+    ? "bg-brand-red/10 text-brand-red"
     : "bg-gray-100 text-gray-800";
 }
 
