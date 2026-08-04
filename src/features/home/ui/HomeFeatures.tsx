@@ -83,18 +83,21 @@ function FeatureCard({
   revealed,
   floating = false,
   compactTitle = false,
+  staticLayout = false,
 }: {
   item: FeatureItem;
   index: number;
   revealed: boolean;
   floating?: boolean;
   compactTitle?: boolean;
+  /** Flat grid card — no slide-in offsets (iPad Mini); float still allowed. */
+  staticLayout?: boolean;
 }) {
   const titleLines = item.title.trim().split(/\s+/);
   const stackedTitle =
     titleLines.length === 2 ? `${titleLines[0]}\n${titleLines[1]}` : item.title;
-  const offsetY = CARD_OFFSET_Y[item.tone];
-  const offsetX = revealed ? 0 : 64;
+  const offsetY = staticLayout ? 0 : CARD_OFFSET_Y[item.tone];
+  const offsetX = staticLayout || revealed ? 0 : 64;
   const titleClass =
     compactTitle && CARD_TITLE_RU[item.tone]
       ? CARD_TITLE_RU[item.tone]
@@ -111,13 +114,19 @@ function FeatureCard({
       style={floating ? { animationDelay: `${floatDelayMs}ms` } : undefined}
     >
       <article
-        className={`relative h-[257px] w-[322px] shrink-0 overflow-visible rounded-[24px] transition-all duration-700 ease-out ${CARD_SHELL[item.tone]} ${
-          revealed ? "opacity-100" : "opacity-0"
+        className={`relative h-[257px] w-[322px] shrink-0 overflow-visible rounded-[24px] ${CARD_SHELL[item.tone]} ${
+          staticLayout
+            ? "mx-auto opacity-100"
+            : `transition-all duration-700 ease-out ${revealed ? "opacity-100" : "opacity-0"}`
         }`}
-        style={{
-          transitionDelay: revealed ? `${120 + index * 90}ms` : "0ms",
-          transform: `translate3d(${offsetX}px, ${offsetY}px, 0)`,
-        }}
+        style={
+          staticLayout
+            ? undefined
+            : {
+                transitionDelay: revealed ? `${120 + index * 90}ms` : "0ms",
+                transform: `translate3d(${offsetX}px, ${offsetY}px, 0)`,
+              }
+        }
       >
         <div className={`pointer-events-none absolute ${CARD_IMAGE[item.tone]}`}>
           <Image
@@ -255,68 +264,104 @@ export function HomeFeatures({
     revealed || reduceMotion ? revealedTranslateX : introTranslateX;
 
   return (
-    <section
-      ref={sectionRef}
-      className="w-full overflow-hidden py-14 sm:py-16 lg:py-20"
-    >
-      <div
-        ref={stageRef}
-        className="relative mx-auto h-[300px] w-full max-w-[1440px] sm:h-[360px] lg:h-[421px]"
-      >
-        <div
-          className={`home-why-track absolute inset-y-0 left-0 flex h-full items-center gap-4 px-4 sm:gap-5 sm:px-6 lg:gap-[31px] lg:px-8 ${
-            revealed ? "is-revealed" : "is-intro"
-          }`}
-          style={{
-            transform: `translate3d(${translateX}px, 0, 0)`,
-          }}
-        >
-          <div
-            ref={cardsRef}
-            className="flex shrink-0 items-center gap-[18px] overflow-visible sm:gap-6 lg:gap-[31px]"
+    <>
+      {/* iPad Mini / tablet: static 2-column grid, no stage animation */}
+      <section className="w-full overflow-x-clip py-10 lg:hidden">
+        <div className="mx-auto w-full max-w-[720px] px-4 sm:px-6">
+          <h2
+            className={`mb-8 text-center font-black tracking-tight text-[#222] uppercase ${
+              compactTitle
+                ? "text-[36px] leading-[0.95] sm:text-[44px]"
+                : "text-[42px] leading-[0.95] sm:text-[52px]"
+            }`}
           >
+            <span className="block">{titleLead}</span>
+            <span className="block text-brand-red-hot">{titleAccent}</span>
+          </h2>
+          <div className="grid grid-cols-2 justify-items-center gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8">
             {items.map((item, index) => (
-              <FeatureCard
+              <div
                 key={item.title}
-                item={item}
-                index={index}
-                revealed={revealed}
-                floating={revealed && !reduceMotion}
-                compactTitle={compactTitle}
-              />
+                className="origin-top scale-[0.88] sm:scale-95"
+              >
+                <FeatureCard
+                  item={item}
+                  index={index}
+                  revealed
+                  floating={!reduceMotion}
+                  staticLayout
+                  compactTitle={compactTitle}
+                />
+              </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="flex shrink-0 items-center gap-1 sm:gap-2 lg:gap-3">
+      {/* Desktop: animated track */}
+      <section
+        ref={sectionRef}
+        className="hidden w-full overflow-hidden py-14 lg:block lg:py-20"
+      >
+        <div
+          ref={stageRef}
+          className="relative mx-auto h-[421px] w-full max-w-[1440px]"
+        >
+          <div
+            className={`home-why-track absolute inset-y-0 left-0 flex h-full items-center gap-[31px] px-8 ${
+              revealed ? "is-revealed" : "is-intro"
+            }`}
+            style={{
+              transform: `translate3d(${translateX}px, 0, 0)`,
+            }}
+          >
             <div
-              ref={motoRef}
-              className="relative h-[200px] w-[150px] shrink-0 sm:h-[280px] sm:w-[210px] lg:h-[360px] lg:w-[280px]"
+              ref={cardsRef}
+              className="flex shrink-0 items-center gap-[31px] overflow-visible"
             >
-              <Image
-                src={staticAssetUrl("/assets/home/feature-scooter.webp")}
-                alt=""
-                fill
-                sizes="280px"
-                className="object-contain object-left"
-                priority={false}
-              />
+              {items.map((item, index) => (
+                <FeatureCard
+                  key={item.title}
+                  item={item}
+                  index={index}
+                  revealed={revealed}
+                  floating={revealed && !reduceMotion}
+                  compactTitle={compactTitle}
+                />
+              ))}
             </div>
 
-            <h2
-              className={`shrink-0 text-left font-black tracking-tight text-[#222] uppercase ${
-                compactTitle
-                  ? "text-[32px] leading-[0.9] sm:text-[52px] lg:text-[84px] xl:text-[110px] xl:leading-[0.88]"
-                  : "text-[42px] leading-[0.9] sm:text-[72px] lg:text-[120px] xl:text-[160px] xl:leading-[0.88]"
-              }`}
-            >
-              <span className="block whitespace-nowrap">{titleLead}</span>
-              <span className="block whitespace-nowrap text-brand-red-hot">
-                {titleAccent}
-              </span>
-            </h2>
+            <div className="flex shrink-0 items-center gap-3">
+              <div
+                ref={motoRef}
+                className="relative h-[360px] w-[280px] shrink-0"
+              >
+                <Image
+                  src={staticAssetUrl("/assets/home/feature-scooter.webp")}
+                  alt=""
+                  fill
+                  sizes="280px"
+                  className="object-contain object-left"
+                  priority={false}
+                />
+              </div>
+
+              <h2
+                className={`shrink-0 text-left font-black tracking-tight text-[#222] uppercase ${
+                  compactTitle
+                    ? "text-[84px] leading-[0.88] xl:text-[110px]"
+                    : "text-[120px] leading-[0.88] xl:text-[160px]"
+                }`}
+              >
+                <span className="block whitespace-nowrap">{titleLead}</span>
+                <span className="block whitespace-nowrap text-brand-red-hot">
+                  {titleAccent}
+                </span>
+              </h2>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

@@ -25,6 +25,17 @@ type SideSheetProps = {
   children: ReactNode;
   /** Desktop panel width as viewport percent. Mobile uses cart-drawer sizing. */
   desktopWidthPercent?: number;
+  /**
+   * Max-width utility below `lg` (default `max-w-sm`).
+   * Use a wider class when the sheet hosts multi-column tables.
+   */
+  mobileMaxWidthClassName?: string;
+  /** Extra classes for the white/colored panel shell. */
+  panelClassName?: string;
+  /** Extra classes for the sticky header. */
+  headerClassName?: string;
+  /** Extra classes for the scrollable body. */
+  bodyClassName?: string;
 };
 
 function subscribeNoop(): () => void {
@@ -45,6 +56,10 @@ export function SideSheet({
   footer,
   children,
   desktopWidthPercent = DEFAULT_DESKTOP_WIDTH_PERCENT,
+  mobileMaxWidthClassName = "max-w-sm",
+  panelClassName = "",
+  headerClassName = "",
+  bodyClassName = "",
 }: SideSheetProps) {
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [rendered, setRendered] = useState(open);
@@ -129,7 +144,7 @@ export function SideSheet({
       />
 
       <div
-        className={`relative h-dvh max-h-dvh w-[87%] max-w-sm transition-transform ease-out motion-reduce:transition-none motion-reduce:duration-0 lg:w-[var(--side-sheet-desktop-width)] lg:max-w-none ${
+        className={`relative h-dvh max-h-dvh w-[87%] transition-transform ease-out motion-reduce:transition-none motion-reduce:duration-0 lg:w-[var(--side-sheet-desktop-width)] lg:max-w-none ${mobileMaxWidthClassName} ${
           visible ? "translate-x-0" : "translate-x-full"
         }`}
         style={{
@@ -139,10 +154,12 @@ export function SideSheet({
       >
         <DrawerCloseTab onClose={onClose} closeLabel={closeLabel} />
         <aside
-          className="relative z-[2] flex h-full w-full flex-col overflow-hidden rounded-tl-3xl rounded-bl-3xl bg-white shadow-2xl"
+          className={`relative z-[2] flex h-full w-full flex-col overflow-hidden rounded-tl-3xl rounded-bl-3xl bg-white shadow-2xl ${panelClassName}`}
           onClick={(event) => event.stopPropagation()}
         >
-          <header className="shrink-0 border-b border-gray-100 px-6 py-4 lg:px-5">
+          <header
+            className={`shrink-0 border-b border-gray-100 px-6 py-4 lg:px-5 ${headerClassName}`}
+          >
             <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0 flex-1">
                 <h2
@@ -152,7 +169,7 @@ export function SideSheet({
                   {title}
                 </h2>
                 {subtitle ? (
-                  <p className="mt-1 text-sm text-gray-600">{subtitle}</p>
+                  <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
                 ) : null}
               </div>
               {headerActions ? (
@@ -161,7 +178,9 @@ export function SideSheet({
             </div>
           </header>
 
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 lg:px-4">
+          <div
+            className={`min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 lg:px-4 ${bodyClassName}`}
+          >
             <div
               className={
                 footer

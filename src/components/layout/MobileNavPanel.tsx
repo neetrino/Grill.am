@@ -188,7 +188,7 @@ export function MobileNavPanel({
   }
 
   return createPortal(
-    <div className="md:hidden" aria-hidden={!expanded}>
+    <div className="lg:hidden" aria-hidden={!expanded}>
       <button
         type="button"
         aria-label={dictionary.nav.closeMenu}
@@ -221,32 +221,47 @@ export function MobileNavPanel({
         >
           <div className="flex flex-col py-3">
             {navItems
-              .filter((item) => item.id !== "home" && item.id !== "shop")
+              .filter((item) => item.id !== "home")
               .map((item) => {
               if (item.kind === "categories") {
                 const sectionActive =
-                  pathname === productsPath && Boolean(categorySlug);
+                  pathname === productsPath ||
+                  pathname.startsWith(`${productsPath}/`);
 
                 return (
                   <div key={item.id}>
-                    <button
-                      type="button"
-                      className={
-                        sectionActive || categoriesOpen
-                          ? "flex w-full items-center justify-between rounded-xl px-1 py-3.5 text-left text-base font-semibold text-brand-red"
-                          : "flex w-full items-center justify-between rounded-xl px-1 py-3.5 text-left text-base font-semibold text-[#171717]"
-                      }
-                      aria-expanded={categoriesOpen}
-                      onClick={() => setCategoriesOpen((value) => !value)}
-                    >
-                      {item.label}
-                      <ChevronDown
-                        className={`size-4 transition ${
-                          categoriesOpen ? "rotate-180" : ""
-                        }`}
-                        aria-hidden
-                      />
-                    </button>
+                    <div className="flex w-full items-center gap-2">
+                      <AppLink
+                        href={productsPath}
+                        prefetchPolicy="intent"
+                        className={
+                          sectionActive
+                            ? "flex-1 rounded-xl px-1 py-3.5 text-left text-base font-semibold text-brand-red"
+                            : "flex-1 rounded-xl px-1 py-3.5 text-left text-base font-semibold text-[#171717]"
+                        }
+                        onClick={onClose}
+                      >
+                        {item.label}
+                      </AppLink>
+                      <button
+                        type="button"
+                        className={
+                          sectionActive || categoriesOpen
+                            ? "rounded-xl p-2 text-brand-red"
+                            : "rounded-xl p-2 text-[#171717]"
+                        }
+                        aria-expanded={categoriesOpen}
+                        aria-label={item.label}
+                        onClick={() => setCategoriesOpen((value) => !value)}
+                      >
+                        <ChevronDown
+                          className={`size-4 transition ${
+                            categoriesOpen ? "rotate-180" : ""
+                          }`}
+                          aria-hidden
+                        />
+                      </button>
+                    </div>
                     {categoriesOpen ? (
                       <div className="pb-1">
                         <AppLink
@@ -314,6 +329,26 @@ export function MobileNavPanel({
                 </AppLink>
               );
             })}
+
+            <AppLink
+              href={`/${locale}/legal`}
+              prefetchPolicy="intent"
+              aria-current={
+                pathname === `/${locale}/legal` ||
+                pathname.startsWith(`/${locale}/legal/`)
+                  ? "page"
+                  : undefined
+              }
+              className={
+                pathname === `/${locale}/legal` ||
+                pathname.startsWith(`/${locale}/legal/`)
+                  ? "rounded-xl px-1 py-3.5 text-base font-semibold text-brand-red"
+                  : "rounded-xl px-1 py-3.5 text-base font-semibold text-[#171717] hover:bg-gray-50"
+              }
+              onClick={onClose}
+            >
+              {dictionary.nav.policy}
+            </AppLink>
           </div>
 
           <div className="grid grid-cols-2 gap-3 border-t border-gray-100 py-4">

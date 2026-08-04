@@ -28,7 +28,7 @@ export default async function CareersPage({ params }: CareersPageProps) {
       {postings.length === 0 ? (
         <p className="text-[var(--muted)]">{dictionary.careers.empty}</p>
       ) : (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           {postings.map((posting) => (
             <JobCard
               key={posting.id}

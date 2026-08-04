@@ -12,12 +12,14 @@ import {
 } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { HeaderUserIcon } from "@/components/layout/HeaderIcons";
 import { ShopNavIcon } from "@/components/layout/ShopNavIcon";
 import styles from "@/components/layout/MobileBottomNav.module.css";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+import type { SessionUser } from "@/lib/auth/session";
 
 const BOTTOM_NAV_TRANSITION_MS = 380;
 
@@ -25,6 +27,7 @@ type MobileBottomNavProps = {
   locale: Locale;
   currency: Currency;
   dictionary: Dictionary;
+  user: SessionUser | null;
   cartItemCount: number;
   wishlistCount: number;
 };
@@ -35,7 +38,7 @@ type NavIcon = ComponentType<{
   "aria-hidden"?: boolean | "true" | "false";
 }>;
 
-type NavTabId = "home" | "shop" | "cart" | "wishlist";
+type NavTabId = "home" | "shop" | "cart" | "wishlist" | "profile";
 
 type NavTab = {
   id: Exclude<NavTabId, "cart">;
@@ -45,7 +48,13 @@ type NavTab = {
   badge?: number;
   /** Overrides default inactive / active icon sizes. */
   iconClassName?: { active: string; idle: string };
+  /** Extra classes on the tab control (e.g. tablet-only visibility). */
+  className?: string;
 };
+
+function ProfileNavIcon({ className }: { className?: string }) {
+  return <HeaderUserIcon className={className} />;
+}
 
 type IndicatorBox = {
   left: number;
@@ -88,6 +97,7 @@ export function MobileBottomNav({
   locale,
   currency,
   dictionary,
+  user,
   cartItemCount,
   wishlistCount,
 }: MobileBottomNavProps) {
@@ -101,6 +111,10 @@ export function MobileBottomNav({
   const homeActive = isHomePath(pathname, locale);
   const shopActive = startsWithPath(pathname, `/${locale}/products`);
   const wishlistActive = startsWithPath(pathname, `/${locale}/wishlist`);
+  const profileActive =
+    startsWithPath(pathname, `/${locale}/profile`) ||
+    startsWithPath(pathname, `/${locale}/login`) ||
+    startsWithPath(pathname, `/${locale}/register`);
 
   const activeId: NavTabId | null = cartOpen
     ? "cart"
@@ -110,7 +124,9 @@ export function MobileBottomNav({
         ? "shop"
         : wishlistActive
           ? "wishlist"
-          : null;
+          : profileActive
+            ? "profile"
+            : null;
 
   const homeTab: NavTab = {
     id: "home",
@@ -122,7 +138,7 @@ export function MobileBottomNav({
   const shopTab: NavTab = {
     id: "shop",
     href: `/${locale}/products`,
-    label: dictionary.nav.shop,
+    label: dictionary.nav.products,
     icon: ShopNavIcon,
     iconClassName: {
       idle: "size-6 min-[390px]:size-8",
@@ -138,20 +154,41 @@ export function MobileBottomNav({
     badge: wishlistCount,
   };
 
+  const profileTab: NavTab = {
+    id: "profile",
+    href: user ? `/${locale}/profile` : `/${locale}/login`,
+    label: user ? dictionary.header.profile : dictionary.header.login,
+    icon: ProfileNavIcon,
+    iconClassName: {
+      idle: "size-5 min-[390px]:size-6",
+      active: "size-6 min-[390px]:size-7",
+    },
+    /** Tablet / iPad Mini: header profile circle is hidden from md. */
+    className: "max-md:hidden",
+  };
+
   useLayoutEffect(() => {
-    if (!activeId) {
-      return;
-    }
-    const el = itemRefs.current.get(activeId);
-    if (!el) {
-      return;
-    }
-    setIndicator({
-      left: el.offsetLeft,
-      top: el.offsetTop,
-      width: el.offsetWidth,
-      height: el.offsetHeight,
+    const frameId = requestAnimationFrame(() => {
+      if (!activeId) {
+        setIndicator(null);
+        return;
+      }
+      const el = itemRefs.current.get(activeId);
+      // Hidden tablet-only tabs (e.g. profile below md) must not drive the pill.
+      if (!el || el.offsetWidth === 0) {
+        setIndicator(null);
+        return;
+      }
+      setIndicator({
+        left: el.offsetLeft,
+        top: el.offsetTop,
+        width: el.offsetWidth,
+        height: el.offsetHeight,
+      });
     });
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
   }, [activeId]);
 
   useEffect(() => {
@@ -175,7 +212,8 @@ export function MobileBottomNav({
         return;
       }
       const el = itemRefs.current.get(activeId);
-      if (!el) {
+      if (!el || el.offsetWidth === 0) {
+        setIndicator(null);
         return;
       }
       setIndicator({
@@ -208,7 +246,7 @@ export function MobileBottomNav({
     <nav
       aria-label={dictionary.nav.navigation}
       data-mobile-bottom-nav
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(12px,env(safe-area-inset-bottom))] min-[390px]:px-8 md:hidden"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(12px,env(safe-area-inset-bottom))] min-[390px]:px-8 lg:hidden"
       style={
         {
           "--bottom-nav-ms": `${BOTTOM_NAV_TRANSITION_MS}ms`,
@@ -217,7 +255,7 @@ export function MobileBottomNav({
     >
       <div
         ref={trackRef}
-        className="pointer-events-auto relative flex h-[60px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[71px] min-[390px]:px-3 min-[390px]:py-2"
+        className="pointer-events-auto relative flex h-[60px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[71px] min-[390px]:px-3 min-[390px]:py-2 md:max-w-[420px]"
       >
         {indicator && activeId ? (
           <span
@@ -274,6 +312,11 @@ export function MobileBottomNav({
           tab={wishlistTab}
           active={activeId === "wishlist"}
           register={(node) => registerItem("wishlist", node)}
+        />
+        <PillTab
+          tab={profileTab}
+          active={activeId === "profile"}
+          register={(node) => registerItem("profile", node)}
         />
       </div>
     </nav>
@@ -355,7 +398,7 @@ function PillTab({
       prefetchPolicy="intent"
       aria-current={active ? "page" : undefined}
       aria-label={tab.label}
-      className={tabClassName(active)}
+      className={`${tabClassName(active)}${tab.className ? ` ${tab.className}` : ""}`}
     >
       <span className="relative inline-flex shrink-0">
         <Icon

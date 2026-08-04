@@ -46,13 +46,13 @@ export function ContactForm({ copy }: ContactFormProps) {
   }
 
   return (
-    <div className="rounded-[15px] border border-gray-100 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:p-8">
+    <div className="flex h-full flex-col rounded-[15px] border border-gray-100 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:p-8">
       <h2 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl">
         {copy.formTitle}
       </h2>
 
       <form
-        className="space-y-4"
+        className="flex flex-1 flex-col space-y-4"
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
@@ -133,8 +133,8 @@ export function ContactForm({ copy }: ContactFormProps) {
             required
             minLength={10}
             maxLength={5000}
-            rows={6}
-            className="w-full rounded-[15px] border border-gray-200 bg-white px-3 py-2.5 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50 disabled:opacity-60"
+            rows={4}
+            className="min-h-[6.5rem] w-full resize-y rounded-[15px] border border-gray-200 bg-white px-3 py-2.5 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50 disabled:opacity-60"
             disabled={isPending}
           />
         </label>
@@ -158,19 +158,21 @@ export function ContactForm({ copy }: ContactFormProps) {
           </p>
         ) : null}
 
-        <button
-          type="submit"
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[15px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={isPending}
-        >
-          {isPending ? "…" : copy.submit}
-          <Send className="size-4 shrink-0" aria-hidden />
-        </button>
+        <div className="mt-auto space-y-4 pt-1">
+          <button
+            type="submit"
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[15px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={isPending}
+          >
+            {isPending ? "…" : copy.submit}
+            <Send className="size-4 shrink-0" aria-hidden />
+          </button>
 
-        <p className="flex items-start justify-center gap-2 pt-1 text-center text-xs text-gray-500">
-          <Lock className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-          <span>{copy.privacyNote}</span>
-        </p>
+          <p className="flex items-start justify-center gap-2 text-center text-xs text-gray-500">
+            <Lock className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+            <span>{copy.privacyNote}</span>
+          </p>
+        </div>
       </form>
     </div>
   );

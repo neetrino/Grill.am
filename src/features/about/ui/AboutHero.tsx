@@ -49,7 +49,7 @@ function AboutSinceBadge({ label, year }: { label: string; year: string }) {
 
 export function AboutHero({ copy }: AboutHeroProps) {
   return (
-    <section className="bg-white py-10 sm:py-12 md:py-14 lg:py-16">
+    <section className="bg-white pt-6 pb-10 sm:pt-8 sm:pb-12 md:pt-8 md:pb-14 lg:py-16">
       <div className="mx-auto w-full max-w-[1440px]">
         <div className="mb-8 flex flex-col items-start gap-3 sm:mb-10">
           <span className="inline-flex w-fit items-center gap-2 rounded-full bg-brand-cream px-4 py-2 text-xs font-bold tracking-[0.14em] text-[#5c3d1e] uppercase sm:text-[13px]">
@@ -57,12 +57,9 @@ export function AboutHero({ copy }: AboutHeroProps) {
             {copy.eyebrow}
           </span>
 
-          <h1 className="text-[22px] leading-[1.2] font-black tracking-tight text-brand-ink sm:whitespace-nowrap sm:text-[32px] lg:text-[40px]">
-            <span className="block sm:inline">{copy.titleLead}</span>
-            <span className="hidden sm:inline"> </span>
-            <span className="block text-brand-red sm:inline">
-              {copy.titleAccent}
-            </span>
+          <h1 className="text-[clamp(16px,3.6vw,40px)] leading-[1.2] font-black tracking-tight whitespace-nowrap text-brand-ink uppercase">
+            <span>{copy.titleLead}</span>{" "}
+            <span className="text-brand-red">{copy.titleAccent}</span>
           </h1>
         </div>
 

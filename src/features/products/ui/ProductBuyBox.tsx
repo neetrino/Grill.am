@@ -6,7 +6,10 @@ import { useMemo, useState, useSyncExternalStore, useTransition } from "react";
 
 import { addToCart } from "@/features/cart/cart";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
-import { notifyCartChanged } from "@/features/cart/cart-client-sync";
+import {
+  adjustLocalCartItemCount,
+  notifyCartChanged,
+} from "@/features/cart/cart-client-sync";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import {
   computeModifiersDelta,
@@ -214,6 +217,8 @@ export function ProductBuyBox({
       imageUrl: PRODUCT_CARD_IMAGE,
     });
 
+    adjustLocalCartItemCount(quantity);
+
     startTransition(async () => {
       try {
         await addToCart(productId, quantity, modifiers);
@@ -221,6 +226,7 @@ export function ProductBuyBox({
         router.refresh();
         setMessage(labels.added);
       } catch {
+        adjustLocalCartItemCount(-quantity);
         setError(labels.error);
       }
     });

@@ -51,9 +51,9 @@
   "payment": {
     "cashOnDelivery": "Կանխիկ առաքման պահին",
     "cashOnDeliveryDescription": "Վճարեք կանխիկ՝ պատվերը ստանալիս",
-    "cashChangeTitle": "Մանրի համար",
-    "cashChangeDescription": "Նշեք, թե որ թղթադրամով եք վճարելու, որպեսզի առաքիչը պատրաստի մանրը",
-    "cashChangeExact": "Առանց մանրի",
+    "cashChangeTitle": "ՄԱՆՐ",
+    "cashChangeDescription": "Սեղմեք այն թղթադրամին, որը կվճարեք, որպեսզի պատրաստենք մանրը:",
+    "cashChangeExact": "Մանր պետք չէ",
     "cashChangeHint": "Առաքիչը պետք է տա մանր՝ {amount}",
     "cashChangeNoEligible": "Պատվերի գումարը գերազանցում է հասանելի թղթադրամները՝ վճարեք առանց մանրի",
     "idram": "Idram",

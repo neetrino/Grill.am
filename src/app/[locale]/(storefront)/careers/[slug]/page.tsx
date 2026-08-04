@@ -110,6 +110,8 @@ export default async function JobPostingPage({ params }: JobPostingPageProps) {
         posting={posting}
         locale={rawLocale}
         copy={dictionary.careers}
+        closeLabel={dictionary.close}
+        cancelLabel={dictionary.buttons.cancel}
         sanitizedDescription={sanitizedDescription}
       />
     </>

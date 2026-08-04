@@ -26,14 +26,17 @@ type MobileHeaderActionsProps = {
   categories: readonly StorefrontNavCategory[];
 };
 
+/** Match bottom-nav idle tabs: 48px on small phones, 56px from 390px. */
 const actionButtonClassName =
-  "relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-red text-white transition hover:bg-brand-red-hot focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red";
+  "relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-red text-white transition hover:bg-brand-red-hot focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red min-[390px]:size-14";
 
 const MENU_ICON_MS = 280;
 
 /**
  * Figma mobile header `164:379` — red circular menu + profile.
  * Burger morphs to X like MaMarie when the dropdown menu is open.
+ * Burger stays through tablet (`lg`); profile circle is phone-only — on iPad Mini
+ * profile lives in the bottom navbar instead.
  */
 export function MobileHeaderActions({
   locale,
@@ -77,11 +80,11 @@ export function MobileHeaderActions({
   };
 
   return (
-    <div className="flex items-center gap-[11px] md:hidden">
+    <div className="flex items-center gap-[11px]">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className={actionButtonClassName}
+        className={`${actionButtonClassName} lg:hidden`}
         aria-label={
           open ? dictionary.nav.closeMenu : dictionary.nav.openMenu
         }
@@ -89,7 +92,7 @@ export function MobileHeaderActions({
         aria-controls={menuId}
       >
         <span
-          className="absolute flex size-6 flex-col justify-center gap-[5px] transition-[opacity,transform] ease-out"
+          className="absolute flex size-5 flex-col justify-center gap-1 transition-[opacity,transform] ease-out min-[390px]:size-6 min-[390px]:gap-[5px]"
           style={{
             opacity: open ? 0 : 1,
             transform: open
@@ -104,7 +107,7 @@ export function MobileHeaderActions({
           <span className="h-0.5 w-full rounded bg-white" />
         </span>
         <X
-          className="absolute size-6 text-white transition-[opacity,transform] ease-out"
+          className="absolute size-5 text-white transition-[opacity,transform] ease-out min-[390px]:size-6"
           style={{
             opacity: open ? 1 : 0,
             transform: open
@@ -120,11 +123,11 @@ export function MobileHeaderActions({
       <AppLink
         href={profileHref}
         prefetchPolicy="intent"
-        className={actionButtonClassName}
+        className={`${actionButtonClassName} md:hidden`}
         aria-label={profileLabel}
         onClick={() => setOpen(false)}
       >
-        <HeaderUserIcon className="block size-6 overflow-visible text-white" />
+        <HeaderUserIcon className="block size-5 overflow-visible text-white min-[390px]:size-6" />
       </AppLink>
 
       <Suspense

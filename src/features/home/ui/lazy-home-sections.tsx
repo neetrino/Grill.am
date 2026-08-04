@@ -69,7 +69,7 @@ export function HomePromotionsLazy(props: PromotionsProps) {
   );
 }
 
-/** Why-choose animation — heaviest home client island (desktop only). */
+/** Why-choose — static 2-col on tablet; animated track from lg. */
 export function HomeFeaturesLazy(props: FeaturesProps) {
   return (
     <div className="hidden md:block">

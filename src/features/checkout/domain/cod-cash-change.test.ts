@@ -11,11 +11,14 @@ import {
 describe("cod-cash-change", () => {
   it("exposes the expected AMD denominations", () => {
     expect([...COD_CASH_DENOMINATIONS]).toEqual([
-      5_000, 10_000, 20_000, 50_000, 100_000,
+      1_000, 5_000, 10_000, 20_000, 50_000, 100_000,
     ]);
   });
 
   it("filters denominations that cover the order total", () => {
+    expect([...eligibleCodCashDenominations(800)]).toEqual([
+      1_000, 5_000, 10_000, 20_000, 50_000, 100_000,
+    ]);
     expect([...eligibleCodCashDenominations(4_500)]).toEqual([
       5_000, 10_000, 20_000, 50_000, 100_000,
     ]);
@@ -51,8 +54,8 @@ describe("cod-cash-change", () => {
   });
 
   it("rejects unknown denominations", () => {
-    expect(isCodCashDenomination(1_000)).toBe(false);
-    expect(validateCodCashTenderedAmount(500, 1_000).ok).toBe(false);
+    expect(isCodCashDenomination(2_000)).toBe(false);
+    expect(validateCodCashTenderedAmount(500, 2_000).ok).toBe(false);
   });
 
   it("reads typed metadata safely", () => {

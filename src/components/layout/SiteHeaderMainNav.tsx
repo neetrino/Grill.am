@@ -288,7 +288,7 @@ export function SiteHeaderMainNav({
       ref={headerRootRef}
       data-site-header
       className={`sticky top-0 z-50 bg-white [overflow-anchor:none] ${
-        isProfileRoute ? "max-md:hidden" : ""
+        isProfileRoute ? "max-lg:hidden" : ""
       }`}
     >
       <div
@@ -343,7 +343,7 @@ export function SiteHeaderMainNav({
                     />
                   </nav>
 
-                  <div className="hidden items-center gap-6 text-base font-medium text-[#333] md:flex">
+                  <div className="hidden items-center gap-6 text-base font-medium text-[#333] lg:flex">
                     <StorePhoneDropdown
                       phones={dictionary.contact.storePhones}
                       toggleLabel={dictionary.contact.callTitle}
@@ -353,6 +353,7 @@ export function SiteHeaderMainNav({
                       addresses={dictionary.contact.storeAddresses}
                       toggleLabel={dictionary.footer.addresses}
                       variant="header"
+                      locale={locale}
                     />
                   </div>
 
@@ -374,7 +375,7 @@ export function SiteHeaderMainNav({
             />
           </div>
 
-          <div className="hidden shrink-0 items-center gap-4 md:flex">
+          <div className="hidden shrink-0 items-center gap-4 lg:flex">
             {desktopActions}
             <HeaderLocaleCurrencyPill
               locale={locale}

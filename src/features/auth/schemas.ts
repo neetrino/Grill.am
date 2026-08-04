@@ -1,12 +1,26 @@
 import { z } from "zod";
 
-export const passwordSchema = z
-  .string()
-  .min(8, "Password must be at least 8 characters.")
-  .regex(/[a-z]/, "Password must contain a lowercase letter.")
-  .regex(/[A-Z]/, "Password must contain an uppercase letter.")
-  .regex(/[0-9]/, "Password must contain a digit.")
-  .regex(/[^A-Za-z0-9]/, "Password must contain a special character.");
+/** Stable marker — UI shows the full requirements list instead of one rule at a time. */
+export const PASSWORD_REQUIREMENTS_ERROR = "PASSWORD_REQUIREMENTS";
+
+const PASSWORD_RULES: ReadonlyArray<(value: string) => boolean> = [
+  (value) => value.length >= 8,
+  (value) => /[a-z]/.test(value),
+  (value) => /[A-Z]/.test(value),
+  (value) => /[0-9]/.test(value),
+  (value) => /[^A-Za-z0-9]/.test(value),
+];
+
+export const passwordSchema = z.string().superRefine((value, ctx) => {
+  if (PASSWORD_RULES.every((rule) => rule(value))) {
+    return;
+  }
+
+  ctx.addIssue({
+    code: "custom",
+    message: PASSWORD_REQUIREMENTS_ERROR,
+  });
+});
 
 export const loginSchema = z.object({
   email: z.string().trim().email().transform((value) => value.toLowerCase()),
@@ -21,6 +35,9 @@ export const registerSchema = z
     phone: z.string().trim().min(5).max(40),
     password: passwordSchema,
     confirmPassword: z.string().min(1),
+    acceptTerms: z.literal("on", {
+      message: "You must accept the terms to continue.",
+    }),
   })
   .refine((value) => value.password === value.confirmPassword, {
     message: "Passwords do not match.",

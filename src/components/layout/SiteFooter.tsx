@@ -205,6 +205,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                     addresses={dictionary.contact.storeAddresses}
                     toggleLabel={dictionary.footer.addresses}
                     variant="footer"
+                    locale={locale}
                   />
                 </li>
               </ul>

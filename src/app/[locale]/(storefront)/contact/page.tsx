@@ -23,7 +23,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   return (
     <div className="-my-10 bg-white">
       <section>
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 pb-4 pt-10 sm:pb-6 sm:pt-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10 lg:pb-6 lg:pt-14">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-stretch gap-8 pb-4 pt-10 sm:pb-6 sm:pt-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10 lg:pb-6 lg:pt-14">
           <ContactInfo copy={copy} />
           <ContactForm
             copy={{

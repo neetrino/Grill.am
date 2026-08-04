@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 
 import { logoutAction } from "@/features/auth/logout-action";
+import {
+  CHECKOUT_DELIVERY_CITY_I18N_KEYS,
+  CHECKOUT_DELIVERY_CITY_VALUES,
+} from "@/features/checkout/domain/checkout-delivery-cities";
 import { listCustomerOrders } from "@/features/orders/application/queries";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
 import { listCustomerAddresses } from "@/features/profile/application/address-queries";
@@ -60,6 +64,10 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const deleteCopy = dictionary.profile.deleteAccountForm;
   const promoCopy = dictionary.profile.promoCodes;
   const profileCopy = dictionary.profile;
+  const cityOptions = CHECKOUT_DELIVERY_CITY_VALUES.map((city) => ({
+    value: city,
+    label: dictionary.checkout.deliveryCities[CHECKOUT_DELIVERY_CITY_I18N_KEYS[city]],
+  }));
   const ordersProfileCopy = {
     reorder: profileCopy.reorder,
     reordering: profileCopy.reordering,
@@ -143,6 +151,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             <ProfileAddressesView
               locale={locale}
               addresses={addressRows}
+              cityOptions={cityOptions}
               labels={{
                 title: dictionary.profile.addresses,
                 addNew: addressCopy.addNew,
@@ -157,8 +166,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 formEditTitle: addressCopy.formEditTitle,
                 line1: addressCopy.line1,
                 city: addressCopy.city,
-                phone: addressCopy.phone,
-                phonePlaceholder: addressCopy.phonePlaceholder,
+                selectCity: dictionary.checkout.form.selectLocation,
                 isDefault: addressCopy.isDefault,
                 cancel: dictionary.profile.cancel,
                 add: addressCopy.add,

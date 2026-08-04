@@ -14,6 +14,7 @@ import enHome from "@/locales/en/home.json";
 import enLegal from "@/locales/en/legal.json";
 import enProduct from "@/locales/en/product.json";
 import enProfile from "@/locales/en/profile.json";
+import enStores from "@/locales/en/stores.json";
 import enWishlist from "@/locales/en/wishlist.json";
 
 import hyAbout from "@/locales/hy/about.json";
@@ -30,6 +31,7 @@ import hyHome from "@/locales/hy/home.json";
 import hyLegal from "@/locales/hy/legal.json";
 import hyProduct from "@/locales/hy/product.json";
 import hyProfile from "@/locales/hy/profile.json";
+import hyStores from "@/locales/hy/stores.json";
 import hyWishlist from "@/locales/hy/wishlist.json";
 
 import ruAbout from "@/locales/ru/about.json";
@@ -46,6 +48,7 @@ import ruHome from "@/locales/ru/home.json";
 import ruLegal from "@/locales/ru/legal.json";
 import ruProduct from "@/locales/ru/product.json";
 import ruProfile from "@/locales/ru/profile.json";
+import ruStores from "@/locales/ru/stores.json";
 import ruWishlist from "@/locales/ru/wishlist.json";
 
 type LocaleNamespaces = {
@@ -64,6 +67,7 @@ type LocaleNamespaces = {
   catalog: typeof hyCatalog;
   wishlist: typeof hyWishlist;
   legal: typeof hyLegal;
+  stores: typeof hyStores;
 };
 
 function buildDictionary(namespaces: LocaleNamespaces) {
@@ -90,6 +94,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     catalog: namespaces.catalog,
     wishlist: namespaces.wishlist,
     legal: namespaces.legal,
+    stores: namespaces.stores,
   } as const;
 }
 
@@ -110,6 +115,7 @@ const dictionaries = {
     catalog: hyCatalog,
     wishlist: hyWishlist,
     legal: hyLegal,
+    stores: hyStores,
   }),
   en: buildDictionary({
     common: enCommon,
@@ -127,6 +133,7 @@ const dictionaries = {
     catalog: enCatalog,
     wishlist: enWishlist,
     legal: enLegal,
+    stores: enStores,
   }),
   ru: buildDictionary({
     common: ruCommon,
@@ -144,6 +151,7 @@ const dictionaries = {
     catalog: ruCatalog,
     wishlist: ruWishlist,
     legal: ruLegal,
+    stores: ruStores,
   }),
 } as const;
 

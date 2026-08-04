@@ -25,6 +25,8 @@ type NavCategoriesDropdownProps = {
   allLabel: string;
   activeCategorySlug: string | null;
   isOnProductsList: boolean;
+  /** Highlight Menu when on any products route. */
+  isMenuActive?: boolean;
 };
 
 const CLOSE_DELAY_MS = 120;
@@ -38,16 +40,17 @@ export function NavCategoriesDropdown({
   allLabel,
   activeCategorySlug,
   isOnProductsList,
+  isMenuActive = false,
 }: NavCategoriesDropdownProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLAnchorElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
   const productsPath = `/${locale}/products`;
-  const triggerActive = isOnProductsList && Boolean(activeCategorySlug);
+  const triggerActive = isMenuActive;
   const open = mounted && visible;
   const menuPosition = useDropdownPortalPosition(mounted, triggerRef, {
     matchTriggerWidth: true,
@@ -115,9 +118,10 @@ export function NavCategoriesDropdown({
       onMouseEnter={openMenu}
       onMouseLeave={scheduleClose}
     >
-      <button
+      <AppLink
         ref={triggerRef}
-        type="button"
+        href={productsPath}
+        prefetchPolicy="intent"
         className={`inline-flex items-center gap-1 rounded-[10px] px-4 py-2 text-base font-semibold whitespace-nowrap transition ${
           triggerActive || open
             ? "text-brand-red"
@@ -127,13 +131,16 @@ export function NavCategoriesDropdown({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
+        aria-current={triggerActive ? "page" : undefined}
         onFocus={openMenu}
-        onClick={() => {
-          if (open) {
+        onClick={(event) => {
+          if (isOnProductsList && !activeCategorySlug) {
+            event.preventDefault();
             scheduleClose();
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
             return;
           }
-          openMenu();
+          scheduleClose();
         }}
       >
         {label}
@@ -141,7 +148,7 @@ export function NavCategoriesDropdown({
           className={`size-4 transition ${open ? "rotate-180" : ""}`}
           aria-hidden
         />
-      </button>
+      </AppLink>
 
       {mounted && menuPosition && portalStyle
         ? createPortal(

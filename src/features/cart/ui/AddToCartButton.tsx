@@ -7,7 +7,10 @@ import { useState, useTransition } from "react";
 
 import { addToCart } from "@/features/cart/cart";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
-import { notifyCartChanged } from "@/features/cart/cart-client-sync";
+import {
+  adjustLocalCartItemCount,
+  notifyCartChanged,
+} from "@/features/cart/cart-client-sync";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type AddToCartButtonProps = {
@@ -59,6 +62,8 @@ export function AddToCartButton({
       imageUrl: imageUrl || PRODUCT_CARD_IMAGE,
     });
 
+    adjustLocalCartItemCount(1);
+
     startTransition(async () => {
       try {
         await addToCart(productId, 1);
@@ -67,6 +72,7 @@ export function AddToCartButton({
         router.refresh();
         window.setTimeout(() => setJustAdded(false), 1500);
       } catch {
+        adjustLocalCartItemCount(-1);
         setJustAdded(false);
       }
     });

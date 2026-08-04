@@ -9,6 +9,9 @@ export const AUTH_TITLE_CLASS =
 export const AUTH_FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
+export const AUTH_FIELD_INVALID_CLASS =
+  "border-red-500 focus:border-red-500 focus:ring-red-500/20";
+
 export const AUTH_PASSWORD_FIELD_CLASS = `${AUTH_FIELD_CLASS} pr-11`;
 
 export const AUTH_BTN_PRIMARY_CLASS =
@@ -16,3 +19,8 @@ export const AUTH_BTN_PRIMARY_CLASS =
 
 export const AUTH_LINK_CLASS =
   "font-medium text-brand-red underline-offset-2 transition hover:text-brand-red-hot hover:underline";
+
+export function authFieldClassName(invalid: boolean, password = false): string {
+  const base = password ? AUTH_PASSWORD_FIELD_CLASS : AUTH_FIELD_CLASS;
+  return invalid ? `${base} ${AUTH_FIELD_INVALID_CLASS}` : base;
+}

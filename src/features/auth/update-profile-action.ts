@@ -1,11 +1,11 @@
 "use server";
 
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, isNull, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
-import { users } from "@/db/schema";
+import { addresses, users } from "@/db/schema";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 
@@ -27,6 +27,7 @@ export type UpdateProfileActionState = {
 
 /**
  * Updates the signed-in customer's personal fields used by profile and checkout.
+ * Also keeps saved address recipient name/phone in sync with the profile.
  */
 export async function updateProfileAction(
   locale: string,
@@ -74,9 +75,22 @@ export async function updateProfileAction(
     })
     .where(eq(users.id, user.id));
 
+  // Addresses store a copy of profile contact fields for checkout prefills.
+  await getDb()
+    .update(addresses)
+    .set({
+      recipientFirstName: parsed.data.firstName,
+      recipientLastName: parsed.data.lastName,
+      phone: parsed.data.phone,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(addresses.userId, user.id), isNull(addresses.archivedAt)));
+
   revalidatePath(`/${locale}/profile`);
   revalidatePath(`/${locale}/profile/personal-information`);
+  revalidatePath(`/${locale}/profile/addresses`);
   revalidatePath(`/${locale}/checkout`);
+  revalidatePath(`/${locale}`, "layout");
 
   return { success: "Personal information saved." };
 }

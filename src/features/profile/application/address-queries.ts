@@ -53,21 +53,23 @@ export async function listCustomerAddresses(
 export async function getDefaultShippingAddress(
   userId: string,
 ): Promise<CustomerAddressListItem | null> {
-  const [row] = await getDb()
-    .select({
-      id: addresses.id,
-      line1: addresses.line1,
-      line2: addresses.line2,
-      city: addresses.city,
-      region: addresses.region,
-      postalCode: addresses.postalCode,
-      countryCode: addresses.countryCode,
-      recipientFirstName: addresses.recipientFirstName,
-      recipientLastName: addresses.recipientLastName,
-      phone: addresses.phone,
-      isDefaultShipping: addresses.isDefaultShipping,
-      isDefaultBilling: addresses.isDefaultBilling,
-    })
+  const selectFields = {
+    id: addresses.id,
+    line1: addresses.line1,
+    line2: addresses.line2,
+    city: addresses.city,
+    region: addresses.region,
+    postalCode: addresses.postalCode,
+    countryCode: addresses.countryCode,
+    recipientFirstName: addresses.recipientFirstName,
+    recipientLastName: addresses.recipientLastName,
+    phone: addresses.phone,
+    isDefaultShipping: addresses.isDefaultShipping,
+    isDefaultBilling: addresses.isDefaultBilling,
+  } as const;
+
+  const [defaultRow] = await getDb()
+    .select(selectFields)
     .from(addresses)
     .where(
       and(
@@ -78,5 +80,18 @@ export async function getDefaultShippingAddress(
     )
     .limit(1);
 
-  return row ?? null;
+  if (defaultRow) {
+    return defaultRow;
+  }
+
+  const [firstRow] = await getDb()
+    .select(selectFields)
+    .from(addresses)
+    .where(
+      and(eq(addresses.userId, userId), isNull(addresses.archivedAt)),
+    )
+    .orderBy(asc(addresses.createdAt))
+    .limit(1);
+
+  return firstRow ?? null;
 }

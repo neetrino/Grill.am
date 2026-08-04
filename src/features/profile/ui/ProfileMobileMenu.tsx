@@ -37,22 +37,15 @@ type MenuRow = {
   key: ProfileNavKey;
   label: string;
   icon: ReactNode;
-  danger?: boolean;
 };
 
-function MenuIconBox({
-  children,
-  danger = false,
-}: {
-  children: ReactNode;
-  danger?: boolean;
-}) {
+function MenuIconBox({ children }: { children: ReactNode }) {
   return (
     <span
       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px] [&>svg]:h-5 [&>svg]:w-5"
       style={{
-        backgroundColor: danger ? "#fee2e2" : PROFILE_ICON_TONE.background,
-        color: danger ? "#dc2626" : PROFILE_ICON_TONE.foreground,
+        backgroundColor: PROFILE_ICON_TONE.background,
+        color: PROFILE_ICON_TONE.foreground,
       }}
     >
       {children}
@@ -204,18 +197,28 @@ export function ProfileMobileMenu({
         </div>
       </nav>
 
+      <form action={logoutAction}>
+        <button
+          type="submit"
+          className={`flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-brand-red shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-colors hover:bg-red-50/60 ${PROFILE_CARD_CLASS}`}
+        >
+          <LogOut className="h-4 w-4" aria-hidden />
+          {dictionary.logout}
+        </button>
+      </form>
+
       <div className={`overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${PROFILE_CARD_CLASS}`}>
         {sheets.deleteAccount != null ? (
           <button
             type="button"
             onClick={() => setActiveSheet("deleteAccount")}
-            className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-red-50/60"
+            className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors active:bg-gray-50 hover:bg-gray-50/80"
           >
             <span className="flex min-w-0 items-center gap-3">
-              <MenuIconBox danger>
+              <MenuIconBox>
                 <Trash2 />
               </MenuIconBox>
-              <span className="text-base font-semibold text-red-500">
+              <span className="text-base font-medium text-gray-800">
                 {dictionary.deleteAccount}
               </span>
             </span>
@@ -228,13 +231,13 @@ export function ProfileMobileMenu({
           <AppLink
             href={`/${locale}/profile/delete-account`}
             prefetchPolicy="intent"
-            className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-red-50/60"
+            className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors active:bg-gray-50 hover:bg-gray-50/80"
           >
             <span className="flex min-w-0 items-center gap-3">
-              <MenuIconBox danger>
+              <MenuIconBox>
                 <Trash2 />
               </MenuIconBox>
-              <span className="text-base font-semibold text-red-500">
+              <span className="text-base font-medium text-gray-800">
                 {dictionary.deleteAccount}
               </span>
             </span>
@@ -245,16 +248,6 @@ export function ProfileMobileMenu({
           </AppLink>
         )}
       </div>
-
-      <form action={logoutAction}>
-        <button
-          type="submit"
-          className={`flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-brand-red shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-colors hover:bg-red-50/60 ${PROFILE_CARD_CLASS}`}
-        >
-          <LogOut className="h-4 w-4" aria-hidden />
-          {dictionary.logout}
-        </button>
-      </form>
 
       <ProfileMobileSheet
         open={activeSheet != null && sheets[activeSheet] != null}

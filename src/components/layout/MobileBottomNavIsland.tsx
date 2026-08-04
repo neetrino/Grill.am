@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getWishlistCount } from "@/features/wishlist/queries";
+import { getCurrentUser } from "@/lib/auth/session";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -16,10 +17,10 @@ type MobileBottomNavIslandProps = {
 function MobileBottomNavFallback() {
   return (
     <div
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-8 pb-[max(12px,env(safe-area-inset-bottom))] md:hidden"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-8 pb-[max(12px,env(safe-area-inset-bottom))] lg:hidden"
       aria-hidden="true"
     >
-      <div className="h-[71px] w-full max-w-[327px] rounded-[100px] bg-[#171717]/80" />
+      <div className="h-[71px] w-full max-w-[327px] rounded-[100px] bg-[#171717]/80 md:max-w-[420px]" />
     </div>
   );
 }
@@ -29,7 +30,8 @@ async function MobileBottomNavAsync({
   currency,
   dictionary,
 }: MobileBottomNavIslandProps) {
-  const [cartItemCount, wishlistCount] = await Promise.all([
+  const [user, cartItemCount, wishlistCount] = await Promise.all([
+    getCurrentUser(),
     getCartItemCount(),
     getWishlistCount(),
   ]);
@@ -39,6 +41,7 @@ async function MobileBottomNavAsync({
       locale={locale}
       currency={currency}
       dictionary={dictionary}
+      user={user}
       cartItemCount={cartItemCount}
       wishlistCount={wishlistCount}
     />
