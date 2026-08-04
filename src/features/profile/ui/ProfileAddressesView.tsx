@@ -268,11 +268,11 @@ export function ProfileAddressesView({
             />
             <span className="text-sm text-gray-700">{labels.isDefault}</span>
           </label>
-          <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:gap-3">
+          <div className="flex flex-row items-center gap-3 pt-1">
             <Button
               type="button"
               variant="outline"
-              className={`${PROFILE_BTN_SECONDARY_CLASS} w-full sm:w-auto`}
+              className={`${PROFILE_BTN_SECONDARY_CLASS} min-w-0 flex-1 sm:flex-none`}
               onClick={() => {
                 setShowForm(false);
                 resetForm();
@@ -284,7 +284,7 @@ export function ProfileAddressesView({
             <Button
               type="submit"
               variant="primary"
-              className={`${PROFILE_BTN_PRIMARY_CLASS} w-full sm:w-auto`}
+              className={`${PROFILE_BTN_PRIMARY_CLASS} min-w-0 flex-1 sm:flex-none`}
               disabled={isPending}
             >
               {isPending

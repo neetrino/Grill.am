@@ -22,17 +22,20 @@ type PersonalInformationFormProps = {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   labels: {
     title: string;
     firstName: string;
     lastName: string;
     email: string;
+    phone: string;
     cancel: string;
     save: string;
     saving: string;
     firstNamePlaceholder: string;
     lastNamePlaceholder: string;
     emailPlaceholder: string;
+    phonePlaceholder: string;
   };
 };
 
@@ -43,6 +46,7 @@ export function PersonalInformationForm({
   firstName,
   lastName,
   email,
+  phone,
   labels,
 }: PersonalInformationFormProps) {
   const action = updateProfileAction.bind(null, locale);
@@ -51,14 +55,15 @@ export function PersonalInformationForm({
     firstName,
     lastName,
     email,
+    phone,
   });
 
   useEffect(() => {
-    setValues({ firstName, lastName, email });
-  }, [firstName, lastName, email]);
+    setValues({ firstName, lastName, email, phone });
+  }, [firstName, lastName, email, phone]);
 
   function resetToSaved(): void {
-    setValues({ firstName, lastName, email });
+    setValues({ firstName, lastName, email, phone });
   }
 
   return (
@@ -110,21 +115,38 @@ export function PersonalInformationForm({
           </label>
         </div>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-          {labels.email}
-          <input
-            name="email"
-            type="email"
-            required
-            value={values.email}
-            onChange={(event) =>
-              setValues((prev) => ({ ...prev, email: event.target.value }))
-            }
-            placeholder={labels.emailPlaceholder}
-            className={FIELD_CLASS}
-            autoComplete="email"
-          />
-        </label>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            {labels.email}
+            <input
+              name="email"
+              type="email"
+              required
+              value={values.email}
+              onChange={(event) =>
+                setValues((prev) => ({ ...prev, email: event.target.value }))
+              }
+              placeholder={labels.emailPlaceholder}
+              className={FIELD_CLASS}
+              autoComplete="email"
+            />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            {labels.phone}
+            <input
+              name="phone"
+              type="tel"
+              required
+              value={values.phone}
+              onChange={(event) =>
+                setValues((prev) => ({ ...prev, phone: event.target.value }))
+              }
+              placeholder={labels.phonePlaceholder}
+              className={FIELD_CLASS}
+              autoComplete="tel"
+            />
+          </label>
+        </div>
 
         {state.error ? (
           <p className="text-sm text-red-700" role="alert">
@@ -137,11 +159,11 @@ export function PersonalInformationForm({
           </p>
         ) : null}
 
-        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4 sm:pt-4">
+        <div className="flex flex-row items-center gap-3 pt-2 sm:gap-4 sm:pt-4">
           <Button
             type="button"
             variant="outline"
-            className={`${PROFILE_BTN_SECONDARY_CLASS} w-full sm:w-auto`}
+            className={`${PROFILE_BTN_SECONDARY_CLASS} min-w-0 flex-1 sm:flex-none`}
             onClick={resetToSaved}
             disabled={isPending}
           >
@@ -150,7 +172,7 @@ export function PersonalInformationForm({
           <Button
             type="submit"
             variant="primary"
-            className={`${PROFILE_BTN_PRIMARY_CLASS} w-full sm:w-auto`}
+            className={`${PROFILE_BTN_PRIMARY_CLASS} min-w-0 flex-1 sm:flex-none`}
             disabled={isPending}
           >
             {isPending ? labels.saving : labels.save}

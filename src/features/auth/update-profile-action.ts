@@ -17,6 +17,7 @@ const profileSchema = z.object({
     .trim()
     .email()
     .transform((value) => value.toLowerCase()),
+  phone: z.string().trim().min(5).max(40),
 });
 
 export type UpdateProfileActionState = {
@@ -41,6 +42,7 @@ export async function updateProfileAction(
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
     email: formData.get("email"),
+    phone: formData.get("phone"),
   });
 
   if (!parsed.success) {
@@ -67,6 +69,7 @@ export async function updateProfileAction(
       firstName: parsed.data.firstName,
       lastName: parsed.data.lastName,
       email: parsed.data.email,
+      phone: parsed.data.phone,
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
