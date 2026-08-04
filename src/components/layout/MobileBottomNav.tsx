@@ -107,7 +107,7 @@ export function MobileBottomNav({
       data-mobile-bottom-nav
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-8 pb-[max(12px,env(safe-area-inset-bottom))] md:hidden"
     >
-      <div className="pointer-events-auto flex h-[71px] w-full max-w-[327px] items-center gap-2 overflow-hidden rounded-[100px] bg-[#171717] px-2.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
+      <div className="pointer-events-auto flex h-[71px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-3 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
         <PillTab tab={homeTab} active={homeActive} />
         <PillTab tab={shopTab} active={shopActive} />
 
