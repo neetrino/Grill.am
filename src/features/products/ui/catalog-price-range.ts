@@ -51,6 +51,15 @@ export function digitsOnly(raw: string): string {
   return raw.replace(/[^\d]/g, "");
 }
 
+/**
+ * Maps a caret in a formatted/raw string to the matching index in a digits-only
+ * value, so mid-string edits do not jump the cursor to the end.
+ */
+export function digitCaretIndex(raw: string, caret: number): number {
+  const safeCaret = Math.max(0, Math.min(caret, raw.length));
+  return digitsOnly(raw.slice(0, safeCaret)).length;
+}
+
 export function parseAmountInput(raw: string): number | null {
   const digits = digitsOnly(raw);
   if (digits.length === 0) return null;

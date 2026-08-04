@@ -1,7 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FocusEvent,
+} from "react";
 
 import type { CatalogFilterCategory } from "@/features/products/application/list-catalog-products";
 import {
@@ -15,6 +22,7 @@ import {
 } from "@/features/products/ui/catalog-category-icon";
 import {
   clamp,
+  digitCaretIndex,
   digitsOnly,
   formatPriceLabel,
   parseAmountInput,
@@ -80,6 +88,12 @@ export function CatalogFilters({
       ? formatPriceLabel(filters.maxPrice, locale, currencySymbol)
       : formatPriceLabel(absoluteMax, locale, currencySymbol),
   );
+  const minInputRef = useRef<HTMLInputElement>(null);
+  const maxInputRef = useRef<HTMLInputElement>(null);
+  const pendingCaretRef = useRef<{
+    edge: "min" | "max";
+    index: number;
+  } | null>(null);
 
   useEffect(() => {
     setMinDraft(
@@ -105,11 +119,57 @@ export function CatalogFilters({
     currencySymbol,
   ]);
 
+  useLayoutEffect(() => {
+    const pending = pendingCaretRef.current;
+    if (pending == null) return;
+    const input =
+      pending.edge === "min" ? minInputRef.current : maxInputRef.current;
+    pendingCaretRef.current = null;
+    if (input == null) return;
+    input.setSelectionRange(pending.index, pending.index);
+  }, [minDraft, maxDraft]);
+
   function navigate(overrides: Partial<CatalogFilter>): void {
     const query = buildCatalogQuery(filters, { ...overrides, page: 1 });
     router.push(
       query ? `/${locale}/products?${query}` : `/${locale}/products`,
     );
+  }
+
+  function beginPriceEdit(
+    edge: "min" | "max",
+    event: FocusEvent<HTMLInputElement>,
+  ): void {
+    const input = event.currentTarget;
+    const digits = digitsOnly(input.value);
+    if (digits === input.value) return;
+
+    const caret = input.selectionStart ?? input.value.length;
+    const index = digitCaretIndex(input.value, caret);
+    pendingCaretRef.current = { edge, index };
+    if (edge === "min") setMinDraft(digits);
+    else setMaxDraft(digits);
+  }
+
+  function changePriceDraft(
+    edge: "min" | "max",
+    event: ChangeEvent<HTMLInputElement>,
+  ): void {
+    const input = event.currentTarget;
+    const caret = input.selectionStart ?? input.value.length;
+    const index = digitCaretIndex(input.value, caret);
+    const digits = digitsOnly(input.value);
+    const current = edge === "min" ? minDraft : maxDraft;
+
+    if (digits === current) {
+      if (input.value !== digits) input.value = digits;
+      input.setSelectionRange(index, index);
+      return;
+    }
+
+    pendingCaretRef.current = { edge, index };
+    if (edge === "min") setMinDraft(digits);
+    else setMaxDraft(digits);
   }
 
   function commitPrice(edge: "min" | "max", raw: string): void {
@@ -182,14 +242,13 @@ export function CatalogFilters({
               {labels.minPrice}
             </span>
             <input
+              ref={minInputRef}
               type="text"
               inputMode="numeric"
               autoComplete="off"
               value={minDraft}
-              onChange={(event) => {
-                const digits = digitsOnly(event.target.value);
-                setMinDraft(digits);
-              }}
+              onFocus={(event) => beginPriceEdit("min", event)}
+              onChange={(event) => changePriceDraft("min", event)}
               onBlur={(event) => commitPrice("min", event.currentTarget.value)}
               onKeyDown={(event) => {
                 if (event.key !== "Enter") return;
@@ -204,14 +263,13 @@ export function CatalogFilters({
               {labels.maxPrice}
             </span>
             <input
+              ref={maxInputRef}
               type="text"
               inputMode="numeric"
               autoComplete="off"
               value={maxDraft}
-              onChange={(event) => {
-                const digits = digitsOnly(event.target.value);
-                setMaxDraft(digits);
-              }}
+              onFocus={(event) => beginPriceEdit("max", event)}
+              onChange={(event) => changePriceDraft("max", event)}
               onBlur={(event) => commitPrice("max", event.currentTarget.value)}
               onKeyDown={(event) => {
                 if (event.key !== "Enter") return;
