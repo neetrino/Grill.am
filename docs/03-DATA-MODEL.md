@@ -2,8 +2,8 @@
 
 **Database.** PostgreSQL (Neon)
 **ORM/migrations.** Drizzle ORM / Drizzle Kit
-**Կարգավիճակ.** Canonical 28-table schema migrated; idempotent seed available (`pnpm db:seed`)
-**Canonical table count.** 28
+**Կարգավիճակ.** Canonical 29-table schema migrated; idempotent seed available (`pnpm db:seed`)
+**Canonical table count.** 29
 **Վերջին թարմացում.** 2026-07-23
 
 ## 1. Սխեմայի նպատակը
@@ -29,7 +29,7 @@
 - Financial, stock և audit records-ը hard delete չեն ընդունում։
 - Flexible JSONB-ը միշտ Zod schema/version ունի և business-critical relational կապերը չի փոխարինում։
 
-## 3. Canonical 28-table inventory
+## 3. Canonical 29-table inventory
 
 | # | Table | Domain | Նշանակություն |
 |---:|---|---|---|
@@ -59,8 +59,9 @@
 | 24 | `payments` | Payments | Payment attempts/current provider state |
 | 25 | `reviews` | Engagement | Verified-purchase reviews/moderation |
 | 26 | `contact_messages` | Support | Contact inbox |
-| 27 | `audit_logs` | Security | Immutable admin/security audit |
-| 28 | `outbox_events` | Reliability | Transactional outbox for async side effects |
+| 27 | `job_applications` | Careers | Job applications + CV object metadata |
+| 28 | `audit_logs` | Security | Immutable admin/security audit |
+| 29 | `outbox_events` | Reliability | Transactional outbox for async side effects |
 
 ### Count assumptions
 
@@ -287,6 +288,10 @@ User, product, eligible order item, rating 1–5, plain/sanitized comment, moder
 ### 11.2 `contact_messages`
 
 Name, normalized email, optional phone, subject, message, status (`UNREAD`,`READ`,`REPLIED`,`ARCHIVED`), minimal spam metadata և timestamps։ Raw IP retention-ը privacy policy է պահանջում։
+
+### 11.3 `job_applications`
+
+`job_posting_id` FK, candidate name/email/phone, message, status (`UNREAD`,`READ`,`ARCHIVED`), CV object key + filename/mime/byte size (R2 via storage adapter, not `media_assets`), և timestamps։ Indexes՝ `(status, created_at)`, `job_posting_id`։
 
 ## 12. Security և reliability records
 

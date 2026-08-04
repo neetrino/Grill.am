@@ -122,6 +122,12 @@ export const contactMessageStatusEnum = pgEnum("contact_message_status", [
   "ARCHIVED",
 ]);
 
+export const jobApplicationStatusEnum = pgEnum("job_application_status", [
+  "UNREAD",
+  "READ",
+  "ARCHIVED",
+]);
+
 export const outboxStatusEnum = pgEnum("outbox_status", [
   "PENDING",
   "PROCESSING",

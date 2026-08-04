@@ -709,6 +709,10 @@
     "confirmDelete": "Delete this job posting? This cannot be undone from the admin list.",
     "editNamed": "Edit {title}",
     "deleteNamed": "Delete {title}",
+    "tabs": {
+      "postings": "Postings",
+      "applications": "Applications"
+    },
     "status": {
       "active": "Active",
       "draft": "Draft",
@@ -746,6 +750,46 @@
       "common": "Common",
       "imageHint": "JPEG, PNG, WebP, or GIF. Max 5MB.",
       "titleRequired": "Title and description are required."
+    },
+    "applications": {
+      "title": "Applications",
+      "count": "{count} application(s)",
+      "searchPlaceholder": "Name, email, phone…",
+      "empty": "No applications match these filters.",
+      "cvYes": "CV",
+      "cvNo": "—",
+      "table": {
+        "candidate": "Candidate",
+        "job": "Position",
+        "status": "Status",
+        "cv": "CV",
+        "received": "Received"
+      },
+      "status": {
+        "unread": "Unread",
+        "read": "Read",
+        "archived": "Archived"
+      },
+      "filters": {
+        "job": "Position"
+      },
+      "detail": {
+        "candidate": "Candidate",
+        "email": "Email",
+        "phone": "Phone",
+        "job": "Position",
+        "status": "Status",
+        "received": "Received",
+        "message": "Message",
+        "cv": "CV / resume",
+        "downloadCv": "Download CV"
+      },
+      "forms": {
+        "current": "Current",
+        "newStatus": "New status",
+        "updateStatus": "Update status",
+        "noFurtherChanges": "No further status changes."
+      }
     }
   },
   "settings": {

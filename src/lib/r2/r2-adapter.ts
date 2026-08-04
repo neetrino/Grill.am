@@ -2,6 +2,7 @@ import "server-only";
 
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
@@ -21,6 +22,12 @@ export type R2AdapterConfig = {
 };
 
 const PRESIGN_TTL_SECONDS = 15 * 60;
+
+function contentDispositionAttachment(fileName: string): string {
+  const ascii = fileName.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "");
+  const encoded = encodeURIComponent(fileName);
+  return `attachment; filename="${ascii}"; filename*=UTF-8''${encoded}`;
+}
 
 /** Cloudflare R2 adapter (S3-compatible API). */
 export function createR2ObjectStorageAdapter(
@@ -54,6 +61,24 @@ export function createR2ObjectStorageAdapter(
       return {
         objectKey,
         uploadUrl,
+        expiresAt: new Date(Date.now() + PRESIGN_TTL_SECONDS * 1000),
+      };
+    },
+    async createPresignedDownload({ objectKey, fileName, contentType }) {
+      const command = new GetObjectCommand({
+        Bucket: config.bucketName,
+        Key: objectKey,
+        ...(contentType ? { ResponseContentType: contentType } : {}),
+        ...(fileName
+          ? { ResponseContentDisposition: contentDispositionAttachment(fileName) }
+          : {}),
+      });
+      const downloadUrl = await getSignedUrl(client, command, {
+        expiresIn: PRESIGN_TTL_SECONDS,
+      });
+      return {
+        objectKey,
+        downloadUrl,
         expiresAt: new Date(Date.now() + PRESIGN_TTL_SECONDS * 1000),
       };
     },

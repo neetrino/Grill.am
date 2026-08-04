@@ -1,21 +1,19 @@
 "use client";
 
 import { FileUp, Send, X } from "lucide-react";
-import { useId, useRef, useState, type FormEvent } from "react";
+import { useId, useRef, useState, useTransition, type FormEvent } from "react";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
+import { submitJobApplicationAction } from "@/features/careers/application/submit-application";
+import {
+  CV_MAX_BYTES,
+  isAllowedCvFile,
+} from "@/features/careers/domain/application-rules";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 const APPLY_FORM_ID = "job-apply-form";
 const CV_ACCEPT =
   ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-const CV_MAX_BYTES = 5 * 1024 * 1024;
-const ALLOWED_CV_MIME = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-]);
-const ALLOWED_CV_EXTENSIONS = new Set(["pdf", "doc", "docx"]);
 
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 bg-white px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50 disabled:opacity-60";
@@ -24,19 +22,12 @@ const LABEL_CLASS = "mb-1.5 block text-sm font-medium text-gray-700";
 type JobApplySheetProps = {
   open: boolean;
   onClose: () => void;
+  jobPostingId: string;
   jobTitle: string;
   closeLabel: string;
   cancelLabel: string;
   copy: Dictionary["careers"]["applyForm"];
 };
-
-function isAllowedCvFile(file: File): boolean {
-  if (ALLOWED_CV_MIME.has(file.type)) {
-    return true;
-  }
-  const extension = file.name.split(".").pop()?.toLowerCase();
-  return extension != null && ALLOWED_CV_EXTENSIONS.has(extension);
-}
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) {
@@ -48,10 +39,11 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-/** Job application side sheet — UI only; submit handler will wire to backend later. */
+/** Job application side sheet — submits to server action with CV upload. */
 export function JobApplySheet({
   open,
   onClose,
+  jobPostingId,
   jobTitle,
   closeLabel,
   cancelLabel,
@@ -63,6 +55,7 @@ export function JobApplySheet({
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   function resetFormState(): void {
     setCvFile(null);
@@ -116,8 +109,38 @@ export function JobApplySheet({
       return;
     }
 
-    // Frontend-only placeholder until apply submission API exists.
-    setSuccess(true);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    formData.set("jobPostingId", jobPostingId);
+    formData.set("cv", cvFile);
+
+    startTransition(async () => {
+      const result = await submitJobApplicationAction(formData);
+      if (!result.ok) {
+        switch (result.error.code) {
+          case "CV_REQUIRED":
+            setError(copy.cvRequired);
+            break;
+          case "CV_INVALID_TYPE":
+            setError(copy.cvInvalidType);
+            break;
+          case "CV_TOO_LARGE":
+            setError(copy.cvTooLarge);
+            break;
+          case "RATE_LIMITED":
+            setError(copy.rateLimited);
+            break;
+          case "JOB_NOT_AVAILABLE":
+            setError(copy.jobUnavailable);
+            break;
+          default:
+            setError(result.error.message || copy.error);
+            break;
+        }
+        return;
+      }
+      setSuccess(true);
+    });
   }
 
   return (
@@ -133,15 +156,17 @@ export function JobApplySheet({
             <button
               type="submit"
               form={APPLY_FORM_ID}
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-[15px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
+              disabled={isPending}
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-[15px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red disabled:opacity-60"
             >
-              {copy.submit}
+              {isPending ? copy.submitting : copy.submit}
               <Send className="size-4 shrink-0" aria-hidden />
             </button>
             <button
               type="button"
               onClick={handleClose}
-              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+              disabled={isPending}
+              className="text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-60"
             >
               {cancelLabel}
             </button>
@@ -173,6 +198,8 @@ export function JobApplySheet({
           onSubmit={handleSubmit}
           noValidate
         >
+          <input type="hidden" name="jobPostingId" value={jobPostingId} />
+
           <label className="block">
             <span className={LABEL_CLASS}>{copy.name}</span>
             <input
@@ -180,6 +207,7 @@ export function JobApplySheet({
               required
               maxLength={120}
               autoComplete="name"
+              disabled={isPending}
               className={FIELD_CLASS}
             />
           </label>
@@ -192,6 +220,7 @@ export function JobApplySheet({
               required
               maxLength={254}
               autoComplete="email"
+              disabled={isPending}
               className={FIELD_CLASS}
             />
           </label>
@@ -204,6 +233,7 @@ export function JobApplySheet({
               required
               maxLength={40}
               autoComplete="tel"
+              disabled={isPending}
               className={FIELD_CLASS}
             />
           </label>
@@ -216,9 +246,23 @@ export function JobApplySheet({
               minLength={10}
               maxLength={5000}
               rows={4}
-              className="min-h-[6.5rem] w-full resize-y rounded-[15px] border border-gray-200 bg-white px-3 py-2.5 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15"
+              disabled={isPending}
+              className="min-h-[6.5rem] w-full resize-y rounded-[15px] border border-gray-200 bg-white px-3 py-2.5 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50 disabled:opacity-60"
             />
           </label>
+
+          {/* Honeypot — leave empty */}
+          <div className="absolute -left-[9999px] top-auto h-px w-px overflow-hidden" aria-hidden>
+            <label>
+              Company website
+              <input
+                name="companyWebsite"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </label>
+          </div>
 
           <div className="block">
             <span className={LABEL_CLASS} id={`${cvInputId}-label`}>
@@ -240,7 +284,8 @@ export function JobApplySheet({
                 <button
                   type="button"
                   onClick={() => handleCvChange(null)}
-                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-gray-500 transition hover:bg-white hover:text-gray-900"
+                  disabled={isPending}
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-gray-500 transition hover:bg-white hover:text-gray-900 disabled:opacity-60"
                   aria-label={copy.cvRemove}
                 >
                   <X className="size-4" aria-hidden />
@@ -265,6 +310,7 @@ export function JobApplySheet({
               type="file"
               accept={CV_ACCEPT}
               required
+              disabled={isPending}
               className="sr-only"
               aria-labelledby={`${cvInputId}-label`}
               onChange={(event) => {

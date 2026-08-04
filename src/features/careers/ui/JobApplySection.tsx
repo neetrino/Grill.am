@@ -7,6 +7,7 @@ import { JobApplySheet } from "@/features/careers/ui/JobApplySheet";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type JobApplySectionProps = {
+  jobPostingId: string;
   jobTitle: string;
   applyLabel: string;
   applyHint: string;
@@ -15,8 +16,9 @@ type JobApplySectionProps = {
   copy: Dictionary["careers"]["applyForm"];
 };
 
-/** Storefront apply CTA: opens application sheet (frontend-only until backend lands). */
+/** Storefront apply CTA: opens application sheet and submits to the backend. */
 export function JobApplySection({
+  jobPostingId,
   jobTitle,
   applyLabel,
   applyHint,
@@ -46,6 +48,7 @@ export function JobApplySection({
       <JobApplySheet
         open={open}
         onClose={() => setOpen(false)}
+        jobPostingId={jobPostingId}
         jobTitle={jobTitle}
         closeLabel={closeLabel}
         cancelLabel={cancelLabel}

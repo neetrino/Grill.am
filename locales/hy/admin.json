@@ -709,6 +709,10 @@
     "confirmDelete": "Ջնջե՞լ այս աշխատանքի հայտարարությունը։ Ադմին ցուցակից վերականգնել հնարավոր չէ։",
     "editNamed": "Խմբագրել {title}",
     "deleteNamed": "Ջնջել {title}",
+    "tabs": {
+      "postings": "Հաստիքներ",
+      "applications": "Դիմումներ"
+    },
     "status": {
       "active": "Ակտիվ",
       "draft": "Սևագիր",
@@ -746,6 +750,46 @@
       "common": "Ընդհանուր",
       "imageHint": "JPEG, PNG, WebP կամ GIF։ Առավելագույնը 5 ՄԲ։",
       "titleRequired": "Վերնագիրը և նկարագրությունը պարտադիր են։"
+    },
+    "applications": {
+      "title": "Դիմումներ",
+      "count": "{count} դիմում",
+      "searchPlaceholder": "Անուն, էլ․ հասցե, հեռախոս…",
+      "empty": "Այս ֆիլտրերին համապատասխանող դիմումներ չկան։",
+      "cvYes": "CV",
+      "cvNo": "—",
+      "table": {
+        "candidate": "Թեկնածու",
+        "job": "Հաստիք",
+        "status": "Կարգավիճակ",
+        "cv": "CV",
+        "received": "Ստացվել է"
+      },
+      "status": {
+        "unread": "Չընթերցված",
+        "read": "Ընթերցված",
+        "archived": "Արխիվացված"
+      },
+      "filters": {
+        "job": "Հաստիք"
+      },
+      "detail": {
+        "candidate": "Թեկնածու",
+        "email": "Էլ․ հասցե",
+        "phone": "Հեռախոս",
+        "job": "Հաստիք",
+        "status": "Կարգավիճակ",
+        "received": "Ստացվել է",
+        "message": "Հաղորդագրություն",
+        "cv": "CV / ռեզյումե",
+        "downloadCv": "Ներբեռնել CV"
+      },
+      "forms": {
+        "current": "Ընթացիկ",
+        "newStatus": "Նոր կարգավիճակ",
+        "updateStatus": "Թարմացնել կարգավիճակը",
+        "noFurtherChanges": "Այլ կարգավիճակի փոփոխություններ չկան։"
+      }
     }
   },
   "settings": {

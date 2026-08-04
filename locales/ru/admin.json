@@ -709,6 +709,10 @@
     "confirmDelete": "Удалить эту вакансию? Из списка админки это нельзя отменить.",
     "editNamed": "Редактировать {title}",
     "deleteNamed": "Удалить {title}",
+    "tabs": {
+      "postings": "Вакансии",
+      "applications": "Отклики"
+    },
     "status": {
       "active": "Активна",
       "draft": "Черновик",
@@ -746,6 +750,46 @@
       "common": "Общее",
       "imageHint": "JPEG, PNG, WebP или GIF. Макс. 5 МБ.",
       "titleRequired": "Название и описание обязательны."
+    },
+    "applications": {
+      "title": "Отклики",
+      "count": "{count} отклик(ов)",
+      "searchPlaceholder": "Имя, email, телефон…",
+      "empty": "Нет откликов по этим фильтрам.",
+      "cvYes": "CV",
+      "cvNo": "—",
+      "table": {
+        "candidate": "Кандидат",
+        "job": "Вакансия",
+        "status": "Статус",
+        "cv": "CV",
+        "received": "Получено"
+      },
+      "status": {
+        "unread": "Непрочитано",
+        "read": "Прочитано",
+        "archived": "В архиве"
+      },
+      "filters": {
+        "job": "Вакансия"
+      },
+      "detail": {
+        "candidate": "Кандидат",
+        "email": "Email",
+        "phone": "Телефон",
+        "job": "Вакансия",
+        "status": "Статус",
+        "received": "Получено",
+        "message": "Сообщение",
+        "cv": "CV / резюме",
+        "downloadCv": "Скачать CV"
+      },
+      "forms": {
+        "current": "Текущий",
+        "newStatus": "Новый статус",
+        "updateStatus": "Обновить статус",
+        "noFurtherChanges": "Дальнейших изменений статуса нет."
+      }
     }
   },
   "settings": {

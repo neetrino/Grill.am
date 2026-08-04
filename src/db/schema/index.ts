@@ -42,6 +42,7 @@ export {
 export * from "@/db/schema/enums";
 export {
   contactMessages,
+  jobApplications,
   reviews,
 } from "@/db/schema/engagement";
 export {

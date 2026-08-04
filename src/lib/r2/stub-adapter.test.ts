@@ -19,6 +19,17 @@ describe("createStubObjectStorageAdapter", () => {
       "https://cdn.example.com/uploads/products/a.jpg",
     );
   });
+
+  it("creates download URLs from the public base", async () => {
+    const storage = createStubObjectStorageAdapter("https://cdn.example.com");
+    const signed = await storage.createPresignedDownload({
+      objectKey: "uploads/careers/applications/a/cv.pdf",
+      fileName: "cv.pdf",
+    });
+    expect(signed.downloadUrl).toBe(
+      "https://cdn.example.com/uploads/careers/applications/a/cv.pdf",
+    );
+  });
 });
 
 describe("isR2Configured", () => {
