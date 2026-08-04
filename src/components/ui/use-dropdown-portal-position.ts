@@ -54,32 +54,45 @@ export function useDropdownPortalPosition(
       const minWidth = matchTriggerWidth
         ? Math.min(Math.max(rect.width, 0), available)
         : undefined;
-      const widthForAlign = minWidth ?? Math.min(180, available);
-      const preferredLeft =
-        align === "right" ? rect.right - widthForAlign : rect.left;
-      const left = Math.max(
-        VIEWPORT_PADDING_PX,
-        Math.min(
-          preferredLeft,
-          window.innerWidth - widthForAlign - VIEWPORT_PADDING_PX,
-        ),
-      );
+      const maxWidth = lockTriggerWidth ? minWidth : undefined;
+
+      // Right-align via `right` so content-sized panels stay flush with the
+      // trigger (guessing width for `left` left a gap for narrow menus).
+      const horizontal =
+        align === "right"
+          ? {
+              right: Math.max(
+                VIEWPORT_PADDING_PX,
+                window.innerWidth - rect.right,
+              ),
+            }
+          : {
+              left: Math.max(
+                VIEWPORT_PADDING_PX,
+                Math.min(
+                  rect.left,
+                  window.innerWidth -
+                    VIEWPORT_PADDING_PX -
+                    (minWidth ?? 0),
+                ),
+              ),
+            };
 
       if (placement === "top") {
         setPosition({
           bottom: window.innerHeight - rect.top + gapPx,
-          left,
+          ...horizontal,
           minWidth,
-          maxWidth: lockTriggerWidth ? minWidth : undefined,
+          maxWidth,
         });
         return;
       }
 
       setPosition({
         top: rect.bottom + gapPx,
-        left,
+        ...horizontal,
         minWidth,
-        maxWidth: lockTriggerWidth ? minWidth : undefined,
+        maxWidth,
       });
     }
 

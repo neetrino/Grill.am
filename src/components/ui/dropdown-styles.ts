@@ -35,7 +35,10 @@ export type DropdownPortalPosition = {
   top?: number;
   /** Distance from viewport bottom (opens upward). */
   bottom?: number;
-  left: number;
+  /** Distance from viewport left (mutually exclusive with `right`). */
+  left?: number;
+  /** Distance from viewport right — prefer for right-aligned menus. */
+  right?: number;
   minWidth?: number;
   maxWidth?: number;
 };
@@ -46,14 +49,18 @@ export type DropdownPortalPosition = {
 export function dropdownPortalStyle(
   position: DropdownPortalPosition,
 ): Record<string, string> {
-  const style: Record<string, string> = {
-    "--dropdown-left": `${position.left}px`,
-  };
+  const style: Record<string, string> = {};
   if (position.top != null) {
     style["--dropdown-top"] = `${position.top}px`;
   }
   if (position.bottom != null) {
     style["--dropdown-bottom"] = `${position.bottom}px`;
+  }
+  if (position.left != null) {
+    style["--dropdown-left"] = `${position.left}px`;
+  }
+  if (position.right != null) {
+    style["--dropdown-right"] = `${position.right}px`;
   }
   if (position.minWidth != null) {
     style["--dropdown-min-width"] = `${position.minWidth}px`;

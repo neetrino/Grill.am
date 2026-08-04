@@ -89,7 +89,8 @@ body {
   position: fixed;
   top: var(--dropdown-top, auto);
   bottom: var(--dropdown-bottom, auto);
-  left: var(--dropdown-left);
+  left: var(--dropdown-left, auto);
+  right: var(--dropdown-right, auto);
   z-index: 400;
   width: max-content;
   min-width: var(--dropdown-min-width, auto);
