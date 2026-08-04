@@ -77,7 +77,17 @@ export function CheckoutOrderSummary({
         </h2>
 
         <div className="mt-5 rounded-[15px] border border-gray-200 p-4">
-          <p className="mb-3 text-sm text-gray-700">{couponTitle}</p>
+          <div className="mb-3 flex items-center justify-between gap-3 sm:mb-0 sm:block">
+            <p className="text-sm text-gray-700 sm:mb-3">{couponTitle}</p>
+            <button
+              type="button"
+              disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
+              onClick={onApplyCoupon}
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white px-3 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:hidden"
+            >
+              {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
+            </button>
+          </div>
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -94,7 +104,7 @@ export function CheckoutOrderSummary({
               autoComplete="off"
               disabled={isSubmitting || isApplyingCoupon}
               size={Math.max(couponPlaceholder.length, 8)}
-              className="h-11 max-w-full rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50"
+              className="h-11 max-w-full max-sm:!w-full rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50"
               style={{
                 width: `calc(${Math.max(couponPlaceholder.length, 8)}ch + 1.5rem)`,
               }}
@@ -104,7 +114,7 @@ export function CheckoutOrderSummary({
               type="button"
               disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
               onClick={onApplyCoupon}
-              className="inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white px-4 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="hidden h-11 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white px-4 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:inline-flex"
             >
               {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
             </button>
