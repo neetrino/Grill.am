@@ -10,19 +10,31 @@ export const ADMIN_CARD_CLASS =
 
 export const ADMIN_CARD_PADDED_CLASS = `${ADMIN_CARD_CLASS} p-6`;
 
-/** Active nav pill — soft surface well + brand accent. */
+/** Matches profile sidebar nav slide timing. */
+export const ADMIN_NAV_TRANSITION_MS = 380;
+
+/** Active label/icon tone (pill itself is the sliding indicator). */
+export const ADMIN_NAV_ACTIVE_TEXT_CLASS = "text-brand-red";
+
+/** Static active pill — mobile drawer (no sliding indicator there). */
 export const ADMIN_NAV_ACTIVE_CLASS =
   "bg-brand-surface text-brand-red ring-1 ring-brand-red/25";
 
 export const ADMIN_NAV_INACTIVE_CLASS =
-  "text-gray-700 hover:bg-gray-100 hover:text-gray-900";
+  "text-gray-700 hover:bg-gray-100/80 hover:text-gray-900";
 
 export const ADMIN_NAV_ICON_ACTIVE_CLASS = "text-brand-red";
 
 export const ADMIN_NAV_ICON_INACTIVE_CLASS = "text-gray-500";
 
 export const ADMIN_NAV_ROW_BASE_CLASS =
-  "flex w-full min-w-0 items-center rounded-[15px] text-sm font-medium transition-colors";
+  "relative z-10 flex w-full min-w-0 items-center rounded-[15px] text-sm font-medium";
+
+/** Sliding active pill colors (applied on the indicator element). */
+export const ADMIN_NAV_INDICATOR = {
+  background: "#f4f4f4",
+  border: "#db0b20",
+} as const;
 
 export const ADMIN_BTN_PRIMARY_CLASS =
   "inline-flex h-11 items-center justify-center rounded-[15px] bg-brand-red px-6 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
