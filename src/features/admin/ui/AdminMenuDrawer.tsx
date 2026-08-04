@@ -15,6 +15,7 @@ import {
   ADMIN_DRAWER_TRANSITION_MS,
   ADMIN_NAV_ACTIVE_CLASS,
   ADMIN_NAV_INACTIVE_CLASS,
+  ADMIN_NAV_ROW_BASE_CLASS,
 } from "@/features/admin/ui/admin-ui";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
 
@@ -34,6 +35,18 @@ function isNestedVisible(
   return productsNestedExpanded;
 }
 
+function isProductsGroupActive(
+  tabs: AdminMenuItem[],
+  pathname: string,
+  locale: string,
+): boolean {
+  return tabs.some(
+    (tab) =>
+      (tab.id === "products" || tab.parentGroupId === "products") &&
+      isAdminTabActive(tab.href, pathname, locale),
+  );
+}
+
 export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -41,6 +54,7 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
   const tabs = getAdminMenuItems(locale, dictionary.menu);
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
+  const productsGroupActive = isProductsGroupActive(tabs, pathname, locale);
 
   const closeDrawer = useCallback(() => {
     setVisible(false);
@@ -162,24 +176,24 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
                   return null;
                 }
 
-                const isActive = isAdminTabActive(tab.href, pathname, locale);
+                const isActive =
+                  tab.id === "products"
+                    ? productsGroupActive
+                    : isAdminTabActive(tab.href, pathname, locale);
+                const rowTone = isActive
+                  ? ADMIN_NAV_ACTIVE_CLASS
+                  : ADMIN_NAV_INACTIVE_CLASS;
 
                 if (tab.id === "products") {
                   return (
                     <div
                       key={tab.id}
-                      className={`flex w-full overflow-hidden rounded-[15px] transition-colors ${
-                        isActive ? ADMIN_NAV_ACTIVE_CLASS : ""
-                      }`}
+                      className={`relative ${ADMIN_NAV_ROW_BASE_CLASS} ${rowTone}`}
                     >
                       <Link
                         href={tab.href}
                         onClick={closeDrawer}
-                        className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-sm font-medium ${
-                          isActive
-                            ? "text-brand-red"
-                            : "text-gray-700 hover:bg-gray-50"
-                        } ${tab.isSubCategory ? "pl-10" : ""}`}
+                        className="flex min-w-0 flex-1 items-center gap-3 py-3 pr-12 pl-4"
                       >
                         <span className="shrink-0">{tab.icon}</span>
                         <span className="truncate">{tab.label}</span>
@@ -189,10 +203,10 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
                         aria-expanded={productsNestedExpanded}
                         aria-label={dictionary.menu.toggleProductSubpages}
                         onClick={toggleProductsNested}
-                        className={`shrink-0 border-l px-3 py-3 ${
+                        className={`absolute top-0 right-0 bottom-0 inline-flex w-11 items-center justify-center rounded-r-[15px] ${
                           isActive
-                            ? "border-brand-red/20 text-brand-red"
-                            : "border-gray-200 text-gray-600"
+                            ? "text-brand-red hover:bg-brand-red/5"
+                            : "text-gray-600 hover:bg-black/5"
                         }`}
                       >
                         <svg
@@ -219,13 +233,9 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
                     key={tab.id}
                     href={tab.href}
                     onClick={closeDrawer}
-                    className={`flex items-center gap-3 rounded-[15px] px-4 py-3 text-sm font-medium transition-colors ${
-                      tab.isSubCategory ? "pl-10" : ""
-                    } ${
-                      isActive
-                        ? ADMIN_NAV_ACTIVE_CLASS
-                        : ADMIN_NAV_INACTIVE_CLASS
-                    }`}
+                    className={`${ADMIN_NAV_ROW_BASE_CLASS} gap-3 px-4 py-3 ${
+                      tab.isSubCategory ? "pl-12" : ""
+                    } ${rowTone}`}
                   >
                     <span className="shrink-0">{tab.icon}</span>
                     <span className="truncate">{tab.label}</span>

@@ -44,6 +44,18 @@ function isNestedVisible(
   return productsNestedExpanded;
 }
 
+function isProductsGroupActive(
+  tabs: AdminMenuItem[],
+  pathname: string,
+  locale: string,
+): boolean {
+  return tabs.some(
+    (tab) =>
+      (tab.id === "products" || tab.parentGroupId === "products") &&
+      isAdminTabActive(tab.href, pathname, locale),
+  );
+}
+
 export function AdminSidebar({ locale }: AdminSidebarProps) {
   const pathname = usePathname() ?? `/${locale}/admin`;
   const dictionary = useAdminDictionary();
@@ -51,6 +63,7 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
   const { collapsed } = useAdminSidebarCollapse();
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
+  const productsGroupActive = isProductsGroupActive(tabs, pathname, locale);
 
   const asideWidthClass = collapsed ? "lg:w-16" : "lg:w-64";
 
@@ -84,54 +97,42 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
               return null;
             }
 
-            const isActive = isAdminTabActive(tab.href, pathname, locale);
-            const rowClasses = `${ADMIN_NAV_ROW_BASE_CLASS} ${
-              collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
-            } ${tab.isSubCategory && !collapsed ? "pl-12" : ""} ${
-              isActive ? ADMIN_NAV_ACTIVE_CLASS : ADMIN_NAV_INACTIVE_CLASS
-            }`;
+            const isActive =
+              tab.id === "products"
+                ? productsGroupActive
+                : isAdminTabActive(tab.href, pathname, locale);
+            const rowTone = isActive
+              ? ADMIN_NAV_ACTIVE_CLASS
+              : ADMIN_NAV_INACTIVE_CLASS;
+            const iconTone = isActive
+              ? ADMIN_NAV_ICON_ACTIVE_CLASS
+              : ADMIN_NAV_ICON_INACTIVE_CLASS;
 
             if (tab.id === "products" && !collapsed) {
               return (
                 <div
                   key={tab.id}
-                  className={`flex w-full min-w-0 overflow-hidden rounded-[15px] ${
-                    isActive ? ADMIN_NAV_ACTIVE_CLASS : "bg-transparent"
-                  }`}
+                  className={`relative ${ADMIN_NAV_ROW_BASE_CLASS} ${rowTone}`}
                 >
                   <Link
                     href={tab.href}
-                    title={tab.label}
-                    className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left text-sm font-medium transition-all ${
-                      isActive
-                        ? "text-brand-red hover:bg-brand-red/5"
-                        : ADMIN_NAV_INACTIVE_CLASS
-                    }`}
+                    className="flex min-w-0 flex-1 items-center gap-3 py-3 pr-12 pl-4"
                   >
-                    <span
-                      className={`shrink-0 ${
-                        isActive
-                          ? ADMIN_NAV_ICON_ACTIVE_CLASS
-                          : ADMIN_NAV_ICON_INACTIVE_CLASS
-                      }`}
-                    >
-                      {tab.icon}
-                    </span>
+                    <span className={`shrink-0 ${iconTone}`}>{tab.icon}</span>
                     <span className="min-w-0 truncate">{tab.label}</span>
                   </Link>
                   <button
                     type="button"
                     aria-expanded={productsNestedExpanded}
                     aria-label={dictionary.menu.toggleProductSubpages}
-                    title={dictionary.menu.toggleProductSubpages}
                     onClick={(event) => {
                       event.preventDefault();
                       toggleProductsNested();
                     }}
-                    className={`shrink-0 border-l px-2 py-3 transition-colors ${
+                    className={`absolute top-0 right-0 bottom-0 inline-flex w-11 items-center justify-center rounded-r-[15px] transition-colors ${
                       isActive
-                        ? "border-brand-red/20 text-brand-red hover:bg-brand-red/5"
-                        : "border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        ? "text-brand-red hover:bg-brand-red/5"
+                        : "text-gray-600 hover:bg-black/5"
                     }`}
                   >
                     <svg
@@ -157,18 +158,11 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
               <Link
                 key={tab.id}
                 href={tab.href}
-                title={tab.label}
-                className={rowClasses}
+                className={`${ADMIN_NAV_ROW_BASE_CLASS} ${
+                  collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
+                } ${tab.isSubCategory && !collapsed ? "pl-12" : ""} ${rowTone}`}
               >
-                <span
-                  className={`shrink-0 ${
-                    isActive
-                      ? ADMIN_NAV_ICON_ACTIVE_CLASS
-                      : ADMIN_NAV_ICON_INACTIVE_CLASS
-                  }`}
-                >
-                  {tab.icon}
-                </span>
+                <span className={`shrink-0 ${iconTone}`}>{tab.icon}</span>
                 {collapsed ? null : (
                   <span className="min-w-0 truncate">{tab.label}</span>
                 )}
