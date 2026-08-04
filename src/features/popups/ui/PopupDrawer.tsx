@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
-import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import {
+  ADMIN_FORM_STACK,
+  ADMIN_LABEL,
+} from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import {
@@ -102,7 +105,7 @@ function PopupDrawerForm({
     >
       <form
         id={POPUP_DRAWER_FORM_ID}
-        className="space-y-4"
+        className={ADMIN_FORM_STACK}
         onSubmit={(event) => {
           event.preventDefault();
           if (!canSubmit) return;

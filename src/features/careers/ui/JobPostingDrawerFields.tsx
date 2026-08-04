@@ -3,6 +3,8 @@
 import type { RefObject } from "react";
 
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_TEXTAREA,
@@ -97,7 +99,7 @@ export function JobPostingDrawerFields({
         disabled={disabled}
       />
 
-      <label className="block">
+      <label className={ADMIN_FIELD}>
         <span className={ADMIN_LABEL}>
           {copy.title} <span className="text-red-600">*</span>
         </span>
@@ -110,7 +112,7 @@ export function JobPostingDrawerFields({
         />
       </label>
 
-      <label className="block">
+      <label className={ADMIN_FIELD}>
         <span className={ADMIN_LABEL}>{copy.location}</span>
         <input
           value={draft.location}
@@ -121,7 +123,7 @@ export function JobPostingDrawerFields({
         />
       </label>
 
-      <label className="block">
+      <label className={ADMIN_FIELD}>
         <span className={ADMIN_LABEL}>{copy.summary}</span>
         <input
           value={draft.summary}
@@ -131,7 +133,7 @@ export function JobPostingDrawerFields({
         />
       </label>
 
-      <label className="block">
+      <label className={ADMIN_FIELD}>
         <span className={ADMIN_LABEL}>
           {copy.description} <span className="text-red-600">*</span>
         </span>
@@ -154,8 +156,8 @@ export function JobPostingDrawerFields({
         <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
           {copy.common}
         </p>
-        <div className="space-y-4">
-          <label className="block">
+        <div className={ADMIN_FORM_STACK}>
+          <label className={ADMIN_FIELD}>
             <span className={ADMIN_LABEL}>{copy.slug}</span>
             <input
               value={slugTouched ? slug : normalizeJobSlug(draft.title)}
@@ -199,7 +201,7 @@ export function JobPostingDrawerFields({
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{copy.salary}</span>
               <input
                 type="number"
@@ -228,7 +230,7 @@ export function JobPostingDrawerFields({
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{copy.sortOrder}</span>
               <input
                 type="number"
@@ -239,7 +241,7 @@ export function JobPostingDrawerFields({
                 disabled={disabled}
               />
             </label>
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{copy.publishedDate}</span>
               <input
                 type="date"

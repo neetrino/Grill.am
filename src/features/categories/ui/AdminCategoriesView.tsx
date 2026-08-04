@@ -339,7 +339,6 @@ export function AdminCategoriesView({
         open={drawerOpen}
         onClose={() => {
           setDrawerOpen(false);
-          setEditingCategory(null);
         }}
         categories={categories}
         category={editingCategory}

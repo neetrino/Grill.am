@@ -55,7 +55,6 @@ export function AdminHeroView({
 
   function closeModal(): void {
     setModalOpen(false);
-    setEditingSlide(null);
   }
 
   return (

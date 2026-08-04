@@ -77,7 +77,6 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setEditingCoupon(null);
   }
 
   function runAction(action: () => Promise<void>): void {

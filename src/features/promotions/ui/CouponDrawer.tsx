@@ -7,6 +7,8 @@ import { ChevronDown } from "lucide-react";
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
@@ -130,7 +132,7 @@ export function CouponDrawer({
     >
       <form
         id={COUPON_DRAWER_FORM_ID}
-        className="space-y-4"
+        className={ADMIN_FORM_STACK}
         onSubmit={(event) => {
           event.preventDefault();
           const nextCode = (code.trim() || name.trim()).toUpperCase();
@@ -175,7 +177,7 @@ export function CouponDrawer({
         }}
       >
         <div className="grid gap-4 sm:grid-cols-2">
-          <label>
+          <label className={ADMIN_FIELD}>
             <span className={ADMIN_LABEL}>{copy.name}</span>
             <input
               value={name}
@@ -185,7 +187,7 @@ export function CouponDrawer({
               disabled={isPending}
             />
           </label>
-          <label>
+          <label className={ADMIN_FIELD}>
             <span className={ADMIN_LABEL}>{copy.code}</span>
             <input
               value={code}
@@ -211,7 +213,7 @@ export function CouponDrawer({
             disabled={isPending}
             onChange={(value) => setDiscountType(value as DiscountType)}
           />
-          <label>
+          <label className={ADMIN_FIELD}>
             <span className={ADMIN_LABEL}>{copy.value}</span>
             <input
               type="number"
@@ -226,7 +228,7 @@ export function CouponDrawer({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <label>
+          <label className={ADMIN_FIELD}>
             <span className={ADMIN_LABEL}>{copy.quantity}</span>
             <input
               type="number"
@@ -237,7 +239,7 @@ export function CouponDrawer({
               disabled={isPending}
             />
           </label>
-          <label>
+          <label className={ADMIN_FIELD}>
             <span className={ADMIN_LABEL}>{copy.expires}</span>
             <input
               type="datetime-local"

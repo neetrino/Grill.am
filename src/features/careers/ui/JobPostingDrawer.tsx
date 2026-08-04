@@ -5,6 +5,7 @@ import { useRef, useState, useTransition } from "react";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
+import { ADMIN_FORM_STACK } from "@/features/admin/ui/admin-form-classes";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   createJobPostingAction,
@@ -193,7 +194,7 @@ export function JobPostingDrawer({
     >
       <form
         id={JOB_POSTING_DRAWER_FORM_ID}
-        className="space-y-6"
+        className={`${ADMIN_FORM_STACK} gap-6`}
         onSubmit={(event) => {
             event.preventDefault();
             const current = drafts[activeLocale];

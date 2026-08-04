@@ -95,7 +95,6 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setEditingPosting(null);
   }
 
   function handleDelete(postingId: string): void {
@@ -215,15 +214,13 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
         </div>
       )}
 
-      {drawerOpen ? (
-        <JobPostingDrawer
-          key={editingPosting?.id ?? "new"}
-          locale={locale}
-          open
-          onClose={closeDrawer}
-          posting={editingPosting}
-        />
-      ) : null}
+      <JobPostingDrawer
+        key={editingPosting?.id ?? "new"}
+        locale={locale}
+        open={drawerOpen}
+        onClose={closeDrawer}
+        posting={editingPosting}
+      />
     </section>
   );
 }

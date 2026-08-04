@@ -7,6 +7,8 @@ import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import type { HeroTranslationsJson } from "@/db/schema";
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
@@ -165,7 +167,7 @@ function HeroSlideDrawerForm({
     >
       <form
         id={HERO_SLIDE_FORM_ID}
-        className="space-y-4"
+        className={ADMIN_FORM_STACK}
         onSubmit={(event) => {
           event.preventDefault();
           const current = drafts[activeLocale];
@@ -203,7 +205,7 @@ function HeroSlideDrawerForm({
           disabled={isPending}
         />
 
-        <label className="block">
+        <label className={ADMIN_FIELD}>
           <span className={ADMIN_LABEL}>{copy.title}</span>
           <input
             required
@@ -214,7 +216,7 @@ function HeroSlideDrawerForm({
           />
         </label>
 
-        <label className="block">
+        <label className={ADMIN_FIELD}>
           <span className={ADMIN_LABEL}>{copy.subtitle}</span>
           <input
             value={draft.subtitle}

@@ -50,7 +50,6 @@ export function AdminPopupsView({ locale, items }: AdminPopupsViewProps) {
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setEditingPopup(null);
   }
 
   return (

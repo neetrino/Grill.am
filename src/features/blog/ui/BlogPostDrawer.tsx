@@ -6,6 +6,8 @@ import { useRef, useState, useTransition } from "react";
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_TEXTAREA,
@@ -154,7 +156,7 @@ export function BlogPostDrawer({
     >
       <form
         id={BLOG_POST_DRAWER_FORM_ID}
-        className="space-y-6"
+        className={`${ADMIN_FORM_STACK} gap-6`}
         onSubmit={(event) => {
             event.preventDefault();
             const current = drafts[activeLocale];
@@ -210,7 +212,7 @@ export function BlogPostDrawer({
               disabled={isPending}
             />
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>
                 {copy.title} <span className="text-red-600">*</span>
               </span>
@@ -225,7 +227,7 @@ export function BlogPostDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{copy.excerpt}</span>
               <input
                 value={draft.excerpt}
@@ -237,7 +239,7 @@ export function BlogPostDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>
                 {copy.content} <span className="text-red-600">*</span>
               </span>
@@ -260,8 +262,8 @@ export function BlogPostDrawer({
               <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
                 {copy.common}
               </p>
-              <div className="space-y-4">
-                <label className="block">
+              <div className={ADMIN_FORM_STACK}>
+                <label className={ADMIN_FIELD}>
                   <span className={ADMIN_LABEL}>{copy.publicationDate}</span>
                   <input
                     type="date"

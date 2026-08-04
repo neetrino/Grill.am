@@ -78,7 +78,6 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setEditingPost(null);
   }
 
   function handleDelete(postId: string): void {
@@ -196,15 +195,13 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
         </div>
       )}
 
-      {drawerOpen ? (
-        <BlogPostDrawer
-          key={editingPost?.id ?? "new"}
-          locale={locale}
-          open
-          onClose={closeDrawer}
-          post={editingPost}
-        />
-      ) : null}
+      <BlogPostDrawer
+        key={editingPost?.id ?? "new"}
+        locale={locale}
+        open={drawerOpen}
+        onClose={closeDrawer}
+        post={editingPost}
+      />
     </section>
   );
 }

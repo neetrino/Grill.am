@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
@@ -85,7 +87,7 @@ function DeliveryLocationEditor({
     >
       <form
         id={DELIVERY_LOCATION_FORM_ID}
-        className="space-y-4"
+        className={ADMIN_FORM_STACK}
         onSubmit={(event) => {
           event.preventDefault();
 
@@ -120,7 +122,7 @@ function DeliveryLocationEditor({
           });
         }}
       >
-        <label>
+        <label className={ADMIN_FIELD}>
           <span className={ADMIN_LABEL}>{copy.country}</span>
           <input
             value={country}
@@ -132,7 +134,7 @@ function DeliveryLocationEditor({
           />
         </label>
 
-        <label>
+        <label className={ADMIN_FIELD}>
           <span className={ADMIN_LABEL}>{copy.city}</span>
           <input
             value={city}
@@ -144,7 +146,7 @@ function DeliveryLocationEditor({
           />
         </label>
 
-        <label>
+        <label className={ADMIN_FIELD}>
           <span className={ADMIN_LABEL}>{copy.price}</span>
           <input
             type="number"
@@ -159,7 +161,7 @@ function DeliveryLocationEditor({
           />
         </label>
 
-        <label>
+        <label className={ADMIN_FIELD}>
           <span className={ADMIN_LABEL}>{copy.freeFrom}</span>
           <input
             type="number"

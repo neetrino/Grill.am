@@ -63,9 +63,6 @@ export function CustomerOrdersView({
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setDetail(null);
-    setError(null);
-    setReorderError(null);
   }
 
   function handleReorder(): void {

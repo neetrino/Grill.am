@@ -7,6 +7,12 @@ import {
 export const ADMIN_LABEL =
   "mb-1 block text-sm font-medium text-gray-700";
 
+/** Field wrapper (`<label>` / field group) — block so stack gaps apply. */
+export const ADMIN_FIELD = "block";
+
+/** Vertical stack for sheet / admin forms (gap works with any child display). */
+export const ADMIN_FORM_STACK = "flex flex-col gap-4";
+
 export const ADMIN_INPUT = ADMIN_FIELD_CLASS;
 
 export const ADMIN_TEXTAREA = ADMIN_TEXTAREA_FIELD_CLASS;

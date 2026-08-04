@@ -66,7 +66,6 @@ export function AdminDeliveryView({
 
   function closeDrawer(): void {
     setDrawerOpen(false);
-    setEditingLocation(null);
   }
 
   function onDelete(location: AdminDeliveryLocation): void {

@@ -7,6 +7,8 @@ import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import type { TranslationsJson } from "@/db/schema";
 import {
+  ADMIN_FIELD,
+  ADMIN_FORM_STACK,
   ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_TEXTAREA,
@@ -443,7 +445,7 @@ export function ProductDrawer({
     >
       <form
         id={PRODUCT_DRAWER_FORM_ID}
-        className="space-y-4"
+        className={ADMIN_FORM_STACK}
         onSubmit={(event) => {
             event.preventDefault();
             const localeCopies = buildLocaleCopies(drafts);
@@ -521,7 +523,7 @@ export function ProductDrawer({
               filledLocales={filledLocalesFromDrafts(drafts)}
             />
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>
                 {form.title} <span className="text-red-600">*</span>
               </span>
@@ -536,7 +538,7 @@ export function ProductDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>
                 {form.slug} <span className="text-red-600">*</span>
               </span>
@@ -556,7 +558,7 @@ export function ProductDrawer({
               </span>
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{form.shortDescription}</span>
               <textarea
                 value={draft.shortDescription}
@@ -571,7 +573,7 @@ export function ProductDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{form.description}</span>
               <textarea
                 value={draft.description}
@@ -586,7 +588,7 @@ export function ProductDrawer({
               />
             </label>
 
-            <label className="block">
+            <label className={ADMIN_FIELD}>
               <span className={ADMIN_LABEL}>{form.composition}</span>
               <textarea
                 value={draft.composition}
@@ -624,7 +626,7 @@ export function ProductDrawer({
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <label>
+              <label className={ADMIN_FIELD}>
                 <span className={ADMIN_LABEL}>
                   {form.price} <span className="text-red-600">*</span>
                 </span>
@@ -639,7 +641,7 @@ export function ProductDrawer({
                   disabled={isPending}
                 />
               </label>
-              <label>
+              <label className={ADMIN_FIELD}>
                 <span className={ADMIN_LABEL}>{form.compareAtPrice}</span>
                 <input
                   min={0}
@@ -654,7 +656,7 @@ export function ProductDrawer({
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <label>
+              <label className={ADMIN_FIELD}>
                 <span className={ADMIN_LABEL}>
                   {form.sku} <span className="text-red-600">*</span>
                 </span>
@@ -667,7 +669,7 @@ export function ProductDrawer({
                   disabled={isPending}
                 />
               </label>
-              <label>
+              <label className={ADMIN_FIELD}>
                 <span className={ADMIN_LABEL}>
                   {form.quantity} <span className="text-red-600">*</span>
                 </span>
