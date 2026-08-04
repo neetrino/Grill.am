@@ -38,17 +38,19 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
 
   if (!user) {
     return (
-      <section className="flex flex-col gap-4">
-        {title}
-        <p className="text-gray-600">
-          <Link
-            href={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
-            className="font-medium text-gray-900 underline underline-offset-2"
-          >
-            {dictionary.header.login}
-          </Link>{" "}
-          — {dictionary.wishlist.signInPrompt}
-        </p>
+      <section className="storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0] px-4 py-10 pb-24 sm:px-6 md:pb-10 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4">
+          {title}
+          <p className="text-gray-600">
+            <Link
+              href={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
+              className="font-medium text-gray-900 underline underline-offset-2"
+            >
+              {dictionary.header.login}
+            </Link>{" "}
+            — {dictionary.wishlist.signInPrompt}
+          </p>
+        </div>
       </section>
     );
   }
@@ -69,38 +71,40 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   });
 
   return (
-    <section className="flex flex-col gap-8">
-      {title}
+    <section className="storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0] px-4 py-10 pb-24 sm:px-6 md:pb-10 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-8">
+        {title}
 
-      {priced.length === 0 ? (
-        <p className="text-gray-600">{dictionary.wishlist.empty}</p>
-      ) : (
-        <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
-          {priced.map(
-            ({ product, priceFormatted, compareAtFormatted }, index) => (
-              <ProductCard
-                key={product.id}
-                href={`/${rawLocale}/products/${product.translation.slug}`}
-                title={product.translation.title}
-                priceFormatted={priceFormatted}
-                compareAtFormatted={compareAtFormatted}
-                discountPercent={product.discountPercent}
-                imageUrl={product.imageUrl}
-                inStock={product.stockOnHand > 0}
-                priority={index < 4}
-                appearIndex={index}
-                locale={rawLocale}
-                productId={product.id}
-                inWishlist
-                isSignedIn
-                wishlistLabel={dictionary.nav.wishlist}
-                addToCartLabel={dictionary.product.addToCart}
-                requiresConfiguration={product.requiresConfiguration}
-              />
-            ),
-          )}
-        </div>
-      )}
+        {priced.length === 0 ? (
+          <p className="text-gray-600">{dictionary.wishlist.empty}</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
+            {priced.map(
+              ({ product, priceFormatted, compareAtFormatted }, index) => (
+                <ProductCard
+                  key={product.id}
+                  href={`/${rawLocale}/products/${product.translation.slug}`}
+                  title={product.translation.title}
+                  priceFormatted={priceFormatted}
+                  compareAtFormatted={compareAtFormatted}
+                  discountPercent={product.discountPercent}
+                  imageUrl={product.imageUrl}
+                  inStock={product.stockOnHand > 0}
+                  priority={index < 4}
+                  appearIndex={index}
+                  locale={rawLocale}
+                  productId={product.id}
+                  inWishlist
+                  isSignedIn
+                  wishlistLabel={dictionary.nav.wishlist}
+                  addToCartLabel={dictionary.product.addToCart}
+                  requiresConfiguration={product.requiresConfiguration}
+                />
+              ),
+            )}
+          </div>
+        )}
+      </div>
     </section>
   );
 }

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Mail, Phone } from "lucide-react";
 
+import { FooterCornerShell } from "@/components/layout/FooterCornerShell";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import { FOOTER_PAYMENT_ASSETS } from "@/lib/payment-assets";
 import {
@@ -91,7 +92,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   ] as const;
 
   return (
-    <div className="mt-auto hidden bg-white md:block">
+    <FooterCornerShell>
       <footer className="lazy-section relative w-full overflow-hidden rounded-tl-[50px] rounded-tr-[50px] bg-black">
         <p
           aria-hidden
@@ -241,6 +242,6 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           </div>
         </div>
       </footer>
-    </div>
+    </FooterCornerShell>
   );
 }
