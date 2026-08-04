@@ -331,14 +331,7 @@ export function SiteHeaderMainNav({
                       />
                     </AppLink>
 
-                    <div className="flex items-center gap-1 md:hidden">
-                      <HeaderSearch
-                        locale={locale}
-                        currency={currency}
-                        labels={searchLabels}
-                      />
-                      {mobileNav}
-                    </div>
+                    <div className="flex items-center md:hidden">{mobileNav}</div>
                   </div>
 
                   <nav
@@ -373,19 +366,17 @@ export function SiteHeaderMainNav({
         </div>
       </div>
 
-      <div className="hidden border-b border-black/7 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] md:block">
-        <div className="mx-auto flex max-w-[1440px] items-center gap-4 px-5 py-4 sm:px-8 lg:px-10">
+      <div className="border-b border-black/7 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+        <div className="mx-auto flex max-w-[1440px] items-center gap-4 px-5 py-3 sm:px-8 sm:py-4 lg:px-10">
           <div className="min-w-0 flex-1">
             <HeaderSearch
               locale={locale}
               currency={currency}
               labels={searchLabels}
-              showLabel
-              triggerClassName="flex h-[49px] w-full items-center gap-2 rounded-full bg-brand-surface px-8 text-sm text-[rgba(33,43,54,0.46)] transition hover:bg-[#ececec]"
             />
           </div>
 
-          <div className="flex shrink-0 items-center gap-4">
+          <div className="hidden shrink-0 items-center gap-4 md:flex">
             {desktopActions}
             <HeaderLocaleCurrencyPill
               locale={locale}
