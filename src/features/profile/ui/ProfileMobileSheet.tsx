@@ -11,12 +11,21 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
-import { PROFILE_MOBILE_SHEET_Z_INDEX } from "@/features/profile/ui/profile-ui";
+import {
+  PROFILE_MOBILE_SHEET_CONTENT_PAD_BOTTOM_PX,
+  PROFILE_MOBILE_SHEET_CONTENT_PAD_TOP_PX,
+  PROFILE_MOBILE_SHEET_CONTENT_PAD_X_PX,
+  PROFILE_MOBILE_SHEET_DISMISS_DRAG_PX,
+  PROFILE_MOBILE_SHEET_DRAG_ZONE_HEIGHT_PX,
+  PROFILE_MOBILE_SHEET_HANDLE_HEIGHT_PX,
+  PROFILE_MOBILE_SHEET_HANDLE_WIDTH_PX,
+  PROFILE_MOBILE_SHEET_HEIGHT_VH,
+  PROFILE_MOBILE_SHEET_PANEL_EASE,
+  PROFILE_MOBILE_SHEET_PANEL_MS,
+  PROFILE_MOBILE_SHEET_Z_INDEX,
+} from "@/features/profile/ui/profile-ui";
 
-const DISMISS_DISTANCE_PX = 110;
 const DISMISS_VELOCITY = 0.5;
-const SNAP_MS = 280;
-const SNAP_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 
 type ProfileMobileSheetProps = {
   open: boolean;
@@ -31,7 +40,7 @@ type ProfileMobileSheetProps = {
 type SheetPhase = "enter" | "open" | "drag" | "exit";
 
 /**
- * MaMarie-style bottom sheet — CSS keyframe rise, swipe-down dismiss.
+ * MaMarie profile mobile tab sheet — 72vh panel, handle drag dismiss.
  * Title lives in sheet content; chrome is handle-only.
  */
 export function ProfileMobileSheet({
@@ -40,7 +49,7 @@ export function ProfileMobileSheet({
   closeLabel,
   onClose,
   children,
-  heightVh = 92,
+  heightVh = PROFILE_MOBILE_SHEET_HEIGHT_VH,
 }: ProfileMobileSheetProps) {
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<SheetPhase>("enter");
@@ -150,7 +159,7 @@ export function ProfileMobileSheet({
       }
       event.currentTarget.releasePointerCapture(event.pointerId);
       const shouldClose =
-        dragYRef.current >= DISMISS_DISTANCE_PX ||
+        dragYRef.current >= PROFILE_MOBILE_SHEET_DISMISS_DRAG_PX ||
         velocityRef.current >= DISMISS_VELOCITY;
       if (shouldClose) {
         onClose();
@@ -189,10 +198,10 @@ export function ProfileMobileSheet({
         type="button"
         tabIndex={-1}
         aria-label={closeLabel}
-        className={`fixed inset-0 rounded-none border-0 bg-black/40 backdrop-blur-[2px] ${backdropClassName}`}
+        className={`fixed inset-0 rounded-none border-0 bg-[#11182759] ${backdropClassName}`}
         style={{
           opacity: isDragging
-            ? Math.max(0.08, 0.4 * (1 - dragY / 360))
+            ? Math.max(0.08, 0.35 * (1 - dragY / 360))
             : undefined,
           animation: isDragging ? "none" : undefined,
           pointerEvents: phase === "exit" ? "none" : "auto",
@@ -213,21 +222,37 @@ export function ProfileMobileSheet({
               : undefined,
           transition:
             phase === "open" && dragY === 0
-              ? `transform ${SNAP_MS}ms ${SNAP_EASE}`
+              ? `transform ${PROFILE_MOBILE_SHEET_PANEL_MS}ms ${PROFILE_MOBILE_SHEET_PANEL_EASE}`
               : undefined,
         }}
         onAnimationEnd={handleSheetAnimationEnd}
       >
         <div
-          className="flex shrink-0 touch-none flex-col items-center px-5 pt-3 pb-2"
+          className="flex shrink-0 touch-none flex-col items-center justify-center"
+          style={{ height: PROFILE_MOBILE_SHEET_DRAG_ZONE_HEIGHT_PX }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
         >
-          <div className="h-1.5 w-12 rounded-full bg-gray-300" aria-hidden />
+          <div
+            className="rounded-full bg-gray-300"
+            style={{
+              width: PROFILE_MOBILE_SHEET_HANDLE_WIDTH_PX,
+              height: PROFILE_MOBILE_SHEET_HANDLE_HEIGHT_PX,
+            }}
+            aria-hidden
+          />
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-1 pb-[max(2rem,env(safe-area-inset-bottom))] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div
+          className="profile-mobile-tab-sheet-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{
+            paddingLeft: PROFILE_MOBILE_SHEET_CONTENT_PAD_X_PX,
+            paddingRight: PROFILE_MOBILE_SHEET_CONTENT_PAD_X_PX,
+            paddingTop: PROFILE_MOBILE_SHEET_CONTENT_PAD_TOP_PX,
+            paddingBottom: `max(${PROFILE_MOBILE_SHEET_CONTENT_PAD_BOTTOM_PX}px, env(safe-area-inset-bottom))`,
+          }}
+        >
           {children}
         </div>
       </div>

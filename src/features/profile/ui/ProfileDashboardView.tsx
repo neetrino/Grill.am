@@ -22,6 +22,7 @@ import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrder
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
 import {
   PROFILE_CARD_CLASS,
+  PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS,
   PROFILE_PRIMARY_BUTTON_CLASS,
   PROFILE_SECTION_TITLE_CLASS,
   PROFILE_STAT_KEYS,
@@ -148,7 +149,7 @@ export function ProfileDashboardView({
           ))}
         </div>
 
-        <div className={`p-5 sm:p-7 ${PROFILE_CARD_CLASS}`}>
+        <div className={`p-5 sm:p-7 ${PROFILE_CARD_CLASS} ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
           <div className="mb-6 flex items-center justify-between gap-4">
             <h2 className={PROFILE_SECTION_TITLE_CLASS}>
               {dictionary.recentOrders}

@@ -71,5 +71,21 @@ export const PROFILE_BTN_SECONDARY_CLASS =
 export const PROFILE_BTN_DANGER_CLASS =
   "h-11 !rounded-[15px] bg-brand-red px-6 text-sm font-semibold text-white hover:bg-brand-red-hot focus:ring-brand-red";
 
+/** MaMarie profile mobile tab-sheet tokens. */
 export const PROFILE_MOBILE_SHEET_Z_INDEX = 90;
 export const PROFILE_MOBILE_SHEET_HEIGHT_VH = 72;
+export const PROFILE_MOBILE_SHEET_PANEL_MS = 300;
+export const PROFILE_MOBILE_SHEET_BACKDROP_MS = 300;
+export const PROFILE_MOBILE_SHEET_PANEL_EASE =
+  "cubic-bezier(0.32, 0.72, 0, 1)";
+export const PROFILE_MOBILE_SHEET_DISMISS_DRAG_PX = 120;
+export const PROFILE_MOBILE_SHEET_HANDLE_WIDTH_PX = 56;
+export const PROFILE_MOBILE_SHEET_HANDLE_HEIGHT_PX = 6;
+export const PROFILE_MOBILE_SHEET_DRAG_ZONE_HEIGHT_PX = 48;
+export const PROFILE_MOBILE_SHEET_CONTENT_PAD_X_PX = 20;
+export const PROFILE_MOBILE_SHEET_CONTENT_PAD_TOP_PX = 16;
+export const PROFILE_MOBILE_SHEET_CONTENT_PAD_BOTTOM_PX = 28;
+
+/** Strip card chrome inside the mobile sheet (MaMarie frameless sections). */
+export const PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS =
+  "max-lg:!rounded-none max-lg:!border-transparent max-lg:!p-0 max-lg:!shadow-none max-lg:!ring-0";

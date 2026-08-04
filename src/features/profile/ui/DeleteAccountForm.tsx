@@ -9,7 +9,7 @@ import {
   deleteAccountAction,
   type DeleteAccountActionState,
 } from "@/features/auth/delete-account-action";
-import { PROFILE_BTN_DANGER_CLASS } from "@/features/profile/ui/profile-ui";
+import { PROFILE_BTN_DANGER_CLASS, PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS } from "@/features/profile/ui/profile-ui";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
@@ -62,7 +62,7 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
   }
 
   return (
-    <Card className="rounded-[15px] border border-red-200 bg-red-50/30 p-5 shadow-none sm:p-7 lg:p-8">
+    <Card className={`rounded-[15px] border border-red-200 bg-red-50/30 p-5 shadow-none sm:p-7 lg:p-8 ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
       <div className="mb-6 space-y-2 sm:mb-8">
         <h1 className="text-xl font-bold tracking-tight text-gray-900">
           {labels.title}

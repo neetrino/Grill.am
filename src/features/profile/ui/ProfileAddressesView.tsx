@@ -17,6 +17,7 @@ import {
   PROFILE_BTN_PRIMARY_CLASS,
   PROFILE_BTN_SECONDARY_CLASS,
   PROFILE_CARD_CLASS,
+  PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS,
   PROFILE_SECTION_TITLE_CLASS,
 } from "@/features/profile/ui/profile-ui";
 
@@ -189,7 +190,7 @@ export function ProfileAddressesView({
   });
 
   return (
-    <section className={`p-5 sm:p-7 lg:p-8 ${PROFILE_CARD_CLASS}`}>
+    <section className={`p-5 sm:p-7 lg:p-8 ${PROFILE_CARD_CLASS} ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
       <div className="mb-7 flex flex-col gap-4 sm:mb-9 sm:flex-row sm:items-center sm:justify-between">
         <h1 className={PROFILE_SECTION_TITLE_CLASS}>{labels.title}</h1>
         {!showForm ? (

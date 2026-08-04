@@ -371,7 +371,7 @@ select:disabled {
   animation: app-modal-panel-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* Profile mobile bottom sheet — MaMarie-style rise / dismiss */
+/* Profile mobile tab sheet — MaMarie tokens (300ms / 72vh panel) */
 @keyframes profile-sheet-in {
   from {
     transform: translate3d(0, 100%, 0);
@@ -409,19 +409,24 @@ select:disabled {
 }
 
 .animate-profile-sheet-in {
-  animation: profile-sheet-in 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
+  animation: profile-sheet-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
 .animate-profile-sheet-out {
-  animation: profile-sheet-out 0.38s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: profile-sheet-out 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
 .animate-profile-sheet-backdrop-in {
-  animation: profile-sheet-backdrop-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: profile-sheet-backdrop-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .animate-profile-sheet-backdrop-out {
-  animation: profile-sheet-backdrop-out 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: profile-sheet-backdrop-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.profile-mobile-tab-sheet-scroll {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 @media (prefers-reduced-motion: reduce) {
