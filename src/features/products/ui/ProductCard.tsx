@@ -4,6 +4,9 @@ import { Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
+import {
+  FeaturedProductCard,
+} from "@/features/products/ui/FeaturedProductCard";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -15,6 +18,8 @@ export const PRODUCT_CARD_APPEAR_STAGGER_MS = 70;
 export const PRODUCT_CARD_APPEAR_DURATION_MS = 560;
 /** Cap delay so long grids do not feel sluggish. */
 const PRODUCT_CARD_APPEAR_MAX_INDEX = 11;
+
+export type ProductCardVariant = "catalog" | "featured-red" | "featured-light";
 
 type ProductCardProps = {
   href: string;
@@ -41,6 +46,8 @@ type ProductCardProps = {
   addToCartLabel?: string;
   /** When true, cart CTA opens the product page for option selection. */
   requiresConfiguration?: boolean;
+  /** Figma mobile featured carousel variants (`164:457` / `164:505`). */
+  variant?: ProductCardVariant;
 };
 
 export function ProductCard({
@@ -62,6 +69,7 @@ export function ProductCard({
   wishlistLabel,
   addToCartLabel,
   requiresConfiguration = false,
+  variant = "catalog",
 }: ProductCardProps) {
   const onSale = Boolean(compareAtFormatted);
   const showWishlist =
@@ -80,6 +88,31 @@ export function ProductCard({
       : (appearActive ?? true)
         ? "animate-catalog-grid-in"
         : "product-appear-pending";
+
+  if (variant === "featured-red" || variant === "featured-light") {
+    return (
+      <FeaturedProductCard
+        href={href}
+        title={title}
+        categoryTitle={categoryTitle}
+        priceFormatted={priceFormatted}
+        compareAtFormatted={compareAtFormatted}
+        discountPercent={discountPercent}
+        inStock={inStock}
+        priority={priority}
+        appearStyle={appearStyle}
+        appearClass={appearClass}
+        locale={locale}
+        productId={productId}
+        inWishlist={inWishlist}
+        isSignedIn={isSignedIn}
+        wishlistLabel={wishlistLabel}
+        addToCartLabel={addToCartLabel}
+        requiresConfiguration={requiresConfiguration}
+        tone={variant === "featured-red" ? "red" : "light"}
+      />
+    );
+  }
 
   return (
     <article

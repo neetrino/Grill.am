@@ -5,7 +5,6 @@ import {
   Home,
   ShoppingBag,
   ShoppingCart,
-  User,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
@@ -22,7 +21,6 @@ type MobileBottomNavProps = {
   dictionary: Dictionary;
   cartItemCount: number;
   wishlistCount: number;
-  isSignedIn: boolean;
 };
 
 type NavTab = {
@@ -30,7 +28,6 @@ type NavTab = {
   href: string;
   label: string;
   icon: LucideIcon;
-  match: (pathname: string) => boolean;
   badge?: number;
 };
 
@@ -42,73 +39,46 @@ function startsWithPath(pathname: string, base: string): boolean {
   return pathname === base || pathname.startsWith(`${base}/`);
 }
 
-function tabClassName(active: boolean): string {
-  return [
-    "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-medium transition-colors",
-    active ? "text-gray-900" : "text-gray-500 hover:text-gray-800",
-  ].join(" ");
-}
-
 function NavBadge({ count }: { count: number }) {
   if (count <= 0) {
     return null;
   }
 
   return (
-    <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gray-900 px-1 text-[9px] font-semibold text-white">
+    <span className="absolute -top-1.5 -right-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand-yellow px-1 text-[10px] font-bold leading-none text-[#171717]">
       {count > 99 ? "99+" : count}
     </span>
   );
 }
 
-function LinkTab({
-  tab,
-  active,
-}: {
-  tab: NavTab;
-  active: boolean;
-}) {
-  const Icon = tab.icon;
-
-  return (
-    <AppLink
-      href={tab.href}
-      prefetchPolicy="intent"
-      aria-current={active ? "page" : undefined}
-      className={tabClassName(active)}
-    >
-      <span className="relative inline-flex">
-        <Icon
-          className="h-5 w-5"
-          strokeWidth={active ? 2.25 : 1.75}
-          aria-hidden="true"
-        />
-        {tab.badge != null ? <NavBadge count={tab.badge} /> : null}
-      </span>
-      <span className="truncate">{tab.label}</span>
-    </AppLink>
-  );
+function tabClassName(active: boolean): string {
+  return active
+    ? "relative flex h-14 min-w-[118px] shrink-0 items-center gap-1 rounded-[70px] bg-brand-red px-2 text-[13px] font-medium text-white transition-[min-width,background-color] duration-200"
+    : "relative flex size-14 shrink-0 items-center justify-center rounded-full bg-white text-[#171717] transition-[min-width,background-color] duration-200";
 }
 
+/**
+ * Figma mobile bottom bar `164:604` — floating dark island.
+ * Active tab expands to the red pill + label (same as Home).
+ */
 export function MobileBottomNav({
   locale,
   currency,
   dictionary,
   cartItemCount,
   wishlistCount,
-  isSignedIn,
 }: MobileBottomNavProps) {
   const pathname = usePathname() ?? `/${locale}`;
-  const profileHref = isSignedIn
-    ? `/${locale}/profile`
-    : `/${locale}/login`;
+
+  const homeActive = isHomePath(pathname, locale);
+  const shopActive = startsWithPath(pathname, `/${locale}/products`);
+  const wishlistActive = startsWithPath(pathname, `/${locale}/wishlist`);
 
   const homeTab: NavTab = {
     id: "home",
     href: `/${locale}`,
     label: dictionary.nav.home,
     icon: Home,
-    match: (path) => isHomePath(path, locale),
   };
 
   const shopTab: NavTab = {
@@ -116,7 +86,6 @@ export function MobileBottomNav({
     href: `/${locale}/products`,
     label: dictionary.nav.shop,
     icon: ShoppingBag,
-    match: (path) => startsWithPath(path, `/${locale}/products`),
   };
 
   const wishlistTab: NavTab = {
@@ -124,29 +93,18 @@ export function MobileBottomNav({
     href: `/${locale}/wishlist`,
     label: dictionary.nav.wishlist,
     icon: Heart,
-    match: (path) => startsWithPath(path, `/${locale}/wishlist`),
     badge: wishlistCount,
-  };
-
-  const profileTab: NavTab = {
-    id: "profile",
-    href: profileHref,
-    label: dictionary.header.profile,
-    icon: User,
-    match: (path) =>
-      startsWithPath(path, `/${locale}/profile`) ||
-      startsWithPath(path, `/${locale}/login`),
   };
 
   return (
     <nav
       aria-label={dictionary.nav.navigation}
       data-mobile-bottom-nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm md:hidden"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-8 pb-[max(12px,env(safe-area-inset-bottom))] md:hidden"
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-stretch">
-        <LinkTab tab={homeTab} active={homeTab.match(pathname)} />
-        <LinkTab tab={shopTab} active={shopTab.match(pathname)} />
+      <div className="pointer-events-auto flex h-[71px] w-full max-w-[327px] items-center gap-2 overflow-hidden rounded-[100px] bg-[#171717] px-2.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
+        <PillTab tab={homeTab} active={homeActive} />
+        <PillTab tab={shopTab} active={shopActive} />
 
         <CartDrawer
           locale={locale}
@@ -169,22 +127,45 @@ export function MobileBottomNav({
               aria-expanded={open}
               className={tabClassName(open)}
             >
-              <span className="relative inline-flex" data-cart-fly-target>
+              <span className="relative inline-flex shrink-0" data-cart-fly-target>
                 <ShoppingCart
-                  className="h-5 w-5"
-                  strokeWidth={open ? 2.25 : 1.75}
-                  aria-hidden="true"
+                  className={open ? "size-[31px]" : "size-6"}
+                  strokeWidth={1.75}
+                  aria-hidden
                 />
                 <NavBadge count={badgeCount} />
               </span>
-              <span className="truncate">{label}</span>
+              {open ? <span className="truncate pr-1">{label}</span> : null}
             </button>
           )}
         />
 
-        <LinkTab tab={wishlistTab} active={wishlistTab.match(pathname)} />
-        <LinkTab tab={profileTab} active={profileTab.match(pathname)} />
+        <PillTab tab={wishlistTab} active={wishlistActive} />
       </div>
     </nav>
+  );
+}
+
+function PillTab({ tab, active }: { tab: NavTab; active: boolean }) {
+  const Icon = tab.icon;
+
+  return (
+    <AppLink
+      href={tab.href}
+      prefetchPolicy="intent"
+      aria-current={active ? "page" : undefined}
+      aria-label={tab.label}
+      className={tabClassName(active)}
+    >
+      <span className="relative inline-flex shrink-0">
+        <Icon
+          className={active ? "size-[31px]" : "size-6"}
+          strokeWidth={1.75}
+          aria-hidden
+        />
+        {tab.badge != null ? <NavBadge count={tab.badge} /> : null}
+      </span>
+      {active ? <span className="truncate pr-1">{tab.label}</span> : null}
+    </AppLink>
   );
 }

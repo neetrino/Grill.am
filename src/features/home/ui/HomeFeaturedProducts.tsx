@@ -45,6 +45,10 @@ function chunkIntoSlides<T>(items: readonly T[], size: number): T[][] {
   return slides;
 }
 
+function featuredVariant(index: number): "featured-red" | "featured-light" {
+  return index % 4 < 2 ? "featured-red" : "featured-light";
+}
+
 export function HomeFeaturedProducts({
   locale,
   titleLead,
@@ -60,7 +64,9 @@ export function HomeFeaturedProducts({
 }: HomeFeaturedProductsProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const mobileScrollerRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [mobileDot, setMobileDot] = useState(0);
   const [cardsRevealed, setCardsRevealed] = useState(false);
   const slides = chunkIntoSlides(products, PRODUCTS_PER_SLIDE);
 
@@ -112,77 +118,137 @@ export function HomeFeaturedProducts({
     setActiveSlide(Math.round(node.scrollLeft / node.clientWidth));
   }
 
+  function handleMobileScroll(): void {
+    const node = mobileScrollerRef.current;
+    if (!node || node.clientWidth === 0) return;
+    const cardWidth = 222;
+    setMobileDot(Math.min(1, Math.round(node.scrollLeft / cardWidth) > 1 ? 1 : 0));
+  }
+
   return (
     <section
       ref={sectionRef}
-      className="w-full overflow-hidden rounded-[30px] bg-brand-yellow-soft py-12 sm:py-16"
+      className="w-full overflow-hidden bg-white pt-5 pb-6 md:rounded-[30px] md:bg-brand-yellow-soft md:py-12 lg:py-16"
     >
-      <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10">
-        <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+      <div className="mx-auto w-full max-w-[1440px] md:px-5 lg:px-8 xl:px-10">
+        <div className="mb-4 flex items-start justify-between gap-3 px-4 md:mb-10 md:items-end md:px-0">
           <div className="min-w-0">
-            <h2 className="text-[26px] leading-tight font-black text-brand-red uppercase sm:text-[30px] sm:leading-[1.2]">
+            <h2 className="text-[20px] leading-[25px] font-black text-brand-red md:text-[26px] md:leading-tight md:uppercase lg:text-[30px] lg:leading-[1.2]">
               {titleLead}{" "}
               <span className="text-[#171717]">{titleAccent}</span>
             </h2>
-            <p className="mt-2 max-w-3xl text-base leading-6 text-[#171717]">
+            <p className="mt-2 hidden max-w-3xl text-base leading-6 text-[#171717] md:block">
               {subtitle}
             </p>
           </div>
           <AppLink
             href={viewAllHref}
             prefetchPolicy="intent"
-            className="inline-flex shrink-0 items-center gap-1 text-sm font-bold tracking-[1.4px] text-[#171717] uppercase"
+            className="inline-flex shrink-0 items-center gap-1 pt-1.5 text-[11px] font-bold tracking-[1.1px] text-[#171717] uppercase md:pt-0 md:text-sm md:tracking-[1.4px]"
           >
             {viewAllLabel}
-            <ChevronRight className="h-4 w-4" aria-hidden />
+            <ChevronRight className="h-3.5 w-3.5 md:h-4 md:w-4" aria-hidden />
           </AppLink>
         </div>
 
         {products.length === 0 ? (
-          <p className="text-[#171717]">{emptyLabel}</p>
+          <p className="px-4 text-[#171717] md:px-0">{emptyLabel}</p>
         ) : (
-          <div
-            ref={scrollerRef}
-            onScroll={handleScroll}
-            className="flex snap-x snap-mandatory overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          >
-            {slides.map((slideProducts, slideIndex) => (
-              <div
-                key={slideProducts[0]?.id ?? `slide-${slideIndex}`}
-                className="grid w-full shrink-0 snap-start grid-cols-4 gap-3 sm:gap-5 lg:gap-6 xl:gap-8"
-              >
-                {slideProducts.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    href={product.href}
-                    title={product.title}
-                    categoryTitle={product.categoryTitle}
-                    priceFormatted={product.priceFormatted}
-                    compareAtFormatted={product.compareAtFormatted}
-                    discountPercent={product.discountPercent}
-                    imageUrl={product.imageUrl}
-                    inStock={product.inStock}
-                    priority={false}
-                    appearIndex={slideIndex * PRODUCTS_PER_SLIDE + index}
-                    appearActive={cardsRevealed}
-                    locale={locale}
-                    productId={product.id}
-                    inWishlist={product.inWishlist ?? false}
-                    isSignedIn={isSignedIn}
-                    wishlistLabel={wishlistLabel}
-                    addToCartLabel={addToCartLabel}
-                    requiresConfiguration={
-                      product.requiresConfiguration ?? false
-                    }
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
+          <>
+            {/* Mobile carousel — Figma `164:456` */}
+            <div
+              ref={mobileScrollerRef}
+              onScroll={handleMobileScroll}
+              className="flex gap-3 overflow-x-auto px-4 pb-2 md:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {products.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  href={product.href}
+                  title={product.title}
+                  categoryTitle={product.categoryTitle}
+                  priceFormatted={product.priceFormatted}
+                  compareAtFormatted={product.compareAtFormatted}
+                  discountPercent={product.discountPercent}
+                  imageUrl={product.imageUrl}
+                  inStock={product.inStock}
+                  appearIndex={index}
+                  appearActive={cardsRevealed}
+                  locale={locale}
+                  productId={product.id}
+                  inWishlist={product.inWishlist ?? false}
+                  isSignedIn={isSignedIn}
+                  wishlistLabel={wishlistLabel}
+                  addToCartLabel={addToCartLabel}
+                  requiresConfiguration={
+                    product.requiresConfiguration ?? false
+                  }
+                  variant={featuredVariant(index)}
+                />
+              ))}
+            </div>
+
+            <div className="mt-4 flex items-center justify-center gap-2 md:hidden">
+              <span
+                className={`h-1.5 rounded-full transition-[width,background-color] ${
+                  mobileDot === 0
+                    ? "w-6 bg-brand-red"
+                    : "w-1.5 bg-[rgba(95,95,95,0.43)]"
+                }`}
+              />
+              <span
+                className={`h-1.5 rounded-full transition-[width,background-color] ${
+                  mobileDot === 1
+                    ? "w-6 bg-brand-red"
+                    : "w-1.5 bg-[rgba(95,95,95,0.43)]"
+                }`}
+              />
+            </div>
+
+            {/* Desktop slide grid */}
+            <div
+              ref={scrollerRef}
+              onScroll={handleScroll}
+              className="hidden snap-x snap-mandatory overflow-x-auto pb-2 md:flex [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {slides.map((slideProducts, slideIndex) => (
+                <div
+                  key={slideProducts[0]?.id ?? `slide-${slideIndex}`}
+                  className="grid w-full shrink-0 snap-start grid-cols-4 gap-3 sm:gap-5 lg:gap-6 xl:gap-8"
+                >
+                  {slideProducts.map((product, index) => (
+                    <ProductCard
+                      key={product.id}
+                      href={product.href}
+                      title={product.title}
+                      categoryTitle={product.categoryTitle}
+                      priceFormatted={product.priceFormatted}
+                      compareAtFormatted={product.compareAtFormatted}
+                      discountPercent={product.discountPercent}
+                      imageUrl={product.imageUrl}
+                      inStock={product.inStock}
+                      priority={false}
+                      appearIndex={slideIndex * PRODUCTS_PER_SLIDE + index}
+                      appearActive={cardsRevealed}
+                      locale={locale}
+                      productId={product.id}
+                      inWishlist={product.inWishlist ?? false}
+                      isSignedIn={isSignedIn}
+                      wishlistLabel={wishlistLabel}
+                      addToCartLabel={addToCartLabel}
+                      requiresConfiguration={
+                        product.requiresConfiguration ?? false
+                      }
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {slides.length > 1 ? (
-          <div className="mt-8 flex items-center justify-center gap-1.5 sm:mt-10">
+          <div className="mt-8 hidden items-center justify-center gap-1.5 sm:mt-10 md:flex">
             {slides.map((slideProducts, slideIndex) => {
               const isActive = slideIndex === activeSlide;
               return (

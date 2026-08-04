@@ -41,6 +41,91 @@ const FALLBACK_PRODUCT: SpecialProduct = {
   saveFormatted: "700 ֏",
 };
 
+/**
+ * Figma mobile promo `164:556` — dark card.
+ */
+function MobilePromoCard({
+  limitedOfferLabel,
+  eyebrow,
+  titleLead,
+  titleAccent,
+  line1,
+  line2,
+  ctaLabel,
+  onlyLabel,
+  product,
+  linkHref,
+}: {
+  limitedOfferLabel: string;
+  eyebrow: string;
+  titleLead: string;
+  titleAccent: string;
+  line1: string;
+  line2: string;
+  ctaLabel: string;
+  onlyLabel: string;
+  product: SpecialProduct;
+  linkHref: string;
+}) {
+  const imageSrc = product.imageUrl ?? "/assets/home/promo-chicken.webp";
+
+  return (
+    <div className="relative min-h-[334px] overflow-hidden rounded-[24px] bg-[#171717] md:hidden">
+      <div className="pointer-events-none absolute top-0 right-[-20%] h-full w-[70%]">
+        <Image
+          src={imageSrc}
+          alt=""
+          fill
+          sizes="70vw"
+          className="object-contain object-right"
+        />
+      </div>
+
+      <div className="relative z-10 flex flex-col px-5 pt-8 pb-5">
+        <span className="inline-flex w-fit items-center rounded-full bg-brand-red-hot px-3 py-1 text-[10px] font-black tracking-[1.4px] text-white uppercase">
+          {limitedOfferLabel}
+        </span>
+
+        <p className="mt-2 text-[22px] leading-[33px] font-black tracking-[2.2px] text-white/90 uppercase">
+          {eyebrow}
+        </p>
+
+        <h2 className="mt-1 text-[38px] leading-[38px] font-black text-white uppercase">
+          <span className="block">{titleLead}</span>
+          <span className="block text-brand-red">{titleAccent}</span>
+        </h2>
+
+        <p className="mt-3 text-[13px] leading-[19.5px] text-white/60">
+          <span className="block">{line1}</span>
+          <span className="block text-white/80">{line2}</span>
+        </p>
+
+        <div className="mt-6 flex items-end justify-between gap-4">
+          <AppLink
+            href={linkHref}
+            prefetchPolicy="intent"
+            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-[#171717] px-5 py-3 text-[12px] leading-[18px] font-black tracking-[0.9px] text-white uppercase"
+          >
+            {ctaLabel}
+          </AppLink>
+
+          <div className="flex size-20 shrink-0 flex-col items-center justify-center rounded-full bg-brand-red">
+            <span className="text-[10px] font-black tracking-[0.25px] text-brand-yellow uppercase">
+              {onlyLabel}
+            </span>
+            <span className="text-xl leading-5 font-black text-white">
+              {product.priceFormatted.replace(/\s*֏$/, "")}
+            </span>
+            <span className="text-[10px] leading-[15px] font-black text-white">
+              ֏
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function HomePromotions({
   limitedOfferLabel,
   eyebrow,
@@ -76,9 +161,22 @@ export function HomePromotions({
   const linkHref = product.href.startsWith("/") ? product.href : ctaHref;
 
   return (
-    <section className="relative w-full py-10 sm:py-12">
+    <section className="relative w-full py-5 md:py-10 lg:py-12">
       <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="relative mx-auto w-full max-w-[1296px]">
+        <MobilePromoCard
+          limitedOfferLabel={limitedOfferLabel}
+          eyebrow={eyebrow}
+          titleLead={titleLead}
+          titleAccent={titleAccent}
+          line1={line1}
+          line2={line2}
+          ctaLabel={ctaLabel}
+          onlyLabel={onlyLabel}
+          product={product}
+          linkHref={linkHref}
+        />
+
+        <div className="relative mx-auto hidden w-full max-w-[1296px] md:block">
           <button
             type="button"
             aria-label={prevLabel}
@@ -109,7 +207,6 @@ export function HomePromotions({
             />
           </button>
 
-          {/* Figma PromoSection 165:1522 — 1296 × 553, radius 30, #ffc12c */}
           <div className="relative h-auto min-h-[420px] overflow-hidden rounded-[30px] bg-[#ffc12c] sm:min-h-[480px] lg:h-[553px] lg:min-h-0">
             <div className="relative z-10 flex h-full flex-col justify-center gap-4 px-6 pt-14 pb-10 sm:gap-4 sm:px-10 sm:pt-16 sm:pb-12 lg:max-w-[55%] lg:justify-start lg:px-14 lg:pt-[88px] lg:pb-0">
               <span className="inline-flex w-fit items-center rounded-full bg-[#f52516] px-4 py-1.5 text-xs font-black tracking-[1.44px] text-[#0d0d0d] uppercase">
@@ -149,16 +246,6 @@ export function HomePromotions({
                   className="object-contain object-right-bottom"
                 />
               </div>
-            </div>
-
-            <div className="relative mx-auto mt-4 h-[260px] w-full max-w-md lg:hidden">
-              <Image
-                src={imageSrc}
-                alt={product.title}
-                fill
-                sizes="90vw"
-                className="object-contain"
-              />
             </div>
 
             <div className="absolute right-4 bottom-4 z-20 flex items-center gap-6 sm:right-8 sm:bottom-8 lg:right-[72px] lg:bottom-10">

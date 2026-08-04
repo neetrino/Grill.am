@@ -48,9 +48,9 @@ export function HomeCategories({
   }
 
   return (
-    <section className="relative z-10 -mt-12 rounded-t-[30px] bg-white pt-14 pb-14 sm:-mt-20 sm:pt-16 sm:pb-16">
-      <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10">
-        <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+    <section className="relative z-10 bg-white pt-6 pb-6 md:-mt-12 md:rounded-t-[30px] md:pt-14 md:pb-14 lg:-mt-20 lg:pt-16 lg:pb-16">
+      <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 lg:px-10">
+        <div className="mb-8 hidden flex-col gap-3 md:mb-10 md:flex md:flex-row md:items-end md:justify-between md:gap-6">
           <div className="min-w-0">
             <h2 className="text-[26px] leading-tight font-black tracking-tight text-[#171717] uppercase sm:text-[30px] sm:leading-[1.2]">
               {titleLead}{" "}
@@ -89,11 +89,44 @@ export function HomeCategories({
               <ChevronRight className="h-6 w-6" aria-hidden />
             </button>
 
+            {/* Mobile — Figma `164:424` compact 88px cards */}
+            <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {categories.map((category, index) => {
+                const fallback =
+                  FALLBACK_IMAGES[index % FALLBACK_IMAGES.length] ??
+                  FALLBACK_IMAGES[0];
+                const imageSrc = category.imageUrl ?? fallback;
+
+                return (
+                  <li key={category.id} className="shrink-0 snap-start">
+                    <AppLink
+                      href={category.href}
+                      prefetchPolicy="intent"
+                      className="flex flex-col items-center gap-2"
+                    >
+                      <span className="relative size-[88px] overflow-hidden rounded-[20px] bg-[#191919]">
+                        <Image
+                          src={imageSrc}
+                          alt=""
+                          fill
+                          sizes="88px"
+                          className="object-cover"
+                        />
+                      </span>
+                      <span className="text-center text-[11px] leading-[16.5px] font-bold text-[#171717] uppercase">
+                        {category.title}
+                      </span>
+                    </AppLink>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* Desktop — existing large cards */}
             <ul
               ref={scrollerRef}
-              className="flex snap-x snap-mandatory justify-start gap-5 overflow-x-auto pb-2 sm:gap-6 xl:justify-center xl:gap-7 xl:overflow-visible xl:px-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
-              {categories.map((category, index) => {
+              className="hidden snap-x snap-mandatory justify-start gap-5 overflow-x-auto pb-2 sm:gap-6 md:flex xl:justify-center xl:gap-7 xl:overflow-visible xl:px-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >              {categories.map((category, index) => {
                 const fallback =
                   FALLBACK_IMAGES[index % FALLBACK_IMAGES.length] ??
                   FALLBACK_IMAGES[0];
@@ -127,9 +160,9 @@ export function HomeCategories({
               })}
             </ul>
 
-            <div className="mt-5 flex items-center justify-center gap-1.5">
-              <span className="h-2.5 w-7 rounded-full bg-brand-red-hot" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[rgba(95,95,95,0.61)]" />
+            <div className="mt-4 flex items-center justify-center gap-2 md:mt-5 md:gap-1.5">
+              <span className="h-1.5 w-6 rounded-full bg-brand-red-hot md:h-2.5 md:w-7" />
+              <span className="size-1.5 rounded-full bg-[rgba(95,95,95,0.6)] md:h-2.5 md:w-2.5" />
             </div>
           </div>
         )}

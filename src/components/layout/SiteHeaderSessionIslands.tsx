@@ -2,7 +2,7 @@ import { cache, Suspense } from "react";
 
 import { AccountControls } from "@/components/layout/AccountControls";
 import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
-import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
+import { MobileHeaderActions } from "@/components/layout/MobileHeaderActions";
 import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { getCartItemCount } from "@/features/cart/cart";
 import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
@@ -100,7 +100,7 @@ async function HeaderMobileNavAsync({
   const { user } = await loadHeaderSessionData();
 
   return (
-    <MobileNavDrawer
+    <MobileHeaderActions
       locale={locale}
       currency={currency}
       dictionary={dictionary}
@@ -126,7 +126,7 @@ export function HeaderMobileNavIsland(props: HeaderMobileNavProps) {
   return (
     <Suspense
       fallback={
-        <MobileNavDrawer
+        <MobileHeaderActions
           locale={props.locale}
           currency={props.currency}
           dictionary={props.dictionary}

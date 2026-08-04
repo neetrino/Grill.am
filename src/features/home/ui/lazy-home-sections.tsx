@@ -69,11 +69,13 @@ export function HomePromotionsLazy(props: PromotionsProps) {
   );
 }
 
-/** Why-choose animation — heaviest home client island. */
+/** Why-choose animation — heaviest home client island (desktop only). */
 export function HomeFeaturesLazy(props: FeaturesProps) {
   return (
-    <LazyWhenVisible minHeight={300} rootMargin="360px 0px">
-      <HomeFeatures {...props} />
-    </LazyWhenVisible>
+    <div className="hidden md:block">
+      <LazyWhenVisible minHeight={300} rootMargin="360px 0px">
+        <HomeFeatures {...props} />
+      </LazyWhenVisible>
+    </div>
   );
 }

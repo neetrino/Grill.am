@@ -306,37 +306,33 @@ export function SiteHeaderMainNav({
             }`}
           >
             <header className="bg-white">
-              <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-10">
-                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/7 py-3">
-                  <div className="flex items-center gap-3">
-                    <AppLink
-                      href={homeHref}
-                      prefetchPolicy="intent"
-                      className="relative block h-9 w-[92px] shrink-0"
-                      onClick={(event) => {
-                        if (!isHomePage) {
-                          return;
-                        }
-                        event.preventDefault();
-                        scrollHomeToTop();
-                      }}
-                    >
-                      <Image
-                        src="/assets/brand/logo.webp"
-                        alt={dictionary.brand}
-                        fill
-                        sizes="92px"
-                        className="object-contain"
-                        priority
-                      />
-                    </AppLink>
-
-                    <div className="flex items-center md:hidden">{mobileNav}</div>
-                  </div>
+              <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-10">
+                <div className="flex items-end justify-between gap-4 border-b border-black/7 py-3 md:items-center md:py-3">
+                  <AppLink
+                    href={homeHref}
+                    prefetchPolicy="intent"
+                    className="relative mb-0.5 block h-[37px] w-[92px] shrink-0 md:mb-0 md:h-9"
+                    onClick={(event) => {
+                      if (!isHomePage) {
+                        return;
+                      }
+                      event.preventDefault();
+                      scrollHomeToTop();
+                    }}
+                  >
+                    <Image
+                      src="/assets/brand/logo.webp"
+                      alt={dictionary.brand}
+                      fill
+                      sizes="92px"
+                      className="object-contain"
+                      priority
+                    />
+                  </AppLink>
 
                   <nav
                     aria-label="Primary"
-                    className="order-3 hidden w-full items-center justify-center gap-0.5 lg:order-none lg:flex lg:w-auto lg:flex-1"
+                    className="hidden flex-1 items-center justify-center gap-0.5 lg:flex"
                   >
                     <PrimaryNavLinks
                       locale={locale}
@@ -359,6 +355,8 @@ export function SiteHeaderMainNav({
                       variant="header"
                     />
                   </div>
+
+                  {mobileNav}
                 </div>
               </div>
             </header>
@@ -366,8 +364,8 @@ export function SiteHeaderMainNav({
         </div>
       </div>
 
-      <div className="border-b border-black/7 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-        <div className="mx-auto flex max-w-[1440px] items-center gap-4 px-5 py-3 sm:px-8 sm:py-4 lg:px-10">
+      <div className="border-b border-black/7 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] md:shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+        <div className="mx-auto flex max-w-[1440px] items-center gap-4 px-4 pt-4 pb-2 sm:px-8 sm:py-4 lg:px-10">
           <div className="min-w-0 flex-1">
             <HeaderSearch
               locale={locale}

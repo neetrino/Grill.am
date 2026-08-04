@@ -148,8 +148,8 @@ export function HeaderSearch({
 
   return (
     <div ref={rootRef} className={`relative ${className ?? ""}`}>
-      <label className="flex h-[49px] w-full items-center gap-2 rounded-full bg-brand-surface px-5 text-sm text-[rgba(33,43,54,0.46)] transition focus-within:bg-[#ececec] sm:px-8">
-        <Search className="h-5 w-5 shrink-0" aria-hidden="true" />
+      <label className="flex h-12 w-full items-center gap-3 rounded-full bg-brand-surface px-4 text-sm text-[rgba(33,43,54,0.46)] transition focus-within:bg-[#ececec] sm:h-[49px] sm:gap-2 sm:px-8">
+        <Search className="h-[18px] w-[18px] shrink-0 sm:h-5 sm:w-5" aria-hidden="true" />
         <span className="sr-only">{labels.search}</span>
         <input
           ref={inputRef}
