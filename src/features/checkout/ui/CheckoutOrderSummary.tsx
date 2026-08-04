@@ -98,6 +98,7 @@ export function CheckoutOrderSummary({
               style={{
                 width: `calc(${Math.max(couponPlaceholder.length, 8)}ch + 1.5rem)`,
               }}
+              suppressHydrationWarning
             />
             <button
               type="button"

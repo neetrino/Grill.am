@@ -57,7 +57,9 @@ function toDate(value: Date | string | number): Date {
 
 /**
  * Short calendar date, identical on Node and every browser.
- * Avoids `Intl.DateTimeFormat` ICU gaps (e.g. `hy` falling back to Russian).
+ * Uses UTC calendar fields so SSR (often UTC) and clients in other
+ * timezones hydrate to the same string. Avoids `Intl.DateTimeFormat`
+ * ICU gaps (e.g. `hy` falling back to Russian).
  */
 export function formatShortDate(
   value: Date | string | number,
@@ -69,9 +71,9 @@ export function formatShortDate(
   }
 
   const appLocale = normalizeDateLocale(locale);
-  const day = date.getDate();
-  const monthIndex = date.getMonth();
-  const year = date.getFullYear();
+  const day = date.getUTCDate();
+  const monthIndex = date.getUTCMonth();
+  const year = date.getUTCFullYear();
 
   switch (appLocale) {
     case "en":

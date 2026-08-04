@@ -164,6 +164,8 @@ export function HeaderSearch({
           aria-controls={listboxId}
           aria-expanded={showPanel}
           className="min-w-0 flex-1 bg-transparent text-base text-gray-900 outline-none placeholder:text-[rgba(33,43,54,0.46)] sm:text-sm"
+          // Chrome iOS injects __gcruniqueid before hydration.
+          suppressHydrationWarning
         />
         {query ? (
           <button

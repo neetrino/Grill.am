@@ -27,13 +27,12 @@ type SiteHeaderMainNavProps = {
 };
 
 const TOP_REVEAL_Y = 8;
-/** Scroll down past this → close primary. */
-const HIDE_DELTA = 14;
+/** Finger / wheel must move at least this much to count as scroll-down. */
+const GESTURE_HIDE_PX = 2;
 /** Scroll up past this → open primary. */
-const SHOW_DELTA = 14;
-const DESKTOP_MIN_WIDTH = 768;
-/** Ignore opposite direction while the open/close animation runs. */
-const TOGGLE_LOCK_MS = 420;
+const SHOW_DELTA = 8;
+/** Ignore reverse (show) briefly after a toggle. Hide is never locked. */
+const TOGGLE_LOCK_MS = 120;
 /** Live sticky header height for catalog sidebars and other sticky rails. */
 const STOREFRONT_HEADER_OFFSET_VAR = "--storefront-header-offset";
 
@@ -82,6 +81,7 @@ export function SiteHeaderMainNav({
 
   const headerRootRef = useRef<HTMLDivElement>(null);
   const lastScrollYRef = useRef(0);
+  const lastTouchYRef = useRef<number | null>(null);
   const primaryHiddenRef = useRef(false);
   const motionEnabledRef = useRef(false);
   const toggleLockUntilRef = useRef(0);
@@ -238,15 +238,17 @@ export function SiteHeaderMainNav({
   useEffect(() => {
     lastScrollYRef.current = window.scrollY;
 
-    function onScroll(): void {
-      if (window.innerWidth < DESKTOP_MIN_WIDTH) {
-        if (primaryHiddenRef.current) {
-          setPrimaryHiddenState(false, false);
-        }
-        lastScrollYRef.current = window.scrollY;
+    function hidePrimaryNow(): void {
+      if (programmaticScrollRef.current) {
         return;
       }
+      if (window.scrollY <= TOP_REVEAL_Y) {
+        return;
+      }
+      setPrimaryHiddenState(true, true);
+    }
 
+    function onScroll(): void {
       const y = window.scrollY;
 
       if (programmaticScrollRef.current) {
@@ -262,24 +264,54 @@ export function SiteHeaderMainNav({
         return;
       }
 
+      if (delta > 0) {
+        hidePrimaryNow();
+        return;
+      }
+
       // While animating a previous toggle, only track position — no reverse flicker.
       if (Date.now() < toggleLockUntilRef.current) {
         return;
       }
 
-      if (delta >= HIDE_DELTA) {
-        setPrimaryHiddenState(true, true);
-      } else if (delta <= -SHOW_DELTA) {
+      if (delta <= -SHOW_DELTA) {
         setPrimaryHiddenState(false, true);
       }
     }
 
+    function onWheel(event: WheelEvent): void {
+      if (event.deltaY > 0) {
+        hidePrimaryNow();
+      }
+    }
+
+    function onTouchStart(event: TouchEvent): void {
+      lastTouchYRef.current = event.touches[0]?.clientY ?? null;
+    }
+
+    function onTouchMove(event: TouchEvent): void {
+      const currentY = event.touches[0]?.clientY;
+      const previousY = lastTouchYRef.current;
+      if (currentY == null || previousY == null) {
+        return;
+      }
+      // Finger moves up → page scrolls down.
+      if (previousY - currentY >= GESTURE_HIDE_PX) {
+        hidePrimaryNow();
+      }
+      lastTouchYRef.current = currentY;
+    }
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
       clearMotionEnableTimer();
       clearProgrammaticScrollTimer();
     };
@@ -288,7 +320,7 @@ export function SiteHeaderMainNav({
 
   const allowMotion = motionEnabled && !scrollLocked;
   const motionClass = allowMotion
-    ? "duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+    ? "duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none"
     : "duration-0";
 
   return (
@@ -309,7 +341,7 @@ export function SiteHeaderMainNav({
           <div
             className={`origin-top transition-[opacity,transform] ${motionClass} ${
               primaryHidden
-                ? "pointer-events-none -translate-y-2 opacity-0"
+                ? "pointer-events-none -translate-y-1 opacity-0"
                 : "translate-y-0 opacity-100"
             }`}
           >

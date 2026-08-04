@@ -21,25 +21,25 @@ function AboutFlameIcon({ className }: { className?: string }) {
 
 function AboutSinceBadge({ label, year }: { label: string; year: string }) {
   return (
-    <div className="absolute bottom-4 left-4 z-20 flex size-[108px] flex-col items-center justify-center rounded-full border-[3px] border-white bg-brand-red text-white sm:bottom-5 sm:left-5 sm:size-[124px]">
-      <AboutFlameIcon className="mb-0.5 size-4 text-brand-yellow sm:size-5" />
-      <span className="text-[10px] font-semibold tracking-[0.12em] uppercase opacity-90 sm:text-[11px]">
+    <div className="absolute bottom-2 left-2 z-20 flex size-[80px] flex-col items-center justify-center rounded-full border-2 border-white bg-brand-red text-white sm:bottom-5 sm:left-5 sm:size-[124px] sm:border-[3px]">
+      <AboutFlameIcon className="mb-0.5 size-3 text-brand-yellow sm:size-5" />
+      <span className="text-[8px] font-semibold tracking-[0.12em] uppercase opacity-90 sm:text-[11px]">
         {label}
       </span>
-      <span className="text-[28px] leading-none font-black tracking-tight sm:text-[32px]">
+      <span className="text-[20px] leading-none font-black tracking-tight sm:text-[32px]">
         {year}
       </span>
-      <span className="mt-1.5 flex items-center gap-0.5" aria-hidden>
+      <span className="mt-1 flex items-center gap-0.5 sm:mt-1.5" aria-hidden>
         <Star
-          className="size-2.5 fill-brand-yellow text-brand-yellow sm:size-3"
+          className="size-2 fill-brand-yellow text-brand-yellow sm:size-3"
           strokeWidth={0}
         />
         <Star
-          className="mt-0.5 size-3.5 fill-brand-yellow text-brand-yellow sm:size-4"
+          className="mt-0.5 size-2.5 fill-brand-yellow text-brand-yellow sm:size-4"
           strokeWidth={0}
         />
         <Star
-          className="size-2.5 fill-brand-yellow text-brand-yellow sm:size-3"
+          className="size-2 fill-brand-yellow text-brand-yellow sm:size-3"
           strokeWidth={0}
         />
       </span>
@@ -57,9 +57,12 @@ export function AboutHero({ copy }: AboutHeroProps) {
             {copy.eyebrow}
           </span>
 
-          <h1 className="whitespace-nowrap text-[22px] leading-[1.2] font-black tracking-tight text-brand-ink sm:text-[32px] lg:text-[40px]">
-            <span>{copy.titleLead} </span>
-            <span className="text-brand-red">{copy.titleAccent}</span>
+          <h1 className="text-[22px] leading-[1.2] font-black tracking-tight text-brand-ink sm:whitespace-nowrap sm:text-[32px] lg:text-[40px]">
+            <span className="block sm:inline">{copy.titleLead}</span>
+            <span className="hidden sm:inline"> </span>
+            <span className="block text-brand-red sm:inline">
+              {copy.titleAccent}
+            </span>
           </h1>
         </div>
 

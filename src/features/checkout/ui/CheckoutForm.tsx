@@ -27,6 +27,7 @@ import {
 } from "@/features/checkout/domain/checkout-delivery-cities";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
+import { createId } from "@/lib/id";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -135,7 +136,7 @@ export function CheckoutForm({
   hasItems,
 }: CheckoutFormProps) {
   const router = useRouter();
-  const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
+  const idempotencyKey = useMemo(() => createId(), []);
   const primaryCityKey = normalizeCheckoutDeliveryCity(
     CHECKOUT_DELIVERY_CITY_PRIMARY,
   );
@@ -368,7 +369,7 @@ export function CheckoutForm({
           </div>
         ) : null}
 
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} suppressHydrationWarning>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
             <CheckoutDetailsSections
               labels={labels}

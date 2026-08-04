@@ -103,6 +103,7 @@ export function CheckoutDetailsSections({
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="given-name"
+                suppressHydrationWarning
               />
             </label>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
@@ -114,6 +115,7 @@ export function CheckoutDetailsSections({
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="family-name"
+                suppressHydrationWarning
               />
             </label>
           </div>
@@ -128,6 +130,7 @@ export function CheckoutDetailsSections({
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="email"
+                suppressHydrationWarning
               />
             </label>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
@@ -141,6 +144,7 @@ export function CheckoutDetailsSections({
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="tel"
+                suppressHydrationWarning
               />
             </label>
           </div>
@@ -161,6 +165,7 @@ export function CheckoutDetailsSections({
               onChange={() => onShippingMethodChange("pickup")}
               className="mr-4 accent-brand-red"
               disabled={pending}
+              suppressHydrationWarning
             />
             <div className="flex-1">
               <div className="font-medium text-gray-900">{labels.storePickup}</div>
@@ -178,6 +183,7 @@ export function CheckoutDetailsSections({
               onChange={() => onShippingMethodChange("delivery")}
               className="mr-4 accent-brand-red"
               disabled={pending || deliveryOptions.length === 0}
+              suppressHydrationWarning
             />
             <div className="flex-1">
               <div className="font-medium text-gray-900">{labels.delivery}</div>
@@ -221,6 +227,7 @@ export function CheckoutDetailsSections({
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="street-address"
+                suppressHydrationWarning
               />
             </label>
           </div>

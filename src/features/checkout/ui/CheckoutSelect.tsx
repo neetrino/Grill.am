@@ -247,6 +247,7 @@ export function CheckoutSelect({
           name={name}
           value={value}
           required={required}
+          suppressHydrationWarning
         />
       ) : null}
 

@@ -60,6 +60,7 @@ export function CheckoutPaymentMethods({
                   onChange={() => onChange(option.id)}
                   className="mr-3 accent-brand-red self-center"
                   disabled={disabled}
+                  suppressHydrationWarning
                 />
 
                 {isCardMethod ? (
