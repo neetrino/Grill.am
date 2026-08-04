@@ -36,8 +36,7 @@ export type MobileNavPanelProps = {
   onClose: () => void;
 };
 
-const MENU_EXIT_MS = 260;
-const MENU_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+const MENU_EXIT_MS = 340;
 const MENU_GAP_PX = 8;
 const MENU_INSET_PX = 12;
 
@@ -89,14 +88,15 @@ export function MobileNavPanel({
   useEffect(() => {
     if (isOpen) {
       clearCloseTimer();
+      setVisible(true);
+      setExpanded(false);
       const openFrame = requestAnimationFrame(() => {
-        setVisible(true);
-        setExpanded(false);
+        const panel = panelRef.current;
+        if (panel) {
+          applyPanelOffset(panel);
+        }
+        // Second frame so the closed styles paint before the open transition.
         requestAnimationFrame(() => {
-          const panel = panelRef.current;
-          if (panel) {
-            applyPanelOffset(panel);
-          }
           setExpanded(true);
         });
       });
@@ -178,12 +178,11 @@ export function MobileNavPanel({
       <button
         type="button"
         aria-label={dictionary.nav.closeMenu}
-        className="fixed inset-0 z-[40] border-0 bg-black/25 backdrop-blur-[8px] transition-[opacity,visibility] duration-[260ms]"
+        className="fixed inset-0 z-[40] border-0 bg-black/25 backdrop-blur-[8px] transition-[opacity,visibility] duration-[340ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
         style={{
           opacity: expanded ? 1 : 0,
           visibility: expanded ? "visible" : "hidden",
           pointerEvents: expanded ? "auto" : "none",
-          transitionTimingFunction: MENU_EASE,
         }}
         onClick={onClose}
       />
@@ -194,13 +193,12 @@ export function MobileNavPanel({
         role="dialog"
         aria-modal="true"
         aria-label={dictionary.nav.navigation}
-        className="fixed right-3 left-3 z-[45] overflow-hidden rounded-[24px] bg-white px-5 shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition-[opacity,transform] duration-[260ms]"
+        className="fixed right-3 left-3 z-[45] origin-top overflow-hidden rounded-[24px] bg-white px-5 shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition-[opacity,transform] duration-[340ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
         style={{
           opacity: expanded ? 1 : 0,
           transform: expanded
             ? "translateY(0) scale(1)"
-            : "translateY(-10px) scale(0.98)",
-          transitionTimingFunction: MENU_EASE,
+            : "translateY(-14px) scale(0.96)",
         }}
       >
         <nav
