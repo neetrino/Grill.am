@@ -8,7 +8,7 @@ import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
-import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
 
 type AdminProductsFiltersProps = {
@@ -115,7 +115,7 @@ export function AdminProductsFilters({
             aria-label={filters.searchSku}
           />
         </label>
-        <CheckoutSelect
+        <AdminSelect
           label={filters.filterCategory}
           placeholder={filters.allCategories}
           options={categoryOptions}
@@ -130,7 +130,7 @@ export function AdminProductsFilters({
             });
           }}
         />
-        <CheckoutSelect
+        <AdminSelect
           label={filters.filterStock}
           placeholder={filters.allProducts}
           options={stockOptions}

@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   getAdminPromotionById,
   listPromotionTargetOptions,
@@ -58,7 +56,7 @@ export default async function AdminDiscountDetailPage({
             {discounts.title}
           </Link>
         </p>
-        <h1 className={ADMIN_PAGE_TITLE}>{discounts.automaticDiscount}</h1>
+        <AdminPageTitle>{discounts.automaticDiscount}</AdminPageTitle>
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
           {fillTemplate(coupons.usedTimes, {
             count: String(promo.usedCount),

@@ -7,14 +7,12 @@ import { Check, Copy, Pencil, Trash2 } from "lucide-react";
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -102,7 +100,7 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
     <section>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
+          <AdminPageTitle>{copy.title}</AdminPageTitle>
           <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{copy.subtitle}</p>
         </div>
         <Button type="button" size="sm" onClick={openCreate}>

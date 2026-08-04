@@ -76,7 +76,8 @@
     "dash": "—"
   },
   "dashboard": {
-    "welcome": "Welcome to the admin dashboard",
+    "welcomeLead": "Welcome to the",
+    "welcomeAccent": "admin dashboard",
     "users": "Users",
     "activeProducts": "Active products",
     "ordersRange": "Orders (range)",

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { listAdminOrders } from "@/features/orders/application/queries";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status";
@@ -90,7 +90,7 @@ export default async function AdminOrdersPage({
   return (
     <section>
       <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
       </div>
 
       <AdminOrdersFilters

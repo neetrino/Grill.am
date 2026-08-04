@@ -1,13 +1,23 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { createPortal } from "react-dom";
 
 import {
   DROPDOWN_ANIMATION_MS,
-  DROPDOWN_PANEL_ANCHORED_CLASS,
   DROPDOWN_PANEL_CLASS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
   dropdownPanelStateClass,
+  dropdownPortalStyle,
 } from "@/components/ui/dropdown-styles";
+import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 
 type IconDropdownProps = {
   label: string;
@@ -23,6 +33,10 @@ type IconDropdownProps = {
 /** Bridges the gap between trigger and panel so hover does not flicker. */
 const HOVER_CLOSE_DELAY_MS = 120;
 
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
+
 export function IconDropdown({
   label,
   trigger,
@@ -31,13 +45,21 @@ export function IconDropdown({
   menuPlacement = "bottom",
   menuAlign = "right",
 }: IconDropdownProps) {
+  const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const unmountTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
+  const menuPosition = useDropdownPortalPosition(mounted, triggerRef, {
+    matchTriggerWidth: false,
+    align: menuAlign,
+    placement: menuPlacement,
+  });
 
   const clearCloseTimer = useCallback((): void => {
     if (closeTimerRef.current) {
@@ -103,43 +125,88 @@ export function IconDropdown({
     }
 
     function handlePointerDown(event: MouseEvent): void {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        closeMenu();
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target) ||
+        panelRef.current?.contains(target)
+      ) {
+        return;
       }
+      closeMenu();
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        closeMenu();
+      if (event.key !== "Escape") {
+        return;
       }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeMenu();
     }
 
     document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, true);
 
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
     };
   }, [open, closeMenu]);
 
-  const placementClass =
-    menuPlacement === "top" ? "bottom-full mb-[6px] top-auto" : "";
-  const alignClass =
-    menuAlign === "left" ? "!left-0 !right-auto" : "!right-0 !left-auto";
+  const panel =
+    canPortal && mounted && menuPosition
+      ? createPortal(
+          <div
+            ref={panelRef}
+            id={menuId}
+            role="menu"
+            aria-label={label}
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} min-w-40 overflow-hidden ${dropdownPanelStateClass(visible)}`}
+            style={dropdownPortalStyle(menuPosition)}
+            onMouseEnter={openMenu}
+            onMouseLeave={scheduleClose}
+          >
+            <div
+              onClick={(event) => {
+                const target = event.target;
+                if (
+                  target instanceof Element &&
+                  target.closest("form, button[type='submit']")
+                ) {
+                  return;
+                }
+                closeMenu();
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") {
+                  return;
+                }
+                const target = event.target;
+                if (
+                  target instanceof Element &&
+                  target.closest("form, button[type='submit']")
+                ) {
+                  return;
+                }
+                closeMenu();
+              }}
+            >
+              {children}
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <div
       ref={rootRef}
-      className={
-        open
-          ? "relative z-50 inline-flex items-center"
-          : "relative inline-flex items-center"
-      }
+      className="relative inline-flex items-center"
       onMouseEnter={openMenu}
       onMouseLeave={scheduleClose}
     >
       <button
+        ref={triggerRef}
         type="button"
         className={
           triggerClassName ??
@@ -155,42 +222,7 @@ export function IconDropdown({
         {trigger}
       </button>
 
-      {mounted ? (
-        <div
-          id={menuId}
-          role="menu"
-          aria-label={label}
-          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} ${alignClass} min-w-40 overflow-hidden ${placementClass} ${dropdownPanelStateClass(visible)}`}
-        >
-          <div
-            onClick={(event) => {
-              const target = event.target;
-              if (
-                target instanceof Element &&
-                target.closest("form, button[type='submit']")
-              ) {
-                return;
-              }
-              closeMenu();
-            }}
-            onKeyDown={(event) => {
-              if (event.key !== "Enter" && event.key !== " ") {
-                return;
-              }
-              const target = event.target;
-              if (
-                target instanceof Element &&
-                target.closest("form, button[type='submit']")
-              ) {
-                return;
-              }
-              closeMenu();
-            }}
-          >
-            {children}
-          </div>
-        </div>
-      ) : null}
+      {panel}
     </div>
   );
 }

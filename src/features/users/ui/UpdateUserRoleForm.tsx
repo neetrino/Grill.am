@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
-import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { updateUserRoleAction } from "@/features/users/application/update-user";
 import {
   USER_ROLES,
@@ -73,7 +73,7 @@ export function UpdateUserRoleForm({
             {adminUserRoleLabel(currentRole, dictionary.users.roles)}
           </strong>
         </p>
-        <CheckoutSelect
+        <AdminSelect
           name="role"
           label={forms.newRole}
           placeholder={forms.newRole}

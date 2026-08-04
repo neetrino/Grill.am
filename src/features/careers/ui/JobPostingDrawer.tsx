@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { X } from "lucide-react";
+import { useRef, useState, useTransition } from "react";
 
+import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
@@ -24,6 +24,8 @@ import {
 } from "@/features/careers/ui/JobPostingDrawerFields";
 import { locales, type Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+
+const JOB_POSTING_DRAWER_FORM_ID = "job-posting-drawer-form";
 
 type JobPostingDrawerProps = {
   locale: string;
@@ -131,26 +133,8 @@ export function JobPostingDrawer({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (!open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    function handleEscape(event: KeyboardEvent): void {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
   const draft = drafts[activeLocale];
+  const drawerTitle = isEdit ? copy.editShort : copy.addShort;
 
   function updateDraft(patch: Partial<JobLocaleDraft>): void {
     setDrafts((current) => ({
@@ -189,34 +173,28 @@ export function JobPostingDrawer({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/40"
-      role="dialog"
-      aria-modal="true"
-      aria-label={isEdit ? copy.editTitle : copy.addTitle}
-      onClick={onClose}
-    >
-      <div
-        className="flex h-full w-full max-w-none flex-col bg-white shadow-2xl md:w-1/2"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? copy.editShort : copy.addShort}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={common.close}
+    <SideSheet
+      open={open}
+      onClose={onClose}
+      title={drawerTitle}
+      closeLabel={common.close}
+      footer={
+        <div className="border-t border-gray-100 px-5 py-4 lg:px-4">
+          <Button
+            type="submit"
+            form={JOB_POSTING_DRAWER_FORM_ID}
+            className="w-full"
+            disabled={isPending}
           >
-            <X className="h-5 w-5" />
-          </button>
+            {isPending ? common.saving : common.save}
+          </Button>
         </div>
-
-        <form
-          className="flex min-h-0 flex-1 flex-col"
-          onSubmit={(event) => {
+      }
+    >
+      <form
+        id={JOB_POSTING_DRAWER_FORM_ID}
+        className="space-y-6"
+        onSubmit={(event) => {
             event.preventDefault();
             const current = drafts[activeLocale];
             const nextSlug = resolvedSlug(slug, slugTouched, current.title);
@@ -298,13 +276,7 @@ export function JobPostingDrawer({
             disabled={isPending}
           />
 
-          <div className="border-t border-gray-200 px-5 py-4">
-            <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? common.saving : common.save}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </SideSheet>
   );
 }

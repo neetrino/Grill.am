@@ -10,7 +10,7 @@ import {
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
-import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
 import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
@@ -101,7 +101,7 @@ export function AdminOrdersFilters({
           });
         }}
       >
-        <CheckoutSelect
+        <AdminSelect
           label={filters.orderStatus}
           hideLabel
           fitContent
@@ -117,7 +117,7 @@ export function AdminOrdersFilters({
             });
           }}
         />
-        <CheckoutSelect
+        <AdminSelect
           label={filters.paymentStatus}
           hideLabel
           fitContent

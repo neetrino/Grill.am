@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 
+import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import type { TranslationsJson } from "@/db/schema";
 import {
@@ -176,6 +176,7 @@ type DrawerDraftSnapshot = {
 };
 
 const DRAWER_SNAPSHOT_KEY = "grill:admin-product-drawer-draft";
+const PRODUCT_DRAWER_FORM_ID = "product-drawer-form";
 
 function readDrawerSnapshot(sessionKey: string): DrawerDraftSnapshot | null {
   if (typeof window === "undefined") return null;
@@ -258,23 +259,6 @@ export function ProductDrawer({
   const [isPending, startTransition] = useTransition();
   /** Prevents prop churn (e.g. categories refresh) from wiping in-progress locale drafts. */
   const editorSessionKeyRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    function handleEscape(event: KeyboardEvent): void {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [open, onClose]);
 
   useEffect(() => {
     if (!open) {
@@ -419,8 +403,6 @@ export function ProductDrawer({
     }
   }
 
-  if (!open) return null;
-
   const draft = drafts[activeLocale];
   const form = dictionary.products.form;
   const drawerTitle = isEdit
@@ -428,32 +410,41 @@ export function ProductDrawer({
     : dictionary.products.addProduct;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/40"
-      role="dialog"
-      aria-modal="true"
-      aria-label={drawerTitle}
-      onClick={onClose}
-    >
-      <div
-        className="flex h-full w-[70%] flex-col bg-white shadow-2xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">{drawerTitle}</h2>
+    <SideSheet
+      open={open}
+      onClose={onClose}
+      title={drawerTitle}
+      closeLabel={dictionary.common.close}
+      desktopWidthPercent={70}
+      footer={
+        <div className="flex items-center gap-4 border-t border-gray-100 px-5 py-4 lg:px-4">
+          <Button
+            type="submit"
+            form={PRODUCT_DRAWER_FORM_ID}
+            disabled={isPending}
+          >
+            {isPending
+              ? isEdit
+                ? dictionary.common.saving
+                : dictionary.common.creating
+              : isEdit
+                ? dictionary.common.save
+                : dictionary.common.create}
+          </Button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={dictionary.common.close}
+            className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
-            <X className="h-5 w-5" />
+            {dictionary.common.cancel}
           </button>
         </div>
-
-        <form
-          className="flex min-h-0 flex-1 flex-col"
-          onSubmit={(event) => {
+      }
+    >
+      <form
+        id={PRODUCT_DRAWER_FORM_ID}
+        className="space-y-4"
+        onSubmit={(event) => {
             event.preventDefault();
             const localeCopies = buildLocaleCopies(drafts);
             if (Object.keys(localeCopies).length === 0) {
@@ -521,10 +512,9 @@ export function ProductDrawer({
               onClose();
               router.refresh();
             });
-          }}
-        >
-          <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-            <AdminLocaleTabs
+        }}
+      >
+        <AdminLocaleTabs
               activeLocale={activeLocale}
               onChange={setActiveLocale}
               disabled={isPending}
@@ -694,29 +684,8 @@ export function ProductDrawer({
               </label>
             </div>
 
-            {error ? <p className="text-sm text-red-700">{error}</p> : null}
-          </div>
-
-          <div className="sticky bottom-0 flex items-center gap-4 border-t border-gray-200 bg-white px-5 py-4">
-            <Button type="submit" disabled={isPending}>
-              {isPending
-                ? isEdit
-                  ? dictionary.common.saving
-                  : dictionary.common.creating
-                : isEdit
-                  ? dictionary.common.save
-                  : dictionary.common.create}
-            </Button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-sm font-medium text-gray-600 hover:text-gray-900"
-            >
-              {dictionary.common.cancel}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      </form>
+    </SideSheet>
   );
 }

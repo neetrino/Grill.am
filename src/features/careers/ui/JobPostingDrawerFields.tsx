@@ -5,9 +5,9 @@ import type { RefObject } from "react";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
-  ADMIN_SELECT,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import {
@@ -89,7 +89,7 @@ export function JobPostingDrawerFields({
   const common = dictionary.common;
 
   return (
-    <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5">
+    <>
       <AdminLocaleTabs
         activeLocale={activeLocale}
         onChange={onLocaleChange}
@@ -168,39 +168,33 @@ export function JobPostingDrawerFields({
           </label>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.employmentType}</span>
-              <select
-                value={employmentType}
-                onChange={(event) =>
-                  onEmploymentTypeChange(
-                    event.target.value as JobEmploymentType,
-                  )
-                }
-                className={ADMIN_SELECT}
-                disabled={disabled}
-              >
-                <option value="FULL_TIME">{employment.fullTime}</option>
-                <option value="PART_TIME">{employment.partTime}</option>
-                <option value="CONTRACT">{employment.contract}</option>
-                <option value="INTERNSHIP">{employment.internship}</option>
-              </select>
-            </label>
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.status}</span>
-              <select
-                value={status}
-                onChange={(event) =>
-                  onStatusChange(event.target.value as JobPostingStatus)
-                }
-                className={ADMIN_SELECT}
-                disabled={disabled}
-              >
-                <option value="DRAFT">{statusCopy.draft}</option>
-                <option value="ACTIVE">{statusCopy.active}</option>
-                <option value="ARCHIVED">{statusCopy.archived}</option>
-              </select>
-            </label>
+            <AdminSelect
+              label={copy.employmentType}
+              placeholder={copy.employmentType}
+              options={[
+                { value: "FULL_TIME", label: employment.fullTime },
+                { value: "PART_TIME", label: employment.partTime },
+                { value: "CONTRACT", label: employment.contract },
+                { value: "INTERNSHIP", label: employment.internship },
+              ]}
+              value={employmentType}
+              disabled={disabled}
+              onChange={(value) =>
+                onEmploymentTypeChange(value as JobEmploymentType)
+              }
+            />
+            <AdminSelect
+              label={copy.status}
+              placeholder={copy.status}
+              options={[
+                { value: "DRAFT", label: statusCopy.draft },
+                { value: "ACTIVE", label: statusCopy.active },
+                { value: "ARCHIVED", label: statusCopy.archived },
+              ]}
+              value={status}
+              disabled={disabled}
+              onChange={(value) => onStatusChange(value as JobPostingStatus)}
+            />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -217,23 +211,19 @@ export function JobPostingDrawerFields({
                 placeholder={copy.salaryOptional}
               />
             </label>
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.salaryCurrency}</span>
-              <select
-                value={salaryCurrency}
-                onChange={(event) =>
-                  onSalaryCurrencyChange(event.target.value as Currency)
-                }
-                className={ADMIN_SELECT}
-                disabled={disabled}
-              >
-                {currencies.map((currency) => (
-                  <option key={currency} value={currency}>
-                    {currency}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <AdminSelect
+              label={copy.salaryCurrency}
+              placeholder={copy.salaryCurrency}
+              options={currencies.map((currency) => ({
+                value: currency,
+                label: currency,
+              }))}
+              value={salaryCurrency}
+              disabled={disabled}
+              onChange={(value) =>
+                onSalaryCurrencyChange(value as Currency)
+              }
+            />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -311,6 +301,6 @@ export function JobPostingDrawerFields({
       </div>
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-    </div>
+    </>
   );
 }

@@ -7,14 +7,17 @@ import { Pencil, Trash2 } from "lucide-react";
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_INPUT,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
+import {
+  ADMIN_CONTENT_CARD_CLASS,
+  ADMIN_CONTENT_CARD_GRID,
+  ADMIN_CONTENT_CARD_STATUS_CLASS,
+} from "@/features/admin/ui/admin-ui";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteJobPostingAction } from "@/features/careers/application/manage-job";
 import type { AdminJobListItem } from "@/features/careers/application/queries";
@@ -120,7 +123,7 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
         <Button type="button" size="sm" onClick={openCreate}>
           {copy.addPosition}
         </Button>
@@ -136,82 +139,81 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
-      <div className="space-y-3">
-        {filtered.length === 0 ? (
-          <Card className="rounded-xl p-8">
-            <p className="text-center text-sm text-gray-600">
-              {postings.length === 0 ? copy.empty : copy.emptySearch}
-            </p>
-          </Card>
-        ) : (
-          filtered.map((posting) => (
-            <Card key={posting.id} className="rounded-xl p-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex min-w-0 flex-1 gap-3">
-                  {posting.coverUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- admin list thumbnail
-                    <img
-                      src={posting.coverUrl}
-                      alt=""
-                      className="h-16 w-16 shrink-0 rounded-lg object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-xs text-gray-400">
-                      {copy.noImage}
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-gray-900">
-                      {posting.title}
-                    </p>
-                    <p className="mt-0.5 text-sm text-gray-500">
-                      {employmentLabel(posting.employmentType)}
-                      {posting.location ? ` · ${posting.location}` : ""}
-                      {posting.salaryAmount != null
-                        ? ` · ${formatMoneyAmount(posting.salaryAmount, posting.salaryCurrency, locale)}`
-                        : ""}
-                    </p>
-                    <p className="mt-0.5 truncate text-xs text-gray-400">
-                      {posting.path}
-                      {posting.publishedAt ? ` · ${posting.publishedAt}` : ""}
-                    </p>
+      {filtered.length === 0 ? (
+        <Card className="rounded-[15px] p-8">
+          <p className="text-center text-sm text-gray-600">
+            {postings.length === 0 ? copy.empty : copy.emptySearch}
+          </p>
+        </Card>
+      ) : (
+        <div className={ADMIN_CONTENT_CARD_GRID}>
+          {filtered.map((posting) => (
+            <Card key={posting.id} className={ADMIN_CONTENT_CARD_CLASS}>
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
+                {posting.coverUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- admin list thumbnail
+                  <img
+                    src={posting.coverUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
+                    {copy.noImage}
+                  </div>
+                )}
+                <span
+                  className={`${ADMIN_BADGE} ${ADMIN_CONTENT_CARD_STATUS_CLASS} ${statusBadgeClass(posting.status)}`}
+                >
+                  {statusLabel(posting.status)}
+                </span>
+              </div>
+              <div className="flex flex-1 flex-col gap-2 p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="min-w-0 flex-1 line-clamp-2 font-medium text-gray-900">
+                    {posting.title}
+                  </p>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => openEdit(posting)}
+                      className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
+                      aria-label={formatAdminMessage(copy.editNamed, {
+                        title: posting.title,
+                      })}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => handleDelete(posting.id)}
+                      className="rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50"
+                      aria-label={formatAdminMessage(copy.deleteNamed, {
+                        title: posting.title,
+                      })}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-1 sm:justify-end">
-                  <span
-                    className={`${ADMIN_BADGE} ${statusBadgeClass(posting.status)}`}
-                  >
-                    {statusLabel(posting.status)}
-                  </span>
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => openEdit(posting)}
-                    className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
-                    aria-label={formatAdminMessage(copy.editNamed, {
-                      title: posting.title,
-                    })}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => handleDelete(posting.id)}
-                    className="rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50"
-                    aria-label={formatAdminMessage(copy.deleteNamed, {
-                      title: posting.title,
-                    })}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+                <p className="line-clamp-2 text-sm text-gray-500">
+                  {employmentLabel(posting.employmentType)}
+                  {posting.location ? ` · ${posting.location}` : ""}
+                  {posting.salaryAmount != null
+                    ? ` · ${formatMoneyAmount(posting.salaryAmount, posting.salaryCurrency, locale)}`
+                    : ""}
+                </p>
+                <p className="truncate text-xs text-gray-400">
+                  {posting.path}
+                  {posting.publishedAt ? ` · ${posting.publishedAt}` : ""}
+                </p>
               </div>
             </Card>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       {drawerOpen ? (
         <JobPostingDrawer

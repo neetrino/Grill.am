@@ -10,6 +10,16 @@ export const ADMIN_CARD_CLASS =
 
 export const ADMIN_CARD_PADDED_CLASS = `${ADMIN_CARD_CLASS} p-6`;
 
+/** Content list grids — careers / blog / popups / hero. */
+export const ADMIN_CONTENT_CARD_GRID =
+  "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3";
+
+export const ADMIN_CONTENT_CARD_CLASS = `${ADMIN_CARD_CLASS} flex h-full flex-col overflow-hidden !border-0 !shadow-none p-0`;
+
+/** Status pill overlay on content-card thumbnails (hero / popups / blog / careers). */
+export const ADMIN_CONTENT_CARD_STATUS_CLASS =
+  "absolute top-2 right-2 z-[1] shadow-sm";
+
 /** Matches profile sidebar nav slide timing. */
 export const ADMIN_NAV_TRANSITION_MS = 380;
 

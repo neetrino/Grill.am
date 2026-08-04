@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { DashboardStatsGrid } from "@/features/admin/ui/DashboardStatsGrid";
-import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import {
   ADMIN_BADGE,
   paymentStatusBadgeClass,
@@ -100,7 +100,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
   return (
     <section>
       <div className="mb-8">
-        <p className={ADMIN_PAGE_SUBTITLE}>{copy.welcome}</p>
+        <AdminPageTitle lead={copy.welcomeLead} accent={copy.welcomeAccent} />
       </div>
 
       <DashboardStatsGrid

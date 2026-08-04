@@ -6,11 +6,12 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import {
   ADMIN_LABEL,
-  ADMIN_SELECT,
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import { changePaymentStatusAction } from "@/features/orders/application/change-payment-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
 import { adminPaymentStatusLabel } from "@/features/orders/ui/admin-order-status-labels";
@@ -33,6 +34,7 @@ export function ChangePaymentStatusForm({
   const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [toStatus, setToStatus] = useState(eligibleStatuses[0] ?? "");
   const [isPending, startTransition] = useTransition();
 
   if (eligibleStatuses.length === 0) {
@@ -41,21 +43,28 @@ export function ChangePaymentStatusForm({
     );
   }
 
+  const statusOptions = eligibleStatuses.map((status) => ({
+    value: status,
+    label: adminPaymentStatusLabel(status, dictionary.orders.paymentStatus),
+  }));
+
   return (
-    <Card className="p-6">
+    <Card
+      className={`overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}
+    >
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const toStatus = String(formData.get("toStatus") ?? "");
+          const nextStatus = String(formData.get("toStatus") ?? "");
           const noteRaw = String(formData.get("note") ?? "").trim();
 
           startTransition(async () => {
             setError(null);
             const result = await changePaymentStatusAction(locale, {
               orderNumber,
-              toStatus: toStatus as PaymentStatus,
+              toStatus: nextStatus as PaymentStatus,
               note: noteRaw.length > 0 ? noteRaw : undefined,
             });
 
@@ -77,22 +86,16 @@ export function ChangePaymentStatusForm({
             )}
           </strong>
         </p>
-        <label>
-          <span className={ADMIN_LABEL}>{forms.newPaymentStatus}</span>
-          <select
-            name="toStatus"
-            required
-            className={ADMIN_SELECT}
-            defaultValue={eligibleStatuses[0]}
-            disabled={isPending}
-          >
-            {eligibleStatuses.map((status) => (
-              <option key={status} value={status}>
-                {adminPaymentStatusLabel(status, dictionary.orders.paymentStatus)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <AdminSelect
+          name="toStatus"
+          label={forms.newPaymentStatus}
+          placeholder={forms.newPaymentStatus}
+          required
+          options={statusOptions}
+          value={toStatus}
+          disabled={isPending}
+          onChange={setToStatus}
+        />
         <label>
           <span className={ADMIN_LABEL}>{forms.noteOptional}</span>
           <textarea

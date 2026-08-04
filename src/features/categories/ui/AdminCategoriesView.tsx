@@ -7,11 +7,9 @@ import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_INPUT,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import { formatAdminMessage } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -163,7 +161,7 @@ export function AdminCategoriesView({
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>{copy.title}</h1>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
         <Button
           type="button"
           size="sm"

@@ -87,9 +87,10 @@ body {
 
 .dropdown-panel--portal {
   position: fixed;
-  top: var(--dropdown-top);
+  top: var(--dropdown-top, auto);
+  bottom: var(--dropdown-bottom, auto);
   left: var(--dropdown-left);
-  z-index: 300;
+  z-index: 400;
   width: max-content;
   min-width: var(--dropdown-min-width, auto);
   max-width: var(--dropdown-max-width, none);

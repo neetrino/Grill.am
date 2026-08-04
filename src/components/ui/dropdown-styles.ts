@@ -6,7 +6,8 @@
 export const DROPDOWN_ANIMATION_MS = 150;
 export const DROPDOWN_GAP_PX = 6;
 export const DROPDOWN_MAX_HEIGHT_PX = 220;
-export const DROPDOWN_PORTAL_Z_INDEX = 200;
+/** Above SideSheet / drawers (z-200) and header overlays. */
+export const DROPDOWN_PORTAL_Z_INDEX = 400;
 
 /** Panel surface + scroll (anchored under trigger or portal). */
 export const DROPDOWN_PANEL_CLASS = "dropdown-panel";
@@ -30,7 +31,10 @@ export const DROPDOWN_OPTION_CLASS = "dropdown-option";
 export const DROPDOWN_OPTION_SELECTED_CLASS = "dropdown-option--selected";
 
 export type DropdownPortalPosition = {
-  top: number;
+  /** Distance from viewport top (mutually exclusive with `bottom`). */
+  top?: number;
+  /** Distance from viewport bottom (opens upward). */
+  bottom?: number;
   left: number;
   minWidth?: number;
   maxWidth?: number;
@@ -43,9 +47,14 @@ export function dropdownPortalStyle(
   position: DropdownPortalPosition,
 ): Record<string, string> {
   const style: Record<string, string> = {
-    "--dropdown-top": `${position.top}px`,
     "--dropdown-left": `${position.left}px`,
   };
+  if (position.top != null) {
+    style["--dropdown-top"] = `${position.top}px`;
+  }
+  if (position.bottom != null) {
+    style["--dropdown-bottom"] = `${position.bottom}px`;
+  }
   if (position.minWidth != null) {
     style["--dropdown-min-width"] = `${position.minWidth}px`;
   }

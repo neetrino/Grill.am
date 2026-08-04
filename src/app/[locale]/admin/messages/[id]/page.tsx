@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import {
   ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminContactMessageById } from "@/features/contact/application/queries";
 import {
@@ -79,7 +79,7 @@ export default async function AdminMessageDetailPage({
             {copy.title}
           </Link>
         </p>
-        <h1 className={ADMIN_PAGE_TITLE}>{message.subject}</h1>
+        <AdminPageTitle>{message.subject}</AdminPageTitle>
       </div>
 
       <Card className="mb-6 p-6">

@@ -76,7 +76,8 @@
     "dash": "—"
   },
   "dashboard": {
-    "welcome": "Բարի գալուստ ադմին վահանակ",
+    "welcomeLead": "Բարի գալուստ",
+    "welcomeAccent": "ադմին վահանակ",
     "users": "Օգտատերեր",
     "activeProducts": "Ակտիվ ապրանքներ",
     "ordersRange": "Պատվերներ (ժամանակահատված)",

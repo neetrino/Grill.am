@@ -16,7 +16,7 @@ import {
   rangeForAnalyticsPeriod,
   type AnalyticsPeriodPreset,
 } from "@/features/analytics/domain/date-range";
-import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 
 type AnalyticsPeriodCardProps = {
   locale: string;
@@ -113,7 +113,7 @@ export function AnalyticsPeriodCard({
       </div>
 
       <div className="max-w-md">
-        <CheckoutSelect
+        <AdminSelect
           label={copy.label}
           placeholder={copy.label}
           options={periodOptions}

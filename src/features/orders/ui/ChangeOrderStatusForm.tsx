@@ -11,7 +11,7 @@ import {
   ADMIN_TEXTAREA,
 } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
-import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { changeOrderStatusAction } from "@/features/orders/application/change-order-status";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { adminOrderStatusLabel } from "@/features/orders/ui/admin-order-status-labels";
@@ -81,7 +81,7 @@ export function ChangeOrderStatusForm({
             {adminOrderStatusLabel(currentStatus, dictionary.orders.status)}
           </strong>
         </p>
-        <CheckoutSelect
+        <AdminSelect
           name="toStatus"
           label={forms.newStatus}
           placeholder={forms.newStatus}

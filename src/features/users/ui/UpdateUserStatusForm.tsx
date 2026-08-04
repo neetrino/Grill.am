@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
-import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { updateUserStatusAction } from "@/features/users/application/update-user";
 import type { UserStatus } from "@/features/users/domain/user-lifecycle";
 import { adminUserStatusLabel } from "@/features/users/ui/admin-user-labels";
@@ -75,7 +75,7 @@ export function UpdateUserStatusForm({
             {adminUserStatusLabel(currentStatus, dictionary.users.statuses)}
           </strong>
         </p>
-        <CheckoutSelect
+        <AdminSelect
           name="status"
           label={forms.newStatus}
           placeholder={forms.newStatus}

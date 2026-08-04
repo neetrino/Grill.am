@@ -1,16 +1,26 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useId, useRef, useState, useTransition } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  useTransition,
+} from "react";
 import { ChevronDown, Globe } from "lucide-react";
+import { createPortal } from "react-dom";
 
 import { HeaderCurrencyIcon } from "@/components/layout/HeaderIcons";
 import { AppLink } from "@/components/ui/AppLink";
 import {
   DROPDOWN_ANIMATION_MS,
-  DROPDOWN_PANEL_ANCHORED_CLASS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
   dropdownPanelStateClass,
+  dropdownPortalStyle,
 } from "@/components/ui/dropdown-styles";
+import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 import { setCurrencyAction } from "@/features/preferences/set-currency-action";
 import type { Locale } from "@/lib/i18n/config";
 import { localeLabels, locales } from "@/lib/i18n/config";
@@ -30,6 +40,10 @@ const localeShortLabels: Record<Locale, string> = {
   ru: "RU",
 };
 
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
+
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
   const segments = pathname.split("/");
   if (segments.length > 1) {
@@ -48,14 +62,21 @@ export function HeaderLocaleCurrencyPill({
 }: HeaderLocaleCurrencyPillProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [pending, startTransition] = useTransition();
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
+  const menuPosition = useDropdownPortalPosition(mounted, triggerRef, {
+    matchTriggerWidth: true,
+    lockTriggerWidth: true,
+  });
 
   function clearCloseTimer(): void {
     if (closeTimerRef.current) {
@@ -101,23 +122,31 @@ export function HeaderLocaleCurrencyPill({
     }
 
     function handlePointerDown(event: MouseEvent): void {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        closeMenu();
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target) ||
+        panelRef.current?.contains(target)
+      ) {
+        return;
       }
+      closeMenu();
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        closeMenu();
+      if (event.key !== "Escape") {
+        return;
       }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeMenu();
     }
 
     document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, true);
 
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
     };
   }, [open]);
 
@@ -126,12 +155,103 @@ export function HeaderLocaleCurrencyPill({
   const idleItemClassName =
     "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm text-gray-500 transition-colors hover:bg-gray-50";
 
+  const panel =
+    canPortal && mounted && menuPosition
+      ? createPortal(
+          <div
+            ref={panelRef}
+            id={menuId}
+            role="dialog"
+            aria-label={`${currencyLabel} / ${languageLabel}`}
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-2 ${dropdownPanelStateClass(visible)}`}
+            style={dropdownPortalStyle(menuPosition)}
+          >
+            <div className="flex w-full">
+              <div className="min-w-0 flex-1 border-r border-gray-100">
+                <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+                  {currencyLabel}
+                </p>
+                <ul
+                  role="listbox"
+                  aria-label={currencyLabel}
+                  className="px-1.5"
+                >
+                  {currencies.map((item) => {
+                    const selected = item === currency;
+
+                    return (
+                      <li key={item} role="option" aria-selected={selected}>
+                        <button
+                          type="button"
+                          disabled={pending}
+                          className={
+                            selected ? selectedItemClassName : idleItemClassName
+                          }
+                          onClick={() => {
+                            if (item === currency) {
+                              closeMenu();
+                              return;
+                            }
+                            startTransition(async () => {
+                              await setCurrencyAction(item);
+                              router.refresh();
+                              closeMenu();
+                            });
+                          }}
+                        >
+                          {item}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+                  {languageLabel}
+                </p>
+                <ul
+                  role="listbox"
+                  aria-label={languageLabel}
+                  className="px-1.5"
+                >
+                  {locales.map((item) => {
+                    const href = replaceLocaleInPath(pathname, item);
+                    const selected = item === locale;
+
+                    return (
+                      <li key={item} role="option" aria-selected={selected}>
+                        <AppLink
+                          href={href}
+                          hrefLang={item}
+                          prefetchPolicy="intent"
+                          aria-label={`${localeShortLabels[item]}: ${localeLabels[item]}`}
+                          className={
+                            selected ? selectedItemClassName : idleItemClassName
+                          }
+                          onClick={closeMenu}
+                        >
+                          {localeLabels[item]}
+                        </AppLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
+
   return (
     <div
       ref={rootRef}
       className="relative inline-flex w-[212px] shrink-0 items-center"
     >
       <button
+        ref={triggerRef}
         type="button"
         className="inline-flex h-[49px] w-full items-center justify-center gap-2 rounded-full bg-brand-surface px-6 text-base font-bold text-[#333] capitalize transition hover:bg-[#ececec]"
         aria-label={`${languageLabel} / ${currencyLabel}`}
@@ -153,89 +273,7 @@ export function HeaderLocaleCurrencyPill({
         />
       </button>
 
-      {mounted ? (
-        <div
-          id={menuId}
-          role="dialog"
-          aria-label={`${currencyLabel} / ${languageLabel}`}
-          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} !min-w-full !w-full overflow-hidden py-2 ${dropdownPanelStateClass(visible)}`}
-        >
-          <div className="flex w-full">
-            <div className="min-w-0 flex-1 border-r border-gray-100">
-              <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-                {currencyLabel}
-              </p>
-              <ul
-                role="listbox"
-                aria-label={currencyLabel}
-                className="px-1.5"
-              >
-                {currencies.map((item) => {
-                  const selected = item === currency;
-
-                  return (
-                    <li key={item} role="option" aria-selected={selected}>
-                      <button
-                        type="button"
-                        disabled={pending}
-                        className={
-                          selected ? selectedItemClassName : idleItemClassName
-                        }
-                        onClick={() => {
-                          if (item === currency) {
-                            closeMenu();
-                            return;
-                          }
-                          startTransition(async () => {
-                            await setCurrencyAction(item);
-                            router.refresh();
-                            closeMenu();
-                          });
-                        }}
-                      >
-                        {item}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-                {languageLabel}
-              </p>
-              <ul
-                role="listbox"
-                aria-label={languageLabel}
-                className="px-1.5"
-              >
-                {locales.map((item) => {
-                  const href = replaceLocaleInPath(pathname, item);
-                  const selected = item === locale;
-
-                  return (
-                    <li key={item} role="option" aria-selected={selected}>
-                      <AppLink
-                        href={href}
-                        hrefLang={item}
-                        prefetchPolicy="intent"
-                        aria-label={`${localeShortLabels[item]}: ${localeLabels[item]}`}
-                        className={
-                          selected ? selectedItemClassName : idleItemClassName
-                        }
-                        onClick={closeMenu}
-                      >
-                        {localeLabels[item]}
-                      </AppLink>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {panel}
     </div>
   );
 }

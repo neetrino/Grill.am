@@ -6,14 +6,18 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
+import { createPortal } from "react-dom";
 
 import {
   DROPDOWN_ANIMATION_MS,
-  DROPDOWN_PANEL_ANCHORED_CLASS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
   dropdownOptionClass,
   dropdownPanelStateClass,
+  dropdownPortalStyle,
 } from "@/components/ui/dropdown-styles";
+import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 
 export type CheckoutSelectOption = {
   value: string;
@@ -35,6 +39,10 @@ type CheckoutSelectProps = {
   /** Shrink trigger to content width (filter bars). */
   fitContent?: boolean;
 };
+
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
 
 function SelectChevron({ isOpen }: { isOpen: boolean }) {
   return (
@@ -59,7 +67,7 @@ function SelectChevron({ isOpen }: { isOpen: boolean }) {
   );
 }
 
-/** Checkout location select — uses global dropdown panel styles. */
+/** Checkout / admin select — portal panel so lists paint above sheets. */
 export function CheckoutSelect({
   label,
   placeholder,
@@ -73,13 +81,21 @@ export function CheckoutSelect({
   hideLabel = false,
   fitContent = false,
 }: CheckoutSelectProps) {
+  const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isDropdownExpanded, setIsDropdownExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLUListElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listboxId = useId();
   const triggerId = useId();
+  const menuPosition = useDropdownPortalPosition(
+    isDropdownVisible,
+    triggerRef,
+    { matchTriggerWidth: true, lockTriggerWidth: fitContent },
+  );
 
   const selectedOption = options.find((option) => option.value === value);
   const displayLabel = selectedOption?.label ?? placeholder;
@@ -139,23 +155,29 @@ export function CheckoutSelect({
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (containerRef.current?.contains(target)) {
+      if (
+        containerRef.current?.contains(target) ||
+        panelRef.current?.contains(target)
+      ) {
         return;
       }
       closeDropdown();
     };
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeDropdown();
+      if (event.key !== "Escape") {
+        return;
       }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeDropdown();
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", handleEscape, true);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleEscape, true);
     };
   }, [closeDropdown, isOpen]);
 
@@ -168,6 +190,38 @@ export function CheckoutSelect({
   const triggerBorderClass = isOpen
     ? "border-brand-red"
     : "border-gray-200";
+
+  const panel =
+    canPortal && isDropdownVisible && menuPosition
+      ? createPortal(
+          <ul
+            ref={panelRef}
+            id={listboxId}
+            role="listbox"
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} ${dropdownPanelStateClass(isDropdownExpanded)}`}
+            style={dropdownPortalStyle(menuPosition)}
+          >
+            {options.map((option) => {
+              const isSelected = option.value === value;
+
+              return (
+                <li key={option.value || "__empty__"} role="presentation">
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => handleSelect(option.value)}
+                    className={dropdownOptionClass(isSelected)}
+                  >
+                    {option.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>,
+          document.body,
+        )
+      : null;
 
   return (
     <div
@@ -195,6 +249,7 @@ export function CheckoutSelect({
       ) : null}
 
       <button
+        ref={triggerRef}
         id={triggerId}
         type="button"
         role="combobox"
@@ -218,31 +273,7 @@ export function CheckoutSelect({
         <SelectChevron isOpen={isOpen} />
       </button>
 
-      {isDropdownVisible ? (
-        <ul
-          id={listboxId}
-          role="listbox"
-          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} ${dropdownPanelStateClass(isDropdownExpanded)}`}
-        >
-          {options.map((option) => {
-            const isSelected = option.value === value;
-
-            return (
-              <li key={option.value || "__empty__"} role="presentation">
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => handleSelect(option.value)}
-                  className={dropdownOptionClass(isSelected)}
-                >
-                  {option.label}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
+      {panel}
     </div>
   );
 }

@@ -6,17 +6,21 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
   useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
+import { createPortal } from "react-dom";
 
 import {
   DROPDOWN_ANIMATION_MS,
-  DROPDOWN_PANEL_ANCHORED_CLASS,
+  DROPDOWN_PANEL_PORTAL_CLASS,
   dropdownOptionClass,
   dropdownPanelStateClass,
+  dropdownPortalStyle,
 } from "@/components/ui/dropdown-styles";
+import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -50,6 +54,10 @@ type AdminInlineStatusSelectProps = {
   disabled?: boolean;
 };
 
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
+
 export function AdminInlineStatusSelect({
   locale,
   orderNumber,
@@ -59,6 +67,7 @@ export function AdminInlineStatusSelect({
 }: AdminInlineStatusSelectProps) {
   const dictionary = useAdminDictionary();
   const router = useRouter();
+  const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [open, setOpen] = useState(false);
   const [panelVisible, setPanelVisible] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);
@@ -67,8 +76,13 @@ export function AdminInlineStatusSelect({
   const [syncedValue, setSyncedValue] = useState(value);
   const [isPending, startTransition] = useTransition();
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLUListElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
+  const menuPosition = useDropdownPortalPosition(panelVisible, triggerRef, {
+    matchTriggerWidth: true,
+  });
 
   if (value !== syncedValue) {
     setSyncedValue(value);
@@ -129,22 +143,28 @@ export function AdminInlineStatusSelect({
 
     function handlePointerDown(event: MouseEvent): void {
       const target = event.target as Node;
-      if (rootRef.current?.contains(target)) {
+      if (
+        rootRef.current?.contains(target) ||
+        panelRef.current?.contains(target)
+      ) {
         return;
       }
       closeDropdown();
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") closeDropdown();
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeDropdown();
     }
 
     document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, true);
 
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
     };
   }, [closeDropdown, open]);
 
@@ -187,9 +207,45 @@ export function AdminInlineStatusSelect({
     });
   }
 
+  const panel =
+    canPortal && panelVisible && menuPosition
+      ? createPortal(
+          <ul
+            ref={panelRef}
+            id={menuId}
+            role="listbox"
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-1 ${dropdownPanelStateClass(panelExpanded)}`}
+            style={dropdownPortalStyle(menuPosition)}
+          >
+            {options.map((option) => {
+              const selected =
+                option.value === displayValue ||
+                (kind === "order" &&
+                  orderStatusLabel(displayValue) === option.label) ||
+                (kind === "payment" &&
+                  paymentStatusLabel(displayValue) === option.label);
+              return (
+                <li key={option.value} role="option" aria-selected={selected}>
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    className={dropdownOptionClass(selected)}
+                    onClick={() => selectStatus(option.value)}
+                  >
+                    {optionDisplayLabel(option.value)}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>,
+          document.body,
+        )
+      : null;
+
   return (
-    <div ref={rootRef} className="relative z-20">
+    <div ref={rootRef} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         disabled={disabled || isPending}
         className={`inline-flex items-center gap-1 rounded-[15px] px-2 py-1 text-xs font-medium transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${badgeClassName}`}
@@ -216,34 +272,7 @@ export function AdminInlineStatusSelect({
         />
       </button>
 
-      {panelVisible ? (
-        <ul
-          id={menuId}
-          role="listbox"
-          className={`${DROPDOWN_PANEL_ANCHORED_CLASS} z-[300] overflow-hidden py-1 ${dropdownPanelStateClass(panelExpanded)}`}
-        >
-          {options.map((option) => {
-            const selected =
-              option.value === displayValue ||
-              (kind === "order" &&
-                orderStatusLabel(displayValue) === option.label) ||
-              (kind === "payment" &&
-                paymentStatusLabel(displayValue) === option.label);
-            return (
-              <li key={option.value} role="option" aria-selected={selected}>
-                <button
-                  type="button"
-                  disabled={isPending}
-                  className={dropdownOptionClass(selected)}
-                  onClick={() => selectStatus(option.value)}
-                >
-                  {optionDisplayLabel(option.value)}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
+      {panel}
 
       {error ? (
         <p className="mt-1 whitespace-nowrap text-[10px] text-red-700">
