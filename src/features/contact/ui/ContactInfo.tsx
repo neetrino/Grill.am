@@ -15,13 +15,15 @@ function InfoCard({
   icon,
   title,
   children,
+  className = "",
 }: {
   icon: ReactNode;
   title: string;
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <article className={CARD_CLASS}>
+    <article className={`${CARD_CLASS} ${className}`.trim()}>
       <div className="mb-4 flex items-center gap-3">
         <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-red text-white">
           {icon}
@@ -36,7 +38,7 @@ function InfoCard({
 /** Contact details — three branded cards (call / write / HQ). */
 export function ContactInfo({ copy }: ContactInfoProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full flex-col gap-4">
       <InfoCard icon={<Phone className="size-5" aria-hidden />} title={copy.callTitle}>
         <p className="mb-3 text-sm leading-relaxed text-gray-600">
           {copy.callDescription}
@@ -69,13 +71,17 @@ export function ContactInfo({ copy }: ContactInfoProps) {
         </a>
       </InfoCard>
 
-      <InfoCard icon={<MapPin className="size-5" aria-hidden />} title={copy.hqTitle}>
+      <InfoCard
+        icon={<MapPin className="size-5" aria-hidden />}
+        title={copy.hqTitle}
+        className="flex flex-1 flex-col"
+      >
         {copy.hqDescription ? (
           <p className="mb-4 text-sm leading-relaxed text-gray-600">
             {copy.hqDescription}
           </p>
         ) : null}
-        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <ul className="grid flex-1 grid-cols-1 content-start gap-2 sm:grid-cols-2">
           {copy.storeAddresses.map((address) => (
             <li
               key={address}
