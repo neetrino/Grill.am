@@ -1,0 +1,23 @@
+import { describe, expect, it } from "vitest";
+
+import { formatShortDate } from "@/lib/i18n/format-date";
+
+describe("formatShortDate", () => {
+  const sample = new Date(2026, 7, 4);
+
+  it("formats English without Intl", () => {
+    expect(formatShortDate(sample, "en")).toBe("Aug 4, 2026");
+  });
+
+  it("formats Russian without Intl", () => {
+    expect(formatShortDate(sample, "ru")).toBe("4 авг. 2026 г.");
+  });
+
+  it("formats Armenian without Intl (hydration-stable)", () => {
+    expect(formatShortDate(sample, "hy")).toBe("4 օգս, 2026 թ.");
+  });
+
+  it("accepts ISO strings", () => {
+    expect(formatShortDate("2026-08-04T12:00:00.000Z", "en")).toMatch(/2026/);
+  });
+});

@@ -29,6 +29,7 @@ import {
   type ProfileStatKey,
 } from "@/features/profile/ui/profile-ui";
 import type { Locale } from "@/lib/i18n/config";
+import { formatShortDate } from "@/lib/i18n/format-date";
 import type {
   AdminDictionary,
   ProfileDictionary,
@@ -44,14 +45,6 @@ type ProfileDashboardViewProps = {
   /** Hide the mobile page title (used inside bottom sheets). */
   hideTitle?: boolean;
 };
-
-function formatPlacedOn(date: Date, locale: Locale): string {
-  return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(date instanceof Date ? date : new Date(date));
-}
 
 export function ProfileDashboardView({
   locale,
@@ -193,7 +186,7 @@ export function ProfileDashboardView({
                         locale,
                       )}
                       metaLine={`${order.itemsCount} ${itemLabel}`}
-                      placedOnLine={`${dictionary.placedOn} ${formatPlacedOn(order.placedAt, locale)}`}
+                      placedOnLine={`${dictionary.placedOn} ${formatShortDate(order.placedAt, locale)}`}
                       orderNumberLabel={dictionary.orderNumber}
                       viewDetailsLabel={dictionary.viewDetails}
                       onViewDetails={() => openOrder(order.orderNumber)}
