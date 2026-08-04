@@ -155,7 +155,7 @@ export function ProductCard({
             label={wishlistLabel}
             size="md"
             tone="onImage"
-            className="absolute top-2 right-3 z-10 h-10 w-10 bg-transparent shadow-none hover:bg-transparent"
+            className="absolute top-1.5 right-2 z-10 h-10 w-10 bg-transparent shadow-none hover:bg-transparent md:top-2 md:right-3"
           />
         ) : null}
 
@@ -186,11 +186,11 @@ export function ProductCard({
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-2">
           <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="text-2xl leading-5 font-extrabold text-[#0d0d0d]">
+            <p className="text-xl leading-5 font-extrabold text-[#0d0d0d] md:text-2xl">
               {priceFormatted}
             </p>
             {onSale ? (
-              <p className="text-sm leading-5 font-extrabold text-[#bababa] line-through">
+              <p className="text-xs leading-5 font-extrabold text-[#bababa] line-through md:text-sm">
                 {compareAtFormatted}
               </p>
             ) : null}
@@ -204,7 +204,7 @@ export function ProductCard({
               size="sm"
               imageUrl={PRODUCT_CARD_IMAGE}
               configureHref={requiresConfiguration ? href : undefined}
-              className="h-[51px] w-[51px] shrink-0 rounded-[45px] bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 [&>svg]:h-[29px] [&>svg]:w-[29px] [&>svg]:text-white"
+              className="h-11 w-11 shrink-0 -translate-y-1 translate-x-2.5 rounded-full bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 md:h-[51px] md:w-[51px] md:translate-x-0 md:translate-y-0 md:rounded-[45px] [&>svg]:h-6 [&>svg]:w-6 [&>svg]:text-white md:[&>svg]:h-[29px] md:[&>svg]:w-[29px]"
             />
           ) : null}
         </div>

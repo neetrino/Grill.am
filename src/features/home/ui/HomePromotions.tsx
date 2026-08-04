@@ -138,7 +138,7 @@ function MobilePromoCard({
             <span className="text-[10px] leading-[15px] font-black tracking-[0.25px] text-brand-yellow uppercase">
               {onlyLabel}
             </span>
-            <span className="flex items-baseline gap-0.5 text-xl leading-5 font-black text-white">
+            <span className="flex items-baseline gap-0 text-xl leading-5 font-black text-white">
               {amount}
               <span className="font-black text-brand-yellow">{currency}</span>
             </span>
@@ -278,7 +278,7 @@ export function HomePromotions({
                 <span className="text-xs font-black tracking-[0.6px] text-[#ffc12c] uppercase">
                   {onlyLabel}
                 </span>
-                <span className="flex items-baseline gap-0.5 text-xl font-black text-white">
+                <span className="flex items-baseline gap-0 text-xl font-black text-white">
                   {amount}
                   <span className="font-black text-[#ffc12c]">{currency}</span>
                 </span>

@@ -39,7 +39,11 @@ export function formatPriceLabel(
   locale: string,
   currencySymbol: string,
 ): string {
-  return `${formatAmount(value, locale)}${NBSP}${currencySymbol}`;
+  // Symbol currencies sit flush after the amount; letter codes keep a space.
+  const tight = currencySymbol.length === 1;
+  return tight
+    ? `${formatAmount(value, locale)}${currencySymbol}`
+    : `${formatAmount(value, locale)}${NBSP}${currencySymbol}`;
 }
 
 /** Keeps only ASCII digits — blocks letters and symbols while typing. */

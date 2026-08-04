@@ -9,7 +9,7 @@ describe("formatMoneyAmount", () => {
   });
 
   it("formats AMD for Armenian with the dram symbol (hydration-stable)", () => {
-    expect(formatMoneyAmount(12_000, "AMD", "hy")).toBe("12\u00A0000\u00A0֏");
+    expect(formatMoneyAmount(12_000, "AMD", "hy")).toBe("12\u00A0000֏");
   });
 
   it("formats AMD for Russian with a stable currency code suffix", () => {
@@ -18,6 +18,6 @@ describe("formatMoneyAmount", () => {
 
   it("formats USD from minor units", () => {
     expect(formatMoneyAmount(2600n, "USD", "en")).toBe("$26.00");
-    expect(formatMoneyAmount(2600n, "USD", "hy")).toBe("26,00\u00A0$");
+    expect(formatMoneyAmount(2600n, "USD", "hy")).toBe("26,00$");
   });
 });

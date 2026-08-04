@@ -73,13 +73,13 @@ function formatMoneyDeterministic(
   switch (currency) {
     case "AMD":
       if (locale === "en") return `AMD${NBSP}${number}`;
-      if (locale === "hy") return `${number}${NBSP}֏`;
+      if (locale === "hy") return `${number}֏`;
       return `${number}${NBSP}AMD`;
     case "USD":
       if (locale === "en") return `$${number}`;
-      return `${number}${NBSP}$`;
+      return `${number}$`;
     case "RUB":
       if (locale === "en") return `RUB${NBSP}${number}`;
-      return `${number}${NBSP}₽`;
+      return `${number}₽`;
   }
 }

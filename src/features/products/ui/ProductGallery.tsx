@@ -134,7 +134,7 @@ export function ProductGallery({
             label={wishlistLabel}
             size="md"
             tone="onImageBrand"
-            className="absolute top-[30px] right-6 z-10 size-[52px] bg-white shadow-none hover:bg-white"
+            className="absolute top-3 right-3 z-10 size-10 bg-white shadow-none hover:bg-white md:top-[30px] md:right-6 md:size-[52px] [&>svg]:h-[16px] [&>svg]:w-[18px] md:[&>svg]:h-[23px] md:[&>svg]:w-[26px]"
           />
         ) : null}
       </div>

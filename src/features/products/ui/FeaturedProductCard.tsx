@@ -102,42 +102,44 @@ export function FeaturedProductCard({
             initialInWishlist={inWishlist}
             isSignedIn={isSignedIn}
             label={wishlistLabel}
-            size="sm"
+            size="md"
             tone="onImage"
-            className="absolute top-2 right-2 z-10 size-7 bg-transparent shadow-none hover:bg-transparent"
+            className="absolute top-1.5 right-1.5 z-10 size-9 bg-transparent shadow-none hover:bg-transparent"
           />
         ) : null}
       </div>
 
       <div
-        className={`flex flex-col px-3 pt-1 pb-3 ${
+        className={`flex flex-col justify-center gap-2 px-3 py-2 ${
           isRed ? "text-white" : "text-[rgba(17,17,17,0.54)]"
         }`}
       >
-        {categoryTitle ? (
-          <p
-            className={`line-clamp-1 text-[11px] leading-[16.5px] ${
-              isRed ? "text-white/54" : ""
+        <div className="min-w-0">
+          {categoryTitle ? (
+            <p
+              className={`line-clamp-1 text-[11px] leading-[16.5px] ${
+                isRed ? "text-white/54" : ""
+              }`}
+            >
+              {categoryTitle}
+            </p>
+          ) : null}
+          <h3
+            className={`line-clamp-1 text-[13px] leading-[16.25px] font-bold ${
+              isRed ? "text-white" : "text-[#111]"
             }`}
           >
-            {categoryTitle}
-          </p>
-        ) : null}
-        <h3
-          className={`line-clamp-1 text-[13px] leading-[16.25px] font-bold ${
-            isRed ? "text-white" : "text-[#111]"
-          }`}
-        >
-          <AppLink
-            href={href}
-            prefetchPolicy={priority ? "intent" : "auto"}
-            className="hover:underline"
-          >
-            {title}
-          </AppLink>
-        </h3>
+            <AppLink
+              href={href}
+              prefetchPolicy={priority ? "intent" : "auto"}
+              className="hover:underline"
+            >
+              {title}
+            </AppLink>
+          </h3>
+        </div>
 
-        <div className="mt-2 flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
             <p
               className={`text-base leading-4 font-extrabold ${
