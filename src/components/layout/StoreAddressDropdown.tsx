@@ -20,6 +20,8 @@ type MenuPosition = {
 
 const MENU_TRANSITION_MS = 200;
 const VIEWPORT_PADDING = 16;
+const SCROLLBAR_HIDDEN_CLASS =
+  "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
 const VARIANT_STYLES = {
   footer: {
@@ -29,7 +31,7 @@ const VARIANT_STYLES = {
     text: "leading-5 text-white/60",
     chevron: "mt-0.5 shrink-0 text-[#9C9FA1] transition hover:text-white",
     chevronIcon: "h-[18px] w-[18px]",
-    menu: "fixed z-[400] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-3 py-2.5 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+    menu: `fixed z-[400] max-h-[140px] origin-top space-y-2 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-3 py-2.5 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${SCROLLBAR_HIDDEN_CLASS}`,
     item: "leading-5 break-words",
   },
   header: {
@@ -39,7 +41,7 @@ const VARIANT_STYLES = {
     text: "text-base font-medium text-[#333]",
     chevron: "shrink-0 text-[#333] transition hover:text-brand-red",
     chevronIcon: "h-5 w-5",
-    menu: "fixed z-[400] max-h-[140px] origin-top-right space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#333] shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+    menu: `fixed z-[400] max-h-[140px] origin-top-right space-y-2 overflow-y-auto rounded-[14px] border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#333] shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${SCROLLBAR_HIDDEN_CLASS}`,
     item: "leading-5 break-words",
   },
 } as const;
@@ -189,6 +191,8 @@ export function StoreAddressDropdown({
               left: menuPosition.left,
               minWidth: menuPosition.minWidth,
               maxWidth: menuPosition.maxWidth,
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
             }}
           >
             {menuAddresses.map((address) => (
