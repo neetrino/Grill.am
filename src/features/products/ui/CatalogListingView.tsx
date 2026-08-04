@@ -8,6 +8,8 @@ import { CatalogSortBar } from "@/features/products/ui/CatalogSortBar";
 export type CatalogGridColumns = 3 | 4;
 
 const STORAGE_KEY = "grill.catalog.gridCols";
+/** Desktop grid toggle is `lg+`; match that for the default. */
+const LARGE_SCREEN_MQ = "(min-width: 1024px)";
 
 type CatalogListingViewProps = {
   locale: string;
@@ -30,10 +32,13 @@ type CatalogListingViewProps = {
 function readStoredColumns(): CatalogGridColumns {
   try {
     const value = window.localStorage.getItem(STORAGE_KEY);
-    return value === "4" ? 4 : 3;
+    if (value === "4") return 4;
+    if (value === "3") return 3;
   } catch {
-    return 3;
+    // Ignore quota / private-mode failures.
   }
+
+  return window.matchMedia(LARGE_SCREEN_MQ).matches ? 4 : 3;
 }
 
 function DotGridIcon({ size }: { size: 3 | 4 }) {
@@ -75,7 +80,7 @@ export function CatalogListingView({
   empty,
   children,
 }: CatalogListingViewProps) {
-  const [columns, setColumns] = useState<CatalogGridColumns>(3);
+  const [columns, setColumns] = useState<CatalogGridColumns>(4);
 
   useLayoutEffect(() => {
     setColumns(readStoredColumns());
