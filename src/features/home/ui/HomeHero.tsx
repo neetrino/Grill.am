@@ -113,14 +113,14 @@ function MobileHeroCard({
           />
         </div>
 
-        <div className="pointer-events-none absolute top-[36%] right-0 h-[64%] w-[50%] overflow-hidden">
-          <div className="relative h-full w-full">
+        <div className="pointer-events-none absolute top-[calc(32%+2px)] -right-[6%] h-[78%] w-[62%] overflow-hidden">
+          <div className="relative h-full w-full scale-110">
             <Image
               src={slideImage ?? HERO_CHICKEN}
               alt=""
               fill
               priority
-              sizes="50vw"
+              sizes="65vw"
               className="object-contain object-bottom"
             />
           </div>
