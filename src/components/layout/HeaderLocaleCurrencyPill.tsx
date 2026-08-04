@@ -12,6 +12,8 @@ import {
 import { ChevronDown, Globe } from "lucide-react";
 import { createPortal } from "react-dom";
 
+import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
+
 import { HeaderCurrencyIcon } from "@/components/layout/HeaderIcons";
 import { AppLink } from "@/components/ui/AppLink";
 import {
@@ -241,7 +243,7 @@ export function HeaderLocaleCurrencyPill({
               </div>
             </div>
           </div>,
-          document.body,
+          getDropdownPortalRoot(),
         )
       : null;
 

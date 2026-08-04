@@ -4,6 +4,8 @@ import { ChevronDown } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
+
 import { AppLink } from "@/components/ui/AppLink";
 import {
   DROPDOWN_OPTION_CLASS,
@@ -221,7 +223,7 @@ export function NavCategoriesDropdown({
                 );
               })}
             </div>,
-            document.body,
+            getDropdownPortalRoot(),
           )
         : null}
     </div>

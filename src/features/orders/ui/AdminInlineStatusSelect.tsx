@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
 
+import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
+
 import {
   DROPDOWN_ANIMATION_MS,
   DROPDOWN_PANEL_PORTAL_CLASS,
@@ -238,7 +240,7 @@ export function AdminInlineStatusSelect({
               );
             })}
           </ul>,
-          document.body,
+          getDropdownPortalRoot(),
         )
       : null;
 

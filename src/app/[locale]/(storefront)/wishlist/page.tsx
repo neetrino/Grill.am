@@ -15,6 +15,13 @@ type WishlistPageProps = {
   params: Promise<{ locale: string }>;
 };
 
+/** Same gray wash + footer bleed as profile / shop catalog. */
+const WISHLIST_SHELL_CLASS =
+  "storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0] lg:min-h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset))]";
+
+const WISHLIST_INNER_CLASS =
+  "mx-auto flex w-full max-w-7xl flex-col px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-24 sm:px-6 md:py-10 md:pb-10 lg:px-8 lg:pt-7 lg:pb-7";
+
 export default async function WishlistPage({ params }: WishlistPageProps) {
   const { locale: rawLocale } = await params;
 
@@ -38,8 +45,8 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
 
   if (!user) {
     return (
-      <section className="storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0] px-4 py-10 pb-24 sm:px-6 md:pb-10 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4">
+      <section className={WISHLIST_SHELL_CLASS}>
+        <div className={`${WISHLIST_INNER_CLASS} gap-4`}>
           {title}
           <p className="text-gray-600">
             <Link
@@ -71,8 +78,8 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   });
 
   return (
-    <section className="storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0] px-4 py-10 pb-24 sm:px-6 md:pb-10 lg:px-8">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8">
+    <section className={WISHLIST_SHELL_CLASS}>
+      <div className={`${WISHLIST_INNER_CLASS} gap-8`}>
         {title}
 
         {priced.length === 0 ? (

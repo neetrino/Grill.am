@@ -10,6 +10,8 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
+
 import {
   DROPDOWN_ANIMATION_MS,
   DROPDOWN_PANEL_CLASS,
@@ -194,7 +196,7 @@ export function IconDropdown({
               {children}
             </div>
           </div>,
-          document.body,
+          getDropdownPortalRoot(),
         )
       : null;
 

@@ -10,6 +10,8 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
+
 import {
   DROPDOWN_ANIMATION_MS,
   DROPDOWN_PANEL_PORTAL_CLASS,
@@ -219,7 +221,7 @@ export function CheckoutSelect({
               );
             })}
           </ul>,
-          document.body,
+          getDropdownPortalRoot(),
         )
       : null;
 
