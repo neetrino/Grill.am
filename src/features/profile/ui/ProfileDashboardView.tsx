@@ -40,6 +40,8 @@ type ProfileDashboardViewProps = {
   recentOrders: ProfileRecentOrder[];
   dictionary: ProfileDictionary;
   adminDictionary: AdminDictionary;
+  /** Hide the mobile page title (used inside bottom sheets). */
+  hideTitle?: boolean;
 };
 
 function formatPlacedOn(date: Date, locale: Locale): string {
@@ -56,6 +58,7 @@ export function ProfileDashboardView({
   recentOrders,
   dictionary,
   adminDictionary,
+  hideTitle = false,
 }: ProfileDashboardViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
@@ -128,9 +131,11 @@ export function ProfileDashboardView({
   return (
     <>
       <section className="space-y-6 lg:space-y-8">
-        <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl lg:hidden`}>
-          {dictionary.dashboard}
-        </h1>
+        {!hideTitle ? (
+          <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl lg:hidden`}>
+            {dictionary.dashboard}
+          </h1>
+        ) : null}
 
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
           {PROFILE_STAT_KEYS.map((key) => (

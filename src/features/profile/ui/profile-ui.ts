@@ -1,7 +1,7 @@
 /** Shared clay-profile visual tokens (MaMarie layout, Grill mono palette). */
 
 /** Light gray wash for the profile shell. */
-export const PROFILE_PAGE_BG_CLASS = "bg-[#f3f3f3]";
+export const PROFILE_PAGE_BG_CLASS = "bg-[#f2f0f0]";
 
 export const PROFILE_CARD_RADIUS_CLASS = "rounded-[15px]";
 

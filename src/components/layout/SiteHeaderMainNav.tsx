@@ -71,6 +71,9 @@ export function SiteHeaderMainNav({
   const pathname = usePathname();
   const homeHref = `/${locale}`;
   const isHomePage = pathname === homeHref || pathname === `${homeHref}/`;
+  const isProfileRoute =
+    pathname === `/${locale}/profile` ||
+    pathname.startsWith(`/${locale}/profile/`);
 
   const [primaryHidden, setPrimaryHidden] = useState(false);
   const [motionEnabled, setMotionEnabled] = useState(false);
@@ -289,7 +292,9 @@ export function SiteHeaderMainNav({
     <div
       ref={headerRootRef}
       data-site-header
-      className="sticky top-0 z-50 bg-white [overflow-anchor:none]"
+      className={`sticky top-0 z-50 bg-white [overflow-anchor:none] ${
+        isProfileRoute ? "max-md:hidden" : ""
+      }`}
     >
       <div
         className={`grid transition-[grid-template-rows] ${motionClass} ${

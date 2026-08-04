@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   ChevronRight,
   LayoutDashboard,
@@ -14,11 +14,10 @@ import {
 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { ProfileMobileSheet } from "@/features/profile/ui/ProfileMobileSheet";
 import {
   PROFILE_CARD_CLASS,
   PROFILE_ICON_TONE,
-  PROFILE_MOBILE_SHEET_HEIGHT_VH,
-  PROFILE_MOBILE_SHEET_Z_INDEX,
   type ProfileNavKey,
 } from "@/features/profile/ui/profile-ui";
 import type { Locale } from "@/lib/i18n/config";
@@ -29,34 +28,31 @@ type ProfileMobileMenuProps = {
   locale: Locale;
   user: SessionUser;
   dictionary: Dictionary["profile"];
+  closeLabel: string;
   logoutAction: (formData: FormData) => void | Promise<void>;
-  dashboardContent: ReactNode;
+  sheets: Partial<Record<ProfileNavKey, ReactNode>>;
 };
 
-type MenuRow =
-  | {
-      key: ProfileNavKey;
-      kind: "sheet";
-      label: string;
-      icon: ReactNode;
-    }
-  | {
-      key: ProfileNavKey;
-      kind: "link";
-      href: string;
-      label: string;
-      icon: ReactNode;
-    };
+type MenuRow = {
+  key: ProfileNavKey;
+  label: string;
+  icon: ReactNode;
+  danger?: boolean;
+};
 
-const SHEET_CLOSE_MS = 280;
-
-function MenuIconBox({ children }: { children: ReactNode }) {
+function MenuIconBox({
+  children,
+  danger = false,
+}: {
+  children: ReactNode;
+  danger?: boolean;
+}) {
   return (
     <span
       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px] [&>svg]:h-5 [&>svg]:w-5"
       style={{
-        backgroundColor: PROFILE_ICON_TONE.background,
-        color: PROFILE_ICON_TONE.foreground,
+        backgroundColor: danger ? "#fee2e2" : PROFILE_ICON_TONE.background,
+        color: danger ? "#dc2626" : PROFILE_ICON_TONE.foreground,
       }}
     >
       {children}
@@ -68,92 +64,72 @@ export function ProfileMobileMenu({
   locale,
   user,
   dictionary,
+  closeLabel,
   logoutAction,
-  dashboardContent,
+  sheets,
 }: ProfileMobileMenuProps) {
-  const [sheetMounted, setSheetMounted] = useState(false);
-  const [sheetVisible, setSheetVisible] = useState(false);
-  const initials = `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}`.toUpperCase();
+  const [activeSheet, setActiveSheet] = useState<ProfileNavKey | null>(null);
+  const initials =
+    `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}`.toUpperCase();
   const displayName = `${user.firstName} ${user.lastName}`.trim();
 
   const rows: MenuRow[] = [
     {
       key: "dashboard",
-      kind: "sheet",
       label: dictionary.dashboard,
       icon: <LayoutDashboard />,
     },
     {
       key: "orders",
-      kind: "link",
-      href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package />,
     },
     {
       key: "promoCodes",
-      kind: "link",
-      href: `/${locale}/profile/promo-codes`,
       label: dictionary.promoCodes.nav,
       icon: <TicketPercent />,
     },
     {
       key: "personal",
-      kind: "link",
-      href: `/${locale}/profile/personal-information`,
       label: dictionary.personal,
       icon: <User />,
     },
     {
       key: "addresses",
-      kind: "link",
-      href: `/${locale}/profile/addresses`,
       label: dictionary.addresses,
       icon: <MapPin />,
     },
     {
       key: "password",
-      kind: "link",
-      href: `/${locale}/profile/password`,
       label: dictionary.password,
       icon: <Lock />,
     },
   ];
 
-  useEffect(() => {
-    if (!sheetMounted) {
-      return;
-    }
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [sheetMounted]);
-
-  function openDashboard(): void {
-    setSheetMounted(true);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setSheetVisible(true);
-      });
-    });
-  }
-
-  function closeDashboard(): void {
-    setSheetVisible(false);
-    window.setTimeout(() => {
-      setSheetMounted(false);
-    }, SHEET_CLOSE_MS);
-  }
+  const activeTitle =
+    activeSheet === "dashboard"
+      ? dictionary.dashboard
+      : activeSheet === "orders"
+        ? dictionary.orders
+        : activeSheet === "promoCodes"
+          ? dictionary.promoCodes.nav
+          : activeSheet === "personal"
+            ? dictionary.personal
+            : activeSheet === "addresses"
+              ? dictionary.addresses
+              : activeSheet === "password"
+                ? dictionary.password
+                : activeSheet === "deleteAccount"
+                  ? dictionary.deleteAccount
+                  : "";
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-4 lg:hidden">
+    <div className="mx-auto w-full max-w-md space-y-3 lg:hidden">
       <section
-        className={`px-4 py-2 ${PROFILE_CARD_CLASS}`}
+        className={`px-4 py-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${PROFILE_CARD_CLASS}`}
         aria-label={dictionary.title}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-red text-lg font-semibold text-white">
             {initials}
           </div>
@@ -169,11 +145,15 @@ export function ProfileMobileMenu({
       </section>
 
       <nav
-        className={`overflow-hidden py-1 ${PROFILE_CARD_CLASS}`}
+        className={`overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${PROFILE_CARD_CLASS}`}
         aria-label={dictionary.title}
       >
         <div className="divide-y divide-gray-100">
           {rows.map((row) => {
+            const hasSheet = sheets[row.key] != null;
+            const className =
+              "flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors active:bg-gray-50 hover:bg-gray-50/80";
+
             const content = (
               <>
                 <span className="flex min-w-0 items-center gap-3">
@@ -189,13 +169,13 @@ export function ProfileMobileMenu({
               </>
             );
 
-            if (row.kind === "sheet") {
+            if (hasSheet) {
               return (
                 <button
                   key={row.key}
                   type="button"
-                  onClick={openDashboard}
-                  className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50/80"
+                  onClick={() => setActiveSheet(row.key)}
+                  className={className}
                 >
                   {content}
                 </button>
@@ -205,24 +185,53 @@ export function ProfileMobileMenu({
             return (
               <AppLink
                 key={row.key}
-                href={row.href}
+                href={`/${locale}/profile/${
+                  row.key === "promoCodes"
+                    ? "promo-codes"
+                    : row.key === "personal"
+                      ? "personal-information"
+                      : row.key === "deleteAccount"
+                        ? "delete-account"
+                        : row.key
+                }`}
                 prefetchPolicy="intent"
-                className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50/80"
+                className={className}
               >
                 {content}
               </AppLink>
             );
           })}
         </div>
+      </nav>
 
-        <div className="px-3 py-2">
+      <div className={`overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${PROFILE_CARD_CLASS}`}>
+        {sheets.deleteAccount != null ? (
+          <button
+            type="button"
+            onClick={() => setActiveSheet("deleteAccount")}
+            className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-red-50/60"
+          >
+            <span className="flex min-w-0 items-center gap-3">
+              <MenuIconBox danger>
+                <Trash2 />
+              </MenuIconBox>
+              <span className="text-base font-semibold text-red-500">
+                {dictionary.deleteAccount}
+              </span>
+            </span>
+            <ChevronRight
+              className="h-[18px] w-[18px] shrink-0 text-brand-yellow"
+              aria-hidden
+            />
+          </button>
+        ) : (
           <AppLink
             href={`/${locale}/profile/delete-account`}
             prefetchPolicy="intent"
-            className="flex w-full items-center justify-between rounded-[15px] border border-red-200 bg-white px-3 py-3 text-left transition-colors hover:bg-red-50/60"
+            className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-red-50/60"
           >
             <span className="flex min-w-0 items-center gap-3">
-              <MenuIconBox>
+              <MenuIconBox danger>
                 <Trash2 />
               </MenuIconBox>
               <span className="text-base font-semibold text-red-500">
@@ -234,51 +243,27 @@ export function ProfileMobileMenu({
               aria-hidden
             />
           </AppLink>
-        </div>
-      </nav>
+        )}
+      </div>
 
       <form action={logoutAction}>
         <button
           type="submit"
-          className={`flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-brand-red transition-colors hover:bg-red-50/60 ${PROFILE_CARD_CLASS}`}
+          className={`flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-brand-red shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-colors hover:bg-red-50/60 ${PROFILE_CARD_CLASS}`}
         >
           <LogOut className="h-4 w-4" aria-hidden />
           {dictionary.logout}
         </button>
       </form>
 
-      {sheetMounted ? (
-        <div
-          className="fixed inset-0 flex items-end overscroll-none lg:hidden"
-          style={{ zIndex: PROFILE_MOBILE_SHEET_Z_INDEX }}
-        >
-          <button
-            type="button"
-            tabIndex={-1}
-            aria-hidden
-            className={`fixed inset-0 rounded-none bg-black/35 backdrop-blur-[1px] transition-opacity duration-300 ${
-              sheetVisible ? "opacity-100" : "opacity-0"
-            }`}
-            onClick={closeDashboard}
-          />
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={dictionary.dashboard}
-            className={`flex w-full flex-col overflow-hidden rounded-t-[15px] bg-white shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-              sheetVisible ? "translate-y-0" : "translate-y-full"
-            }`}
-            style={{ height: `${PROFILE_MOBILE_SHEET_HEIGHT_VH}dvh` }}
-          >
-            <div className="flex shrink-0 items-center justify-center py-3">
-              <div className="h-1.5 w-14 rounded-full bg-gray-300" />
-            </div>
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-8">
-              {dashboardContent}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <ProfileMobileSheet
+        open={activeSheet != null && sheets[activeSheet] != null}
+        title={activeTitle}
+        closeLabel={closeLabel}
+        onClose={() => setActiveSheet(null)}
+      >
+        {activeSheet ? sheets[activeSheet] : null}
+      </ProfileMobileSheet>
     </div>
   );
 }
