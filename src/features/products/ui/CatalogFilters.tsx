@@ -58,10 +58,16 @@ export function CatalogFilters({
 }: CatalogFiltersProps) {
   const router = useRouter();
   const selectedSlug = filters.category[0] ?? null;
-  const shellClass =
-    variant === "sidebar"
-      ? "flex h-full flex-col border-r border-[#f3f4f6] bg-white shadow-[1px_0_8px_rgba(0,0,0,0.03)]"
-      : "flex flex-col bg-white";
+  const isPanel = variant === "panel";
+  const shellClass = isPanel
+    ? "flex max-h-[min(55dvh,360px)] flex-col bg-white"
+    : "flex h-full flex-col border-r border-[#f3f4f6] bg-white shadow-[1px_0_8px_rgba(0,0,0,0.03)]";
+  const categoriesScrollClass = isPanel
+    ? "min-h-0 flex-1 overflow-y-auto overscroll-contain px-3.5 pt-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    : "min-h-0 flex-1 overflow-y-auto px-3.5 pt-4 pb-2";
+  const priceFieldsClass = isPanel
+    ? "mt-3 grid grid-cols-2 gap-3"
+    : "mt-3 space-y-3";
   const { absoluteMin, absoluteMax } = resolvePriceBounds(priceBounds);
 
   const [minDraft, setMinDraft] = useState(
@@ -129,7 +135,7 @@ export function CatalogFilters({
 
   return (
     <aside className={shellClass}>
-      <div className="min-h-0 flex-1 overflow-y-auto px-3.5 pt-4 pb-2">
+      <div className={categoriesScrollClass}>
         <p className="px-1 text-xs font-semibold tracking-[0.6px] text-[#99a1af] uppercase">
           {labels.categories}
         </p>
@@ -170,7 +176,7 @@ export function CatalogFilters({
         <p className="px-1 text-xs font-semibold tracking-[0.6px] text-[#99a1af] uppercase">
           {labels.price}
         </p>
-        <div className="mt-3 space-y-3">
+        <div className={priceFieldsClass}>
           <label className="block space-y-1.5">
             <span className="text-xs font-medium text-[#4a5565]">
               {labels.minPrice}

@@ -1,15 +1,11 @@
 "use client";
 
-import {
-  Heart,
-  Home,
-  ShoppingBag,
-  ShoppingCart,
-} from "lucide-react";
+import { Heart, Home, ShoppingCart } from "lucide-react";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { ShopNavIcon } from "@/components/layout/ShopNavIcon";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -23,12 +19,20 @@ type MobileBottomNavProps = {
   wishlistCount: number;
 };
 
+type NavIcon = ComponentType<{
+  className?: string;
+  strokeWidth?: number;
+  "aria-hidden"?: boolean | "true" | "false";
+}>;
+
 type NavTab = {
   id: string;
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: NavIcon;
   badge?: number;
+  /** Overrides default inactive `size-6` / active `size-[31px]`. */
+  iconClassName?: { active: string; idle: string };
 };
 
 function isHomePath(pathname: string, locale: Locale): boolean {
@@ -85,7 +89,8 @@ export function MobileBottomNav({
     id: "shop",
     href: `/${locale}/products`,
     label: dictionary.nav.shop,
-    icon: ShoppingBag,
+    icon: ShopNavIcon,
+    iconClassName: { idle: "size-8", active: "size-9" },
   };
 
   const wishlistTab: NavTab = {
@@ -148,6 +153,9 @@ export function MobileBottomNav({
 
 function PillTab({ tab, active }: { tab: NavTab; active: boolean }) {
   const Icon = tab.icon;
+  const iconClassName = active
+    ? (tab.iconClassName?.active ?? "size-[31px]")
+    : (tab.iconClassName?.idle ?? "size-6");
 
   return (
     <AppLink
@@ -159,8 +167,8 @@ function PillTab({ tab, active }: { tab: NavTab; active: boolean }) {
     >
       <span className="relative inline-flex shrink-0">
         <Icon
-          className={active ? "size-[31px]" : "size-6"}
-          strokeWidth={1.75}
+          className={iconClassName}
+          strokeWidth={tab.id === "shop" ? 1.35 : 1.75}
           aria-hidden
         />
         {tab.badge != null ? <NavBadge count={tab.badge} /> : null}

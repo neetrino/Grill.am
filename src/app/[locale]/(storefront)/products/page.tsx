@@ -12,6 +12,7 @@ import { CatalogActiveChips } from "@/features/products/ui/CatalogActiveChips";
 import { CatalogBreadcrumbs } from "@/features/products/ui/CatalogBreadcrumbs";
 import { CatalogFilters } from "@/features/products/ui/CatalogFilters";
 import { CatalogListingView } from "@/features/products/ui/CatalogListingView";
+import { MobileCatalogFiltersToggle } from "@/features/products/ui/MobileCatalogFiltersToggle";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -123,23 +124,18 @@ export default async function ProductsPage({
         </div>
 
         <div className="flex min-w-0 flex-col bg-[#f2f0f0] px-4 pt-3 pb-10 sm:px-6 lg:px-8">
-          <details className="mb-4 rounded-[14px] border border-[#e5e7eb] bg-white lg:hidden">
-            <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-[#101828]">
-              {catalogCopy.filters}
-            </summary>
-            <div className="border-t border-[#f3f4f6]">
-              <CatalogFilters
-                locale={rawLocale}
-                filters={filters}
-                categories={catalog.categories}
-                totalProductCount={catalog.allProductCount}
-                priceBounds={catalog.priceBoundsDisplay}
-                currencySymbol={currencySymbols[currency]}
-                labels={filterLabels}
-                variant="panel"
-              />
-            </div>
-          </details>
+          <MobileCatalogFiltersToggle label={catalogCopy.filters}>
+            <CatalogFilters
+              locale={rawLocale}
+              filters={filters}
+              categories={catalog.categories}
+              totalProductCount={catalog.allProductCount}
+              priceBounds={catalog.priceBoundsDisplay}
+              currencySymbol={currencySymbols[currency]}
+              labels={filterLabels}
+              variant="panel"
+            />
+          </MobileCatalogFiltersToggle>
 
           <CatalogBreadcrumbs
             backLabel={catalogCopy.back}

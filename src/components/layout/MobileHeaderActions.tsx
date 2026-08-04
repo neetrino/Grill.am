@@ -89,7 +89,7 @@ export function MobileHeaderActions({
         aria-controls={menuId}
       >
         <span
-          className="absolute flex w-6 flex-col gap-[5px] transition-[opacity,transform] ease-out"
+          className="absolute flex size-6 flex-col justify-center gap-[5px] transition-[opacity,transform] ease-out"
           style={{
             opacity: open ? 0 : 1,
             transform: open
@@ -112,6 +112,7 @@ export function MobileHeaderActions({
               : "rotate(90deg) scale(0.82)",
             transitionDuration: `${MENU_ICON_MS}ms`,
           }}
+          strokeWidth={1.75}
           aria-hidden
         />
       </button>
@@ -122,7 +123,7 @@ export function MobileHeaderActions({
         className={actionButtonClassName}
         aria-label={profileLabel}
       >
-        <HeaderUserIcon className="block h-[30px] w-[30px] overflow-visible text-white" />
+        <HeaderUserIcon className="block size-6 overflow-visible text-white" />
       </AppLink>
 
       <Suspense

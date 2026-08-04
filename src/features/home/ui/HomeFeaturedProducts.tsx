@@ -45,10 +45,6 @@ function chunkIntoSlides<T>(items: readonly T[], size: number): T[][] {
   return slides;
 }
 
-function featuredVariant(index: number): "featured-red" | "featured-light" {
-  return index % 4 < 2 ? "featured-red" : "featured-light";
-}
-
 export function HomeFeaturedProducts({
   locale,
   titleLead,
@@ -183,7 +179,7 @@ export function HomeFeaturedProducts({
                   requiresConfiguration={
                     product.requiresConfiguration ?? false
                   }
-                  variant={featuredVariant(index)}
+                  variant="featured-red"
                 />
               ))}
             </div>

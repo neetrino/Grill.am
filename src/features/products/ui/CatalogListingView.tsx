@@ -107,7 +107,7 @@ export function CatalogListingView({
         <div
           role="group"
           aria-label={viewLabels.group}
-          className="relative ml-auto inline-flex items-center gap-1 rounded-full bg-white p-1 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+          className="relative ml-auto hidden items-center gap-1 rounded-full bg-white p-1 shadow-[0_1px_2px_rgba(0,0,0,0.04)] lg:inline-flex"
         >
           <span
             aria-hidden
