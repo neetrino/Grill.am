@@ -74,7 +74,9 @@ export function useCartDrawerView(
     serverItemCount: number;
   } | null>(null);
 
-  viewRef.current = view;
+  useEffect(() => {
+    viewRef.current = view;
+  }, [view]);
 
   useEffect(() => {
     let cancelled = false;

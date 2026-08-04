@@ -168,22 +168,27 @@ export function MobileBottomNav({
   };
 
   useLayoutEffect(() => {
-    if (!activeId) {
-      setIndicator(null);
-      return;
-    }
-    const el = itemRefs.current.get(activeId);
-    // Hidden tablet-only tabs (e.g. profile below md) must not drive the pill.
-    if (!el || el.offsetWidth === 0) {
-      setIndicator(null);
-      return;
-    }
-    setIndicator({
-      left: el.offsetLeft,
-      top: el.offsetTop,
-      width: el.offsetWidth,
-      height: el.offsetHeight,
+    const frameId = requestAnimationFrame(() => {
+      if (!activeId) {
+        setIndicator(null);
+        return;
+      }
+      const el = itemRefs.current.get(activeId);
+      // Hidden tablet-only tabs (e.g. profile below md) must not drive the pill.
+      if (!el || el.offsetWidth === 0) {
+        setIndicator(null);
+        return;
+      }
+      setIndicator({
+        left: el.offsetLeft,
+        top: el.offsetTop,
+        width: el.offsetWidth,
+        height: el.offsetHeight,
+      });
     });
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
   }, [activeId]);
 
   useEffect(() => {

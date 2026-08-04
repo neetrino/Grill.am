@@ -154,18 +154,23 @@ export function ProfileSidebarNav({
   const [slideEnabled, setSlideEnabled] = useState(false);
 
   useLayoutEffect(() => {
-    if (!activeHref) {
-      setIndicator(null);
-      return;
-    }
-    const link = linkRefs.current.get(activeHref);
-    if (!link) {
-      return;
-    }
-    setIndicator({
-      top: link.offsetTop,
-      height: link.offsetHeight,
+    const frameId = requestAnimationFrame(() => {
+      if (!activeHref) {
+        setIndicator(null);
+        return;
+      }
+      const link = linkRefs.current.get(activeHref);
+      if (!link) {
+        return;
+      }
+      setIndicator({
+        top: link.offsetTop,
+        height: link.offsetHeight,
+      });
     });
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
   }, [activeHref, items.length]);
 
   useEffect(() => {

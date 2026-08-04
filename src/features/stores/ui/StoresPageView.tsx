@@ -1,7 +1,7 @@
 "use client";
 
 import { MapPin } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { resolveStoreMapEmbedSrc } from "@/features/stores/yandex-map-embed";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -24,14 +24,17 @@ export function StoresPageView({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(
     initialSelectedIndex,
   );
+  const [syncedInitialIndex, setSyncedInitialIndex] = useState<number | null>(
+    initialSelectedIndex,
+  );
+  if (initialSelectedIndex !== syncedInitialIndex) {
+    setSyncedInitialIndex(initialSelectedIndex);
+    setSelectedIndex(initialSelectedIndex);
+  }
   const mapSrc = useMemo(
     () => resolveStoreMapEmbedSrc(selectedIndex),
     [selectedIndex],
   );
-
-  useEffect(() => {
-    setSelectedIndex(initialSelectedIndex);
-  }, [initialSelectedIndex]);
 
   if (addresses.length === 0) {
     return (

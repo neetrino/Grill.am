@@ -68,13 +68,14 @@ export async function registerAction(
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- exclude confirmPassword / acceptTerms from persisted payload
   const {
     password,
-    confirmPassword: _confirmPassword,
-    acceptTerms: _acceptTerms,
+    confirmPassword,
+    acceptTerms,
     ...registration
   } = parsed.data;
+  void confirmPassword;
+  void acceptTerms;
   const [user] = await getDb()
     .insert(users)
     .values({

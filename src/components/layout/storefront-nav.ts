@@ -47,8 +47,9 @@ export function isStorefrontNavActive(
   pathname: string,
   item: StorefrontNavItem,
   locale: Locale,
-  _options?: { categorySlug?: string | null },
+  options?: { categorySlug?: string | null },
 ): boolean {
+  void options;
   const homeHref = `/${locale}`;
   const productsPath = `/${locale}/products`;
   const storesPath = `/${locale}/stores`;

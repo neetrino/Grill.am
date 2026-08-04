@@ -59,7 +59,7 @@ export function StoreAddressDropdown({
   const rootRef = useRef<HTMLDivElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLElement | null>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [primary, ...rest] = addresses;
   const isHeader = variant === "header";
@@ -67,6 +67,10 @@ export function StoreAddressDropdown({
   const menuAddresses = isHeader ? addresses : rest;
   const showChevron = isHeader ? addresses.length > 0 : rest.length > 0;
   const linksEnabled = Boolean(locale);
+
+  function setMenuRef(node: HTMLElement | null): void {
+    menuRef.current = node;
+  }
 
   function clearCloseTimer(): void {
     if (closeTimerRef.current) {
@@ -202,7 +206,7 @@ export function StoreAddressDropdown({
       ? createPortal(
           isHeader ? (
             <div
-              ref={menuRef}
+              ref={setMenuRef}
               id={listId}
               className={`fixed z-[400] w-max origin-top-right transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${visibilityClass}`}
               style={{
@@ -266,7 +270,7 @@ export function StoreAddressDropdown({
             </div>
           ) : (
             <ul
-              ref={menuRef}
+              ref={setMenuRef}
               id={listId}
               className={`${FOOTER_STYLES.menu} ${visibilityClass}`}
               style={{
