@@ -12,7 +12,7 @@ import { DrawerCloseTab } from "@/components/drawer/DrawerCloseTab";
 
 const PANEL_TRANSITION_MS = 300;
 const BACKDROP_TRANSITION_MS = 200;
-const DEFAULT_DESKTOP_WIDTH_PERCENT = 50;
+const DEFAULT_DESKTOP_WIDTH_PERCENT = 36;
 
 type SideSheetProps = {
   open: boolean;
@@ -129,7 +129,7 @@ export function SideSheet({
       />
 
       <div
-        className={`relative h-dvh max-h-dvh w-[87%] max-w-md transition-transform ease-out motion-reduce:transition-none motion-reduce:duration-0 lg:w-[var(--side-sheet-desktop-width)] lg:max-w-none ${
+        className={`relative h-dvh max-h-dvh w-[87%] max-w-sm transition-transform ease-out motion-reduce:transition-none motion-reduce:duration-0 lg:w-[var(--side-sheet-desktop-width)] lg:max-w-none ${
           visible ? "translate-x-0" : "translate-x-full"
         }`}
         style={{

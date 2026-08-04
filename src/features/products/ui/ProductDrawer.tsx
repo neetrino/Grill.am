@@ -415,7 +415,7 @@ export function ProductDrawer({
       onClose={onClose}
       title={drawerTitle}
       closeLabel={dictionary.common.close}
-      desktopWidthPercent={70}
+      desktopWidthPercent={48}
       footer={
         <div className="flex items-center gap-4 border-t border-gray-100 px-5 py-4 lg:px-4">
           <Button
