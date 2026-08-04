@@ -76,14 +76,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       productsHref={`/${rawLocale}/products`}
       hasItems={items.length > 0}
       orderProducts={orderProducts}
-      defaultFirstName={
-        defaultAddress?.recipientFirstName ?? user?.firstName ?? ""
-      }
-      defaultLastName={
-        defaultAddress?.recipientLastName ?? user?.lastName ?? ""
-      }
+      defaultFirstName={user?.firstName ?? defaultAddress?.recipientFirstName ?? ""}
+      defaultLastName={user?.lastName ?? defaultAddress?.recipientLastName ?? ""}
       defaultEmail={user?.email ?? ""}
-      defaultPhone={defaultAddress?.phone ?? user?.phone ?? ""}
+      defaultPhone={user?.phone ?? defaultAddress?.phone ?? ""}
       defaultLine1={defaultAddress?.line1 ?? ""}
       defaultCity={defaultAddress?.city ?? ""}
       subtotalAmount={subtotal}

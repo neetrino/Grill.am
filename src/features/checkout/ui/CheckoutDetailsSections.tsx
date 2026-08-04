@@ -92,7 +92,10 @@ export function CheckoutDetailsSections({
         <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
           {labels.contactInformation}
         </h2>
-        <div className="space-y-4">
+        <div
+          className="space-y-4"
+          key={`${defaultFirstName}|${defaultLastName}|${defaultEmail}|${defaultPhone}`}
+        >
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.firstName}
