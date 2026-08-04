@@ -23,7 +23,8 @@
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
     "navigation": "Навигация",
-    "allCategories": "Все"
+    "allCategories": "Все",
+    "policy": "Политика"
   },
   "header": {
     "language": "Язык",

@@ -329,6 +329,26 @@ export function MobileNavPanel({
                 </AppLink>
               );
             })}
+
+            <AppLink
+              href={`/${locale}/legal`}
+              prefetchPolicy="intent"
+              aria-current={
+                pathname === `/${locale}/legal` ||
+                pathname.startsWith(`/${locale}/legal/`)
+                  ? "page"
+                  : undefined
+              }
+              className={
+                pathname === `/${locale}/legal` ||
+                pathname.startsWith(`/${locale}/legal/`)
+                  ? "rounded-xl px-1 py-3.5 text-base font-semibold text-brand-red"
+                  : "rounded-xl px-1 py-3.5 text-base font-semibold text-[#171717] hover:bg-gray-50"
+              }
+              onClick={onClose}
+            >
+              {dictionary.nav.policy}
+            </AppLink>
           </div>
 
           <div className="grid grid-cols-2 gap-3 border-t border-gray-100 py-4">

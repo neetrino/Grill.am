@@ -23,7 +23,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "navigation": "Navigation",
-    "allCategories": "All"
+    "allCategories": "All",
+    "policy": "Policy"
   },
   "header": {
     "language": "Language",
