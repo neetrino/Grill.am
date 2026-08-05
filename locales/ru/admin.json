@@ -238,6 +238,7 @@
       "empty": "Нет заказов по этим фильтрам.",
       "selectAll": "Выбрать все заказы на странице",
       "selectOrder": "Выбрать заказ {orderNumber}",
+      "openOrder": "Открыть заказ {orderNumber}",
       "selectedOnPage": "На этой странице выбрано: {count}"
     },
     "bulk": {

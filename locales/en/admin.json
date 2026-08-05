@@ -238,6 +238,7 @@
       "empty": "No orders match these filters.",
       "selectAll": "Select all orders on page",
       "selectOrder": "Select order {orderNumber}",
+      "openOrder": "Open order {orderNumber}",
       "selectedOnPage": "{count} selected on this page"
     },
     "bulk": {

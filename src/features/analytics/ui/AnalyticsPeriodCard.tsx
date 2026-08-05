@@ -4,10 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
+import { DateField } from "@/components/ui/DateField";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import {
@@ -128,24 +125,12 @@ export function AnalyticsPeriodCard({
           onSubmit={onCustomSubmit}
           className="mt-4 flex flex-wrap items-end gap-3"
         >
-          <label className="min-w-[140px] flex-1">
-            <span className={ADMIN_LABEL}>{copy.from}</span>
-            <input
-              name="from"
-              type="date"
-              defaultValue={from}
-              className={ADMIN_INPUT}
-            />
-          </label>
-          <label className="min-w-[140px] flex-1">
-            <span className={ADMIN_LABEL}>{copy.to}</span>
-            <input
-              name="to"
-              type="date"
-              defaultValue={to}
-              className={ADMIN_INPUT}
-            />
-          </label>
+          <div className="min-w-[140px] flex-1">
+            <DateField label={copy.from} name="from" defaultValue={from} />
+          </div>
+          <div className="min-w-[140px] flex-1">
+            <DateField label={copy.to} name="to" defaultValue={to} />
+          </div>
           <button
             type="submit"
             disabled={pending}

@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { DateField } from "@/components/ui/DateField";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -290,26 +291,20 @@ export function PromotionForm({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <label>
-            <span className={ADMIN_LABEL}>{copy.startsAt}</span>
-            <input
-              name="startsAt"
-              type="datetime-local"
-              defaultValue={toDateInput(defaults?.startsAt)}
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
-          <label>
-            <span className={ADMIN_LABEL}>{copy.endsAt}</span>
-            <input
-              name="endsAt"
-              type="datetime-local"
-              defaultValue={toDateInput(defaults?.endsAt)}
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
+          <DateField
+            label={copy.startsAt}
+            name="startsAt"
+            defaultValue={toDateInput(defaults?.startsAt)}
+            withTime
+            disabled={isPending}
+          />
+          <DateField
+            label={copy.endsAt}
+            name="endsAt"
+            defaultValue={toDateInput(defaults?.endsAt)}
+            withTime
+            disabled={isPending}
+          />
         </div>
 
         <label>

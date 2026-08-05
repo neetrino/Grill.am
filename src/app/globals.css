@@ -207,6 +207,106 @@ select:not([data-dropdown-unstyled]):disabled,
   background-color: #f9fafb !important;
 }
 
+/* ─── Calendar popover (DateField) ─── */
+:root {
+  --calendar-width: 280px;
+  --calendar-cell-size: 34px;
+  /* Matches VIEWPORT_PADDING_PX in use-dropdown-portal-position.ts. */
+  --calendar-viewport-padding: 16px;
+}
+
+/* Positioned by `dropdownPortalStyle()` — same CSS vars as dropdown panels. */
+.calendar-panel {
+  position: fixed;
+  top: var(--dropdown-top, auto);
+  bottom: var(--dropdown-bottom, auto);
+  left: var(--dropdown-left, auto);
+  right: var(--dropdown-right, auto);
+  z-index: 400;
+  box-sizing: border-box;
+  width: var(--calendar-width);
+  max-width: calc(100vw - 2 * var(--calendar-viewport-padding));
+  padding: 12px;
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--dropdown-radius);
+  background: #ffffff;
+  box-shadow: var(--dropdown-shadow);
+  transform-origin: top center;
+  transition:
+    opacity var(--dropdown-anim-ms) ease-out,
+    transform var(--dropdown-anim-ms) ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-panel {
+    transition: none;
+  }
+}
+
+.calendar-nav {
+  display: flex;
+  height: 28px;
+  width: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  color: #6b7280;
+  transition: background-color var(--dropdown-anim-ms) ease-out;
+}
+
+.calendar-nav:hover {
+  background: var(--dropdown-option-hover);
+  color: #111827;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.calendar-weekday {
+  display: flex;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.calendar-day {
+  display: flex;
+  height: var(--calendar-cell-size);
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #1f2937;
+  transition:
+    background-color var(--dropdown-anim-ms) ease-out,
+    color var(--dropdown-anim-ms) ease-out;
+}
+
+.calendar-day:hover {
+  background: var(--dropdown-option-hover);
+}
+
+.calendar-day--muted {
+  color: #d1d5db;
+}
+
+.calendar-day--today {
+  box-shadow: inset 0 0 0 1px var(--brand-red);
+}
+
+.calendar-day--selected,
+.calendar-day--selected:hover {
+  background: var(--brand-red);
+  font-weight: 600;
+  color: #ffffff;
+}
+
 /*
  * iOS Safari auto-zooms focused fields when computed font-size is under 16px.
  * Keep controls at 16px below `lg` so checkout/auth/search stay readable without zoom.
