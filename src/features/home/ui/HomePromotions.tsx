@@ -169,7 +169,7 @@ export function HomePromotions({
 
   return (
     <section className="relative w-full py-5 md:py-10 lg:py-12">
-      <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+      <div className="page-container">
         <div className="lg:hidden">
           <MobilePromoCard
             limitedOfferLabel={limitedOfferLabel}

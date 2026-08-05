@@ -231,19 +231,21 @@ export function HomeHero({
       />
 
       <section className="relative hidden w-full overflow-hidden bg-brand-red md:block">
-        <div className="relative mx-auto h-[clamp(400px,60vw,860px)] w-full max-w-[1440px] overflow-hidden lg:h-[860px]">
-          <div className="absolute inset-x-0 top-[-20%] h-[125%]">
-            <div className="pointer-events-none absolute inset-[13.4%_-34.36%_2.18%_-37.43%] z-0">
-              <HeroArtImage
-                src={HERO_FLAME}
-                alt=""
-                fill
-                priority
-                sizes="100vw"
-                className="object-contain"
-              />
-            </div>
+        {/* Flame backdrop follows the band; the art below stays on the canvas. */}
+        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+          <HeroArtImage
+            src={HERO_FLAME}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
 
+        {/* Art is positioned in percentages, so the canvas keeps the 1440:860 design ratio. */}
+        <div className="relative mx-auto h-[min(59.72vw,860px)] w-full max-w-[1440px] overflow-hidden">
+          <div className="absolute inset-x-0 top-[-20%] h-[125%]">
             <div className="pointer-events-none absolute inset-[26.53%_18.58%_50.76%_18.54%] z-[1]">
               <HeroArtImage
                 src={HERO_LOGO}

@@ -17,7 +17,7 @@ type WishlistPageProps = {
 
 /** Same gray wash + footer bleed as profile / shop catalog. */
 const WISHLIST_SHELL_CLASS =
-  "storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0] lg:min-h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset))]";
+  "storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0] lg:min-h-[calc(100dvh-var(--storefront-header-offset))]";
 
 const WISHLIST_INNER_CLASS =
   "mx-auto flex w-full max-w-7xl flex-col px-4 pt-6 pb-24 sm:px-6 md:py-10 md:pb-10 lg:px-8 lg:pt-7 lg:pb-7";

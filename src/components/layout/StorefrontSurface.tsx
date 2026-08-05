@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 
-import { DesktopFluidFrame } from "@/components/layout/DesktopFluidFrame";
 import { isLocale } from "@/lib/i18n/config";
 
 type StorefrontSurfaceProps = {
@@ -63,9 +62,7 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
         isWhitePage ? "" : "max-lg:bg-[#f2f0f0]"
       }`}
     >
-      <DesktopFluidFrame className="flex min-h-dvh flex-1 flex-col">
-        {children}
-      </DesktopFluidFrame>
+      {children}
     </div>
   );
 }

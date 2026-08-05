@@ -303,9 +303,10 @@ export function HomeFeatures({
         ref={sectionRef}
         className="hidden w-full overflow-hidden py-14 lg:block lg:py-20"
       >
+        {/* Track slides wider than the stage; clip it so the moto parks out of view. */}
         <div
           ref={stageRef}
-          className="relative mx-auto h-[421px] w-full max-w-[1440px]"
+          className="relative mx-auto h-[421px] w-full max-w-[1440px] overflow-x-clip"
         >
           <div
             className={`home-why-track absolute inset-y-0 left-0 flex h-full items-center gap-[31px] px-8 ${

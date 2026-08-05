@@ -97,12 +97,12 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
       <footer className="lazy-section relative w-full overflow-hidden rounded-tl-[50px] rounded-tr-[50px] bg-black">
         <p
           aria-hidden
-          className="pointer-events-none absolute bottom-[18px] left-[20px] z-0 translate-y-1/2 font-mirage text-[281px] leading-[230px] whitespace-nowrap text-white/25 uppercase opacity-40 select-none"
+          className="pointer-events-none absolute bottom-[18px] left-1/2 z-0 -translate-x-1/2 translate-y-1/2 font-mirage text-[281px] leading-[230px] whitespace-nowrap text-white/25 uppercase opacity-40 select-none"
         >
           GRILL.AM
         </p>
 
-        <div className="relative z-10 mx-auto max-w-[1440px] px-10 pt-[55px] pb-10">
+        <div className="page-container relative z-10 pt-[55px] pb-10">
           <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[minmax(240px,1.6fr)_repeat(2,minmax(140px,1fr))_auto]">
             <div className="col-span-2 lg:col-span-1">
               <div className="relative h-[37px] w-[92px]">

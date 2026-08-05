@@ -130,7 +130,8 @@ export function HomeFeaturedProducts({
       ref={sectionRef}
       className="w-full overflow-hidden bg-white pt-5 pb-6 md:rounded-[30px] md:bg-brand-yellow-soft md:py-12 lg:py-16"
     >
-      <div className="mx-auto w-full max-w-[1440px] md:px-5 lg:px-8 xl:px-10">
+      {/* Mobile carousel bleeds to the edges, so padding starts at md. */}
+      <div className="mx-auto w-full max-w-[1440px] md:px-[var(--page-padding-inline)]">
         <div className="mb-4 flex items-start justify-between gap-3 px-4 md:mb-10 md:items-end md:px-0">
           <div className="min-w-0">
             <h2 className="text-[20px] leading-[25px] font-black text-brand-red md:text-[26px] md:leading-tight md:uppercase lg:text-[30px] lg:leading-[1.2]">
