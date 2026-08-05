@@ -11,6 +11,11 @@ import {
   adjustLocalCartItemCount,
   notifyCartChanged,
 } from "@/features/cart/cart-client-sync";
+import {
+  acknowledgeOptimisticAdd,
+  rollbackUpsertLocally,
+  upsertItemLocally,
+} from "@/features/cart/cart-drawer-local-store";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type AddToCartButtonProps = {
@@ -20,6 +25,12 @@ type AddToCartButtonProps = {
   className?: string;
   size?: "sm" | "md";
   imageUrl?: string | null;
+  /** Product title for optimistic drawer row. */
+  title?: string;
+  /** Product slug for optimistic drawer row. */
+  slug?: string;
+  /** Formatted unit price for optimistic drawer row. */
+  unitPriceFormatted?: string;
   /**
    * When set, navigates here instead of quick-adding (required options / sauces).
    */
@@ -33,6 +44,9 @@ export function AddToCartButton({
   className = "",
   size = "md",
   imageUrl = null,
+  title = "",
+  slug = "",
+  unitPriceFormatted = "",
   configureHref,
 }: AddToCartButtonProps) {
   const router = useRouter();
@@ -57,21 +71,41 @@ export function AddToCartButton({
         "[data-product-fly-origin]",
       ) as HTMLElement | null) ?? button;
 
+    const resolvedImage = imageUrl || PRODUCT_CARD_IMAGE;
     playCartFlyAnimation({
       fromElement: origin,
-      imageUrl: imageUrl || PRODUCT_CARD_IMAGE,
+      imageUrl: resolvedImage,
     });
 
+    const resolvedTitle =
+      title.trim() ||
+      card?.querySelector("h3")?.textContent?.trim() ||
+      label;
+    const resolvedSlug = slug.trim() || productId;
+    const resolvedPrice = unitPriceFormatted.trim() || "…";
+
+    const upsert = upsertItemLocally({
+      productId,
+      selectionKey: "",
+      title: resolvedTitle,
+      slug: resolvedSlug,
+      quantity: 1,
+      imageUrl: imageUrl,
+      unitPriceFormatted: resolvedPrice,
+      modifierLines: [],
+    });
     adjustLocalCartItemCount(1);
 
     startTransition(async () => {
       try {
         await addToCart(productId, 1);
+        acknowledgeOptimisticAdd();
         notifyCartChanged();
         setJustAdded(true);
         router.refresh();
         window.setTimeout(() => setJustAdded(false), 1500);
       } catch {
+        rollbackUpsertLocally(upsert);
         adjustLocalCartItemCount(-1);
         setJustAdded(false);
       }

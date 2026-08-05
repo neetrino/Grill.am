@@ -107,6 +107,7 @@ export function ProductDetailView({
             fxRate={fxRate}
             productId={product.id}
             title={product.translation.title}
+            slug={product.translation.slug}
             stockOnHand={product.stockOnHand}
             baseUnitAmount={product.priceAmount}
             compareAtAmount={product.compareAtAmount}
