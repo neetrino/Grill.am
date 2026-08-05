@@ -87,7 +87,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
       label: dictionary.footer.privacyPolicy,
     },
     {
-      href: `/${locale}/contact`,
+      href: `/${locale}/legal/refund`,
       label: dictionary.footer.faq,
     },
   ] as const;

@@ -199,98 +199,114 @@
     ]
   },
   "refund": {
-    "title": "Refund Policy",
+    "title": "Return and Refund Policy",
     "lastUpdated": "23 July 2026",
-    "intro": "This policy explains how to request a product return or refund from White-Shop.",
+    "intro": "Grill.am is committed to ensuring that every order reaches the customer in proper quality and complete condition. Since the products offered on the website are food products, returns and refunds are handled in accordance with food safety and hygiene requirements.",
     "sections": [
       {
-        "heading": "1. General principles",
+        "heading": "1. General Return and Exchange Conditions",
         "paragraphs": [
-          "We want you to be satisfied with your purchase. If you received a wrong, damaged, or defective item, contact us as soon as possible with your order number and a description of the issue."
+          "Food products delivered in proper quality and in accordance with the confirmed order are not eligible for return or exchange.",
+          "A return, replacement, or refund may be considered if:"
+        ],
+        "bullets": [
+          "the delivered item does not match the confirmed order,",
+          "one or more ordered items are missing,",
+          "the delivered product is damaged, incomplete, or of unsatisfactory quality,",
+          "the product or its packaging was damaged during delivery."
         ]
       },
       {
-        "heading": "2. When returns are allowed",
+        "heading": "2. Reporting an Issue",
         "paragraphs": [
-          "Returns are generally possible if the product does not match the order, was damaged in transit, or has a manufacturing defect.",
-          "Items should be in resalable condition with original packaging and labels, unless safety or hygiene rules require otherwise."
+          "Please report any issue as soon as possible after receiving the order. To help us review the case promptly, please provide:"
+        ],
+        "bullets": [
+          "the order number,",
+          "a short description of the issue,",
+          "photos of the product and packaging, where possible."
+        ],
+        "closingParagraphs": [
+          "Each case is reviewed individually. Where appropriate, Grill.am may offer a replacement, delivery of the missing item, or a full or partial refund."
         ]
       },
       {
-        "heading": "3. Limitations",
+        "heading": "3. Refunds",
         "paragraphs": [
-          "Some items may not be returnable, such as personal-hygiene products, custom-made items, or goods that have been opened or used in a way that prevents resale.",
-          "Return conditions for discounted or promotional items may differ and will be noted on the product or order when applicable."
+          "If a refund is approved, it will be issued using the same payment method used for the original purchase.",
+          "For card or online payments, the refund may take up to 7 business days, depending on the bank or payment provider procedures.",
+          "The delivery fee is refundable only if the issue was caused by Grill.am or the delivery service."
         ]
       },
       {
-        "heading": "4. How to request a return",
+        "heading": "4. Order Changes or Cancellation",
         "paragraphs": [
-          "Contact us via the Contact page or by phone, including your order number, the product, and a description of the issue. We may ask for photos.",
-          "After approval, we will explain the return method and timing."
+          "An order may be changed or canceled before preparation begins.",
+          "Once preparation has started or the order has been handed over to the delivery service, changing or canceling the order may no longer be possible. Please contact us as soon as possible in such cases."
         ]
       },
       {
-        "heading": "5. Refunds",
-        "paragraphs": [
-          "If a refund is approved, funds are returned using the original payment method or another agreed method. For Cash on Delivery (COD), the refund method is arranged separately.",
-          "Processing usually takes several business days after approval, depending on the payment method and banking timelines."
+        "heading": "5. Non-Returnable or Non-Exchangeable Products",
+        "paragraphs": [],
+        "bullets": [
+          "food products delivered in proper quality and in accordance with the confirmed order,",
+          "opened or partially consumed products where no quality issue exists,",
+          "products damaged or spoiled due to improper storage by the customer,",
+          "custom-made orders that comply with the confirmed order details."
         ]
       },
       {
-        "heading": "6. Order cancellation",
+        "heading": "6. Damaged, Incorrect, or Incomplete Orders",
         "paragraphs": [
-          "If an order has not yet shipped, you may request cancellation by contacting us. If the order is already in transit or delivered, standard return rules apply."
+          "If you receive a damaged, incorrect, or incomplete order, please contact Grill.am immediately. We will review the situation as quickly as possible and offer an appropriate solution."
         ]
       }
     ]
   },
   "delivery": {
-    "title": "Delivery Policy",
+    "title": "Delivery Terms",
     "lastUpdated": "23 July 2026",
-    "intro": "This policy describes White-Shop delivery and pickup terms.",
+    "intro": "Grill.am aims to deliver your order quickly, safely, and in proper packaging. The main delivery terms are outlined below.",
     "sections": [
       {
-        "heading": "1. Delivery area",
-        "paragraphs": [
-          "We primarily serve the Republic of Armenia according to active delivery zones and rules on the site. Available locations are shown during checkout."
+        "heading": "1. Delivery Timeframes",
+        "paragraphs": [],
+        "bullets": [
+          "Delivery time depends on the order size, current workload, and delivery address.",
+          "Orders are usually delivered within 30–45 minutes.",
+          "In case of a possible delay, a Grill.am operator will contact you in advance."
         ]
       },
       {
-        "heading": "2. Delivery methods",
+        "heading": "2. Delivery Arrangements",
         "paragraphs": [
-          "Depending on available options, you may choose address delivery or pickup from a designated point. The cost and estimated timing for each method appear at checkout."
+          "Order delivery is organized under the following conditions:"
+        ],
+        "bullets": [
+          "Delivery is carried out by Grill.am or its partner courier services.",
+          "The customer must provide a correct address and an active phone number."
         ]
       },
       {
-        "heading": "3. Fees and timing",
-        "paragraphs": [
-          "Delivery fees are calculated from the selected zone/rule. Some zones may offer a free-delivery threshold.",
-          "Estimated delivery days are indicative and may change due to stock, weather, or other operational reasons. We will notify you of material delays."
+        "heading": "3. Receiving Your Order",
+        "paragraphs": [],
+        "bullets": [
+          "When receiving the order, please check that the items, quantities, and packaging are correct and intact.",
+          "If an item is incorrect, missing, damaged, or of inadequate quality, please contact us as soon as possible."
         ]
       },
       {
-        "heading": "4. Address and contact",
+        "heading": "4. Possible Delays",
         "paragraphs": [
-          "You must provide an accurate address and a working phone number. Failed delivery caused by an incorrect address or unavailability may require an extra fee or rescheduling."
-        ]
-      },
-      {
-        "heading": "5. Receipt and inspection",
-        "paragraphs": [
-          "On receipt, please check the outer condition of the package. If you notice damage or a mismatch, tell the courier and contact us immediately with your order number."
-        ]
-      },
-      {
-        "heading": "6. Failed delivery",
-        "paragraphs": [
-          "If delivery fails because you were unavailable, we will try to contact you to reschedule. A repeat delivery may be chargeable under the applicable rules."
-        ]
-      },
-      {
-        "heading": "7. Contact",
-        "paragraphs": [
-          "For delivery questions, use the Contact page or footer details and include your order number."
+          "Despite our efforts, delivery may occasionally be delayed due to:"
+        ],
+        "bullets": [
+          "Adverse weather conditions",
+          "Traffic or transportation issues",
+          "Holiday periods or high workload"
+        ],
+        "closingParagraphs": [
+          "Incorrect or incomplete delivery and contact information may also cause delays. In such cases, we will inform you as soon as possible."
         ]
       }
     ]
