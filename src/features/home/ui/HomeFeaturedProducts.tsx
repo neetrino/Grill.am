@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { AppLink } from "@/components/ui/AppLink";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import type { Locale } from "@/lib/i18n/config";
+import type { Currency } from "@/lib/money/currency";
 
 type FeaturedItem = {
   id: string;
@@ -13,6 +14,7 @@ type FeaturedItem = {
   title: string;
   categoryTitle?: string | null;
   priceFormatted: string;
+  unitPriceAmount?: number;
   compareAtFormatted?: string | null;
   discountPercent?: number | null;
   imageUrl: string | null;
@@ -23,6 +25,7 @@ type FeaturedItem = {
 
 type HomeFeaturedProductsProps = {
   locale: Locale;
+  currency: Currency;
   titleLead: string;
   titleAccent: string;
   subtitle: string;
@@ -47,6 +50,7 @@ function chunkIntoSlides<T>(items: readonly T[], size: number): T[][] {
 
 export function HomeFeaturedProducts({
   locale,
+  currency,
   titleLead,
   titleAccent,
   subtitle,
@@ -164,6 +168,7 @@ export function HomeFeaturedProducts({
                   title={product.title}
                   categoryTitle={product.categoryTitle}
                   priceFormatted={product.priceFormatted}
+                  unitPriceAmount={product.unitPriceAmount}
                   compareAtFormatted={product.compareAtFormatted}
                   discountPercent={product.discountPercent}
                   imageUrl={product.imageUrl}
@@ -171,6 +176,7 @@ export function HomeFeaturedProducts({
                   appearIndex={index}
                   appearActive={cardsRevealed}
                   locale={locale}
+                  currency={currency}
                   productId={product.id}
                   inWishlist={product.inWishlist ?? false}
                   isSignedIn={isSignedIn}
@@ -219,6 +225,7 @@ export function HomeFeaturedProducts({
                       title={product.title}
                       categoryTitle={product.categoryTitle}
                       priceFormatted={product.priceFormatted}
+                      unitPriceAmount={product.unitPriceAmount}
                       compareAtFormatted={product.compareAtFormatted}
                       discountPercent={product.discountPercent}
                       imageUrl={product.imageUrl}
@@ -227,6 +234,7 @@ export function HomeFeaturedProducts({
                       appearIndex={slideIndex * PRODUCTS_PER_SLIDE + index}
                       appearActive={cardsRevealed}
                       locale={locale}
+                      currency={currency}
                       productId={product.id}
                       inWishlist={product.inWishlist ?? false}
                       isSignedIn={isSignedIn}

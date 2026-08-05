@@ -217,6 +217,7 @@ export default async function ProductsPage({
                 title={product.translation.title}
                 categoryTitle={product.categoryTitle}
                 priceFormatted={price.formatted}
+                unitPriceAmount={Number(price.displayAmount)}
                 compareAtFormatted={compareAtFormatted}
                 discountPercent={product.discountPercent}
                 imageUrl={product.imageUrl}
@@ -224,6 +225,7 @@ export default async function ProductsPage({
                 priority={index < 4}
                 appearIndex={index}
                 locale={rawLocale}
+                currency={currency}
                 productId={product.id}
                 inWishlist={wishlistIds.has(product.id)}
                 isSignedIn={Boolean(user)}

@@ -75,12 +75,14 @@ export async function ProductRelatedSection({
               title={item.translation.title}
               categoryTitle={item.categoryTitle}
               priceFormatted={price.formatted}
+              unitPriceAmount={Number(price.displayAmount)}
               compareAtFormatted={compareAt?.formatted ?? null}
               discountPercent={item.discountPercent}
               imageUrl={item.imageUrl}
               inStock={item.stockOnHand > 0}
               priority={false}
               locale={locale}
+              currency={currency}
               productId={item.id}
               inWishlist={wishlistIds.has(item.id)}
               isSignedIn={isSignedIn}
