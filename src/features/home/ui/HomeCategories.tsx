@@ -31,6 +31,12 @@ const FALLBACK_IMAGES = [
   staticAssetUrl("/assets/home/category-4.webp"),
 ] as const;
 
+/** One arrow click ≈ one desktop card plus its gap. */
+const SCROLL_STEP_PX = 300;
+
+/** Absorbs fractional scroll offsets so the edges are detected reliably. */
+const SCROLL_EDGE_TOLERANCE_PX = 1;
+
 export function HomeCategories({
   titleLead,
   titleAccent,
@@ -42,10 +48,31 @@ export function HomeCategories({
 }: HomeCategoriesProps) {
   const scrollerRef = useRef<HTMLUListElement>(null);
 
+  /** Wraps around at both edges so the arrows never dead-end. */
   function scrollByDirection(direction: -1 | 1): void {
     const node = scrollerRef.current;
     if (!node) return;
-    node.scrollBy({ left: direction * 300, behavior: "smooth" });
+
+    const maxScrollLeft = node.scrollWidth - node.clientWidth;
+    if (maxScrollLeft <= 0) return;
+
+    if (
+      direction === 1 &&
+      node.scrollLeft >= maxScrollLeft - SCROLL_EDGE_TOLERANCE_PX
+    ) {
+      node.scrollTo({ left: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (direction === -1 && node.scrollLeft <= SCROLL_EDGE_TOLERANCE_PX) {
+      node.scrollTo({ left: maxScrollLeft, behavior: "smooth" });
+      return;
+    }
+
+    node.scrollBy({
+      left: direction * SCROLL_STEP_PX,
+      behavior: "smooth",
+    });
   }
 
   return (
@@ -124,10 +151,13 @@ export function HomeCategories({
             </ul>
 
             {/* Desktop — existing large cards */}
+            {/* `w-fit` centers the row while it fits and lets it scroll once
+                it does not; `justify-center` would strand the leading cards. */}
             <ul
               ref={scrollerRef}
-              className="hidden snap-x snap-mandatory justify-start gap-5 overflow-x-auto pb-2 sm:gap-6 md:flex xl:justify-center xl:gap-7 xl:overflow-visible xl:px-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >              {categories.map((category, index) => {
+              className="hidden snap-x snap-mandatory justify-start gap-5 overflow-x-auto pb-2 sm:gap-6 md:flex xl:mx-auto xl:w-fit xl:max-w-full xl:gap-7 xl:px-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {categories.map((category, index) => {
                 const fallback =
                   FALLBACK_IMAGES[index % FALLBACK_IMAGES.length] ??
                   FALLBACK_IMAGES[0];
@@ -160,11 +190,6 @@ export function HomeCategories({
                 );
               })}
             </ul>
-
-            <div className="mt-4 flex items-center justify-center gap-2 md:mt-5 md:gap-1.5">
-              <span className="h-1.5 w-6 rounded-full bg-brand-red-hot md:h-2.5 md:w-7" />
-              <span className="size-1.5 rounded-full bg-[rgba(95,95,95,0.6)] md:h-2.5 md:w-2.5" />
-            </div>
           </div>
         )}
       </div>
