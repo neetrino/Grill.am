@@ -1,0 +1,2461 @@
+{
+  "summary": {
+    "csvPath": "C:\\AI\\Grill.am\\wc-product-export-5-8-2026-1785923568934.csv",
+    "mode": "apply",
+    "runTimestamp": "2026-08-05T12:27:46.695Z",
+    "totalCsvRows": 97,
+    "skippedRows": 1,
+    "validRows": 96,
+    "invalidRows": 0,
+    "productsPlanned": 96,
+    "productsCreated": 96,
+    "productsPlannedCreates": 96,
+    "productsUpdated": 0,
+    "productsUnchanged": 0,
+    "productsFailed": 0,
+    "categoriesCreated": 9,
+    "categoriesReused": 0,
+    "categoryLinksCreated": 100,
+    "imagesDiscovered": 99,
+    "uniqueImageUrls": 87,
+    "duplicateImageUrlsRemoved": 11,
+    "imagesDownloaded": 99,
+    "imagesValidated": 99,
+    "imagesUploadedToR2": 99,
+    "imagesReused": 0,
+    "imageFailures": 0,
+    "imageHttp403": 0,
+    "imageHttp404": 0,
+    "imageTimeouts": 0,
+    "imageInvalidMime": 0,
+    "imageOversized": 0,
+    "imageCorrupted": 0,
+    "productsWithoutImages": 2,
+    "stockValuesApplied": 96,
+    "warnings": 3,
+    "blockingErrors": 0,
+    "duplicateGeneratedSlugs": 0,
+    "applyReady": true
+  },
+  "skipped": [
+    {
+      "woocommerceId": 677,
+      "title": "Ալկոհոլային ըմպելիքներ",
+      "reason": "Excluded unpublished category-placeholder product (no price/category/image)."
+    }
+  ],
+  "categories": [
+    {
+      "title": "Կոմբո առաջարկներ, ակցիաներ",
+      "slug": "կոմբո-առաջարկներ-ակցիաներ",
+      "existingId": "019fd1e2-f319-7678-af43-55ebfcb66490",
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Հավի գրիլ",
+      "slug": "հավի-գրիլ",
+      "existingId": "019fd1e2-f3ef-7483-8581-a2a5511da40f",
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Քաբաբ",
+      "slug": "քաբաբ",
+      "existingId": "019fd1e2-f4c1-7721-91f6-eeceb291b4ba",
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Խորոված",
+      "slug": "խորոված",
+      "existingId": "019fd1e2-f590-7199-9ca3-c4a06e2ea500",
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Շաուրմա",
+      "slug": "շաուրմա",
+      "existingId": "019fd1e2-f66a-7495-a990-3bee7d8cfd8e",
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Ըմպելիքներ",
+      "slug": "ըմպելիքներ",
+      "existingId": "019fd1e2-f738-7620-beff-e81f285502a7",
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Ալկոհոլային ըմպելիքներ",
+      "slug": "ալկոհոլային-ըմպելիքներ",
+      "existingId": "019fd1e2-f80a-761a-928e-20c0ee5a7274",
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Նախուտեստ, սոուս",
+      "slug": "նախուտեստ-սոուս",
+      "existingId": "019fd1e2-f8e5-7594-8bae-9de93bb384bb",
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Աղցան",
+      "slug": "աղցան",
+      "existingId": "019fd1e2-f9c0-7303-abe8-ab2391cd40a5",
+      "plannedMutation": "created"
+    }
+  ],
+  "products": [
+    {
+      "woocommerceId": 271,
+      "sku": "WC-271",
+      "productId": "019fd1e2-fa53-756e-80a6-ef3aab76b695",
+      "mutation": "created",
+      "slug": "boom-arajark",
+      "status": "ACTIVE",
+      "priceAmount": 9700,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/բում-առաջարկ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e2-fa53-756e-80a6-ef3aab76b695/woocommerce-271-0-02051b5987e2.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 459,
+      "sku": "WC-459",
+      "productId": "019fd1e3-0102-756a-9625-f05c0c07c69a",
+      "mutation": "created",
+      "slug": "gril-aparati",
+      "status": "ACTIVE",
+      "priceAmount": 3500,
+      "stockOnHand": 999,
+      "categories": [
+        "Հավի գրիլ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-0102-756a-9625-f05c0c07c69a/woocommerce-459-0-fb1e2daedf97.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 472,
+      "sku": "WC-472",
+      "productId": "019fd1e3-05a4-742c-9919-02a7e4dcdfab",
+      "mutation": "created",
+      "slug": "gril-atsukhi",
+      "status": "ACTIVE",
+      "priceAmount": 3500,
+      "stockOnHand": 999,
+      "categories": [
+        "Հավի գրիլ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-05a4-742c-9919-02a7e4dcdfab/woocommerce-472-0-fb1e2daedf97.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 474,
+      "sku": "WC-474",
+      "productId": "019fd1e3-0b71-734d-8680-e4caa3828eb9",
+      "mutation": "created",
+      "slug": "hav-tonri",
+      "status": "ACTIVE",
+      "priceAmount": 3700,
+      "stockOnHand": 999,
+      "categories": [
+        "Հավի գրիլ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-0b71-734d-8680-e4caa3828eb9/woocommerce-474-0-fb1e2daedf97.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 477,
+      "sku": "WC-477",
+      "productId": "019fd1e3-111e-735d-8f78-c496fd198e18",
+      "mutation": "created",
+      "slug": "kabab-tavari",
+      "status": "ACTIVE",
+      "priceAmount": 1100,
+      "stockOnHand": 999,
+      "categories": [
+        "Քաբաբ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/քաբաբ-տավարի.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-111e-735d-8f78-c496fd198e18/woocommerce-477-0-b0c3b0b6673a.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 480,
+      "sku": "WC-480",
+      "productId": "019fd1e3-1609-72f1-b65e-578a0ed69e12",
+      "mutation": "created",
+      "slug": "kabab-havi",
+      "status": "ACTIVE",
+      "priceAmount": 1000,
+      "stockOnHand": 999,
+      "categories": [
+        "Քաբաբ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/քաբաբ-հավի.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-1609-72f1-b65e-578a0ed69e12/woocommerce-480-0-e2ef1445d0b1.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 486,
+      "sku": "WC-486",
+      "productId": "019fd1e3-1a93-718c-a724-6b241088c718",
+      "mutation": "created",
+      "slug": "khozi-chalaghaj",
+      "status": "ACTIVE",
+      "priceAmount": 3400,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/2.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-1a93-718c-a724-6b241088c718/woocommerce-486-0-4901c9d2f377.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 489,
+      "sku": "WC-489",
+      "productId": "019fd1e3-1f21-7023-a354-de8eaf61fa42",
+      "mutation": "created",
+      "slug": "khozi-mat",
+      "status": "ACTIVE",
+      "priceAmount": 3400,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/1-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-1f21-7023-a354-de8eaf61fa42/woocommerce-489-0-bebf9df7e60d.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 492,
+      "sku": "WC-492",
+      "productId": "019fd1e3-23aa-72a1-813a-065710dfb491",
+      "mutation": "created",
+      "slug": "khozi-papuk",
+      "status": "ACTIVE",
+      "priceAmount": 2500,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/12.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-23aa-72a1-813a-065710dfb491/woocommerce-492-0-b964799abf64.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 495,
+      "sku": "WC-495",
+      "productId": "019fd1e3-2866-775f-b26b-6e4c58ef7b6d",
+      "mutation": "created",
+      "slug": "kartofil-plech",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/7.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-2866-775f-b26b-6e4c58ef7b6d/woocommerce-495-0-d4889d83ade9.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 498,
+      "sku": "WC-498",
+      "productId": "019fd1e3-2cfa-76cb-9c1d-e97ce323f91e",
+      "mutation": "created",
+      "slug": "khorovats-kartofil",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/9.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-2cfa-76cb-9c1d-e97ce323f91e/woocommerce-498-0-b76c43aeca1e.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 501,
+      "sku": "WC-501",
+      "productId": "019fd1e3-3197-750b-a81f-2c33821ce651",
+      "mutation": "created",
+      "slug": "kartofili-brduch",
+      "status": "ACTIVE",
+      "priceAmount": 450,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/11.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-3197-750b-a81f-2c33821ce651/woocommerce-501-0-4d230ecc42a6.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 504,
+      "sku": "WC-504",
+      "productId": "019fd1e3-3633-7354-9b9c-610a3f7dc638",
+      "mutation": "created",
+      "slug": "khozi-shaurma-lavashov",
+      "status": "ACTIVE",
+      "priceAmount": 1100,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-3633-7354-9b9c-610a3f7dc638/woocommerce-504-0-13a015b5b461.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 508,
+      "sku": "WC-508",
+      "productId": "019fd1e3-3af4-70cc-8dee-6b2a95c087da",
+      "mutation": "created",
+      "slug": "havi-shaurma-lavashov",
+      "status": "ACTIVE",
+      "priceAmount": 1000,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-3af4-70cc-8dee-6b2a95c087da/woocommerce-508-0-13a015b5b461.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 513,
+      "sku": "WC-513",
+      "productId": "019fd1e3-3fb9-77a9-9c1e-6d6731c92e44",
+      "mutation": "created",
+      "slug": "khozi-shaurma-hatsov",
+      "status": "ACTIVE",
+      "priceAmount": 800,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/4-1.jpg",
+        "https://grill.am/wp-content/uploads/2021/03/խոզի-շաուրմա-հացով.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-3fb9-77a9-9c1e-6d6731c92e44/woocommerce-513-0-6345159420d0.jpg",
+        "uploads/products/019fd1e3-3fb9-77a9-9c1e-6d6731c92e44/woocommerce-513-1-f718e0ace14e.jpg"
+      ],
+      "imagesUploaded": 2,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 517,
+      "sku": "WC-517",
+      "productId": "019fd1e3-46de-74a7-ae93-3d897d662c62",
+      "mutation": "created",
+      "slug": "havi-shaurma-hatsov",
+      "status": "ACTIVE",
+      "priceAmount": 700,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/4-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-46de-74a7-ae93-3d897d662c62/woocommerce-517-0-6345159420d0.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 520,
+      "sku": "WC-520",
+      "productId": "019fd1e3-4b23-772b-be89-c27f1d7f35bd",
+      "mutation": "created",
+      "slug": "bbq-set",
+      "status": "ACTIVE",
+      "priceAmount": 16400,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/բբք-սեթ-scaled-removebg-preview-1-3.png"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-4b23-772b-be89-c27f1d7f35bd/woocommerce-520-0-05ebc16bede5.png"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 540,
+      "sku": "WC-540",
+      "productId": "019fd1e3-507d-705c-9c2c-e870bc44857b",
+      "mutation": "created",
+      "slug": "coca-cola-0-5-l",
+      "status": "ACTIVE",
+      "priceAmount": 500,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/кола-05.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-507d-705c-9c2c-e870bc44857b/woocommerce-540-0-dbf85f5a2bd9.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 544,
+      "sku": "WC-544",
+      "productId": "019fd1e3-54ef-7593-b4c1-fe7c579555d9",
+      "mutation": "created",
+      "slug": "coca-cola-zero-0-5-l",
+      "status": "ACTIVE",
+      "priceAmount": 500,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/coca-zero.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-54ef-7593-b4c1-fe7c579555d9/woocommerce-544-0-9f895b50bada.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 547,
+      "sku": "WC-547",
+      "productId": "019fd1e3-5a13-730a-8dfc-8f14f457b387",
+      "mutation": "created",
+      "slug": "sprite-0-5-l",
+      "status": "ACTIVE",
+      "priceAmount": 500,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/sprite-05-.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-5a13-730a-8dfc-8f14f457b387/woocommerce-547-0-e77244a6fa50.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 560,
+      "sku": "WC-560",
+      "productId": "019fd1e3-5ef6-77f7-adcb-6d659ff3932c",
+      "mutation": "created",
+      "slug": "fanta-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 500,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/ֆանտա-0․5.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-5ef6-77f7-adcb-6d659ff3932c/woocommerce-560-0-81ac3fa68172.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 567,
+      "sku": "WC-567",
+      "productId": "019fd1e3-63ca-757b-a697-fcdf96526e54",
+      "mutation": "created",
+      "slug": "fanta-exotic-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 500,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/ֆանտա-էկզոտիկ.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-63ca-757b-a697-fcdf96526e54/woocommerce-567-0-7867aa7e44f8.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 570,
+      "sku": "WC-570",
+      "productId": "019fd1e3-6943-77e7-8e33-d06af2d0ef57",
+      "mutation": "created",
+      "slug": "coca-cola-1l",
+      "status": "ACTIVE",
+      "priceAmount": 700,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/COCACOLAPETLT1-5449000054227-1.webp"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-6943-77e7-8e33-d06af2d0ef57/woocommerce-570-0-c5b890fbfc59.webp"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 573,
+      "sku": "WC-573",
+      "productId": "019fd1e3-6e72-74be-8009-84c90b73aa16",
+      "mutation": "created",
+      "slug": "fanta-1l",
+      "status": "ACTIVE",
+      "priceAmount": 700,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/ֆանտա-1լ.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-6e72-74be-8009-84c90b73aa16/woocommerce-573-0-8b0ba3f5e09c.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 576,
+      "sku": "WC-576",
+      "productId": "019fd1e3-7342-76a7-beb9-d2ce81a8aca4",
+      "mutation": "created",
+      "slug": "sprite-1l",
+      "status": "ACTIVE",
+      "priceAmount": 700,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/sprite-1l.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-7342-76a7-beb9-d2ce81a8aca4/woocommerce-576-0-2ed969fb5bbd.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 579,
+      "sku": "WC-579",
+      "productId": "019fd1e3-7820-73dc-9c9d-174aa5b4320a",
+      "mutation": "created",
+      "slug": "firmayin-tan-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 300,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/web.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-7820-73dc-9c9d-174aa5b4320a/woocommerce-579-0-a89780224274.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 613,
+      "sku": "WC-613",
+      "productId": "019fd1e3-7c7f-74fa-9b87-81aade72916c",
+      "mutation": "created",
+      "slug": "khozi-ikibir",
+      "status": "ACTIVE",
+      "priceAmount": 1200,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/4.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-7c7f-74fa-9b87-81aade72916c/woocommerce-613-0-686d804cebb7.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 616,
+      "sku": "WC-616",
+      "productId": "019fd1e3-811a-70da-959e-e0d892fa0e09",
+      "mutation": "created",
+      "slug": "havi-ikibir",
+      "status": "ACTIVE",
+      "priceAmount": 1100,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/3-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-811a-70da-959e-e0d892fa0e09/woocommerce-616-0-5f2c447572d3.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 647,
+      "sku": "WC-647",
+      "productId": "019fd1e3-85c3-7763-b8ae-6c0d4ce26833",
+      "mutation": "created",
+      "slug": "havi-khorovats",
+      "status": "ACTIVE",
+      "priceAmount": 1200,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/6.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-85c3-7763-b8ae-6c0d4ce26833/woocommerce-647-0-7dcbd68cb035.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 680,
+      "sku": "WC-680",
+      "productId": "019fd1e3-8a7f-701c-868a-efec8843863a",
+      "mutation": "created",
+      "slug": "oghi-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 5350,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/օղի-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-8a7f-701c-868a-efec8843863a/woocommerce-680-0-f7b9b4e9d860.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 683,
+      "sku": "WC-683",
+      "productId": "019fd1e3-9018-7569-afed-1c80414fada1",
+      "mutation": "created",
+      "slug": "oghi-0-5l-683",
+      "status": "ACTIVE",
+      "priceAmount": 4800,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/օղի-2.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-9018-7569-afed-1c80414fada1/woocommerce-683-0-ff9a460572eb.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [
+        {
+          "code": "slug_conflict_suffix",
+          "message": "Slug conflict resolved with suffix; using oghi-0-5l-683.",
+          "woocommerceId": 683,
+          "sku": "WC-683"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "woocommerceId": 695,
+      "sku": "WC-695",
+      "productId": "019fd1e3-94d9-756d-8c77-124a9166c3d1",
+      "mutation": "created",
+      "slug": "oghi-dasakan-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 4300,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/օղի-6.jpeg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-94d9-756d-8c77-124a9166c3d1/woocommerce-695-0-eb10eadd79a0.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 698,
+      "sku": "WC-698",
+      "productId": "019fd1e3-99c6-71b0-87d3-799feda78bb4",
+      "mutation": "created",
+      "slug": "garejur-kilikia-0-5-l",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/գարեջուր-կիլիկիա.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-99c6-71b0-87d3-799feda78bb4/woocommerce-698-0-3d1abc8d3eb3.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 701,
+      "sku": "WC-701",
+      "productId": "019fd1e3-9e8d-751c-8bd2-c631ba4ac643",
+      "mutation": "created",
+      "slug": "garejur-gyumri-0-5-l",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/գյումրի.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-9e8d-751c-8bd2-c631ba4ac643/woocommerce-701-0-b233d3708ca0.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 883,
+      "sku": "WC-883",
+      "productId": "019fd1e3-a342-7710-921a-82ee1b64c71d",
+      "mutation": "created",
+      "slug": "havi-teviki-khorovats",
+      "status": "ACTIVE",
+      "priceAmount": 1600,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/8.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-a342-7710-921a-82ee1b64c71d/woocommerce-883-0-fd6a207346f8.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 1081,
+      "sku": "WC-1081",
+      "productId": "019fd1e3-a7e9-74d7-b0c2-18fb23f599e4",
+      "mutation": "created",
+      "slug": "ketchup",
+      "status": "ACTIVE",
+      "priceAmount": 50,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/05/11-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-a7e9-74d7-b0c2-18fb23f599e4/woocommerce-1081-0-583e222bbecb.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 1084,
+      "sku": "WC-1084",
+      "productId": "019fd1e3-ac7a-7388-a1b3-afae75af65e1",
+      "mutation": "created",
+      "slug": "mayonez",
+      "status": "ACTIVE",
+      "priceAmount": 50,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/05/10-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-ac7a-7388-a1b3-afae75af65e1/woocommerce-1084-0-9c0db9ab471c.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 1152,
+      "sku": "WC-1152",
+      "productId": "019fd1e3-b126-73fd-82d1-ee60120bd00e",
+      "mutation": "created",
+      "slug": "tonri-lavash",
+      "status": "ACTIVE",
+      "priceAmount": 50,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/05/12-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-b126-73fd-82d1-ee60120bd00e/woocommerce-1152-0-78363da20408.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 1663,
+      "sku": "WC-1663",
+      "productId": "019fd1e3-b5c4-723f-9640-665bfd9b3d7a",
+      "mutation": "created",
+      "slug": "gril-kombo",
+      "status": "ACTIVE",
+      "priceAmount": 8300,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/06/clipboard_image_a77672373c00c5f1.png"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-b5c4-723f-9640-665bfd9b3d7a/woocommerce-1663-0-4bfe67206bca.png"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 1832,
+      "sku": "WC-1832",
+      "productId": "019fd1e3-bb7d-718e-a07e-ed20e521ba8e",
+      "mutation": "created",
+      "slug": "hankayin-jur-jermuk-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 350,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/06/ջերմուկ-0․5լ.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-bb7d-718e-a07e-ed20e521ba8e/woocommerce-1832-0-e9b645cc0195.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 1835,
+      "sku": "WC-1835",
+      "productId": "019fd1e3-c13d-7202-93ec-73481df6feea",
+      "mutation": "created",
+      "slug": "hankayin-jur-jermuk-1l",
+      "status": "ACTIVE",
+      "priceAmount": 400,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/06/ջերմուկ-0․5լ.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-c13d-7202-93ec-73481df6feea/woocommerce-1835-0-e9b645cc0195.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 1916,
+      "sku": "WC-1916",
+      "productId": "019fd1e3-c6c5-73bf-b7cc-8cfb5a5f0255",
+      "mutation": "created",
+      "slug": "firmayin-matsnabrdosh-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 400,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/06/web-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-c6c5-73bf-b7cc-8cfb5a5f0255/woocommerce-1916-0-adf05359a2ee.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 3418,
+      "sku": "WC-3418",
+      "productId": "019fd1e3-cb4b-7123-87ab-66e3d522ecb7",
+      "mutation": "created",
+      "slug": "khorovats-sunk",
+      "status": "ACTIVE",
+      "priceAmount": 1500,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/09/14.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-cb4b-7123-87ab-66e3d522ecb7/woocommerce-3418-0-03ac0a4d887f.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 4687,
+      "sku": "WC-4687",
+      "productId": "019fd1e3-d01f-7628-9917-31cbfead7a39",
+      "mutation": "created",
+      "slug": "firmayin-sous",
+      "status": "ACTIVE",
+      "priceAmount": 250,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/11/ֆիրմային-սոուս-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-d01f-7628-9917-31cbfead7a39/woocommerce-4687-0-f913271161f1.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 5798,
+      "sku": "WC-5798",
+      "productId": "019fd1e3-d56f-763e-b279-d1b89eeb6d3a",
+      "mutation": "created",
+      "slug": "garejur-ararat-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/01/գարեջուր-արարատ.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-d56f-763e-b279-d1b89eeb6d3a/woocommerce-5798-0-725349440979.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 6204,
+      "sku": "WC-6204",
+      "productId": "019fd1e3-da01-7426-a90f-47ab12ea4cfa",
+      "mutation": "created",
+      "slug": "bnakan-hyut-dobri-1l",
+      "status": "ACTIVE",
+      "priceAmount": 850,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/01/dMpbGZhwMY5Xl8Erxc.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-da01-7426-a90f-47ab12ea4cfa/woocommerce-6204-0-f2e2d4658658.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 7530,
+      "sku": "WC-7530",
+      "productId": "019fd1e3-deb6-71b9-bdb3-6ce8bc5f9c94",
+      "mutation": "created",
+      "slug": "bnakan-hyut-dobri-0-33-l",
+      "status": "ACTIVE",
+      "priceAmount": 500,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/03/dobri_033_multifrukt.webp"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-deb6-71b9-bdb3-6ce8bc5f9c94/woocommerce-7530-0-071dea586328.webp"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 7532,
+      "sku": "WC-7532",
+      "productId": "019fd1e3-e39a-746b-af43-99e976a99dfc",
+      "mutation": "created",
+      "slug": "bnakan-hyut-dobri-0-25-l",
+      "status": "ACTIVE",
+      "priceAmount": 350,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/03/DWSR4VVVR3rZzBM1t6.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-e39a-746b-af43-99e976a99dfc/woocommerce-7532-0-7ee38becd206.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 7537,
+      "sku": "WC-7537",
+      "productId": "019fd1e3-e872-7628-949f-5ddca74254d2",
+      "mutation": "created",
+      "slug": "jur-bonakua-0-5-l",
+      "status": "ACTIVE",
+      "priceAmount": 300,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/03/bOHhFGZ53z6SuaJ4DK.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-e872-7628-949f-5ddca74254d2/woocommerce-7537-0-614cf2c1138f.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 8304,
+      "sku": "WC-8304",
+      "productId": "019fd1e3-ed2e-75a4-863f-c78e4bea3b51",
+      "mutation": "created",
+      "slug": "fri",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/04/ֆրի-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-ed2e-75a4-863f-c78e4bea3b51/woocommerce-8304-0-94aa3aa67d1d.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 8678,
+      "sku": "WC-8678",
+      "productId": "019fd1e3-f281-720d-b1d2-e49f6e6ad2c6",
+      "mutation": "created",
+      "slug": "firmayin-tomati-hyut-0-33-l",
+      "status": "ACTIVE",
+      "priceAmount": 300,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/05/Tomato_juice_Aparan_600x600.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-f281-720d-b1d2-e49f6e6ad2c6/woocommerce-8678-0-37e8b1be66db.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 8900,
+      "sku": "WC-8900",
+      "productId": "019fd1e3-f723-756f-a4d0-ecc14ca5c377",
+      "mutation": "created",
+      "slug": "khorovats-ktsu-pghpegh-1-hat",
+      "status": "ACTIVE",
+      "priceAmount": 150,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/05/խորոված-կծու-պղպեղ.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-f723-756f-a4d0-ecc14ca5c377/woocommerce-8900-0-b97253dbfd86.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 9113,
+      "sku": "WC-9113",
+      "productId": "019fd1e3-fc56-719a-b0fe-76ab434c13d0",
+      "mutation": "created",
+      "slug": "kombo-entanekan-havi-kababov",
+      "status": "ACTIVE",
+      "priceAmount": 8750,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e3-fc56-719a-b0fe-76ab434c13d0/woocommerce-9113-0-9ba8dda34bf7.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 9327,
+      "sku": "WC-9327",
+      "productId": "019fd1e4-01cc-74ec-bc19-009642fefdea",
+      "mutation": "created",
+      "slug": "kombo-lanch-grilov",
+      "status": "ACTIVE",
+      "priceAmount": 6000,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/05/լանչ-գրիլ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-01cc-74ec-bc19-009642fefdea/woocommerce-9327-0-da555aa7f693.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 11554,
+      "sku": "WC-11554",
+      "productId": "019fd1e4-0766-7299-a685-e4d3452c4ac0",
+      "mutation": "created",
+      "slug": "bnakan-hyut-amare-0-25-l",
+      "status": "ACTIVE",
+      "priceAmount": 450,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/08/87033.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-0766-7299-a685-e4d3452c4ac0/woocommerce-11554-0-79c5b685345f.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 11556,
+      "sku": "WC-11556",
+      "productId": "019fd1e4-0c84-754b-990f-30eb72795fd2",
+      "mutation": "created",
+      "slug": "bnakan-hyut-amare-0-75-l",
+      "status": "ACTIVE",
+      "priceAmount": 1050,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/08/a861f8795aa124e346f3bcd59f663b3c.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-0c84-754b-990f-30eb72795fd2/woocommerce-11556-0-2016c295669d.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 11558,
+      "sku": "WC-11558",
+      "productId": "019fd1e4-1234-71a8-84e8-148c91ec56a7",
+      "mutation": "created",
+      "slug": "masuri-hyut-0-5-l",
+      "status": "ACTIVE",
+      "priceAmount": 400,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/08/մասուրի-հյութ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-1234-71a8-84e8-148c91ec56a7/woocommerce-11558-0-8cc89082900b.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 11560,
+      "sku": "WC-11560",
+      "productId": "019fd1e4-178b-77cf-a821-74700f80d312",
+      "mutation": "created",
+      "slug": "hyut-palpi-0-45-l",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/08/careefour_15_0031_43045_600x600.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-178b-77cf-a821-74700f80d312/woocommerce-11560-0-2eb393a2418b.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 12705,
+      "sku": "WC-12705",
+      "productId": "019fd1e4-1c1b-75ae-aade-996c1684733c",
+      "mutation": "created",
+      "slug": "kombo-tonri-havov",
+      "status": "ACTIVE",
+      "priceAmount": 8700,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/clipboard_image_708f26140cf388b.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-1c1b-75ae-aade-996c1684733c/woocommerce-12705-0-bd9866c22d22.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 12710,
+      "sku": "WC-12710",
+      "productId": "019fd1e4-209f-73ff-bbd8-3794465174e6",
+      "mutation": "created",
+      "slug": "entanekan-patet-tonri-havov",
+      "status": "ACTIVE",
+      "priceAmount": 8950,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-209f-73ff-bbd8-3794465174e6/woocommerce-12710-0-9ba8dda34bf7.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 13529,
+      "sku": "WC-13529",
+      "productId": "019fd1e4-2608-738c-87db-36e7b8a8b125",
+      "mutation": "created",
+      "slug": "khozi-tiak-tonri",
+      "status": "ACTIVE",
+      "priceAmount": 9500,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/թիակ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-2608-738c-87db-36e7b8a8b125/woocommerce-13529-0-6a539f915686.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 14789,
+      "sku": "WC-14789",
+      "productId": "019fd1e4-2b63-7317-93d7-3d3458de8939",
+      "mutation": "created",
+      "slug": "tonri-bbq-set",
+      "status": "ACTIVE",
+      "priceAmount": 20700,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/12/թոնրի-բբք-սեթ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-2b63-7317-93d7-3d3458de8939/woocommerce-14789-0-497e26d0351a.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 16963,
+      "sku": "WC-16963",
+      "productId": "019fd1e4-30a9-70bf-b83b-a17955c0d498",
+      "mutation": "created",
+      "slug": "kombo-arajark-2-1",
+      "status": "ACTIVE",
+      "priceAmount": 5800,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/03/կոմբո-առաջարկ-21.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-30a9-70bf-b83b-a17955c0d498/woocommerce-16963-0-895ca2aa3e28.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 18539,
+      "sku": "WC-18539",
+      "productId": "019fd1e4-3621-7008-98e3-ff82cdd772d2",
+      "mutation": "created",
+      "slug": "amarayin-aghtsan",
+      "status": "ACTIVE",
+      "priceAmount": 800,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-59-583.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-3621-7008-98e3-ff82cdd772d2/woocommerce-18539-0-daa6e73ab355.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 18541,
+      "sku": "WC-18541",
+      "productId": "019fd1e4-3bb8-7661-aa99-77b1740b108d",
+      "mutation": "created",
+      "slug": "kamats-matsunov-aghtsan",
+      "status": "ACTIVE",
+      "priceAmount": 1000,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-16-909.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-3bb8-7661-aa99-77b1740b108d/woocommerce-18541-0-5581fdbef922.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 18543,
+      "sku": "WC-18543",
+      "productId": "019fd1e4-40e6-76b9-9fee-d3e4cd1f0665",
+      "mutation": "created",
+      "slug": "kaghambov-aghtsan",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-56-427.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-40e6-76b9-9fee-d3e4cd1f0665/woocommerce-18543-0-61c48dd9bc0a.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 18662,
+      "sku": "WC-18662",
+      "productId": "019fd1e4-4602-703c-b4f1-58a5f8d7829a",
+      "mutation": "created",
+      "slug": "ajika",
+      "status": "ACTIVE",
+      "priceAmount": 250,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/05/աջիկա-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-4602-703c-b4f1-58a5f8d7829a/woocommerce-18662-0-f201b97785dc.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 23236,
+      "sku": "WC-23236",
+      "productId": "019fd1e4-4b2d-7049-9e2b-296ec698aa11",
+      "mutation": "created",
+      "slug": "kombo-tevikov",
+      "status": "ACTIVE",
+      "priceAmount": 9450,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/10/viber_image_2023-10-05_19-14-05-490.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-4b2d-7049-9e2b-296ec698aa11/woocommerce-23236-0-9a122afd355c.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 23407,
+      "sku": "WC-23407",
+      "productId": "019fd1e4-5043-72da-b727-89ab83302b70",
+      "mutation": "created",
+      "slug": "havi-shaurma-lavashov-mets",
+      "status": "ACTIVE",
+      "priceAmount": 1500,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-5043-72da-b727-89ab83302b70/woocommerce-23407-0-13a015b5b461.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 23409,
+      "sku": "WC-23409",
+      "productId": "019fd1e4-54b8-708d-8ca0-c7b4d7670235",
+      "mutation": "created",
+      "slug": "khozi-shaurma-lavashov-mets",
+      "status": "ACTIVE",
+      "priceAmount": 1600,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-54b8-708d-8ca0-c7b4d7670235/woocommerce-23409-0-13a015b5b461.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 24590,
+      "sku": "WC-24590",
+      "productId": "019fd1e4-5962-70a8-add7-528ce17b145d",
+      "mutation": "created",
+      "slug": "kombo-n2-tavari-kababov",
+      "status": "ACTIVE",
+      "priceAmount": 19800,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/12/clipboard_image_8d1899f16af540dc.png"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-5962-70a8-add7-528ce17b145d/woocommerce-24590-0-638929955915.png"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 27011,
+      "sku": "WC-27011",
+      "productId": "019fd1e4-5ea6-77ad-9d7b-41b1eca8fb93",
+      "mutation": "created",
+      "slug": "kombo-twix-khozi-shaurmayov",
+      "status": "ACTIVE",
+      "priceAmount": 3300,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ",
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/02/depositphotos_270546018-stock-photo-crumpled-white-paper-texture-2.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-5ea6-77ad-9d7b-41b1eca8fb93/woocommerce-27011-0-47b6e26ee863.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 27014,
+      "sku": "WC-27014",
+      "productId": "019fd1e4-6430-7006-a264-9aaf56633fc6",
+      "mutation": "created",
+      "slug": "kombo-twix-havi-shaurmayov",
+      "status": "ACTIVE",
+      "priceAmount": 3100,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ",
+        "Շաուրմա"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/02/depositphotos_270546018-stock-photo-crumpled-white-2-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-6430-7006-a264-9aaf56633fc6/woocommerce-27014-0-514723aef2e8.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 29737,
+      "sku": "WC-29737",
+      "productId": "019fd1e4-6a02-7538-884c-0943a6fa5b01",
+      "mutation": "created",
+      "slug": "garan-ikibir",
+      "status": "ACTIVE",
+      "priceAmount": 1300,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/05/գառան-իքիբիր.webp"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-6a02-7538-884c-0943a6fa5b01/woocommerce-29737-0-5415477bc6db.webp"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 31774,
+      "sku": "WC-31774",
+      "productId": "019fd1e4-6e71-710f-8eb6-a2f23a6c2894",
+      "mutation": "created",
+      "slug": "khorovats-lolik",
+      "status": "ACTIVE",
+      "priceAmount": 800,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/07/bd3f6d3ef496a19df07d4eab2b198d6e.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-6e71-710f-8eb6-a2f23a6c2894/woocommerce-31774-0-117bd6465ee2.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 31779,
+      "sku": "WC-31779",
+      "productId": "019fd1e4-74a6-77ac-ad0c-fc63ee3566aa",
+      "mutation": "created",
+      "slug": "tara-grili-hamar",
+      "status": "ACTIVE",
+      "priceAmount": 250,
+      "stockOnHand": 999,
+      "categories": [
+        "Հավի գրիլ"
+      ],
+      "sourceImageUrls": [],
+      "finalObjectKeys": [],
+      "imagesUploaded": 0,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [
+        {
+          "code": "missing_images",
+          "message": "Product has no images; will be imported without media.",
+          "woocommerceId": 31779
+        }
+      ],
+      "errors": []
+    },
+    {
+      "woocommerceId": 34755,
+      "sku": "WC-34755",
+      "productId": "019fd1e4-76d7-772d-88ad-3535496b8bec",
+      "mutation": "created",
+      "slug": "havi-bdiki-khorovats",
+      "status": "ACTIVE",
+      "priceAmount": 1600,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/11/viber_image_2025-03-10_16-58-34-293.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-76d7-772d-88ad-3535496b8bec/woocommerce-34755-0-1f982d77073b.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 34759,
+      "sku": "WC-34759",
+      "productId": "019fd1e4-7c6c-71a9-b950-d75022417502",
+      "mutation": "created",
+      "slug": "khorovats-banjaregheni-aghtsan",
+      "status": "ACTIVE",
+      "priceAmount": 1300,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/11/բանջարեղենի-աղցան.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-7c6c-71a9-b950-d75022417502/woocommerce-34759-0-4adb1019b80a.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 35194,
+      "sku": "WC-35194",
+      "productId": "019fd1e4-8130-74df-bb83-d7be39986dfc",
+      "mutation": "created",
+      "slug": "oghi-ohanyan-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 5650,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/11/4850092000589zbdZXyHK0fw5Y_600x600.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-8130-74df-bb83-d7be39986dfc/woocommerce-35194-0-7c840d122a84.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 35197,
+      "sku": "WC-35197",
+      "productId": "019fd1e4-862f-7080-9758-a421d1460f0c",
+      "mutation": "created",
+      "slug": "oghi-ohanyan-0-5l-ays",
+      "status": "ACTIVE",
+      "priceAmount": 7050,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/11/249870-Ohanyan-ICE-0.5L.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-862f-7080-9758-a421d1460f0c/woocommerce-35197-0-724eea1a40ba.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 35469,
+      "sku": "WC-35469",
+      "productId": "019fd1e4-8bfb-74fa-b6a2-234e41d54b48",
+      "mutation": "created",
+      "slug": "entanekan-patet-tonri-tavari-kababov",
+      "status": "ACTIVE",
+      "priceAmount": 9450,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-8bfb-74fa-b6a2-234e41d54b48/woocommerce-35469-0-9ba8dda34bf7.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 35471,
+      "sku": "WC-35471",
+      "productId": "019fd1e4-914a-7635-a239-97aff461d487",
+      "mutation": "created",
+      "slug": "kombo-entanekan-tavari-kababov",
+      "status": "ACTIVE",
+      "priceAmount": 9250,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-914a-7635-a239-97aff461d487/woocommerce-35471-0-9ba8dda34bf7.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 36637,
+      "sku": "WC-36637",
+      "productId": "019fd1e4-96d5-74d8-b8f6-4d2d2e9da65b",
+      "mutation": "created",
+      "slug": "organik-oghi-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 6700,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/01/9d9z5uDfRjZIPlq0wk.webp",
+        "https://grill.am/wp-content/uploads/2025/01/պրգանիկ.png"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-96d5-74d8-b8f6-4d2d2e9da65b/woocommerce-36637-0-722093ad47cd.webp",
+        "uploads/products/019fd1e4-96d5-74d8-b8f6-4d2d2e9da65b/woocommerce-36637-1-ded46326dc72.png"
+      ],
+      "imagesUploaded": 2,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 37217,
+      "sku": "WC-37217",
+      "productId": "019fd1e4-9dbe-717d-b582-cf744d686182",
+      "mutation": "created",
+      "slug": "humus",
+      "status": "ACTIVE",
+      "priceAmount": 600,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/02/FMDD141_FMDD142_FMDD245_Mediterranean_Delicacies_Humus_Traditional_1kg_2.5kg_5kg_835c83d2-5de6-4836-9a54-605150526f64.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-9dbe-717d-b582-cf744d686182/woocommerce-37217-0-27a2e511a939.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 37221,
+      "sku": "WC-37221",
+      "productId": "019fd1e4-a24c-709e-9708-d5d88263f774",
+      "mutation": "created",
+      "slug": "mutabal",
+      "status": "ACTIVE",
+      "priceAmount": 700,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/02/Mutabal-10.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-a24c-709e-9708-d5d88263f774/woocommerce-37221-0-cb89f0756aaa.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 37240,
+      "sku": "WC-37240",
+      "productId": "019fd1e4-a71a-70ba-ab39-c220311a2b10",
+      "mutation": "created",
+      "slug": "mankakan-tup",
+      "status": "ACTIVE",
+      "priceAmount": 1300,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան",
+        "Կոմբո առաջարկներ, ակցիաներ",
+        "Նախուտեստ, սոուս"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_11-36-49-899.jpg",
+        "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-58-878.jpg",
+        "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-59-197.jpg",
+        "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-59-547.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-0-8026cd4287ae.jpg",
+        "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-1-439989b91fb0.jpg",
+        "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-2-29aad9c06a20.jpg",
+        "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-3-bae1ac986d6b.jpg"
+      ],
+      "imagesUploaded": 4,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 38425,
+      "sku": "WC-38425",
+      "productId": "019fd1e4-b345-746e-9144-df04bf151d20",
+      "mutation": "created",
+      "slug": "kombo-n2-havi-kababov",
+      "status": "ACTIVE",
+      "priceAmount": 19300,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/12/clipboard_image_8d1899f16af540dc.png"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-b345-746e-9144-df04bf151d20/woocommerce-38425-0-638929955915.png"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 41380,
+      "sku": "WC-41380",
+      "productId": "019fd1e4-b951-7004-88c3-67b916e233de",
+      "mutation": "created",
+      "slug": "oghi-chistaya-kaplya-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 4500,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/06/trim_9ee462b66022ecb7624d381b850ad98b.png"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-b951-7004-88c3-67b916e233de/woocommerce-41380-0-bb6c39be8643.png"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 41704,
+      "sku": "WC-41704",
+      "productId": "019fd1e4-be59-766a-a429-78dac9a483e6",
+      "mutation": "created",
+      "slug": "krombakher-0-33l",
+      "status": "ACTIVE",
+      "priceAmount": 850,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/06/krombacher-kfc.webp"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-be59-766a-a429-78dac9a483e6/woocommerce-41704-0-e131af1c903d.webp"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 41920,
+      "sku": "WC-41920",
+      "productId": "019fd1e4-c30f-723c-b813-76ddd0e300dc",
+      "mutation": "created",
+      "slug": "oghi-strumbas-0-5l",
+      "status": "ACTIVE",
+      "priceAmount": 5650,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/06/74970.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-c30f-723c-b813-76ddd0e300dc/woocommerce-41920-0-10a8eb15acf9.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 46662,
+      "sku": "WC-46662",
+      "productId": "019fd1e4-c7ce-7641-ba85-926de82e37e7",
+      "mutation": "created",
+      "slug": "garan-khorovats-mat",
+      "status": "ACTIVE",
+      "priceAmount": 5200,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/10/604e78e12268b604e78e12268d.png"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-c7ce-7641-ba85-926de82e37e7/woocommerce-46662-0-4c0cc331e271.png"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 46665,
+      "sku": "WC-46665",
+      "productId": "019fd1e4-ccf3-730e-a5bd-04b13014cd8a",
+      "mutation": "created",
+      "slug": "garan-khorovats-papuk",
+      "status": "ACTIVE",
+      "priceAmount": 4000,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/10/af2d18cd2d7d50b8e46826b4f040760da9e2.png"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-ccf3-730e-a5bd-04b13014cd8a/woocommerce-46665-0-e035c727c082.png"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 46668,
+      "sku": "WC-46668",
+      "productId": "019fd1e4-d256-706c-9806-84fc1b0c44cf",
+      "mutation": "created",
+      "slug": "garan-khare-khorovats",
+      "status": "ACTIVE",
+      "priceAmount": 4000,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [],
+      "finalObjectKeys": [],
+      "imagesUploaded": 0,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [
+        {
+          "code": "missing_images",
+          "message": "Product has no images; will be imported without media.",
+          "woocommerceId": 46668
+        }
+      ],
+      "errors": []
+    },
+    {
+      "woocommerceId": 46670,
+      "sku": "WC-46670",
+      "productId": "019fd1e4-d40e-7470-8be9-9954e8be7f50",
+      "mutation": "created",
+      "slug": "garan-chalaghaj",
+      "status": "ACTIVE",
+      "priceAmount": 4200,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/10/2Z2A2984-scaled-1.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-d40e-7470-8be9-9954e8be7f50/woocommerce-46670-0-50af176aaaf2.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 46673,
+      "sku": "WC-46673",
+      "productId": "019fd1e4-db79-72d9-af7f-b2a9529b8813",
+      "mutation": "created",
+      "slug": "garan-kabab",
+      "status": "ACTIVE",
+      "priceAmount": 1200,
+      "stockOnHand": 999,
+      "categories": [
+        "Քաբաբ"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/քաբաբ-տավարի.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-db79-72d9-af7f-b2a9529b8813/woocommerce-46673-0-b0c3b0b6673a.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "woocommerceId": 46902,
+      "sku": "WC-46902",
+      "productId": "019fd1e4-e012-7298-bbb8-16b1b4ce8e36",
+      "mutation": "created",
+      "slug": "tnakan-ttu",
+      "status": "ACTIVE",
+      "priceAmount": 1000,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/10/Թթու.jpg"
+      ],
+      "finalObjectKeys": [
+        "uploads/products/019fd1e4-e012-7298-bbb8-16b1b4ce8e36/woocommerce-46902-0-b0e0fdc0afcf.jpg"
+      ],
+      "imagesUploaded": 1,
+      "imagesReused": 0,
+      "imageFailures": [],
+      "warnings": [],
+      "errors": []
+    }
+  ],
+  "conflicts": [],
+  "warnings": [
+    {
+      "code": "slug_conflict_suffix",
+      "message": "Slug conflict resolved with suffix; using oghi-0-5l-683.",
+      "woocommerceId": 683,
+      "sku": "WC-683"
+    },
+    {
+      "code": "missing_images",
+      "message": "Product has no images; will be imported without media.",
+      "woocommerceId": 31779
+    },
+    {
+      "code": "missing_images",
+      "message": "Product has no images; will be imported without media.",
+      "woocommerceId": 46668
+    }
+  ],
+  "errors": [],
+  "applyReadiness": {
+    "ready": true,
+    "blockingReasons": [],
+    "inaccessibleSourceImages": 0,
+    "duplicateGeneratedSlugs": 0,
+    "invalidRows": 0
+  }
+}

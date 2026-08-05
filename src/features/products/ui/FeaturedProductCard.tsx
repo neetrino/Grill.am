@@ -8,7 +8,7 @@ import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const PRODUCT_CARD_IMAGE = staticAssetUrl(
+const FEATURED_CARD_IMAGE_FALLBACK = staticAssetUrl(
   "/assets/products/product-card.webp",
 );
 
@@ -19,6 +19,7 @@ type FeaturedProductCardProps = {
   priceFormatted: string;
   compareAtFormatted?: string | null;
   discountPercent?: number | null;
+  imageUrl?: string | null;
   inStock: boolean;
   priority?: boolean;
   appearStyle?: CSSProperties;
@@ -43,6 +44,7 @@ export function FeaturedProductCard({
   priceFormatted,
   compareAtFormatted = null,
   discountPercent = null,
+  imageUrl = null,
   inStock,
   priority = false,
   appearStyle,
@@ -56,6 +58,7 @@ export function FeaturedProductCard({
   requiresConfiguration = false,
   tone,
 }: FeaturedProductCardProps) {
+  const resolvedImageUrl = imageUrl?.trim() || FEATURED_CARD_IMAGE_FALLBACK;
   const isRed = tone === "red";
   const onSale = Boolean(compareAtFormatted);
   const showWishlist =
@@ -82,7 +85,7 @@ export function FeaturedProductCard({
           className="absolute inset-0 z-[1] block"
         >
           <Image
-            src={PRODUCT_CARD_IMAGE}
+            src={resolvedImageUrl}
             alt={title}
             fill
             sizes="210px"
@@ -167,7 +170,7 @@ export function FeaturedProductCard({
               label={addToCartLabel}
               disabled={!inStock}
               size="sm"
-              imageUrl={PRODUCT_CARD_IMAGE}
+              imageUrl={resolvedImageUrl}
               configureHref={requiresConfiguration ? href : undefined}
               className={
                 isRed

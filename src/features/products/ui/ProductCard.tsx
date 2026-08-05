@@ -11,7 +11,7 @@ import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-/** Shared product-card photo until per-product media is ready. */
+/** Fallback product-card photo when a product has no media. */
 export const PRODUCT_CARD_IMAGE = staticAssetUrl(
   "/assets/products/product-card.webp",
 );
@@ -60,8 +60,7 @@ export function ProductCard({
   priceFormatted,
   compareAtFormatted = null,
   discountPercent = null,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- reserved until per-product media replaces the shared placeholder image
-  imageUrl: _imageUrl,
+  imageUrl,
   inStock,
   priority = false,
   appearIndex,
@@ -75,6 +74,7 @@ export function ProductCard({
   requiresConfiguration = false,
   variant = "catalog",
 }: ProductCardProps) {
+  const resolvedImageUrl = imageUrl?.trim() || PRODUCT_CARD_IMAGE;
   const onSale = Boolean(compareAtFormatted);
   const showWishlist =
     locale != null && productId != null && wishlistLabel != null;
@@ -102,6 +102,7 @@ export function ProductCard({
         priceFormatted={priceFormatted}
         compareAtFormatted={compareAtFormatted}
         discountPercent={discountPercent}
+        imageUrl={resolvedImageUrl}
         inStock={inStock}
         priority={priority}
         appearStyle={appearStyle}
@@ -134,7 +135,7 @@ export function ProductCard({
           className="absolute inset-0 z-[1] block"
         >
           <Image
-            src={PRODUCT_CARD_IMAGE}
+            src={resolvedImageUrl}
             alt={title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 279px"
@@ -205,7 +206,7 @@ export function ProductCard({
               label={addToCartLabel}
               disabled={!inStock}
               size="sm"
-              imageUrl={PRODUCT_CARD_IMAGE}
+              imageUrl={resolvedImageUrl}
               configureHref={requiresConfiguration ? href : undefined}
               className="h-11 w-11 shrink-0 -translate-y-1 translate-x-2.5 rounded-full bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 md:h-[51px] md:w-[51px] md:translate-x-0 md:translate-y-0 md:rounded-[45px] [&>svg]:h-6 [&>svg]:w-6 [&>svg]:text-white md:[&>svg]:h-[29px] md:[&>svg]:w-[29px]"
             />
