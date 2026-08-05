@@ -1,0 +1,5948 @@
+{
+  "summary": {
+    "csvPath": "C:\\AI\\Grill.am\\wc-product-export-5-8-2026-1785923568934.csv",
+    "mode": "dry-run",
+    "runTimestamp": "2026-08-05T12:21:45.718Z",
+    "totalCsvRows": 97,
+    "skippedRows": 1,
+    "validRows": 96,
+    "invalidRows": 0,
+    "productsPlanned": 96,
+    "productsCreated": 96,
+    "productsPlannedCreates": 96,
+    "productsUpdated": 0,
+    "productsUnchanged": 0,
+    "productsFailed": 0,
+    "categoriesCreated": 9,
+    "categoriesReused": 0,
+    "categoryLinksCreated": 0,
+    "imagesDiscovered": 99,
+    "uniqueImageUrls": 87,
+    "duplicateImageUrlsRemoved": 11,
+    "imagesDownloaded": 99,
+    "imagesValidated": 99,
+    "imagesUploadedToR2": 0,
+    "imagesReused": 0,
+    "imageFailures": 0,
+    "imageHttp403": 0,
+    "imageHttp404": 0,
+    "imageTimeouts": 0,
+    "imageInvalidMime": 0,
+    "imageOversized": 0,
+    "imageCorrupted": 0,
+    "productsWithoutImages": 2,
+    "stockValuesApplied": 96,
+    "warnings": 3,
+    "blockingErrors": 0,
+    "duplicateGeneratedSlugs": 0,
+    "applyReady": true
+  },
+  "skipped": [
+    {
+      "woocommerceId": 677,
+      "title": "Ալկոհոլային ըմպելիքներ",
+      "reason": "Excluded unpublished category-placeholder product (no price/category/image)."
+    }
+  ],
+  "categories": [
+    {
+      "title": "Կոմբո առաջարկներ, ակցիաներ",
+      "slug": "կոմբո-առաջարկներ-ակցիաներ",
+      "existingId": null,
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Հավի գրիլ",
+      "slug": "հավի-գրիլ",
+      "existingId": null,
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Քաբաբ",
+      "slug": "քաբաբ",
+      "existingId": null,
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Խորոված",
+      "slug": "խորոված",
+      "existingId": null,
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Շաուրմա",
+      "slug": "շաուրմա",
+      "existingId": null,
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Ըմպելիքներ",
+      "slug": "ըմպելիքներ",
+      "existingId": null,
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Ալկոհոլային ըմպելիքներ",
+      "slug": "ալկոհոլային-ըմպելիքներ",
+      "existingId": null,
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Նախուտեստ, սոուս",
+      "slug": "նախուտեստ-սոուս",
+      "existingId": null,
+      "plannedMutation": "created"
+    },
+    {
+      "title": "Աղցան",
+      "slug": "աղցան",
+      "existingId": null,
+      "plannedMutation": "created"
+    }
+  ],
+  "products": [
+    {
+      "woocommerceId": 271,
+      "sku": "WC-271",
+      "titleHy": "BOOM առաջարկ",
+      "shortDescriptionHy": "10 հատ հավի քաբաբ+4 հատ թան",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 9700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/բում-առաջարկ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/բում-առաջարկ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "02051b5987e2",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-271-0-02051b5987e2.{ext}"
+        }
+      ],
+      "slug": "boom-arajark",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/բում-առաջարկ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (454401 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 459,
+      "sku": "WC-459",
+      "titleHy": "Գրիլ ապարատի",
+      "shortDescriptionHy": "Գրիլի հետ տրամադրվում է՝\n\n2 հատ խորոված ամբողջական կարտոֆիլ\n\n1 հատ խորոված կծու պղպեղ\n\n2 սոուս\n\n2 լավաշ\n\nսոխ, կանաչի",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 3500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Հավի գրիլ"
+      ],
+      "primaryCategory": "Հավի գրիլ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg",
+          "index": 0,
+          "sourceHash": "fb1e2daedf97",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-459-0-fb1e2daedf97.{ext}"
+        }
+      ],
+      "slug": "gril-aparati",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (53631 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 472,
+      "sku": "WC-472",
+      "titleHy": "Գրիլ ածուխի",
+      "shortDescriptionHy": "Գրիլի հետ տրամադրվում է՝\n\n2 հատ խորոված ամբողջական կարտոֆիլ\n\n1 հատ խորոված կծու պղպեղ\n\n2 սոուս\n\n2 լավաշ\n\nսոխ, կանաչի",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 3500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Հավի գրիլ"
+      ],
+      "primaryCategory": "Հավի գրիլ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg",
+          "index": 0,
+          "sourceHash": "fb1e2daedf97",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-472-0-fb1e2daedf97.{ext}"
+        }
+      ],
+      "slug": "gril-atsukhi",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (53631 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 474,
+      "sku": "WC-474",
+      "titleHy": "Հավ թոնրի",
+      "shortDescriptionHy": "Գրիլի հետ տրամադրվում է՝\n\n2 հատ խորոված ամբողջական կարտոֆիլ\n\n1 հատ խորոված կծու պղպեղ\n\n2 սոուս\n\n2 լավաշ\n\nսոխ, կանաչի",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 3700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Հավի գրիլ"
+      ],
+      "primaryCategory": "Հավի գրիլ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg",
+          "index": 0,
+          "sourceHash": "fb1e2daedf97",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-474-0-fb1e2daedf97.{ext}"
+        }
+      ],
+      "slug": "hav-tonri",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/02/IMG_0156-1-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (53631 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 477,
+      "sku": "WC-477",
+      "titleHy": "Քաբաբ տավարի",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1100,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Քաբաբ"
+      ],
+      "primaryCategory": "Քաբաբ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/քաբաբ-տավարի.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/քաբաբ-տավարի.jpg",
+          "index": 0,
+          "sourceHash": "b0c3b0b6673a",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-477-0-b0c3b0b6673a.{ext}"
+        }
+      ],
+      "slug": "kabab-tavari",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/քաբաբ-տավարի.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (36075 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 480,
+      "sku": "WC-480",
+      "titleHy": "Քաբաբ հավի",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1000,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Քաբաբ"
+      ],
+      "primaryCategory": "Քաբաբ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/քաբաբ-հավի.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/քաբաբ-հավի.jpg",
+          "index": 0,
+          "sourceHash": "e2ef1445d0b1",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-480-0-e2ef1445d0b1.{ext}"
+        }
+      ],
+      "slug": "kabab-havi",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/քաբաբ-հավի.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (35849 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 486,
+      "sku": "WC-486",
+      "titleHy": "Խոզի չալաղաջ",
+      "shortDescriptionHy": "Ներառում է 2-3 կտոր՝ 450 - 500 գրամ՝ հում վիճակում\n\nՍոխ, կանաչի, լավաշ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 3400,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/2.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/2.jpg",
+          "index": 0,
+          "sourceHash": "4901c9d2f377",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-486-0-4901c9d2f377.{ext}"
+        }
+      ],
+      "slug": "khozi-chalaghaj",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/2.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (22476 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 489,
+      "sku": "WC-489",
+      "titleHy": "Խոզի մատ",
+      "shortDescriptionHy": "Ներառում է 4-5 կտոր՝ 400- 410 գրամ հում վիճակում\n\nՍոխ, կանաչի, լավաշ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 3400,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/1-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/1-1.jpg",
+          "index": 0,
+          "sourceHash": "bebf9df7e60d",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-489-0-bebf9df7e60d.{ext}"
+        }
+      ],
+      "slug": "khozi-mat",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/1-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (22851 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 492,
+      "sku": "WC-492",
+      "titleHy": "Խոզի փափուկ",
+      "shortDescriptionHy": "Ներառում է 4-5 կտոր՝ 400 -410  գրամ հում վիճակում\n\nՍոխ, կանաչի, լավաշ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 2500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/12.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/12.jpg",
+          "index": 0,
+          "sourceHash": "b964799abf64",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-492-0-b964799abf64.{ext}"
+        }
+      ],
+      "slug": "khozi-papuk",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/12.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (24140 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 495,
+      "sku": "WC-495",
+      "titleHy": "Կարտոֆիլ պլեճ",
+      "shortDescriptionHy": "10 հատ ջեռոցի կարտոֆիլ\n\nսոխ, կանաչի, լավաշ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/7.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/7.jpg",
+          "index": 0,
+          "sourceHash": "d4889d83ade9",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-495-0-d4889d83ade9.{ext}"
+        }
+      ],
+      "slug": "kartofil-plech",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/7.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (21414 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 498,
+      "sku": "WC-498",
+      "titleHy": "Խորոված կարտոֆիլ",
+      "shortDescriptionHy": "Սոխ, կանաչի, լավաշ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/9.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/9.jpg",
+          "index": 0,
+          "sourceHash": "b76c43aeca1e",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-498-0-b76c43aeca1e.{ext}"
+        }
+      ],
+      "slug": "khorovats-kartofil",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/9.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (21571 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 501,
+      "sku": "WC-501",
+      "titleHy": "Կարտոֆիլի բրդուճ",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 450,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Շաուրմա",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/11.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/11.jpg",
+          "index": 0,
+          "sourceHash": "4d230ecc42a6",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-501-0-4d230ecc42a6.{ext}"
+        }
+      ],
+      "slug": "kartofili-brduch",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/11.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (17331 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 504,
+      "sku": "WC-504",
+      "titleHy": "Խոզի շաուրմա լավաշով",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ, սխտորային սոուս, կծու ծիծակ, լոլիկ, գյուղական կարտոֆիլ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1100,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Շաուրմա",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg",
+          "index": 0,
+          "sourceHash": "13a015b5b461",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-504-0-13a015b5b461.{ext}"
+        }
+      ],
+      "slug": "khozi-shaurma-lavashov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (29417 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 508,
+      "sku": "WC-508",
+      "titleHy": "Հավի շաուրմա լավաշով",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ, սխտորային սոուս, կծու ծիծակ, լոլիկ, գյուղական կարտոֆիլ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1000,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Շաուրմա",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg",
+          "index": 0,
+          "sourceHash": "13a015b5b461",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-508-0-13a015b5b461.{ext}"
+        }
+      ],
+      "slug": "havi-shaurma-lavashov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (29417 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 513,
+      "sku": "WC-513",
+      "titleHy": "Խոզի շաուրմա հացով",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ, սխտորային սոուս, կծու ծիծակ, լոլիկ, գյուղական կարտոֆիլ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 800,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Շաուրմա",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/4-1.jpg",
+        "https://grill.am/wp-content/uploads/2021/03/խոզի-շաուրմա-հացով.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/4-1.jpg",
+          "index": 0,
+          "sourceHash": "6345159420d0",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-513-0-6345159420d0.{ext}"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/խոզի-շաուրմա-հացով.jpg",
+          "index": 1,
+          "sourceHash": "f718e0ace14e",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-513-1-f718e0ace14e.{ext}"
+        }
+      ],
+      "slug": "khozi-shaurma-hatsov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/4-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (13212 bytes)",
+          "serverHint": "litespeed"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/խոզի-շաուրմա-հացով.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (37774 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 2
+    },
+    {
+      "woocommerceId": 517,
+      "sku": "WC-517",
+      "titleHy": "Հավի շաուրմա հացով",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ, սխտորային սոուս, կծու ծիծակ, լոլիկ, գյուղական կարտոֆիլ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Շաուրմա",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/4-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/4-1.jpg",
+          "index": 0,
+          "sourceHash": "6345159420d0",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-517-0-6345159420d0.{ext}"
+        }
+      ],
+      "slug": "havi-shaurma-hatsov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/4-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (13212 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 520,
+      "sku": "WC-520",
+      "titleHy": "BBQ սեթ",
+      "shortDescriptionHy": "1 շիշ խոզի փափուկ\n\n\n\n1 շիշ խոզի մատ\n\n\n\n1 շիշ խոզի չալաղաջ\n\n\n\n1շիշ գառան խառը խորոված\n\n\n\n1 շիշ հավի խորոված\n\n\n\n2 շիշ խորոված կարտոֆիլ\n\n\n\n2 հատ խորոված կծու բիբար\n\n1 հատ ֆանտա 1լ, 1 հատ կոլա 1 լիտր, 1 հատ սպրայտ 1 լիտր\n\n\n\n&nbsp;",
+      "descriptionHy": "1 շիշ խոզի փափուկ\n\n\n\n1 շիշ խոզի մատ\n\n\n\n1 շիշ խոզի չալաղաջ\n\n\n\n1շիշ գառան խառը խորոված\n\n\n\n1 շիշ հավի խորոված\n\n\n\n2 շիշ խորոված կարտոֆիլ\n\n\n\n2 հատ խորոված կծու բիբար\n\n1 հատ ֆանտա 1լ, 1 հատ կոլա 1 լիտր, 1 հատ սպրայտ 1 լիտր\n\n\n\n&nbsp;",
+      "seoDescriptionHy": "1 բաժին փափուկ,1 բաժին մատ,1 բաժին չալաղաջ,1 բաժին հավի խորոված, 2 շիշ խորոված ամբողջական կարտոֆիլm2 հատ կծու պղպեղ,1 հատ լիտր կոլա/ֆանտա/սփրայթ հյուրասիրություն",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 16400,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/բբք-սեթ-scaled-removebg-preview-1-3.png"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/բբք-սեթ-scaled-removebg-preview-1-3.png",
+          "index": 0,
+          "sourceHash": "05ebc16bede5",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-520-0-05ebc16bede5.{ext}"
+        }
+      ],
+      "slug": "bbq-set",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/բբք-սեթ-scaled-removebg-preview-1-3.png",
+          "status": "validated",
+          "message": "Validated image/png (196352 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 540,
+      "sku": "WC-540",
+      "titleHy": "Coca Cola 0․5 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/кола-05.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/кола-05.jpg",
+          "index": 0,
+          "sourceHash": "dbf85f5a2bd9",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-540-0-dbf85f5a2bd9.{ext}"
+        }
+      ],
+      "slug": "coca-cola-0-5-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/кола-05.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (24317 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 544,
+      "sku": "WC-544",
+      "titleHy": "Coca Cola Zero 0.5 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/coca-zero.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/coca-zero.jpg",
+          "index": 0,
+          "sourceHash": "9f895b50bada",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-544-0-9f895b50bada.{ext}"
+        }
+      ],
+      "slug": "coca-cola-zero-0-5-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/coca-zero.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (139932 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 547,
+      "sku": "WC-547",
+      "titleHy": "Sprite 0.5 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/sprite-05-.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/sprite-05-.jpg",
+          "index": 0,
+          "sourceHash": "e77244a6fa50",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-547-0-e77244a6fa50.{ext}"
+        }
+      ],
+      "slug": "sprite-0-5-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/sprite-05-.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (53939 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 560,
+      "sku": "WC-560",
+      "titleHy": "Fanta 0.5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/ֆանտա-0․5.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/ֆանտա-0․5.jpg",
+          "index": 0,
+          "sourceHash": "81ac3fa68172",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-560-0-81ac3fa68172.{ext}"
+        }
+      ],
+      "slug": "fanta-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/ֆանտա-0․5.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (94708 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 567,
+      "sku": "WC-567",
+      "titleHy": "Fanta Exotic 0.5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/ֆանտա-էկզոտիկ.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/ֆանտա-էկզոտիկ.jpg",
+          "index": 0,
+          "sourceHash": "7867aa7e44f8",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-567-0-7867aa7e44f8.{ext}"
+        }
+      ],
+      "slug": "fanta-exotic-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/ֆանտա-էկզոտիկ.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (163745 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 570,
+      "sku": "WC-570",
+      "titleHy": "Coca Cola 1լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/COCACOLAPETLT1-5449000054227-1.webp"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/COCACOLAPETLT1-5449000054227-1.webp",
+          "index": 0,
+          "sourceHash": "c5b890fbfc59",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-570-0-c5b890fbfc59.{ext}"
+        }
+      ],
+      "slug": "coca-cola-1l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/COCACOLAPETLT1-5449000054227-1.webp",
+          "status": "validated",
+          "message": "Validated image/webp (187878 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 573,
+      "sku": "WC-573",
+      "titleHy": "Fanta 1լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/ֆանտա-1լ.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/ֆանտա-1լ.jpg",
+          "index": 0,
+          "sourceHash": "8b0ba3f5e09c",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-573-0-8b0ba3f5e09c.{ext}"
+        }
+      ],
+      "slug": "fanta-1l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/ֆանտա-1լ.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (72704 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 576,
+      "sku": "WC-576",
+      "titleHy": "Sprite 1լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/sprite-1l.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/sprite-1l.jpg",
+          "index": 0,
+          "sourceHash": "2ed969fb5bbd",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-576-0-2ed969fb5bbd.{ext}"
+        }
+      ],
+      "slug": "sprite-1l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/sprite-1l.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (56539 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 579,
+      "sku": "WC-579",
+      "titleHy": "Ֆիրմային թան 0․5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/web.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/web.jpg",
+          "index": 0,
+          "sourceHash": "a89780224274",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-579-0-a89780224274.{ext}"
+        }
+      ],
+      "slug": "firmayin-tan-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/web.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (10860 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 613,
+      "sku": "WC-613",
+      "titleHy": "Խոզի իքիբիր",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1200,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/4.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/4.jpg",
+          "index": 0,
+          "sourceHash": "686d804cebb7",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-613-0-686d804cebb7.{ext}"
+        }
+      ],
+      "slug": "khozi-ikibir",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/4.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (22811 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 616,
+      "sku": "WC-616",
+      "titleHy": "Հավի իքիբիր",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1100,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/3-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/3-1.jpg",
+          "index": 0,
+          "sourceHash": "5f2c447572d3",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-616-0-5f2c447572d3.{ext}"
+        }
+      ],
+      "slug": "havi-ikibir",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/3-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (22703 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 647,
+      "sku": "WC-647",
+      "titleHy": "Հավի Խորոված",
+      "shortDescriptionHy": "Ներառում է 5 կտոր՝\n\n2 կտոր կրծքամիս, 3 կտոր խառը",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1200,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/6.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/6.jpg",
+          "index": 0,
+          "sourceHash": "7dcbd68cb035",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-647-0-7dcbd68cb035.{ext}"
+        }
+      ],
+      "slug": "havi-khorovats",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/6.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (24116 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 680,
+      "sku": "WC-680",
+      "titleHy": "Օղի Царская 0.5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 5350,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/օղի-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/օղի-1.jpg",
+          "index": 0,
+          "sourceHash": "f7b9b4e9d860",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-680-0-f7b9b4e9d860.{ext}"
+        }
+      ],
+      "slug": "oghi-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/օղի-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (471710 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 683,
+      "sku": "WC-683",
+      "titleHy": "Օղի Воздух 0.5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 4800,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/օղի-2.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/օղի-2.jpg",
+          "index": 0,
+          "sourceHash": "ff9a460572eb",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-683-0-ff9a460572eb.{ext}"
+        }
+      ],
+      "slug": "oghi-0-5l-683",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": true,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [
+        {
+          "code": "slug_conflict_suffix",
+          "message": "Slug conflict resolved with suffix; using oghi-0-5l-683.",
+          "woocommerceId": 683,
+          "sku": "WC-683"
+        }
+      ],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/օղի-2.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (72577 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 695,
+      "sku": "WC-695",
+      "titleHy": "Օղի Хортица դասական 0.5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 4300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/օղի-6.jpeg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/օղի-6.jpeg",
+          "index": 0,
+          "sourceHash": "eb10eadd79a0",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-695-0-eb10eadd79a0.{ext}"
+        }
+      ],
+      "slug": "oghi-dasakan-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/օղի-6.jpeg",
+          "status": "validated",
+          "message": "Validated image/jpeg (70387 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 698,
+      "sku": "WC-698",
+      "titleHy": "Գարեջուր Կիլիկիա 0․5 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/գարեջուր-կիլիկիա.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/գարեջուր-կիլիկիա.jpg",
+          "index": 0,
+          "sourceHash": "3d1abc8d3eb3",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-698-0-3d1abc8d3eb3.{ext}"
+        }
+      ],
+      "slug": "garejur-kilikia-0-5-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/գարեջուր-կիլիկիա.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (75053 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 701,
+      "sku": "WC-701",
+      "titleHy": "Գարեջուր Գյումրի 0․5 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/գյումրի.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/գյումրի.jpg",
+          "index": 0,
+          "sourceHash": "b233d3708ca0",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-701-0-b233d3708ca0.{ext}"
+        }
+      ],
+      "slug": "garejur-gyumri-0-5-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/գյումրի.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (38937 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 883,
+      "sku": "WC-883",
+      "titleHy": "Հավի թևիկի խորոված",
+      "shortDescriptionHy": "5 կտոր\n\n\n\n&nbsp;",
+      "descriptionHy": null,
+      "seoDescriptionHy": "Հավի թևիկի խորոված,պատրաստվու է թարմ տեղական հավի թևիկներից,Թևիկ խորոված, Խորոված, թարմ խրթխրթան,առաքում 24 ժամ,033600700,010600700",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/04/8.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/8.jpg",
+          "index": 0,
+          "sourceHash": "fd6a207346f8",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-883-0-fd6a207346f8.{ext}"
+        }
+      ],
+      "slug": "havi-teviki-khorovats",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/04/8.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (24415 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 1081,
+      "sku": "WC-1081",
+      "titleHy": "Կետչուպ",
+      "shortDescriptionHy": "40 գրամ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 50,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "primaryCategory": "Նախուտեստ, սոուս",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/05/11-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/05/11-1.jpg",
+          "index": 0,
+          "sourceHash": "583e222bbecb",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-1081-0-583e222bbecb.{ext}"
+        }
+      ],
+      "slug": "ketchup",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/05/11-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (21792 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 1084,
+      "sku": "WC-1084",
+      "titleHy": "Մայոնեզ",
+      "shortDescriptionHy": "40 գրամ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 50,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "primaryCategory": "Նախուտեստ, սոուս",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/05/10-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/05/10-1.jpg",
+          "index": 0,
+          "sourceHash": "9c0db9ab471c",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-1084-0-9c0db9ab471c.{ext}"
+        }
+      ],
+      "slug": "mayonez",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/05/10-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (14598 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 1152,
+      "sku": "WC-1152",
+      "titleHy": "Թոնրի լավաշ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 50,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "primaryCategory": "Նախուտեստ, սոուս",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/05/12-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/05/12-1.jpg",
+          "index": 0,
+          "sourceHash": "78363da20408",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-1152-0-78363da20408.{ext}"
+        }
+      ],
+      "slug": "tonri-lavash",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/05/12-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (15792 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 1663,
+      "sku": "WC-1663",
+      "titleHy": "Գրիլ կոմբո",
+      "shortDescriptionHy": "<strong>2 հավի գրիլ նախընտրությամբ, 2 շիշ պլեճ + 1լ կոլա հյուրասիրություն։</strong>",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 8300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/06/clipboard_image_a77672373c00c5f1.png"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/06/clipboard_image_a77672373c00c5f1.png",
+          "index": 0,
+          "sourceHash": "4bfe67206bca",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-1663-0-4bfe67206bca.{ext}"
+        }
+      ],
+      "slug": "gril-kombo",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/06/clipboard_image_a77672373c00c5f1.png",
+          "status": "validated",
+          "message": "Validated image/png (313430 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 1832,
+      "sku": "WC-1832",
+      "titleHy": "Հանքային ջուր Ջերմուկ 0․5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 350,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/06/ջերմուկ-0․5լ.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/06/ջերմուկ-0․5լ.jpg",
+          "index": 0,
+          "sourceHash": "e9b645cc0195",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-1832-0-e9b645cc0195.{ext}"
+        }
+      ],
+      "slug": "hankayin-jur-jermuk-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/06/ջերմուկ-0․5լ.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (335157 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 1835,
+      "sku": "WC-1835",
+      "titleHy": "Հանքային ջուր Ջերմուկ 1լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 400,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/06/ջերմուկ-0․5լ.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/06/ջերմուկ-0․5լ.jpg",
+          "index": 0,
+          "sourceHash": "e9b645cc0195",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-1835-0-e9b645cc0195.{ext}"
+        }
+      ],
+      "slug": "hankayin-jur-jermuk-1l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/06/ջերմուկ-0․5լ.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (335157 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 1916,
+      "sku": "WC-1916",
+      "titleHy": "Ֆիրմային մածնաբրդոշ 0․5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 400,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/06/web-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/06/web-1.jpg",
+          "index": 0,
+          "sourceHash": "adf05359a2ee",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-1916-0-adf05359a2ee.{ext}"
+        }
+      ],
+      "slug": "firmayin-matsnabrdosh-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/06/web-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (10860 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 3418,
+      "sku": "WC-3418",
+      "titleHy": "Խորոված սունկ",
+      "shortDescriptionHy": "6-7 կտոր 300 գրամ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/09/14.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/09/14.jpg",
+          "index": 0,
+          "sourceHash": "03ac0a4d887f",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-3418-0-03ac0a4d887f.{ext}"
+        }
+      ],
+      "slug": "khorovats-sunk",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/09/14.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (21040 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 4687,
+      "sku": "WC-4687",
+      "titleHy": "Ֆիրմային սոուս",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 250,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "primaryCategory": "Նախուտեստ, սոուս",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/11/ֆիրմային-սոուս-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/11/ֆիրմային-սոուս-scaled.jpg",
+          "index": 0,
+          "sourceHash": "f913271161f1",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-4687-0-f913271161f1.{ext}"
+        }
+      ],
+      "slug": "firmayin-sous",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/11/ֆիրմային-սոուս-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (163857 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 5798,
+      "sku": "WC-5798",
+      "titleHy": "Գարեջուր Արարատ 0․5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/01/գարեջուր-արարատ.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/01/գարեջուր-արարատ.jpg",
+          "index": 0,
+          "sourceHash": "725349440979",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-5798-0-725349440979.{ext}"
+        }
+      ],
+      "slug": "garejur-ararat-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/01/գարեջուր-արարատ.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (43232 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 6204,
+      "sku": "WC-6204",
+      "titleHy": "Բնական հյութ Դոբրի 1լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 850,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/01/dMpbGZhwMY5Xl8Erxc.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/01/dMpbGZhwMY5Xl8Erxc.jpg",
+          "index": 0,
+          "sourceHash": "f2e2d4658658",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-6204-0-f2e2d4658658.{ext}"
+        }
+      ],
+      "slug": "bnakan-hyut-dobri-1l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/01/dMpbGZhwMY5Xl8Erxc.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (17956 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 7530,
+      "sku": "WC-7530",
+      "titleHy": "Բնական հյութ Դոբրի 0․33 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/03/dobri_033_multifrukt.webp"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/03/dobri_033_multifrukt.webp",
+          "index": 0,
+          "sourceHash": "071dea586328",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-7530-0-071dea586328.{ext}"
+        }
+      ],
+      "slug": "bnakan-hyut-dobri-0-33-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/03/dobri_033_multifrukt.webp",
+          "status": "validated",
+          "message": "Validated image/webp (52921 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 7532,
+      "sku": "WC-7532",
+      "titleHy": "Բնական հյութ Դոբրի 0․25 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 350,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/03/DWSR4VVVR3rZzBM1t6.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/03/DWSR4VVVR3rZzBM1t6.jpg",
+          "index": 0,
+          "sourceHash": "7ee38becd206",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-7532-0-7ee38becd206.{ext}"
+        }
+      ],
+      "slug": "bnakan-hyut-dobri-0-25-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/03/DWSR4VVVR3rZzBM1t6.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (86824 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 7537,
+      "sku": "WC-7537",
+      "titleHy": "Ջուր Բոնակուա 0․5 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/03/bOHhFGZ53z6SuaJ4DK.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/03/bOHhFGZ53z6SuaJ4DK.jpg",
+          "index": 0,
+          "sourceHash": "614cf2c1138f",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-7537-0-614cf2c1138f.{ext}"
+        }
+      ],
+      "slug": "jur-bonakua-0-5-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/03/bOHhFGZ53z6SuaJ4DK.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (44197 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 8304,
+      "sku": "WC-8304",
+      "titleHy": "Ֆրի",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Շաուրմա",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/04/ֆրի-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/04/ֆրի-scaled.jpg",
+          "index": 0,
+          "sourceHash": "94aa3aa67d1d",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-8304-0-94aa3aa67d1d.{ext}"
+        }
+      ],
+      "slug": "fri",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/04/ֆրի-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (234044 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 8678,
+      "sku": "WC-8678",
+      "titleHy": "Ֆիրմային տոմատի հյութ 0․33 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/05/Tomato_juice_Aparan_600x600.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/05/Tomato_juice_Aparan_600x600.jpg",
+          "index": 0,
+          "sourceHash": "37e8b1be66db",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-8678-0-37e8b1be66db.{ext}"
+        }
+      ],
+      "slug": "firmayin-tomati-hyut-0-33-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/05/Tomato_juice_Aparan_600x600.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (36628 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 8900,
+      "sku": "WC-8900",
+      "titleHy": "Խորոված կծու պղպեղ 1 հատ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 150,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/05/խորոված-կծու-պղպեղ.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/05/խորոված-կծու-պղպեղ.jpg",
+          "index": 0,
+          "sourceHash": "b97253dbfd86",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-8900-0-b97253dbfd86.{ext}"
+        }
+      ],
+      "slug": "khorovats-ktsu-pghpegh-1-hat",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/05/խորոված-կծու-պղպեղ.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (118547 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 9113,
+      "sku": "WC-9113",
+      "titleHy": "Կոմբո ընտանեկան հավի քաբաբով",
+      "shortDescriptionHy": "1 գրիլ\n\n5 հատ հավի  քաբաբ\n\n1 շիշ խորոված կարտոֆիլ\n\n1 հատ խորոված կծու պղպեղ\n\n1 հատ 1 լ  կոլա/ֆանտա/սփրայթ  հյուրասիրություն",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 8750,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "9ba8dda34bf7",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-9113-0-9ba8dda34bf7.{ext}"
+        }
+      ],
+      "slug": "kombo-entanekan-havi-kababov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (360787 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 9327,
+      "sku": "WC-9327",
+      "titleHy": "Կոմբո լանչ գրիլով",
+      "shortDescriptionHy": "Ներառում է ՝\n\n\n\n4 բաժին լանչ գրիլով\n\nԿարտոֆիլ նախընտրությամբ՝ 3 հատ պլեճ, 1 բաժին ֆրի, 2 հատ խորոված կարտոֆիլ\n\nԿաղամբով աղցան\n\n2 կտոր հաց\n\nԶովացուցիչ ըմպելիք նախընտրությամբ՝ Կոլա 0․25լ, թան 0․5լ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 6000,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/05/լանչ-գրիլ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/05/լանչ-գրիլ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "da555aa7f693",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-9327-0-da555aa7f693.{ext}"
+        }
+      ],
+      "slug": "kombo-lanch-grilov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/05/լանչ-գրիլ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (464595 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 11554,
+      "sku": "WC-11554",
+      "titleHy": "Բնական հյութ Ամառե՝ 0․25 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 450,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/08/87033.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/08/87033.jpg",
+          "index": 0,
+          "sourceHash": "79c5b685345f",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-11554-0-79c5b685345f.{ext}"
+        }
+      ],
+      "slug": "bnakan-hyut-amare-0-25-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/08/87033.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (242080 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 11556,
+      "sku": "WC-11556",
+      "titleHy": "Բնական հյութ Ամառե՝ 0․75 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1050,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/08/a861f8795aa124e346f3bcd59f663b3c.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/08/a861f8795aa124e346f3bcd59f663b3c.jpg",
+          "index": 0,
+          "sourceHash": "2016c295669d",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-11556-0-2016c295669d.{ext}"
+        }
+      ],
+      "slug": "bnakan-hyut-amare-0-75-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/08/a861f8795aa124e346f3bcd59f663b3c.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (439724 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 11558,
+      "sku": "WC-11558",
+      "titleHy": "Մասուրի հյութ 0․5 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 400,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/08/մասուրի-հյութ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/08/մասուրի-հյութ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "8cc89082900b",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-11558-0-8cc89082900b.{ext}"
+        }
+      ],
+      "slug": "masuri-hyut-0-5-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/08/մասուրի-հյութ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (147299 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 11560,
+      "sku": "WC-11560",
+      "titleHy": "Հյութ փալփի 0․45 լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ըմպելիքներ"
+      ],
+      "primaryCategory": "Ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/08/careefour_15_0031_43045_600x600.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/08/careefour_15_0031_43045_600x600.jpg",
+          "index": 0,
+          "sourceHash": "2eb393a2418b",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-11560-0-2eb393a2418b.{ext}"
+        }
+      ],
+      "slug": "hyut-palpi-0-45-l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/08/careefour_15_0031_43045_600x600.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (40198 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 12705,
+      "sku": "WC-12705",
+      "titleHy": "Կոմբո թոնրի հավով",
+      "shortDescriptionHy": "2 թոնրի հավ\n\n2 շիշ պլեճ\n\n2 հատ խորոված կծու պղպեղ\n\n1 լ կոլա հյուրասիրություն",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 8700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/clipboard_image_708f26140cf388b.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/clipboard_image_708f26140cf388b.jpg",
+          "index": 0,
+          "sourceHash": "bd9866c22d22",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-12705-0-bd9866c22d22.{ext}"
+        }
+      ],
+      "slug": "kombo-tonri-havov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/clipboard_image_708f26140cf388b.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (28206 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 12710,
+      "sku": "WC-12710",
+      "titleHy": "Ընտանեկան փաթեթ թոնրի հավով",
+      "shortDescriptionHy": "1 հատ թոնրի հավ\n\n5 հատ հավի քաբաբ\n\n1 շիշ կարտոֆիլ\n\n1 հատ կծու պղպեղ\n\n1 հատ 1 լ  կոլա/ֆանտա/սփրայթ  հյուրասիրություն",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 8950,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "9ba8dda34bf7",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-12710-0-9ba8dda34bf7.{ext}"
+        }
+      ],
+      "slug": "entanekan-patet-tonri-havov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (360787 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 13529,
+      "sku": "WC-13529",
+      "titleHy": "Խոզի Թիակ թոնրի",
+      "shortDescriptionHy": "1 հատ խոզի թիակ ամբողջական                                                                                                                                                                                                              Քաշը 2,5-3 կգ",
+      "descriptionHy": null,
+      "seoDescriptionHy": "Խոզի Թիակ թոնրի",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 9500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/թիակ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/թիակ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "6a539f915686",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-13529-0-6a539f915686.{ext}"
+        }
+      ],
+      "slug": "khozi-tiak-tonri",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/թիակ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (327421 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 14789,
+      "sku": "WC-14789",
+      "titleHy": "Թոնրի BBQ սեթ",
+      "shortDescriptionHy": "Ներառում է՝\n\n\n\nՉալաղաջ՝  2 շիշ\n\nՄատ՝  2 շիշ\n\nՓափուկ՝ 2 շիշ\n\nՊլեճ՝  2 շիշ\n\nԱմբողջական կարտոֆիլ՝  2 շիշ\n\nԽորոված սոխ՝  1 շիշ\n\nԽորոված բանջարեղեն՝ 2 բաժին\n\nԱջիկա՝  3 բաժին\n\nՖիրմային սոուս՝  3 բաժին\n\nՀյուրասիրություն՝  5 թան 0․5 լիտր",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 20700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/12/թոնրի-բբք-սեթ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/12/թոնրի-բբք-սեթ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "497e26d0351a",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-14789-0-497e26d0351a.{ext}"
+        }
+      ],
+      "slug": "tonri-bbq-set",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/12/թոնրի-բբք-սեթ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (433140 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 16963,
+      "sku": "WC-16963",
+      "titleHy": "Կոմբո առաջարկ 2+1",
+      "shortDescriptionHy": "Ներառում է 2 բաժին խոզի փափկամսի խորոված + 1 հատ կոլա լիտր՝ հյուրասիրություն",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 5800,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/03/կոմբո-առաջարկ-21.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/03/կոմբո-առաջարկ-21.jpg",
+          "index": 0,
+          "sourceHash": "895ca2aa3e28",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-16963-0-895ca2aa3e28.{ext}"
+        }
+      ],
+      "slug": "kombo-arajark-2-1",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/03/կոմբո-առաջարկ-21.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (218270 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 18539,
+      "sku": "WC-18539",
+      "titleHy": "Ամառային աղցան",
+      "shortDescriptionHy": "530 գրամ\n\n\n\nԼոլիլ, վարունգ, քաղցր պղպեղ, խառը կանաչի, բուսայուղ, աղ, սև պղպեղ, սոխ՝ ըստ ցանկության։",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 800,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "primaryCategory": "Աղցան",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-59-583.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-59-583.jpg",
+          "index": 0,
+          "sourceHash": "daa6e73ab355",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-18539-0-daa6e73ab355.{ext}"
+        }
+      ],
+      "slug": "amarayin-aghtsan",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-59-583.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (196059 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 18541,
+      "sku": "WC-18541",
+      "titleHy": "Քամած մածունով աղցան",
+      "shortDescriptionHy": "350 գրամ\n\n\n\nՔամած մածուն, վարունգ, թթվասեր, սամիթ, սխտոր, ընկույզ։",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1000,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "primaryCategory": "Աղցան",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-16-909.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-16-909.jpg",
+          "index": 0,
+          "sourceHash": "5581fdbef922",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-18541-0-5581fdbef922.{ext}"
+        }
+      ],
+      "slug": "kamats-matsunov-aghtsan",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-16-909.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (204843 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 18543,
+      "sku": "WC-18543",
+      "titleHy": "Կաղամբով աղցան",
+      "shortDescriptionHy": "250 գրամ\n\n\n\nԿաղամբ, գազար, կանաչի, կիտրոնի հյութ, աղ, սև պղպեղ, սխտոր։",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "primaryCategory": "Աղցան",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-56-427.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-56-427.jpg",
+          "index": 0,
+          "sourceHash": "61c48dd9bc0a",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-18543-0-61c48dd9bc0a.{ext}"
+        }
+      ],
+      "slug": "kaghambov-aghtsan",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/04/viber_image_2023-10-16_18-12-56-427.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (201329 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 18662,
+      "sku": "WC-18662",
+      "titleHy": "Աջիկա",
+      "shortDescriptionHy": "90 գրամ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 250,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "primaryCategory": "Նախուտեստ, սոուս",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/05/աջիկա-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/05/աջիկա-scaled.jpg",
+          "index": 0,
+          "sourceHash": "f201b97785dc",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-18662-0-f201b97785dc.{ext}"
+        }
+      ],
+      "slug": "ajika",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/05/աջիկա-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (160265 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 23236,
+      "sku": "WC-23236",
+      "titleHy": "Կոմբո թևիկով",
+      "shortDescriptionHy": "5 շիշ հավի թևիկ\n\n1 բաժին խորոված բանջարեղեն\n\n2 շիշ պլեճ\n\n2 հատ աջիկա\n\n5 հատ 0,5 կոլա",
+      "descriptionHy": null,
+      "seoDescriptionHy": "5 շիշ հավի թևիկ2 շիշ պլեճ2 հատ աջիկա5 հատ 0,5 կոլա",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 9450,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/10/viber_image_2023-10-05_19-14-05-490.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/10/viber_image_2023-10-05_19-14-05-490.jpg",
+          "index": 0,
+          "sourceHash": "9a122afd355c",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-23236-0-9a122afd355c.{ext}"
+        }
+      ],
+      "slug": "kombo-tevikov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/10/viber_image_2023-10-05_19-14-05-490.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (200392 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 23407,
+      "sku": "WC-23407",
+      "titleHy": "Հավի շաուրմա լավաշով մեծ",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ, սխտորային սոուս, կծու ծիծակ, լոլիկ, գյուղական կարտոֆիլ,վարունգ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Շաուրմա",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg",
+          "index": 0,
+          "sourceHash": "13a015b5b461",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-23407-0-13a015b5b461.{ext}"
+        }
+      ],
+      "slug": "havi-shaurma-lavashov-mets",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (29417 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 23409,
+      "sku": "WC-23409",
+      "titleHy": "Խոզի շաուրմա լավաշով մեծ",
+      "shortDescriptionHy": "Սոխ, կանաչի, կետչուպ, մայոնեզ, սխտորային սոուս, կծու ծիծակ, լոլիկ, գյուղական կարտոֆիլ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Շաուրմա",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg",
+          "index": 0,
+          "sourceHash": "13a015b5b461",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-23409-0-13a015b5b461.{ext}"
+        }
+      ],
+      "slug": "khozi-shaurma-lavashov-mets",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/շաուրմա.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (29417 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 24590,
+      "sku": "WC-24590",
+      "titleHy": "Կոմբո N2 տավարի քաբաբով",
+      "shortDescriptionHy": "2 հատ հավի գրիլ\n\n5 հատ տավարի քեբաբ\n\n2 շիշ խոզի փափուկ\n\n2 շիշ պլեճ\n\nՀյուրասիրություն՝\n\n6 հատ 0,5 լիտր  կոլա\n\n1 բաժին խորոված բանջարեղեն\n\n1 բաժին  քամած մածունով աղցան",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 19800,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/12/clipboard_image_8d1899f16af540dc.png"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/12/clipboard_image_8d1899f16af540dc.png",
+          "index": 0,
+          "sourceHash": "638929955915",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-24590-0-638929955915.{ext}"
+        }
+      ],
+      "slug": "kombo-n2-tavari-kababov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/12/clipboard_image_8d1899f16af540dc.png",
+          "status": "validated",
+          "message": "Validated image/png (205330 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 27011,
+      "sku": "WC-27011",
+      "titleHy": "Կոմբո TWIX խոզի շաուրմայով",
+      "shortDescriptionHy": "2 հատ խոզի միջին շաուրմա\n\n\n\n2 հատ 250 մլ կոկա կոլա\n\n\n\n2 բաժին կարտոֆիլ ֆրի",
+      "descriptionHy": "2 հատ խոզի միջին շաուրմա\n\n\n\n2 հատ 250 մլ կոկա կոլա\n\n\n\n2 բաժին կարտոֆիլ ֆրի",
+      "seoDescriptionHy": "2 հատ խոզի միջին շաուրմա2 հատ 250 մլ կոկա կոլա2 բաժին կարտոֆիլ ֆրի",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 3300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ",
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/02/depositphotos_270546018-stock-photo-crumpled-white-paper-texture-2.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/02/depositphotos_270546018-stock-photo-crumpled-white-paper-texture-2.jpg",
+          "index": 0,
+          "sourceHash": "47b6e26ee863",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-27011-0-47b6e26ee863.{ext}"
+        }
+      ],
+      "slug": "kombo-twix-khozi-shaurmayov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/02/depositphotos_270546018-stock-photo-crumpled-white-paper-texture-2.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (307207 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 27014,
+      "sku": "WC-27014",
+      "titleHy": "Կոմբո Twix հավի շաուրմայով",
+      "shortDescriptionHy": "2 հատ հավի միջին շաուրմա\n\n\n\n2 հատ 250 մլ կոկա կոլա\n\n\n\n2 բաժին կարտոֆիլ ֆրի",
+      "descriptionHy": "2 հատ հավի միջին շաուրմա\n\n\n\n2 հատ 250 մլ կոկա կոլա\n\n\n\n2 բաժին կարտոֆիլ ֆրի",
+      "seoDescriptionHy": "2 հատ խոզի միջին շաուրմա2 հատ 250 մլ կոկա կոլա2 բաժին կարտոֆիլ ֆրի",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 3100,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ",
+        "Շաուրմա"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/02/depositphotos_270546018-stock-photo-crumpled-white-2-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/02/depositphotos_270546018-stock-photo-crumpled-white-2-1.jpg",
+          "index": 0,
+          "sourceHash": "514723aef2e8",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-27014-0-514723aef2e8.{ext}"
+        }
+      ],
+      "slug": "kombo-twix-havi-shaurmayov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/02/depositphotos_270546018-stock-photo-crumpled-white-2-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (300256 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 29737,
+      "sku": "WC-29737",
+      "titleHy": "Գառան իքիբիր",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": "Գառան իքիբիր, 1300 դրամ,",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/05/գառան-իքիբիր.webp"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/05/գառան-իքիբիր.webp",
+          "index": 0,
+          "sourceHash": "5415477bc6db",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-29737-0-5415477bc6db.{ext}"
+        }
+      ],
+      "slug": "garan-ikibir",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/05/գառան-իքիբիր.webp",
+          "status": "validated",
+          "message": "Validated image/webp (22332 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 31774,
+      "sku": "WC-31774",
+      "titleHy": "Խորոված լոլիկ",
+      "shortDescriptionHy": "300 գր․",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 800,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/07/bd3f6d3ef496a19df07d4eab2b198d6e.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/07/bd3f6d3ef496a19df07d4eab2b198d6e.jpg",
+          "index": 0,
+          "sourceHash": "117bd6465ee2",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-31774-0-117bd6465ee2.{ext}"
+        }
+      ],
+      "slug": "khorovats-lolik",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/07/bd3f6d3ef496a19df07d4eab2b198d6e.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (599263 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 31779,
+      "sku": "WC-31779",
+      "titleHy": "Տարա գրիլի համար",
+      "shortDescriptionHy": null,
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 250,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Հավի գրիլ"
+      ],
+      "primaryCategory": "Հավի գրիլ",
+      "sourceImageUrls": [],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [],
+      "slug": "tara-grili-hamar",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [
+        {
+          "code": "missing_images",
+          "message": "Product has no images; will be imported without media.",
+          "woocommerceId": 31779
+        }
+      ],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [],
+      "imagesValidatedCount": 0
+    },
+    {
+      "woocommerceId": 34755,
+      "sku": "WC-34755",
+      "titleHy": "Հավի բդիկի խորոված",
+      "shortDescriptionHy": "Ներառում է 5 կտոր՝ 420-450 գր․",
+      "descriptionHy": null,
+      "seoDescriptionHy": "հավի բդիկի խորոված, շատ համեղ և հյութալի, պատրաստվում է տեղական հավի բդիկներից,Բդիկ,հավի բդիկ,Հավի բդիկի խորոված,հավ թարմ,",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/11/viber_image_2025-03-10_16-58-34-293.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/11/viber_image_2025-03-10_16-58-34-293.jpg",
+          "index": 0,
+          "sourceHash": "1f982d77073b",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-34755-0-1f982d77073b.{ext}"
+        }
+      ],
+      "slug": "havi-bdiki-khorovats",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/11/viber_image_2025-03-10_16-58-34-293.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (226216 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 34759,
+      "sku": "WC-34759",
+      "titleHy": "Խորոված բանջարեղենի աղցան",
+      "shortDescriptionHy": "Լոլիկ, սմբուկ, պղպեղ, սոխ, կանաչի, աղ, բուսայուղ։",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "primaryCategory": "Աղցան",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/11/բանջարեղենի-աղցան.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/11/բանջարեղենի-աղցան.jpg",
+          "index": 0,
+          "sourceHash": "4adb1019b80a",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-34759-0-4adb1019b80a.{ext}"
+        }
+      ],
+      "slug": "khorovats-banjaregheni-aghtsan",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/11/բանջարեղենի-աղցան.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (40814 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 35194,
+      "sku": "WC-35194",
+      "titleHy": "Օղի Օհանյան 0,5լ",
+      "shortDescriptionHy": "Օղի Օհանյան 0,5լ",
+      "descriptionHy": null,
+      "seoDescriptionHy": "Օղի Օհանյան",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 5650,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/11/4850092000589zbdZXyHK0fw5Y_600x600.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/11/4850092000589zbdZXyHK0fw5Y_600x600.jpg",
+          "index": 0,
+          "sourceHash": "7c840d122a84",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-35194-0-7c840d122a84.{ext}"
+        }
+      ],
+      "slug": "oghi-ohanyan-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/11/4850092000589zbdZXyHK0fw5Y_600x600.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (17403 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 35197,
+      "sku": "WC-35197",
+      "titleHy": "Օղի Օհանյան 0,5լ ԱՅՍ",
+      "shortDescriptionHy": null,
+      "descriptionHy": "Օղի Օհանյան 0,5լ ԱՅՍ",
+      "seoDescriptionHy": "Օղի Օհանյան 0,5լ ԱՅՍ",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 7050,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2024/11/249870-Ohanyan-ICE-0.5L.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/11/249870-Ohanyan-ICE-0.5L.jpg",
+          "index": 0,
+          "sourceHash": "724eea1a40ba",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-35197-0-724eea1a40ba.{ext}"
+        }
+      ],
+      "slug": "oghi-ohanyan-0-5l-ays",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2024/11/249870-Ohanyan-ICE-0.5L.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (237687 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 35469,
+      "sku": "WC-35469",
+      "titleHy": "Ընտանեկան փաթեթ թոնրի՝ տավարի քաբաբով",
+      "shortDescriptionHy": "1 հատ թոնրի հավ\n\n5 հատ տավարի քաբաբ\n\n1 շիշ կարտոֆիլ\n\n1 հատ կծու պղպեղ\n\n1 հատ 1 լ  կոլա/ֆանտա/սփրայթ  հյուրասիրություն",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 9450,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "9ba8dda34bf7",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-35469-0-9ba8dda34bf7.{ext}"
+        }
+      ],
+      "slug": "entanekan-patet-tonri-tavari-kababov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (360787 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 35471,
+      "sku": "WC-35471",
+      "titleHy": "Կոմբո ընտանեկան տավարի քաբաբով",
+      "shortDescriptionHy": "1 գրիլ\n\n5 հատ տավարի քաբաբ\n\n1 շիշ խորոված կարտոֆիլ\n\n1 հատ խորոված կծու պղպեղ\n\n1 հատ 1 լ  կոլա/ֆանտա/սփրայթ  հյուրասիրություն",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 9250,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg",
+          "index": 0,
+          "sourceHash": "9ba8dda34bf7",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-35471-0-9ba8dda34bf7.{ext}"
+        }
+      ],
+      "slug": "kombo-entanekan-tavari-kababov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2022/10/ընտանեկան-փաթեթ-scaled.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (360787 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 36637,
+      "sku": "WC-36637",
+      "titleHy": "Օրգանիկ օղի 0,5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": "Օրգանիկ օղի 0,5 լիտր",
+      "seoDescriptionHy": "Օրգանիկ օղի 0,5",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 6700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/01/9d9z5uDfRjZIPlq0wk.webp",
+        "https://grill.am/wp-content/uploads/2025/01/պրգանիկ.png"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/01/9d9z5uDfRjZIPlq0wk.webp",
+          "index": 0,
+          "sourceHash": "722093ad47cd",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-36637-0-722093ad47cd.{ext}"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/01/պրգանիկ.png",
+          "index": 1,
+          "sourceHash": "ded46326dc72",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-36637-1-ded46326dc72.{ext}"
+        }
+      ],
+      "slug": "organik-oghi-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/01/9d9z5uDfRjZIPlq0wk.webp",
+          "status": "validated",
+          "message": "Validated image/webp (10054 bytes)",
+          "serverHint": "litespeed"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/01/պրգանիկ.png",
+          "status": "validated",
+          "message": "Validated image/png (120421 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 2
+    },
+    {
+      "woocommerceId": 37217,
+      "sku": "WC-37217",
+      "titleHy": "Հումուս",
+      "shortDescriptionHy": "200գր-500դրամ\n\nբաղադրությունը\n\nՍիսեռ, թահին, սխտոր, ջուր, աղ, կիտրոնի հյութ, ձիթապտղի ձեթ, համեմունք քիմիոն, կարմիր պղպեղ:",
+      "descriptionHy": "200գր\n\nբաղադրությունը\n\nՍիսեռ, թահին, սխտոր, ջուր, աղ, կիտրոնի հյութ, ձիթապտղի ձեթ, համեմունք քիմիոն, կարմիր պղպեղ:",
+      "seoDescriptionHy": "բաղադրությունըՍիսեռ, թահին, սխտոր, ջուր, աղ, կիտրոնի հյութ, ձիթապտղի ձեթ, համեմունք քիմիոն, կարմիր պղպեղ",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 600,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "primaryCategory": "Աղցան",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/02/FMDD141_FMDD142_FMDD245_Mediterranean_Delicacies_Humus_Traditional_1kg_2.5kg_5kg_835c83d2-5de6-4836-9a54-605150526f64.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/FMDD141_FMDD142_FMDD245_Mediterranean_Delicacies_Humus_Traditional_1kg_2.5kg_5kg_835c83d2-5de6-4836-9a54-605150526f64.jpg",
+          "index": 0,
+          "sourceHash": "27a2e511a939",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-37217-0-27a2e511a939.{ext}"
+        }
+      ],
+      "slug": "humus",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/FMDD141_FMDD142_FMDD245_Mediterranean_Delicacies_Humus_Traditional_1kg_2.5kg_5kg_835c83d2-5de6-4836-9a54-605150526f64.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (17135 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 37221,
+      "sku": "WC-37221",
+      "titleHy": "Մութաբալ",
+      "shortDescriptionHy": null,
+      "descriptionHy": "200գր\n\nբաղադրությունը\n\nՍմբուկ, սխտոր, թահին, ջուր, աղ, համեմունք, ձիթապտղի յուղ, կարմիր պղպեղ:",
+      "seoDescriptionHy": "200գրբաղադրությունըՍմբուկ, սխտոր, թահին, ջուր, աղ, համեմունք, ձիթապտղի յուղ, կարմիր պղպեղ:",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 700,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան"
+      ],
+      "primaryCategory": "Աղցան",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/02/Mutabal-10.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/Mutabal-10.jpg",
+          "index": 0,
+          "sourceHash": "cb89f0756aaa",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-37221-0-cb89f0756aaa.{ext}"
+        }
+      ],
+      "slug": "mutabal",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/Mutabal-10.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (82860 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 37240,
+      "sku": "WC-37240",
+      "titleHy": "Մանկական տուփ",
+      "shortDescriptionHy": "Մանկական տուփ\n\n\n\nՀավի շաուրմա փոքր հացով 1 հատ\n\n\n\nՖրի կարտոֆիլ 1 հատ\n\n\n\nԴոբրի 0,25լ 1 հատ\n\n\n\nԽաղալիք շարժական 1 հատ",
+      "descriptionHy": "Մանկական տուփ\n\n\n\nՀավի խոզի շաուրմա փոքր հացով 1 հատ\n\n\n\nՖրի կարտոֆիլ 1 հատ\n\n\n\nԴոբրի 0,25լ 1 հատ\n\n\n\nԽաղալիք շարժական 1 հատ",
+      "seoDescriptionHy": "Մանկական տուփՀավի շաուրմա փոքր հացով 1 հատՖրի կարտոֆիլ 1 հատԴոբրի 0,25լ 1 հատԽաղալիք շարժական 1 հատ",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Աղցան",
+        "Կոմբո առաջարկներ, ակցիաներ",
+        "Նախուտեստ, սոուս"
+      ],
+      "primaryCategory": "Աղցան",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_11-36-49-899.jpg",
+        "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-58-878.jpg",
+        "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-59-197.jpg",
+        "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-59-547.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_11-36-49-899.jpg",
+          "index": 0,
+          "sourceHash": "8026cd4287ae",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-37240-0-8026cd4287ae.{ext}"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-58-878.jpg",
+          "index": 1,
+          "sourceHash": "439989b91fb0",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-37240-1-439989b91fb0.{ext}"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-59-197.jpg",
+          "index": 2,
+          "sourceHash": "29aad9c06a20",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-37240-2-29aad9c06a20.{ext}"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-59-547.jpg",
+          "index": 3,
+          "sourceHash": "bae1ac986d6b",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-37240-3-bae1ac986d6b.{ext}"
+        }
+      ],
+      "slug": "mankakan-tup",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_11-36-49-899.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (140139 bytes)",
+          "serverHint": "litespeed"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-58-878.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (28492 bytes)",
+          "serverHint": "litespeed"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-59-197.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (40258 bytes)",
+          "serverHint": "litespeed"
+        },
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/02/viber_image_2025-02-04_12-11-59-547.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (34815 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 4
+    },
+    {
+      "woocommerceId": 38425,
+      "sku": "WC-38425",
+      "titleHy": "Կոմբո N2 հավի քաբաբով",
+      "shortDescriptionHy": "Ներառում է՝\n\n\n\n2 հատ հավի գրիլ\n\n5 հատ հավի քեբաբ\n\n2 շիշ խոզի փափուկ\n\n2 շիշ պլեճ\n\nՀյուրասիրություն՝\n\n6 հատ 0,5 լիտր  կոլա\n\n1 բաժին խորոված բանջարեղեն\n\n1 բաժին  քամած մածունով աղցան",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 19300,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Կոմբո առաջարկներ, ակցիաներ"
+      ],
+      "primaryCategory": "Կոմբո առաջարկներ, ակցիաներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2023/12/clipboard_image_8d1899f16af540dc.png"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/12/clipboard_image_8d1899f16af540dc.png",
+          "index": 0,
+          "sourceHash": "638929955915",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-38425-0-638929955915.{ext}"
+        }
+      ],
+      "slug": "kombo-n2-havi-kababov",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2023/12/clipboard_image_8d1899f16af540dc.png",
+          "status": "validated",
+          "message": "Validated image/png (205330 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 41380,
+      "sku": "WC-41380",
+      "titleHy": "Օղի Չիստայա կապլյա 0,5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": "Օղի Չիստայա կապլյա 0,5լ",
+      "seoDescriptionHy": "чистая капля օղի",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 4500,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/06/trim_9ee462b66022ecb7624d381b850ad98b.png"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/06/trim_9ee462b66022ecb7624d381b850ad98b.png",
+          "index": 0,
+          "sourceHash": "bb6c39be8643",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-41380-0-bb6c39be8643.{ext}"
+        }
+      ],
+      "slug": "oghi-chistaya-kaplya-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/06/trim_9ee462b66022ecb7624d381b850ad98b.png",
+          "status": "validated",
+          "message": "Validated image/png (65806 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 41704,
+      "sku": "WC-41704",
+      "titleHy": "Կրոմբախեր 0.33լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": "Կրոմբախեր 0.33լ",
+      "seoDescriptionHy": "Կրոմբախեր 0.33լ",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 850,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/06/krombacher-kfc.webp"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/06/krombacher-kfc.webp",
+          "index": 0,
+          "sourceHash": "e131af1c903d",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-41704-0-e131af1c903d.{ext}"
+        }
+      ],
+      "slug": "krombakher-0-33l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/06/krombacher-kfc.webp",
+          "status": "validated",
+          "message": "Validated image/webp (27348 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 41920,
+      "sku": "WC-41920",
+      "titleHy": "Օղի Ստրումբաս 0,5լ",
+      "shortDescriptionHy": null,
+      "descriptionHy": "Օղի Ստրումբաս 0,5լ",
+      "seoDescriptionHy": "Օղի Ստրումբաս 0,5լ",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 5650,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Ալկոհոլային ըմպելիքներ"
+      ],
+      "primaryCategory": "Ալկոհոլային ըմպելիքներ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/06/74970.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/06/74970.jpg",
+          "index": 0,
+          "sourceHash": "10a8eb15acf9",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-41920-0-10a8eb15acf9.{ext}"
+        }
+      ],
+      "slug": "oghi-strumbas-0-5l",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/06/74970.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (92993 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 46662,
+      "sku": "WC-46662",
+      "titleHy": "Գառան խորոված մատ",
+      "shortDescriptionHy": "Ներառում է 4-5 կտոր,  հում վիճակում ՝ 300 գր․ , սոխ, կանաչի, լավաշ։",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 5200,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/10/604e78e12268b604e78e12268d.png"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/10/604e78e12268b604e78e12268d.png",
+          "index": 0,
+          "sourceHash": "4c0cc331e271",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-46662-0-4c0cc331e271.{ext}"
+        }
+      ],
+      "slug": "garan-khorovats-mat",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/10/604e78e12268b604e78e12268d.png",
+          "status": "validated",
+          "message": "Validated image/png (164766 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 46665,
+      "sku": "WC-46665",
+      "titleHy": "Գառան խորոված փափուկ",
+      "shortDescriptionHy": "Ներառում է 4-5 կտոր, 350-400 գրամ հում վիճակում, սոխ, կանաչի, լավաշ։",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 4000,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/10/af2d18cd2d7d50b8e46826b4f040760da9e2.png"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/10/af2d18cd2d7d50b8e46826b4f040760da9e2.png",
+          "index": 0,
+          "sourceHash": "e035c727c082",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-46665-0-e035c727c082.{ext}"
+        }
+      ],
+      "slug": "garan-khorovats-papuk",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/10/af2d18cd2d7d50b8e46826b4f040760da9e2.png",
+          "status": "validated",
+          "message": "Validated image/png (439850 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 46668,
+      "sku": "WC-46668",
+      "titleHy": "Գառան խառը խորոված",
+      "shortDescriptionHy": "Ներառում է 4-5 կտոր, 400 գր․, սոխ, կանաչի, լավաշ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 4000,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [],
+      "slug": "garan-khare-khorovats",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [
+        {
+          "code": "missing_images",
+          "message": "Product has no images; will be imported without media.",
+          "woocommerceId": 46668
+        }
+      ],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [],
+      "imagesValidatedCount": 0
+    },
+    {
+      "woocommerceId": 46670,
+      "sku": "WC-46670",
+      "titleHy": "Գառան չալաղաջ",
+      "shortDescriptionHy": "Ներառում է 4 կտոր, հում վիճակում՝  350 գր, սոխ, կանաչի, լավաշ\n\n\n\n&nbsp;\n\n\n\n&nbsp;",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 4200,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Խորոված"
+      ],
+      "primaryCategory": "Խորոված",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2025/10/2Z2A2984-scaled-1.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/10/2Z2A2984-scaled-1.jpg",
+          "index": 0,
+          "sourceHash": "50af176aaaf2",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-46670-0-50af176aaaf2.{ext}"
+        }
+      ],
+      "slug": "garan-chalaghaj",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2025/10/2Z2A2984-scaled-1.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (922740 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 46673,
+      "sku": "WC-46673",
+      "titleHy": "Գառան քաբաբ",
+      "shortDescriptionHy": "150 գրամ, սոխ կանաչի, լավաշ",
+      "descriptionHy": null,
+      "seoDescriptionHy": null,
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1200,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Քաբաբ"
+      ],
+      "primaryCategory": "Քաբաբ",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/03/քաբաբ-տավարի.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 0,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/քաբաբ-տավարի.jpg",
+          "index": 0,
+          "sourceHash": "b0c3b0b6673a",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-46673-0-b0c3b0b6673a.{ext}"
+        }
+      ],
+      "slug": "garan-kabab",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/03/քաբաբ-տավարի.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (36075 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    },
+    {
+      "woocommerceId": 46902,
+      "sku": "WC-46902",
+      "titleHy": "Տնական թթու",
+      "shortDescriptionHy": null,
+      "descriptionHy": "Տնական թթու,վարունգ, գազար, կաղամբ,ծաղկակաղամբ,ճակնդեղ,սխտոր,",
+      "seoDescriptionHy": "Տնական թթու,Վարունգ, գազար, կաղամբ,ծաղկակաղամբ,ճակնդեղ,սխտոր,",
+      "truncatedFields": [],
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "priceAmount": 1000,
+      "compareAtAmount": null,
+      "stockOnHand": 999,
+      "categories": [
+        "Նախուտեստ, սոուս"
+      ],
+      "primaryCategory": "Նախուտեստ, սոուս",
+      "sourceImageUrls": [
+        "https://grill.am/wp-content/uploads/2021/10/Թթու.jpg"
+      ],
+      "duplicateImageUrlsRemoved": 1,
+      "images": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/10/Թթու.jpg",
+          "index": 0,
+          "sourceHash": "b0e0fdc0afcf",
+          "plannedObjectKeyTemplate": "uploads/products/{productId}/woocommerce-46902-0-b0e0fdc0afcf.{ext}"
+        }
+      ],
+      "slug": "tnakan-ttu",
+      "slugFallbackUsed": false,
+      "slugConflictSuffixApplied": false,
+      "csvType": "simple",
+      "publishedRaw": "1",
+      "featuredRaw": "0",
+      "conflicts": {
+        "existingProductId": null,
+        "existingSkuOwnerId": null,
+        "slugOwnedByOtherSku": false,
+        "slugOwnerSku": null,
+        "existingStockOnHand": null,
+        "existingStatus": null,
+        "existingPriceAmount": null,
+        "hasImportStockMovement": false,
+        "existingCategoryIds": [],
+        "existingMediaObjectKeys": []
+      },
+      "warnings": [],
+      "errors": [],
+      "plannedMutation": "created",
+      "imageValidations": [
+        {
+          "sourceUrl": "https://grill.am/wp-content/uploads/2021/10/Թթու.jpg",
+          "status": "validated",
+          "message": "Validated image/jpeg (19516 bytes)",
+          "serverHint": "litespeed"
+        }
+      ],
+      "imagesValidatedCount": 1
+    }
+  ],
+  "conflicts": [],
+  "warnings": [
+    {
+      "code": "slug_conflict_suffix",
+      "message": "Slug conflict resolved with suffix; using oghi-0-5l-683.",
+      "woocommerceId": 683,
+      "sku": "WC-683"
+    },
+    {
+      "code": "missing_images",
+      "message": "Product has no images; will be imported without media.",
+      "woocommerceId": 31779
+    },
+    {
+      "code": "missing_images",
+      "message": "Product has no images; will be imported without media.",
+      "woocommerceId": 46668
+    }
+  ],
+  "errors": [],
+  "applyReadiness": {
+    "ready": true,
+    "blockingReasons": [],
+    "inaccessibleSourceImages": 0,
+    "duplicateGeneratedSlugs": 0,
+    "invalidRows": 0
+  }
+}

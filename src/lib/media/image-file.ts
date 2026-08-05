@@ -14,16 +14,33 @@ export function extensionForImageMime(mimeType: string): string {
   return "jpg";
 }
 
+/** True when the MIME type is allowed for product/category media. */
+export function isAllowedImageMime(mimeType: string): boolean {
+  return ALLOWED_MIME.has(mimeType);
+}
+
+/** Validates MIME and byte size for image buffers (CLI / remote downloads). */
+export function validateImageBytes(
+  mimeType: string,
+  byteSize: number,
+  maxBytes = MEDIA_IMAGE_MAX_BYTES,
+): string | null {
+  if (!ALLOWED_MIME.has(mimeType)) {
+    return "Only JPEG, PNG, WebP, or GIF images are allowed.";
+  }
+  if (byteSize > maxBytes) {
+    return `Image must be ${Math.floor(maxBytes / (1024 * 1024))}MB or smaller.`;
+  }
+  if (byteSize <= 0) {
+    return "Image is empty.";
+  }
+  return null;
+}
+
 /** Validates MIME and size for admin image uploads. */
 export function validateImageFile(
   file: File,
   maxBytes = MEDIA_IMAGE_MAX_BYTES,
 ): string | null {
-  if (!ALLOWED_MIME.has(file.type)) {
-    return "Only JPEG, PNG, WebP, or GIF images are allowed.";
-  }
-  if (file.size > maxBytes) {
-    return `Image must be ${Math.floor(maxBytes / (1024 * 1024))}MB or smaller.`;
-  }
-  return null;
+  return validateImageBytes(file.type, file.size, maxBytes);
 }
