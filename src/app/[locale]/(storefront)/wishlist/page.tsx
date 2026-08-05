@@ -73,6 +73,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
     return {
       product,
       priceFormatted: price.formatted,
+      unitPriceAmount: Number(price.displayAmount),
       compareAtFormatted: compareAt?.formatted ?? null,
     };
   });
@@ -87,12 +88,16 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
         ) : (
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
             {priced.map(
-              ({ product, priceFormatted, compareAtFormatted }, index) => (
+              (
+                { product, priceFormatted, unitPriceAmount, compareAtFormatted },
+                index,
+              ) => (
                 <ProductCard
                   key={product.id}
                   href={`/${rawLocale}/products/${product.translation.slug}`}
                   title={product.translation.title}
                   priceFormatted={priceFormatted}
+                  unitPriceAmount={unitPriceAmount}
                   compareAtFormatted={compareAtFormatted}
                   discountPercent={product.discountPercent}
                   imageUrl={product.imageUrl}
@@ -100,6 +105,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   priority={index < 4}
                   appearIndex={index}
                   locale={rawLocale}
+                  currency={currency}
                   productId={product.id}
                   inWishlist
                   isSignedIn

@@ -229,6 +229,9 @@ export function ProductBuyBox({
     });
 
     const selectionKey = selectionKeyFromModifiers(modifiers);
+    const displayUnitAmount = Number(
+      convertAmount(unitAmount, fxRate, defaultCurrency, currency).amount,
+    );
     const upsert = upsertItemLocally({
       productId,
       selectionKey,
@@ -236,7 +239,10 @@ export function ProductBuyBox({
       slug,
       quantity,
       imageUrl,
+      unitPriceAmount: displayUnitAmount,
       unitPriceFormatted: priceFormatted,
+      locale,
+      currency,
       modifierLines: describeModifiers(rawCustomization, modifiers, locale),
     });
     adjustLocalCartItemCount(quantity);

@@ -17,6 +17,8 @@ import {
   upsertItemLocally,
 } from "@/features/cart/cart-drawer-local-store";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
+import type { Locale } from "@/lib/i18n/config";
+import type { Currency } from "@/lib/money/currency";
 
 type AddToCartButtonProps = {
   productId: string;
@@ -31,6 +33,10 @@ type AddToCartButtonProps = {
   slug?: string;
   /** Formatted unit price for optimistic drawer row. */
   unitPriceFormatted?: string;
+  /** Display-currency minor units for optimistic totals. */
+  unitPriceAmount?: number;
+  locale?: Locale;
+  currency?: Currency;
   /**
    * When set, navigates here instead of quick-adding (required options / sauces).
    */
@@ -47,6 +53,9 @@ export function AddToCartButton({
   title = "",
   slug = "",
   unitPriceFormatted = "",
+  unitPriceAmount,
+  locale,
+  currency,
   configureHref,
 }: AddToCartButtonProps) {
   const router = useRouter();
@@ -83,6 +92,12 @@ export function AddToCartButton({
       label;
     const resolvedSlug = slug.trim() || productId;
     const resolvedPrice = unitPriceFormatted.trim() || "…";
+    const resolvedAmount =
+      unitPriceAmount != null && Number.isFinite(unitPriceAmount)
+        ? Math.max(0, Math.trunc(unitPriceAmount))
+        : 0;
+    const resolvedLocale = locale ?? "hy";
+    const resolvedCurrency = currency ?? "AMD";
 
     const upsert = upsertItemLocally({
       productId,
@@ -91,7 +106,10 @@ export function AddToCartButton({
       slug: resolvedSlug,
       quantity: 1,
       imageUrl: imageUrl,
+      unitPriceAmount: resolvedAmount,
       unitPriceFormatted: resolvedPrice,
+      locale: resolvedLocale,
+      currency: resolvedCurrency,
       modifierLines: [],
     });
     adjustLocalCartItemCount(1);

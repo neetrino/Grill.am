@@ -9,6 +9,7 @@ import {
 } from "@/features/products/ui/FeaturedProductCard";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
+import type { Currency } from "@/lib/money/currency";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 /** Fallback product-card photo when a product has no media. */
@@ -29,6 +30,8 @@ type ProductCardProps = {
   title: string;
   categoryTitle?: string | null;
   priceFormatted: string;
+  /** Display-currency minor units for optimistic cart totals. */
+  unitPriceAmount?: number;
   compareAtFormatted?: string | null;
   discountPercent?: number | null;
   imageUrl: string | null;
@@ -42,6 +45,7 @@ type ProductCardProps = {
    */
   appearActive?: boolean;
   locale?: Locale;
+  currency?: Currency;
   productId?: string;
   /** Product slug for optimistic cart lines (defaults from href when omitted). */
   slug?: string;
@@ -60,6 +64,7 @@ export function ProductCard({
   title,
   categoryTitle = null,
   priceFormatted,
+  unitPriceAmount,
   compareAtFormatted = null,
   discountPercent = null,
   imageUrl,
@@ -68,6 +73,7 @@ export function ProductCard({
   appearIndex,
   appearActive,
   locale,
+  currency,
   productId,
   slug,
   inWishlist = false,
@@ -107,6 +113,7 @@ export function ProductCard({
         title={title}
         categoryTitle={categoryTitle}
         priceFormatted={priceFormatted}
+        unitPriceAmount={unitPriceAmount}
         compareAtFormatted={compareAtFormatted}
         discountPercent={discountPercent}
         imageUrl={resolvedImageUrl}
@@ -115,6 +122,7 @@ export function ProductCard({
         appearStyle={appearStyle}
         appearClass={appearClass}
         locale={locale}
+        currency={currency}
         productId={productId}
         slug={resolvedSlug}
         inWishlist={inWishlist}
@@ -217,6 +225,9 @@ export function ProductCard({
               title={title}
               slug={resolvedSlug}
               unitPriceFormatted={priceFormatted}
+              unitPriceAmount={unitPriceAmount}
+              locale={locale}
+              currency={currency}
               imageUrl={resolvedImageUrl}
               configureHref={requiresConfiguration ? href : undefined}
               className="h-11 w-11 shrink-0 -translate-y-1 translate-x-2.5 rounded-full bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 md:h-[51px] md:w-[51px] md:translate-x-0 md:translate-y-0 md:rounded-[45px] [&>svg]:h-6 [&>svg]:w-6 [&>svg]:text-white md:[&>svg]:h-[29px] md:[&>svg]:w-[29px]"

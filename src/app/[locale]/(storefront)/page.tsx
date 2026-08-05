@@ -33,6 +33,7 @@ type PricedCard = {
   title: string;
   categoryTitle: string | null;
   priceFormatted: string;
+  unitPriceAmount: number;
   compareAtFormatted: string | null;
   discountPercent: number | null;
   imageUrl: string | null;
@@ -92,6 +93,7 @@ export default async function HomePage({ params }: HomePageProps) {
         title: product.translation.title,
         categoryTitle: product.categoryTitle,
         priceFormatted: price.formatted,
+        unitPriceAmount: Number(price.displayAmount),
         compareAtFormatted: compareAt?.formatted ?? null,
         discountPercent: product.discountPercent,
         imageUrl: product.imageUrl,
@@ -152,6 +154,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <HomeFeaturedProductsLazy
         locale={locale}
+        currency={currency}
         titleLead={dictionary.home.featuredTitleLead}
         titleAccent={dictionary.home.featuredTitleAccent}
         subtitle={dictionary.home.featuredSubtitle}

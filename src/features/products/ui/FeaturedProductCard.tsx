@@ -6,6 +6,7 @@ import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
+import type { Currency } from "@/lib/money/currency";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 const FEATURED_CARD_IMAGE_FALLBACK = staticAssetUrl(
@@ -17,6 +18,7 @@ type FeaturedProductCardProps = {
   title: string;
   categoryTitle?: string | null;
   priceFormatted: string;
+  unitPriceAmount?: number;
   compareAtFormatted?: string | null;
   discountPercent?: number | null;
   imageUrl?: string | null;
@@ -25,6 +27,7 @@ type FeaturedProductCardProps = {
   appearStyle?: CSSProperties;
   appearClass: string;
   locale?: Locale;
+  currency?: Currency;
   productId?: string;
   /** Product slug for optimistic cart lines. */
   slug?: string;
@@ -44,6 +47,7 @@ export function FeaturedProductCard({
   title,
   categoryTitle = null,
   priceFormatted,
+  unitPriceAmount,
   compareAtFormatted = null,
   discountPercent = null,
   imageUrl = null,
@@ -52,6 +56,7 @@ export function FeaturedProductCard({
   appearStyle,
   appearClass,
   locale,
+  currency,
   productId,
   slug,
   inWishlist = false,
@@ -180,6 +185,9 @@ export function FeaturedProductCard({
               title={title}
               slug={resolvedSlug}
               unitPriceFormatted={priceFormatted}
+              unitPriceAmount={unitPriceAmount}
+              locale={locale}
+              currency={currency}
               imageUrl={resolvedImageUrl}
               configureHref={requiresConfiguration ? href : undefined}
               className={

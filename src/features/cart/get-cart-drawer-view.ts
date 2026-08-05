@@ -26,7 +26,12 @@ export type CartDrawerItemView = {
   slug: string;
   quantity: number;
   imageUrl: string | null;
+  /** Display-currency minor units for one unit. */
+  unitPriceAmount: number;
+  /** unitPriceAmount × quantity. */
+  lineTotalAmount: number;
   unitPriceFormatted: string;
+  lineTotalFormatted: string;
   modifierLines: string[];
   /** Used for optimistic upsert matching across client + server rows. */
   productId?: string;
@@ -35,8 +40,19 @@ export type CartDrawerItemView = {
 };
 
 export type CartDrawerView = {
+  locale: Locale;
+  currency: Currency;
   itemCount: number;
   items: CartDrawerItemView[];
+  /** Sum of line totals in display-currency minor units. */
+  subtotalAmount: number;
+  /**
+   * Server-only delta applied on top of subtotal (coupons, taxes, etc.).
+   * Usually 0 while the drawer total equals merchandise subtotal.
+   */
+  adjustmentsAmount: number;
+  shippingAmount: number;
+  totalAmount: number;
   subtotalFormatted: string;
   shippingFormatted: string;
   totalFormatted: string;
@@ -75,19 +91,14 @@ async function loadPrimaryProductImages(
   return map;
 }
 
-function formatConvertedAmount(
+function toDisplayMinor(
   baseAmountAmd: number,
   rate: string,
   currency: Currency,
-  locale: Locale,
-): string {
-  const converted = convertAmount(
-    baseAmountAmd,
-    rate,
-    defaultCurrency,
-    currency,
+): number {
+  return Number(
+    convertAmount(baseAmountAmd, rate, defaultCurrency, currency).amount,
   );
-  return formatMoneyAmount(converted.amount, currency, locale);
 }
 
 /** Builds storefront cart-drawer display data for the active cart. */
@@ -109,7 +120,7 @@ export async function getCartDrawerView(
   ]);
 
   const items: CartDrawerItemView[] = [];
-  let subtotalBase = 0;
+  let subtotalAmount = 0;
 
   for (const { item, product } of rows) {
     const translation =
@@ -118,11 +129,17 @@ export async function getCartDrawerView(
     const customization = parseProductCustomization(product.customization);
     const baseUnit =
       prices.get(product.id)?.unitAmount ?? product.priceAmount;
-    const unitAmount = unitAmountWithModifiers(
+    const unitAmountAmd = unitAmountWithModifiers(
       baseUnit,
       customization,
       modifiers,
     );
+    const unitPriceAmount = toDisplayMinor(
+      unitAmountAmd,
+      quote.rate,
+      currency,
+    );
+    const lineTotalAmount = unitPriceAmount * item.quantity;
 
     items.push({
       id: item.id,
@@ -132,29 +149,38 @@ export async function getCartDrawerView(
       slug: translation?.slug ?? product.sku,
       quantity: item.quantity,
       imageUrl: images.get(product.id) ?? null,
-      unitPriceFormatted: formatConvertedAmount(
-        unitAmount,
-        quote.rate,
+      unitPriceAmount,
+      lineTotalAmount,
+      unitPriceFormatted: formatMoneyAmount(
+        unitPriceAmount,
+        currency,
+        locale,
+      ),
+      lineTotalFormatted: formatMoneyAmount(
+        lineTotalAmount,
         currency,
         locale,
       ),
       modifierLines: describeModifiers(customization, modifiers, locale),
     });
-    subtotalBase += item.quantity * unitAmount;
+    subtotalAmount += lineTotalAmount;
   }
 
-  const subtotalFormatted = formatConvertedAmount(
-    subtotalBase,
-    quote.rate,
-    currency,
-    locale,
-  );
+  const shippingAmount = 0;
+  const adjustmentsAmount = 0;
+  const totalAmount = subtotalAmount + adjustmentsAmount;
 
   return {
+    locale,
+    currency,
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
     items,
-    subtotalFormatted,
-    shippingFormatted: formatMoneyAmount(0, currency, locale),
-    totalFormatted: subtotalFormatted,
+    subtotalAmount,
+    adjustmentsAmount,
+    shippingAmount,
+    totalAmount,
+    subtotalFormatted: formatMoneyAmount(subtotalAmount, currency, locale),
+    shippingFormatted: formatMoneyAmount(shippingAmount, currency, locale),
+    totalFormatted: formatMoneyAmount(totalAmount, currency, locale),
   };
 }
