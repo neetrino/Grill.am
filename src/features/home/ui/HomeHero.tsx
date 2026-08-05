@@ -72,6 +72,7 @@ function HeroChickenCollage() {
           src={HERO_CHICKEN}
           alt=""
           fill
+          priority
           sizes="37vw"
           className="object-cover"
         />
@@ -82,6 +83,7 @@ function HeroChickenCollage() {
           src={HERO_CHICKEN}
           alt=""
           fill
+          priority
           sizes="48vw"
           className="object-cover"
         />
@@ -112,6 +114,7 @@ function MobileHeroCard({
             src={HERO_FLAME}
             alt=""
             fill
+            priority
             sizes="100vw"
             className="object-cover"
           />
@@ -201,6 +204,7 @@ export function HomeHero({
                 src={HERO_FLAME}
                 alt=""
                 fill
+                priority
                 sizes="100vw"
                 className="object-contain"
               />
@@ -222,6 +226,7 @@ export function HomeHero({
                 src={HERO_ACCENT}
                 alt=""
                 fill
+                priority
                 sizes="13vw"
                 className="object-contain"
               />
