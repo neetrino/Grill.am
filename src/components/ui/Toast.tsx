@@ -37,7 +37,10 @@ type ToastProps = {
 export function Toast({ message, tone, onDismiss, closeLabel }: ToastProps) {
   const [exiting, setExiting] = useState(false);
   const dismissRef = useRef(onDismiss);
-  dismissRef.current = onDismiss;
+
+  useEffect(() => {
+    dismissRef.current = onDismiss;
+  }, [onDismiss]);
 
   useEffect(() => {
     const hideTimer = window.setTimeout(
