@@ -28,6 +28,10 @@ export type CartDrawerItemView = {
   imageUrl: string | null;
   unitPriceFormatted: string;
   modifierLines: string[];
+  /** Used for optimistic upsert matching across client + server rows. */
+  productId?: string;
+  /** Empty string for unmodified simple products. */
+  selectionKey?: string;
 };
 
 export type CartDrawerView = {
@@ -122,6 +126,8 @@ export async function getCartDrawerView(
 
     items.push({
       id: item.id,
+      productId: product.id,
+      selectionKey: item.selectionKey,
       title: translation?.title ?? product.sku,
       slug: translation?.slug ?? product.sku,
       quantity: item.quantity,

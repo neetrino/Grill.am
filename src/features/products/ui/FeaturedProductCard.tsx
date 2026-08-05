@@ -26,6 +26,8 @@ type FeaturedProductCardProps = {
   appearClass: string;
   locale?: Locale;
   productId?: string;
+  /** Product slug for optimistic cart lines. */
+  slug?: string;
   inWishlist?: boolean;
   isSignedIn?: boolean;
   wishlistLabel?: string;
@@ -51,6 +53,7 @@ export function FeaturedProductCard({
   appearClass,
   locale,
   productId,
+  slug,
   inWishlist = false,
   isSignedIn = false,
   wishlistLabel,
@@ -59,6 +62,10 @@ export function FeaturedProductCard({
   tone,
 }: FeaturedProductCardProps) {
   const resolvedImageUrl = imageUrl?.trim() || FEATURED_CARD_IMAGE_FALLBACK;
+  const resolvedSlug =
+    slug?.trim() ||
+    href.split("/").filter(Boolean).at(-1)?.split("?")[0] ||
+    "";
   const isRed = tone === "red";
   const onSale = Boolean(compareAtFormatted);
   const showWishlist =
@@ -170,6 +177,9 @@ export function FeaturedProductCard({
               label={addToCartLabel}
               disabled={!inStock}
               size="sm"
+              title={title}
+              slug={resolvedSlug}
+              unitPriceFormatted={priceFormatted}
               imageUrl={resolvedImageUrl}
               configureHref={requiresConfiguration ? href : undefined}
               className={

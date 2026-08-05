@@ -43,6 +43,8 @@ type ProductCardProps = {
   appearActive?: boolean;
   locale?: Locale;
   productId?: string;
+  /** Product slug for optimistic cart lines (defaults from href when omitted). */
+  slug?: string;
   inWishlist?: boolean;
   isSignedIn?: boolean;
   wishlistLabel?: string;
@@ -67,6 +69,7 @@ export function ProductCard({
   appearActive,
   locale,
   productId,
+  slug,
   inWishlist = false,
   isSignedIn = false,
   wishlistLabel,
@@ -75,6 +78,10 @@ export function ProductCard({
   variant = "catalog",
 }: ProductCardProps) {
   const resolvedImageUrl = imageUrl?.trim() || PRODUCT_CARD_IMAGE;
+  const resolvedSlug =
+    slug?.trim() ||
+    href.split("/").filter(Boolean).at(-1)?.split("?")[0] ||
+    "";
   const onSale = Boolean(compareAtFormatted);
   const showWishlist =
     locale != null && productId != null && wishlistLabel != null;
@@ -109,6 +116,7 @@ export function ProductCard({
         appearClass={appearClass}
         locale={locale}
         productId={productId}
+        slug={resolvedSlug}
         inWishlist={inWishlist}
         isSignedIn={isSignedIn}
         wishlistLabel={wishlistLabel}
@@ -206,6 +214,9 @@ export function ProductCard({
               label={addToCartLabel}
               disabled={!inStock}
               size="sm"
+              title={title}
+              slug={resolvedSlug}
+              unitPriceFormatted={priceFormatted}
               imageUrl={resolvedImageUrl}
               configureHref={requiresConfiguration ? href : undefined}
               className="h-11 w-11 shrink-0 -translate-y-1 translate-x-2.5 rounded-full bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 md:h-[51px] md:w-[51px] md:translate-x-0 md:translate-y-0 md:rounded-[45px] [&>svg]:h-6 [&>svg]:w-6 [&>svg]:text-white md:[&>svg]:h-[29px] md:[&>svg]:w-[29px]"

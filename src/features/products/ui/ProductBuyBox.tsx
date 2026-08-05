@@ -10,10 +10,17 @@ import {
   adjustLocalCartItemCount,
   notifyCartChanged,
 } from "@/features/cart/cart-client-sync";
+import {
+  acknowledgeOptimisticAdd,
+  rollbackUpsertLocally,
+  upsertItemLocally,
+} from "@/features/cart/cart-drawer-local-store";
 import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import {
   computeModifiersDelta,
+  describeModifiers,
   hasRequiredModifiersSelected,
+  selectionKeyFromModifiers,
   type CartModifiers,
   type ProductCustomization,
   type StorefrontCustomization,
@@ -50,6 +57,7 @@ type ProductBuyBoxProps = {
   fxRate: string;
   productId: string;
   title: string;
+  slug: string;
   stockOnHand: number;
   baseUnitAmount: number;
   compareAtAmount: number | null;
@@ -102,6 +110,7 @@ export function ProductBuyBox({
   fxRate,
   productId,
   title,
+  slug,
   stockOnHand,
   baseUnitAmount,
   compareAtAmount,
@@ -219,15 +228,28 @@ export function ProductBuyBox({
       imageUrl: imageUrl?.trim() || PRODUCT_CARD_IMAGE,
     });
 
+    const selectionKey = selectionKeyFromModifiers(modifiers);
+    const upsert = upsertItemLocally({
+      productId,
+      selectionKey,
+      title,
+      slug,
+      quantity,
+      imageUrl,
+      unitPriceFormatted: priceFormatted,
+      modifierLines: describeModifiers(rawCustomization, modifiers, locale),
+    });
     adjustLocalCartItemCount(quantity);
 
     startTransition(async () => {
       try {
         await addToCart(productId, quantity, modifiers);
+        acknowledgeOptimisticAdd();
         notifyCartChanged();
         router.refresh();
         setMessage(labels.added);
       } catch {
+        rollbackUpsertLocally(upsert);
         adjustLocalCartItemCount(-quantity);
         setError(labels.error);
       }
