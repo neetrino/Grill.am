@@ -146,7 +146,8 @@ async function withProductImages(
     .filter((product): product is CatalogProduct => product !== null);
 }
 
-const activeCatalogWhere = and(
+/** Storefront visibility filter: published and not soft-deleted. */
+export const activeCatalogWhere = and(
   eq(products.status, "ACTIVE"),
   isNull(products.deletedAt),
 );
