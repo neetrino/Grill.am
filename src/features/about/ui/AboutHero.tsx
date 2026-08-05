@@ -57,9 +57,11 @@ export function AboutHero({ copy }: AboutHeroProps) {
             {copy.eyebrow}
           </span>
 
-          <h1 className="text-[clamp(16px,3.6vw,40px)] leading-[1.2] font-black tracking-tight whitespace-nowrap text-brand-ink uppercase">
-            <span>{copy.titleLead}</span>{" "}
-            <span className="text-brand-red">{copy.titleAccent}</span>
+          <h1 className="text-[22px] leading-[1.2] font-black tracking-tight text-brand-ink uppercase sm:whitespace-nowrap sm:text-[26px] md:text-[28px] lg:text-[40px]">
+            <span className="block sm:inline">{copy.titleLead}</span>{" "}
+            <span className="block text-brand-red sm:inline">
+              {copy.titleAccent}
+            </span>
           </h1>
         </div>
 
