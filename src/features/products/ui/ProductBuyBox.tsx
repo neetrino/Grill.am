@@ -57,6 +57,7 @@ type ProductBuyBoxProps = {
   initialCompareAtFormatted: string | null;
   shortDescription?: string;
   description?: string;
+  imageUrl?: string | null;
   customization: StorefrontCustomization;
   rawCustomization: ProductCustomization | null;
   ratingAverage?: number | null;
@@ -108,6 +109,7 @@ export function ProductBuyBox({
   initialCompareAtFormatted,
   shortDescription,
   description,
+  imageUrl = null,
   customization,
   rawCustomization,
   ratingAverage = null,
@@ -214,7 +216,7 @@ export function ProductBuyBox({
     const flyOrigin = document.querySelector("[data-product-fly-origin]");
     playCartFlyAnimation({
       fromElement: flyOrigin,
-      imageUrl: PRODUCT_CARD_IMAGE,
+      imageUrl: imageUrl?.trim() || PRODUCT_CARD_IMAGE,
     });
 
     adjustLocalCartItemCount(quantity);

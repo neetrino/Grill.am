@@ -1,0 +1,465 @@
+{
+  "generatedAt": "2026-08-05T12:33:28.009Z",
+  "environment": {
+    "databaseConfigured": true,
+    "r2Configured": true,
+    "publicBaseConfigured": true,
+    "publicBaseHost": "pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev"
+  },
+  "counts": {
+    "importedProducts": 96,
+    "media": {
+      "media_rows": 99,
+      "distinct_product_ids": 94,
+      "distinct_object_keys": 99,
+      "primary_rows": 94,
+      "primary_role_rows": 94
+    }
+  },
+  "sampleSkus": [
+    "WC-271",
+    "WC-459",
+    "WC-477",
+    "WC-520",
+    "WC-37240"
+  ],
+  "sampleRows": [
+    {
+      "sku": "WC-271",
+      "product_id": "019fd1e2-fa53-756e-80a6-ef3aab76b695",
+      "title": "BOOM առաջարկ",
+      "slug": "boom-arajark",
+      "media_id": "019fd1e2-fff2-7693-8588-7fd155cb87bd",
+      "object_key": "uploads/products/019fd1e2-fa53-756e-80a6-ef3aab76b695/woocommerce-271-0-02051b5987e2.jpg",
+      "is_primary": true,
+      "sort_order": 0,
+      "mime_type": "image/jpeg",
+      "byte_size": 454401,
+      "checksum": "02051b5987e2",
+      "role": "PRIMARY",
+      "upload_status": "READY"
+    },
+    {
+      "sku": "WC-37240",
+      "product_id": "019fd1e4-a71a-70ba-ab39-c220311a2b10",
+      "title": "Մանկական տուփ",
+      "slug": "mankakan-tup",
+      "media_id": "019fd1e4-ab6f-739f-83bd-9251121bf16a",
+      "object_key": "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-0-8026cd4287ae.jpg",
+      "is_primary": true,
+      "sort_order": 0,
+      "mime_type": "image/jpeg",
+      "byte_size": 140139,
+      "checksum": "8026cd4287ae",
+      "role": "PRIMARY",
+      "upload_status": "READY"
+    },
+    {
+      "sku": "WC-37240",
+      "product_id": "019fd1e4-a71a-70ba-ab39-c220311a2b10",
+      "title": "Մանկական տուփ",
+      "slug": "mankakan-tup",
+      "media_id": "019fd1e4-ad74-761b-9aae-b93cf4d46270",
+      "object_key": "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-1-439989b91fb0.jpg",
+      "is_primary": false,
+      "sort_order": 1,
+      "mime_type": "image/jpeg",
+      "byte_size": 28492,
+      "checksum": "439989b91fb0",
+      "role": "GALLERY",
+      "upload_status": "READY"
+    },
+    {
+      "sku": "WC-37240",
+      "product_id": "019fd1e4-a71a-70ba-ab39-c220311a2b10",
+      "title": "Մանկական տուփ",
+      "slug": "mankakan-tup",
+      "media_id": "019fd1e4-b00f-712d-bbb3-6727e9b1cf16",
+      "object_key": "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-2-29aad9c06a20.jpg",
+      "is_primary": false,
+      "sort_order": 2,
+      "mime_type": "image/jpeg",
+      "byte_size": 40258,
+      "checksum": "29aad9c06a20",
+      "role": "GALLERY",
+      "upload_status": "READY"
+    },
+    {
+      "sku": "WC-37240",
+      "product_id": "019fd1e4-a71a-70ba-ab39-c220311a2b10",
+      "title": "Մանկական տուփ",
+      "slug": "mankakan-tup",
+      "media_id": "019fd1e4-b244-74b9-b366-3199efd17c8f",
+      "object_key": "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-3-bae1ac986d6b.jpg",
+      "is_primary": false,
+      "sort_order": 3,
+      "mime_type": "image/jpeg",
+      "byte_size": 34815,
+      "checksum": "bae1ac986d6b",
+      "role": "GALLERY",
+      "upload_status": "READY"
+    },
+    {
+      "sku": "WC-459",
+      "product_id": "019fd1e3-0102-756a-9625-f05c0c07c69a",
+      "title": "Գրիլ ապարատի",
+      "slug": "gril-aparati",
+      "media_id": "019fd1e3-047d-744f-92a2-3f70467371ab",
+      "object_key": "uploads/products/019fd1e3-0102-756a-9625-f05c0c07c69a/woocommerce-459-0-fb1e2daedf97.jpg",
+      "is_primary": true,
+      "sort_order": 0,
+      "mime_type": "image/jpeg",
+      "byte_size": 53631,
+      "checksum": "fb1e2daedf97",
+      "role": "PRIMARY",
+      "upload_status": "READY"
+    },
+    {
+      "sku": "WC-477",
+      "product_id": "019fd1e3-111e-735d-8f78-c496fd198e18",
+      "title": "Քաբաբ տավարի",
+      "slug": "kabab-tavari",
+      "media_id": "019fd1e3-14fc-7445-aa37-9460ae91e0da",
+      "object_key": "uploads/products/019fd1e3-111e-735d-8f78-c496fd198e18/woocommerce-477-0-b0c3b0b6673a.jpg",
+      "is_primary": true,
+      "sort_order": 0,
+      "mime_type": "image/jpeg",
+      "byte_size": 36075,
+      "checksum": "b0c3b0b6673a",
+      "role": "PRIMARY",
+      "upload_status": "READY"
+    },
+    {
+      "sku": "WC-520",
+      "product_id": "019fd1e3-4b23-772b-be89-c27f1d7f35bd",
+      "title": "BBQ սեթ",
+      "slug": "bbq-set",
+      "media_id": "019fd1e3-4f73-75fb-867a-8509fa9390b3",
+      "object_key": "uploads/products/019fd1e3-4b23-772b-be89-c27f1d7f35bd/woocommerce-520-0-05ebc16bede5.png",
+      "is_primary": true,
+      "sort_order": 0,
+      "mime_type": "image/png",
+      "byte_size": 196352,
+      "checksum": "05ebc16bede5",
+      "role": "PRIMARY",
+      "upload_status": "READY"
+    }
+  ],
+  "sharedObjectKeys": [],
+  "checksumGroups": [
+    {
+      "checksum": "9ba8dda34bf7",
+      "n": 4,
+      "products": 4,
+      "keys": 4,
+      "byte_size": 360787
+    },
+    {
+      "checksum": "13a015b5b461",
+      "n": 4,
+      "products": 4,
+      "keys": 4,
+      "byte_size": 29417
+    },
+    {
+      "checksum": "fb1e2daedf97",
+      "n": 3,
+      "products": 3,
+      "keys": 3,
+      "byte_size": 53631
+    },
+    {
+      "checksum": "e9b645cc0195",
+      "n": 2,
+      "products": 2,
+      "keys": 2,
+      "byte_size": 335157
+    },
+    {
+      "checksum": "b0c3b0b6673a",
+      "n": 2,
+      "products": 2,
+      "keys": 2,
+      "byte_size": 36075
+    },
+    {
+      "checksum": "638929955915",
+      "n": 2,
+      "products": 2,
+      "keys": 2,
+      "byte_size": 205330
+    },
+    {
+      "checksum": "6345159420d0",
+      "n": 2,
+      "products": 2,
+      "keys": 2,
+      "byte_size": 13212
+    },
+    {
+      "checksum": "37e8b1be66db",
+      "n": 1,
+      "products": 1,
+      "keys": 1,
+      "byte_size": 36628
+    },
+    {
+      "checksum": "117bd6465ee2",
+      "n": 1,
+      "products": 1,
+      "keys": 1,
+      "byte_size": 599263
+    },
+    {
+      "checksum": "05ebc16bede5",
+      "n": 1,
+      "products": 1,
+      "keys": 1,
+      "byte_size": 196352
+    },
+    {
+      "checksum": "2eb393a2418b",
+      "n": 1,
+      "products": 1,
+      "keys": 1,
+      "byte_size": 40198
+    },
+    {
+      "checksum": "2ed969fb5bbd",
+      "n": 1,
+      "products": 1,
+      "keys": 1,
+      "byte_size": 56539
+    },
+    {
+      "checksum": "29aad9c06a20",
+      "n": 1,
+      "products": 1,
+      "keys": 1,
+      "byte_size": 40258
+    },
+    {
+      "checksum": "3d1abc8d3eb3",
+      "n": 1,
+      "products": 1,
+      "keys": 1,
+      "byte_size": 75053
+    },
+    {
+      "checksum": "27a2e511a939",
+      "n": 1,
+      "products": 1,
+      "keys": 1,
+      "byte_size": 17135
+    }
+  ],
+  "byteSizeGroups": [
+    {
+      "byte_size": 29417,
+      "mime_type": "image/jpeg",
+      "n": 4,
+      "products": 4,
+      "keys": 4
+    },
+    {
+      "byte_size": 360787,
+      "mime_type": "image/jpeg",
+      "n": 4,
+      "products": 4,
+      "keys": 4
+    },
+    {
+      "byte_size": 53631,
+      "mime_type": "image/jpeg",
+      "n": 3,
+      "products": 3,
+      "keys": 3
+    },
+    {
+      "byte_size": 13212,
+      "mime_type": "image/jpeg",
+      "n": 2,
+      "products": 2,
+      "keys": 2
+    },
+    {
+      "byte_size": 335157,
+      "mime_type": "image/jpeg",
+      "n": 2,
+      "products": 2,
+      "keys": 2
+    },
+    {
+      "byte_size": 205330,
+      "mime_type": "image/png",
+      "n": 2,
+      "products": 2,
+      "keys": 2
+    },
+    {
+      "byte_size": 10860,
+      "mime_type": "image/jpeg",
+      "n": 2,
+      "products": 2,
+      "keys": 2
+    },
+    {
+      "byte_size": 36075,
+      "mime_type": "image/jpeg",
+      "n": 2,
+      "products": 2,
+      "keys": 2
+    },
+    {
+      "byte_size": 17331,
+      "mime_type": "image/jpeg",
+      "n": 1,
+      "products": 1,
+      "keys": 1
+    },
+    {
+      "byte_size": 21414,
+      "mime_type": "image/jpeg",
+      "n": 1,
+      "products": 1,
+      "keys": 1
+    },
+    {
+      "byte_size": 17135,
+      "mime_type": "image/jpeg",
+      "n": 1,
+      "products": 1,
+      "keys": 1
+    },
+    {
+      "byte_size": 21571,
+      "mime_type": "image/jpeg",
+      "n": 1,
+      "products": 1,
+      "keys": 1
+    },
+    {
+      "byte_size": 21792,
+      "mime_type": "image/jpeg",
+      "n": 1,
+      "products": 1,
+      "keys": 1
+    },
+    {
+      "byte_size": 22332,
+      "mime_type": "image/webp",
+      "n": 1,
+      "products": 1,
+      "keys": 1
+    },
+    {
+      "byte_size": 21040,
+      "mime_type": "image/jpeg",
+      "n": 1,
+      "products": 1,
+      "keys": 1
+    }
+  ],
+  "primaryDupes": [],
+  "productsWithoutMedia": [
+    {
+      "sku": "WC-31779",
+      "id": "019fd1e4-74a6-77ac-ad0c-fc63ee3566aa"
+    },
+    {
+      "sku": "WC-46668",
+      "id": "019fd1e4-d256-706c-9806-84fc1b0c44cf"
+    }
+  ],
+  "publicByteProbe": [
+    {
+      "sku": "WC-271",
+      "objectKey": "uploads/products/019fd1e2-fa53-756e-80a6-ef3aab76b695/woocommerce-271-0-02051b5987e2.jpg",
+      "publicUrl": "https://pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev/uploads/products/019fd1e2-fa53-756e-80a6-ef3aab76b695/woocommerce-271-0-02051b5987e2.jpg",
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "downloadedBytes": 454401,
+      "dbByteSize": 454401,
+      "sha256": "0212ba06b0d0cbec2f6aa0499343fea2e00c5fe04ed63466866945795ccd4d31",
+      "mimeDb": "image/jpeg"
+    },
+    {
+      "sku": "WC-37240",
+      "objectKey": "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-0-8026cd4287ae.jpg",
+      "publicUrl": "https://pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev/uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-0-8026cd4287ae.jpg",
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "downloadedBytes": 140139,
+      "dbByteSize": 140139,
+      "sha256": "b4553436f88b987b3ca81a38a4277b33235135102ab4eec73b08f7c414bf6eda",
+      "mimeDb": "image/jpeg"
+    },
+    {
+      "sku": "WC-37240",
+      "objectKey": "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-1-439989b91fb0.jpg",
+      "publicUrl": "https://pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev/uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-1-439989b91fb0.jpg",
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "downloadedBytes": 28492,
+      "dbByteSize": 28492,
+      "sha256": "aa8eb24abbedad0c6a00669ab9953e8f4b15a61ff1c10b0a06fb84ced6646e90",
+      "mimeDb": "image/jpeg"
+    },
+    {
+      "sku": "WC-37240",
+      "objectKey": "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-2-29aad9c06a20.jpg",
+      "publicUrl": "https://pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev/uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-2-29aad9c06a20.jpg",
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "downloadedBytes": 40258,
+      "dbByteSize": 40258,
+      "sha256": "6b7b74c6215821b9fcab86fe68c2c275868cb2a371d2c1fc2b1736e11486f554",
+      "mimeDb": "image/jpeg"
+    },
+    {
+      "sku": "WC-37240",
+      "objectKey": "uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-3-bae1ac986d6b.jpg",
+      "publicUrl": "https://pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev/uploads/products/019fd1e4-a71a-70ba-ab39-c220311a2b10/woocommerce-37240-3-bae1ac986d6b.jpg",
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "downloadedBytes": 34815,
+      "dbByteSize": 34815,
+      "sha256": "f378ac42946ffe59bf50bfa8d2b29bea3bea7d6745ce17882de36b9f7cee5bb8",
+      "mimeDb": "image/jpeg"
+    },
+    {
+      "sku": "WC-459",
+      "objectKey": "uploads/products/019fd1e3-0102-756a-9625-f05c0c07c69a/woocommerce-459-0-fb1e2daedf97.jpg",
+      "publicUrl": "https://pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev/uploads/products/019fd1e3-0102-756a-9625-f05c0c07c69a/woocommerce-459-0-fb1e2daedf97.jpg",
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "downloadedBytes": 53631,
+      "dbByteSize": 53631,
+      "sha256": "f18add12d6a68515ba66ac285d9ea27ac215076ea08096d00956293072f0a904",
+      "mimeDb": "image/jpeg"
+    },
+    {
+      "sku": "WC-477",
+      "objectKey": "uploads/products/019fd1e3-111e-735d-8f78-c496fd198e18/woocommerce-477-0-b0c3b0b6673a.jpg",
+      "publicUrl": "https://pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev/uploads/products/019fd1e3-111e-735d-8f78-c496fd198e18/woocommerce-477-0-b0c3b0b6673a.jpg",
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "downloadedBytes": 36075,
+      "dbByteSize": 36075,
+      "sha256": "01369607f0e29ff3d6ae814227f39d27ff8523932893e5783dbcf90e1a66449f",
+      "mimeDb": "image/jpeg"
+    },
+    {
+      "sku": "WC-520",
+      "objectKey": "uploads/products/019fd1e3-4b23-772b-be89-c27f1d7f35bd/woocommerce-520-0-05ebc16bede5.png",
+      "publicUrl": "https://pub-0a95985e746a4db09dfa6ef180ecaa1f.r2.dev/uploads/products/019fd1e3-4b23-772b-be89-c27f1d7f35bd/woocommerce-520-0-05ebc16bede5.png",
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "downloadedBytes": 196352,
+      "dbByteSize": 196352,
+      "sha256": "3add8ce682d12487d07b86b7c44c005b5cd4723f637b4e000aef6b1ad468162e",
+      "mimeDb": "image/png"
+    }
+  ],
+  "uniqueDownloadedSha256Count": 8
+}
