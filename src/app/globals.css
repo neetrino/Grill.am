@@ -416,15 +416,6 @@ select:disabled {
   }
 }
 
-@keyframes profile-sheet-out {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(0, 100%, 0);
-  }
-}
-
 @keyframes profile-sheet-backdrop-in {
   from {
     opacity: 0;
@@ -434,29 +425,12 @@ select:disabled {
   }
 }
 
-@keyframes profile-sheet-backdrop-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
 .animate-profile-sheet-in {
   animation: profile-sheet-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-.animate-profile-sheet-out {
-  animation: profile-sheet-out 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-}
-
 .animate-profile-sheet-backdrop-in {
   animation: profile-sheet-backdrop-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.animate-profile-sheet-backdrop-out {
-  animation: profile-sheet-backdrop-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .profile-mobile-tab-sheet-scroll {
@@ -474,11 +448,14 @@ select:disabled {
   }
 
   .animate-profile-sheet-in,
-  .animate-profile-sheet-out,
-  .animate-profile-sheet-backdrop-in,
-  .animate-profile-sheet-backdrop-out {
+  .animate-profile-sheet-backdrop-in {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  /* Overrides the inline settle transition set by ProfileMobileSheet. */
+  .profile-sheet-settle {
+    transition-duration: 0.01ms !important;
   }
 }
 

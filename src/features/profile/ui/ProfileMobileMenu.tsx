@@ -62,6 +62,12 @@ export function ProfileMobileMenu({
   sheets,
 }: ProfileMobileMenuProps) {
   const [activeSheet, setActiveSheet] = useState<ProfileNavKey | null>(null);
+  // Keeps the last opened sheet rendered while the closing animation plays,
+  // so the panel does not go blank before it leaves the screen.
+  const [renderedSheet, setRenderedSheet] = useState<ProfileNavKey | null>(null);
+  if (activeSheet != null && activeSheet !== renderedSheet) {
+    setRenderedSheet(activeSheet);
+  }
   const initials =
     `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}`.toUpperCase();
   const displayName = `${user.firstName} ${user.lastName}`.trim();
@@ -100,19 +106,19 @@ export function ProfileMobileMenu({
   ];
 
   const activeTitle =
-    activeSheet === "dashboard"
+    renderedSheet === "dashboard"
       ? dictionary.dashboard
-      : activeSheet === "orders"
+      : renderedSheet === "orders"
         ? dictionary.orders
-        : activeSheet === "promoCodes"
+        : renderedSheet === "promoCodes"
           ? dictionary.promoCodes.nav
-          : activeSheet === "personal"
+          : renderedSheet === "personal"
             ? dictionary.personal
-            : activeSheet === "addresses"
+            : renderedSheet === "addresses"
               ? dictionary.addresses
-              : activeSheet === "password"
+              : renderedSheet === "password"
                 ? dictionary.password
-                : activeSheet === "deleteAccount"
+                : renderedSheet === "deleteAccount"
                   ? dictionary.deleteAccount
                   : "";
 
@@ -255,7 +261,7 @@ export function ProfileMobileMenu({
         closeLabel={closeLabel}
         onClose={() => setActiveSheet(null)}
       >
-        {activeSheet ? sheets[activeSheet] : null}
+        {renderedSheet ? sheets[renderedSheet] : null}
       </ProfileMobileSheet>
     </div>
   );
