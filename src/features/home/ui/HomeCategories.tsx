@@ -126,11 +126,11 @@ export function HomeCategories({
                 const imageSrc = category.imageUrl ?? fallback;
 
                 return (
-                  <li key={category.id} className="shrink-0 snap-start">
+                  <li key={category.id} className="w-[88px] shrink-0 snap-start">
                     <AppLink
                       href={category.href}
                       prefetchPolicy="intent"
-                      className="flex flex-col items-center gap-2"
+                      className="flex w-full flex-col items-center gap-2"
                     >
                       <span className="relative size-[88px] overflow-hidden rounded-[20px] bg-[#191919]">
                         <Image
@@ -141,7 +141,7 @@ export function HomeCategories({
                           className="object-cover"
                         />
                       </span>
-                      <span className="text-center text-[11px] leading-[16.5px] font-bold text-[#171717] uppercase">
+                      <span className="line-clamp-2 w-full text-center text-[11px] leading-[16.5px] font-bold break-words text-[#171717] uppercase">
                         {category.title}
                       </span>
                     </AppLink>
