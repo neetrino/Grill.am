@@ -14,7 +14,7 @@ import {
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_CONTENT_CARD_CLASS,
-  ADMIN_CONTENT_CARD_GRID,
+  ADMIN_CONTENT_CARD_GRID_COMPACT,
   ADMIN_CONTENT_CARD_STATUS_CLASS,
 } from "@/features/admin/ui/admin-ui";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
@@ -147,7 +147,7 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
           </p>
         </Card>
       ) : (
-        <div className={ADMIN_CONTENT_CARD_GRID}>
+        <div className={ADMIN_CONTENT_CARD_GRID_COMPACT}>
           {filtered.map((posting) => (
             <Card key={posting.id} className={ADMIN_CONTENT_CARD_CLASS}>
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">

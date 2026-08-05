@@ -15,7 +15,7 @@ import {
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_CONTENT_CARD_CLASS,
-  ADMIN_CONTENT_CARD_GRID,
+  ADMIN_CONTENT_CARD_GRID_COMPACT,
   ADMIN_CONTENT_CARD_STATUS_CLASS,
 } from "@/features/admin/ui/admin-ui";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
@@ -88,7 +88,7 @@ export function AdminPopupsView({ locale, items }: AdminPopupsViewProps) {
           <p className="text-center text-sm text-gray-600">{copy.empty}</p>
         </Card>
       ) : (
-        <div className={ADMIN_CONTENT_CARD_GRID}>
+        <div className={ADMIN_CONTENT_CARD_GRID_COMPACT}>
           {items.map((popup) => (
             <Card key={popup.id} className={ADMIN_CONTENT_CARD_CLASS}>
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
@@ -116,7 +116,7 @@ export function AdminPopupsView({ locale, items }: AdminPopupsViewProps) {
               </div>
               <div className="flex flex-1 flex-col gap-2 p-4">
                 <div className="flex items-start justify-between gap-2">
-                  <p className="min-w-0 flex-1 font-medium text-gray-900">
+                  <p className="min-w-0 flex-1 text-sm font-medium text-gray-900">
                     {copy.itemLabel}
                   </p>
                   <PopupControls
