@@ -114,6 +114,7 @@ export function ProductDetailView({
             initialCompareAtFormatted={compareAtFormatted}
             shortDescription={product.translation.shortDescription}
             description={product.translation.description}
+            imageUrl={product.images[0]?.url ?? product.imageUrl}
             customization={storefrontCustomization}
             rawCustomization={product.customization}
             ratingAverage={ratingAverage}

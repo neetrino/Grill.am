@@ -4,7 +4,7 @@
 
 - **csvPath**: C:\AI\Grill.am\wc-product-export-5-8-2026-1785923568934.csv
 - **mode**: dry-run
-- **runTimestamp**: 2026-08-05T12:21:45.718Z
+- **runTimestamp**: 2026-08-05T12:25:39.135Z
 - **totalCsvRows**: 97
 - **skippedRows**: 1
 - **validRows**: 96
