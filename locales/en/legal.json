@@ -5,59 +5,92 @@
   "privacy": {
     "title": "Privacy Policy",
     "lastUpdated": "23 July 2026",
-    "intro": "This policy explains how White-Shop (“we”, “us”) collects, uses, and protects your personal data when you use our website and services.",
+    "intro": "By visiting the website grill.am (hereinafter referred to as the “Website”) and making purchases, you automatically consent to the collection, processing, and use of your personal data.",
+    "introParagraphs": [
+      "By “Personal Data,” we mean any information that allows or may allow us to directly or indirectly identify your identity, such as your name, surname, address, email, phone number, and other data (hereinafter referred to as “Data”).",
+      "In this Privacy Policy, “we,” “us,” and “our” refer to the Website (for more information, please visit the “About Us” section), while “you,” “your,” and “yours” refer to any individual who visits the Website or uses our services."
+    ],
     "sections": [
       {
-        "heading": "1. Who we are",
-        "paragraphs": [
-          "White-Shop is an online store operating in Armenia. You can reach us through the Contact page or the email address shown in the site footer."
+        "heading": "1. Collected Data",
+        "paragraphs": ["We may collect the following types of information:"],
+        "bullets": [
+          "Contact information – name, surname, address, phone number, email address",
+          "Purchase information – products purchased, payment methods",
+          "Technical information – device type, browser, operating system",
+          "Cookies and tracking technologies – for website usage analysis"
         ]
       },
       {
-        "heading": "2. Data we collect",
+        "heading": "2. Use of Data",
         "paragraphs": [
-          "We may collect your name, email, phone number, shipping/billing address, order and payment details, account data, contact-form messages, and technical data (IP address, browser type, device information) needed to operate and secure the service.",
-          "If you register or sign in, we also keep account status, session data, and preferences such as language and currency."
+          "Collected data is never sold or provided to third parties for marketing purposes. It is used only for the following purposes:"
+        ],
+        "bullets": [
+          "Processing and shipping orders",
+          "Providing user support",
+          "Improving website functionality",
+          "Complying with legal requirements"
         ]
       },
       {
-        "heading": "3. Why we process data",
-        "paragraphs": [
-          "We process data to place and fulfill orders, handle payments and accounting, create and manage accounts, provide support, maintain security and prevent fraud, and meet legal obligations."
+        "heading": "3. Data Retention Periods",
+        "paragraphs": ["Your personal data is stored as follows:"],
+        "bullets": [
+          "User account data – as long as the account is active",
+          "Purchase history – 5 years (to comply with tax and accounting regulations)",
+          "Marketing data – 2 years or until the user opts out"
         ]
       },
       {
-        "heading": "4. Sharing",
+        "heading": "4. Data Security",
         "paragraphs": [
-          "We may share data with service providers (hosting, email, payments, delivery) when needed to fulfill an order or run the site.",
-          "We do not sell your personal data. We may disclose data when required by law or a competent authority."
+          "We implement appropriate technical and organizational measures to ensure the protection of your data, including:"
+        ],
+        "bullets": [
+          "SSL encryption – to secure payment and personal data transmission",
+          "Access control – limited access to personal data",
+          "Regular audits – to detect potential security vulnerabilities"
         ]
       },
       {
-        "heading": "5. Retention",
-        "paragraphs": [
-          "We keep personal data only as long as needed to provide the service and meet legal and accounting requirements.",
-          "When you delete your account, profile, address, wishlist, and cart data are anonymized or removed. Financial order records may be retained for the legally required period without unnecessary personal contact details."
+        "heading": "5. Sharing Data with Third Parties",
+        "paragraphs": ["We do not sell or provide your data to third parties, except for:"],
+        "bullets": [
+          "Shipping services – to ensure order delivery",
+          "Payment systems – for secure payment processing",
+          "Law enforcement authorities – in cases required by law"
+        ],
+        "closingParagraphs": [
+          "All third parties are obligated to protect your data and cannot use it for other purposes."
         ]
       },
       {
-        "heading": "6. Your rights",
-        "paragraphs": [
-          "You may request access to your data, correction, restriction of processing, or account deletion through profile tools or by contacting us.",
-          "If you believe your rights have been violated, you may also contact the competent personal-data authority in Armenia."
+        "heading": "6. User Rights",
+        "paragraphs": ["You have the right to:"],
+        "bullets": [
+          "Receive a copy of your personal data",
+          "Edit or delete your data (through our website settings or customer support)",
+          "Opt out of marketing emails (via the “unsubscribe” link in each email)",
+          "Request that your data is not processed for specific purposes, except in cases required by law"
         ]
       },
       {
-        "heading": "7. Security and cookies",
-        "paragraphs": [
-          "We apply technical and organizational measures to protect data from unauthorized access. No system is fully secure, but we work to reduce risks.",
-          "The site may use necessary cookies and similar technologies for sign-in sessions, language/currency preferences, and security."
+        "heading": "7. Cookies Usage",
+        "paragraphs": ["Our website uses cookies to optimize user experience. We use:"],
+        "bullets": [
+          "Functional cookies – to ensure proper website operation",
+          "Analytical cookies – to understand user behavior and improve the website",
+          "Marketing cookies (only with your consent) – to provide more relevant advertisements"
+        ],
+        "closingParagraphs": [
+          "You can change your preferences at any time by managing cookies in your browser."
         ]
       },
       {
-        "heading": "8. Contact",
+        "heading": "8. Policy Changes",
         "paragraphs": [
-          "For privacy questions, use the Contact page or the email and phone listed in the footer."
+          "We reserve the right to make legally permitted changes to this page and the above sections. Updates will be posted on the Website."
         ]
       }
     ]
@@ -101,9 +134,7 @@
       },
       {
         "heading": "6. Returns and refunds",
-        "paragraphs": [
-          "Return and refund rules are set out in the Refund Policy."
-        ]
+        "paragraphs": ["Return and refund rules are set out in the Refund Policy."]
       },
       {
         "heading": "7. Intellectual property",
@@ -125,9 +156,7 @@
       },
       {
         "heading": "10. Contact",
-        "paragraphs": [
-          "For questions, use the Contact page or the details in the footer."
-        ]
+        "paragraphs": ["For questions, use the Contact page or the details in the footer."]
       }
     ]
   },

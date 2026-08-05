@@ -273,16 +273,20 @@ export function HomePromotions({
               </AppLink>
             </div>
 
-            <div className="pointer-events-none absolute inset-y-[24px] right-[-4%] w-[52%]">
-              <div className="relative h-full w-full">
-                <Image
-                  src={PROMO_CHICKEN}
-                  alt=""
-                  fill
-                  sizes="542px"
-                  className="object-contain object-right-bottom"
-                />
-              </div>
+            {/*
+              Figma `165:1524` — chicken art is 542×436 inside the 1296×553
+              card. The source webp is square with ~15% transparent padding,
+              so the box is oversized and overflows the card (clipped padding
+              only) to reach the design's visual size.
+            */}
+            <div className="pointer-events-none absolute top-1/2 right-[-7%] aspect-square w-[57%] -translate-y-1/2">
+              <Image
+                src={PROMO_CHICKEN}
+                alt=""
+                fill
+                sizes="740px"
+                className="object-contain"
+              />
             </div>
 
             <div className="absolute right-[72px] bottom-10 z-20 flex items-center gap-6">
