@@ -11,7 +11,9 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
@@ -145,38 +147,41 @@ export default async function AdminApplicationsPage({
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
                   <th className={ADMIN_TABLE_TH}>{copy.table.candidate}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.job}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.status}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.cv}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.job}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.status}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.cv}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.received}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
                 {rows.map((application) => (
-                  <tr key={application.id} className={ADMIN_TABLE_ROW}>
+                  <tr
+                    key={application.id}
+                    className={`${ADMIN_TABLE_ROW} group relative`}
+                  >
                     <td className={ADMIN_TABLE_TD}>
                       <Link
                         href={`/${locale}/admin/careers/applications/${application.id}`}
-                        className="font-medium text-gray-900 hover:underline"
+                        className="font-medium text-gray-900 after:absolute after:inset-0 group-hover:underline"
                       >
                         {application.name}
                       </Link>
                       <p className="text-xs text-gray-500">{application.email}</p>
                       <p className="text-xs text-gray-500">{application.phone}</p>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       <span className="text-sm text-gray-900">
                         {application.jobTitle}
                       </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       <span
                         className={`${ADMIN_BADGE} ${applicationStatusBadgeClass(application.status)}`}
                       >
                         {applicationStatusLabel(application.status, copy.status)}
                       </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       <span className="text-sm text-gray-700">
                         {application.hasCv ? copy.cvYes : copy.cvNo}
                       </span>

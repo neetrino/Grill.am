@@ -8,14 +8,12 @@ import {
   Phone,
   User,
 } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
-import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
-import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { AdminSectionCard } from "@/features/admin/ui/AdminSectionCard";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminJobApplicationById } from "@/features/careers/application/application-queries";
@@ -94,17 +92,7 @@ export default async function AdminApplicationDetailPage({
 
   return (
     <>
-      <div className="mb-6">
-        <p className={`mb-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          <Link
-            href={`/${locale}/admin/careers/applications`}
-            className="font-medium text-gray-700 hover:underline"
-          >
-            {copy.title}
-          </Link>
-        </p>
-        <AdminPageTitle>{application.name}</AdminPageTitle>
-      </div>
+      <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{application.name}</h2>
 
       <Card
         className={`mb-4 !border-0 !shadow-none p-5 sm:p-6 ${ADMIN_CARD_CLASS}`}
