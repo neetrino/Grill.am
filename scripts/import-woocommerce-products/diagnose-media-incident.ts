@@ -8,7 +8,6 @@ import { drizzle } from "drizzle-orm/neon-http";
 import { and, isNull, like, sql } from "drizzle-orm";
 
 import * as schema from "../../src/db/schema/index";
-import { createR2ObjectStorageAdapter } from "../../src/lib/r2/r2-adapter";
 import { isR2Configured } from "../../src/lib/r2/is-configured";
 
 loadEnv({ path: path.resolve(process.cwd(), ".env") });
@@ -22,7 +21,7 @@ async function main(): Promise<void> {
   }
 
   const db = drizzle(neon(databaseUrl), { schema });
-  const { products, mediaAssets } = schema;
+  const { products } = schema;
 
   const [productCountRow] = await db
     .select({ n: sql<number>`count(*)::int` })
@@ -166,11 +165,6 @@ async function main(): Promise<void> {
   };
 
   if (isR2Configured(r2) && publicBase) {
-    const storage = createR2ObjectStorageAdapter({
-      ...r2,
-      endpoint: process.env.R2_ENDPOINT,
-    });
-
     for (const row of sampleRows) {
       if (!row.object_key) continue;
       const publicUrl = `${publicBase}/${row.object_key}`;

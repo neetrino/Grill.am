@@ -7,7 +7,6 @@ import { X, ZoomIn, ZoomOut } from "lucide-react";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { ProductGalleryImage } from "@/features/products/types";
 import type { Locale } from "@/lib/i18n/config";
-import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type ProductGalleryProps = {
   images: ProductGalleryImage[];
@@ -84,7 +83,7 @@ export function ProductGallery({
         data-product-fly-origin
         className="relative aspect-[764/420] w-full overflow-hidden rounded-[30px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.09)]"
       >
-        {selected ? (
+        {selected?.url ? (
           <button
             type="button"
             onClick={openLightbox}
@@ -92,7 +91,7 @@ export function ProductGallery({
             aria-label={zoomLabel}
           >
             <Image
-              src={selected.url || PRODUCT_CARD_IMAGE}
+              src={selected.url}
               alt={selected.alt || title}
               fill
               sizes="(max-width: 1024px) 100vw, 764px"
@@ -101,16 +100,7 @@ export function ProductGallery({
             />
           </button>
         ) : (
-          <div className="relative h-full w-full">
-            <Image
-              src={PRODUCT_CARD_IMAGE}
-              alt={title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 764px"
-              className="object-cover"
-              priority
-            />
-          </div>
+          <div className="relative h-full w-full bg-white" aria-hidden />
         )}
 
         {hitLabel ? (
@@ -150,19 +140,21 @@ export function ProductGallery({
                   onClick={() => setSelectedId(image.id)}
                   aria-label={image.alt || title}
                   aria-pressed={isActive}
-                  className={`relative size-20 overflow-hidden rounded-[14px] transition ${
+                  className={`relative size-20 overflow-hidden rounded-[14px] bg-white transition ${
                     isActive
                       ? "opacity-100 shadow-[0_0_0_2px_#fff,0_0_0_4px_#0a0a0a]"
                       : "opacity-60 hover:opacity-100"
                   }`}
                 >
-                  <Image
-                    src={image.url || PRODUCT_CARD_IMAGE}
-                    alt=""
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                  />
+                  {image.url ? (
+                    <Image
+                      src={image.url}
+                      alt=""
+                      fill
+                      sizes="80px"
+                      className="object-cover"
+                    />
+                  ) : null}
                 </button>
               </li>
             );
@@ -218,14 +210,14 @@ export function ProductGallery({
           </div>
         </div>
 
-        {lightboxOpen && selected ? (
+        {lightboxOpen && selected?.url ? (
           <div className="relative flex flex-1 items-center justify-center overflow-auto px-4 pb-8">
             <div
               className="relative h-[70vh] w-full max-w-5xl transition-transform duration-200 ease-out"
               style={{ transform: `scale(${zoom})` }}
             >
               <Image
-                src={selected.url || PRODUCT_CARD_IMAGE}
+                src={selected.url}
                 alt={selected.alt || title}
                 fill
                 sizes="100vw"

@@ -15,7 +15,6 @@ import {
   rollbackUpsertLocally,
   upsertItemLocally,
 } from "@/features/cart/cart-drawer-local-store";
-import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import {
   computeModifiersDelta,
   describeModifiers,
@@ -225,7 +224,7 @@ export function ProductBuyBox({
     const flyOrigin = document.querySelector("[data-product-fly-origin]");
     playCartFlyAnimation({
       fromElement: flyOrigin,
-      imageUrl: imageUrl?.trim() || PRODUCT_CARD_IMAGE,
+      imageUrl: imageUrl?.trim() || null,
     });
 
     const selectionKey = selectionKeyFromModifiers(modifiers);

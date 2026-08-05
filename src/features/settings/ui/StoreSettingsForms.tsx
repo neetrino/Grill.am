@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Card } from "@/components/ui/Card";
+import { Toast, type ToastTone } from "@/components/ui/Toast";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -29,6 +30,13 @@ type StoreSettingsFormsProps = {
   fxRates: StoreFxRates;
 };
 
+type SettingsToast = {
+  /** Restarts the toast timer when the same message repeats. */
+  id: number;
+  message: string;
+  tone: ToastTone;
+};
+
 export function StoreSettingsForms({
   locale,
   identity,
@@ -37,16 +45,26 @@ export function StoreSettingsForms({
   const dictionary = useAdminDictionary();
   const copy = dictionary.settings;
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<SettingsToast | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function showToast(message: string, tone: ToastTone): void {
+    setToast({ id: Date.now(), message, tone });
+  }
 
   return (
     <div className="flex w-full flex-col gap-6">
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      {message ? <p className="text-sm text-green-700">{message}</p> : null}
+      {toast ? (
+        <Toast
+          key={toast.id}
+          message={toast.message}
+          tone={toast.tone}
+          closeLabel={dictionary.common.close}
+          onDismiss={() => setToast(null)}
+        />
+      ) : null}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card
           className={`overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}
         >
@@ -56,8 +74,6 @@ export function StoreSettingsForms({
               event.preventDefault();
               const data = new FormData(event.currentTarget);
               startTransition(async () => {
-                setError(null);
-                setMessage(null);
                 const result = await upsertStoreSettingAction(locale, {
                   key: "store.identity",
                   value: {
@@ -67,11 +83,12 @@ export function StoreSettingsForms({
                   },
                 });
                 if (!result.ok) {
-                  setError(result.error.message);
+                  showToast(result.error.message, "error");
                   return;
                 }
-                setMessage(
+                showToast(
                   formatAdminMessage(copy.savedKey, { key: result.value.key }),
+                  "success",
                 );
                 router.refresh();
               });
@@ -127,8 +144,6 @@ export function StoreSettingsForms({
               event.preventDefault();
               const data = new FormData(event.currentTarget);
               startTransition(async () => {
-                setError(null);
-                setMessage(null);
                 const result = await upsertStoreSettingAction(locale, {
                   key: "store.fxRates",
                   value: {
@@ -137,11 +152,12 @@ export function StoreSettingsForms({
                   },
                 });
                 if (!result.ok) {
-                  setError(result.error.message);
+                  showToast(result.error.message, "error");
                   return;
                 }
-                setMessage(
+                showToast(
                   formatAdminMessage(copy.savedKey, { key: result.value.key }),
+                  "success",
                 );
                 router.refresh();
               });
