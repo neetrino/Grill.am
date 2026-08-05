@@ -33,4 +33,4 @@ public/uploads/
 # *.swo
 #docs/reference/payment integration/Example only
 
-*.tsbuildinfo
+tsconfig.tsbuildinfo
