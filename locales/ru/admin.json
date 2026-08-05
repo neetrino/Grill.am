@@ -785,7 +785,6 @@
         "downloadCv": "Скачать CV"
       },
       "forms": {
-        "current": "Текущий",
         "newStatus": "Новый статус",
         "updateStatus": "Обновить статус",
         "noFurtherChanges": "Дальнейших изменений статуса нет."

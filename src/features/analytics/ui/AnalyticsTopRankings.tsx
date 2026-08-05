@@ -53,7 +53,7 @@ export function AnalyticsTopRankings({
 
   return (
     <div className="mb-6 grid gap-4 lg:grid-cols-2">
-      <Card className="rounded-2xl p-5 sm:p-6">
+      <Card className="p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-gray-900">
             {copy.topProducts}
@@ -114,7 +114,7 @@ export function AnalyticsTopRankings({
         </div>
       </Card>
 
-      <Card className="rounded-2xl p-5 sm:p-6">
+      <Card className="p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-gray-900">
             {copy.topCategories}
