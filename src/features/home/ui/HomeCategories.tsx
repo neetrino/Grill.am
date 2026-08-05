@@ -77,7 +77,7 @@ export function HomeCategories({
 
   return (
     <section className="relative z-10 bg-white pt-6 pb-6 md:-mt-12 md:rounded-t-[30px] md:pt-14 md:pb-14 lg:-mt-20 lg:pt-16 lg:pb-16">
-      <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 lg:px-10">
+      <div className="page-container">
         <div className="mb-8 hidden flex-col gap-3 md:mb-10 md:flex md:flex-row md:items-end md:justify-between md:gap-6">
           <div className="min-w-0">
             <h2 className="text-[26px] leading-tight font-black tracking-tight text-[#171717] uppercase sm:text-[30px] sm:leading-[1.2]">

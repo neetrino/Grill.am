@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 
-import { DesktopFluidFrame } from "@/components/layout/DesktopFluidFrame";
 import { isLocale } from "@/lib/i18n/config";
 
 type StorefrontSurfaceProps = {
@@ -12,8 +11,8 @@ type StorefrontSurfaceProps = {
 
 const SURFACE_WHITE = "#ffffff";
 const SURFACE_GRAY = "#f2f0f0";
-/** Matches footer `lg:block` / bottom nav `lg:hidden`. */
-const DESKTOP_CHROME_MQ = "(min-width: 1024px)";
+/** Matches footer `lg:block` / bottom nav `lg:hidden`; mirrors `--breakpoint-lg`. */
+const DESKTOP_CHROME_MQ = "(min-width: 1025px)";
 
 /** White page wash on home + marketing pages — matches content and mobile bottom gap. */
 function isWhiteSurfacePath(pathname: string): boolean {
@@ -63,9 +62,7 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
         isWhitePage ? "" : "max-lg:bg-[#f2f0f0]"
       }`}
     >
-      <DesktopFluidFrame className="flex min-h-dvh flex-1 flex-col">
-        {children}
-      </DesktopFluidFrame>
+      {children}
     </div>
   );
 }

@@ -107,9 +107,9 @@ export default async function ProductsPage({
 
   return (
     <section className="storefront-bleed -mt-10 mb-[-2.5rem]">
-      <div className="grid min-h-[calc(100dvh/var(--desktop-layout-scale)-12rem)] lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_288px]">
+      <div className="grid min-h-[calc(100dvh-12rem)] lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_288px]">
         <div className="hidden lg:block">
-          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset))] self-start">
+          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh-var(--storefront-header-offset))] self-start">
             <CatalogFilters
               locale={rawLocale}
               filters={filters}
@@ -281,7 +281,7 @@ export default async function ProductsPage({
         </div>
 
         <div className="hidden xl:block">
-          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset))] self-start">
+          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh-var(--storefront-header-offset))] self-start">
             <CatalogCartSidebar
               locale={rawLocale}
               currency={currency}
