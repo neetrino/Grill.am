@@ -122,7 +122,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
       {filtered.length === 0 ? (
-        <Card className="rounded-[15px] p-8">
+        <Card className="p-8">
           <p className="text-center text-sm text-gray-600">
             {posts.length === 0 ? copy.empty : copy.emptySearch}
           </p>

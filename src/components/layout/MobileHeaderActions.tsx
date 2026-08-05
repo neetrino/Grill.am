@@ -26,9 +26,9 @@ type MobileHeaderActionsProps = {
   categories: readonly StorefrontNavCategory[];
 };
 
-/** Match bottom-nav idle tabs: 48px on small phones, 56px from 390px. */
+/** Slightly tighter than bottom-nav idle tabs: 44px on small phones, 48px from 390px. */
 const actionButtonClassName =
-  "relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-red text-white transition hover:bg-brand-red-hot focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red min-[390px]:size-14";
+  "relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-red text-white transition hover:bg-brand-red-hot focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red min-[390px]:size-12";
 
 const MENU_ICON_MS = 280;
 
@@ -92,7 +92,7 @@ export function MobileHeaderActions({
         aria-controls={menuId}
       >
         <span
-          className="absolute flex size-5 flex-col justify-center gap-1 transition-[opacity,transform] ease-out min-[390px]:size-6 min-[390px]:gap-[5px]"
+          className="absolute flex size-4.5 flex-col justify-center gap-1 transition-[opacity,transform] ease-out min-[390px]:size-5 min-[390px]:gap-[5px]"
           style={{
             opacity: open ? 0 : 1,
             transform: open
@@ -107,7 +107,7 @@ export function MobileHeaderActions({
           <span className="h-0.5 w-full rounded bg-white" />
         </span>
         <X
-          className="absolute size-5 text-white transition-[opacity,transform] ease-out min-[390px]:size-6"
+          className="absolute size-4.5 text-white transition-[opacity,transform] ease-out min-[390px]:size-5"
           style={{
             opacity: open ? 1 : 0,
             transform: open
@@ -127,7 +127,7 @@ export function MobileHeaderActions({
         aria-label={profileLabel}
         onClick={() => setOpen(false)}
       >
-        <HeaderUserIcon className="block size-5 overflow-visible text-white min-[390px]:size-6" />
+        <HeaderUserIcon className="block size-4.5 overflow-visible text-white min-[390px]:size-5" />
       </AppLink>
 
       <Suspense

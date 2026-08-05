@@ -1,12 +1,20 @@
-import Link from "next/link";
+import {
+  BriefcaseBusiness,
+  CalendarDays,
+  Download,
+  FileText,
+  Mail,
+  MessageSquare,
+  Phone,
+  User,
+} from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
+import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
+import { AdminSectionCard } from "@/features/admin/ui/AdminSectionCard";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminJobApplicationById } from "@/features/careers/application/application-queries";
 import {
@@ -14,7 +22,6 @@ import {
   isJobApplicationStatus,
   type JobApplicationStatus,
 } from "@/features/careers/domain/application-rules";
-import { AdminCareersTabs } from "@/features/careers/ui/AdminCareersTabs";
 import { UpdateApplicationStatusForm } from "@/features/careers/ui/UpdateApplicationStatusForm";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -22,6 +29,10 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 type AdminApplicationDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
+
+const FIELD_ICON_CLASS = "h-4 w-4";
+
+const SECTION_ICON_CLASS = "h-5 w-5";
 
 function applicationStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
@@ -80,77 +91,86 @@ export default async function AdminApplicationDetailPage({
   const eligible = status ? getEligibleJobApplicationStatuses(status) : [];
 
   return (
-    <section>
-      <div className="mb-6">
-        <p className={`mb-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          <Link
-            href={`/${locale}/admin/careers/applications`}
-            className="font-medium text-gray-700 hover:underline"
+    <>
+      <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{application.name}</h2>
+
+      <Card
+        className={`mb-4 !border-0 !shadow-none p-5 sm:p-6 ${ADMIN_CARD_CLASS}`}
+      >
+        <div className="grid gap-4 md:grid-cols-2 md:gap-x-10">
+          <AdminDetailField
+            icon={<User className={FIELD_ICON_CLASS} />}
+            label={copy.detail.candidate}
           >
-            {copy.title}
-          </Link>
-        </p>
-        <AdminPageTitle>{application.name}</AdminPageTitle>
-      </div>
-
-      <AdminCareersTabs
-        locale={locale}
-        active="applications"
-        postingsLabel={careers.tabs.postings}
-        applicationsLabel={careers.tabs.applications}
-      />
-
-      <Card className="mb-6 p-6">
-        <div className="grid gap-3 text-sm md:grid-cols-2">
-          <p className="text-gray-700">
-            {copy.detail.candidate}:{" "}
-            <strong className="text-gray-900">{application.name}</strong>
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.email}: {application.email}
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.phone}: {application.phone}
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.job}: {application.jobTitle}
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.status}:{" "}
+            {application.name}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Mail className={FIELD_ICON_CLASS} />}
+            label={copy.detail.email}
+          >
+            {application.email}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Phone className={FIELD_ICON_CLASS} />}
+            label={copy.detail.phone}
+          >
+            {application.phone}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<BriefcaseBusiness className={FIELD_ICON_CLASS} />}
+            label={copy.detail.job}
+          >
+            {application.jobTitle}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<BriefcaseBusiness className={FIELD_ICON_CLASS} />}
+            label={copy.detail.status}
+          >
             <span
               className={`${ADMIN_BADGE} ${applicationStatusBadgeClass(application.status)}`}
             >
               {applicationStatusLabel(application.status, copy.status)}
             </span>
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.received}:{" "}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
+            label={copy.detail.received}
+          >
             {application.createdAt.toISOString().slice(0, 19).replace("T", " ")}{" "}
             {common.utc}
-          </p>
+          </AdminDetailField>
         </div>
       </Card>
 
-      <Card className="mb-6 p-6">
-        <h2 className={`mb-3 ${ADMIN_SECTION_TITLE}`}>{copy.detail.message}</h2>
+      <AdminSectionCard
+        className="mb-4"
+        icon={<MessageSquare className={SECTION_ICON_CLASS} />}
+        title={copy.detail.message}
+      >
         <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
           {application.message}
         </p>
-      </Card>
+      </AdminSectionCard>
 
-      <Card className="mb-6 p-6">
-        <h2 className={`mb-3 ${ADMIN_SECTION_TITLE}`}>{copy.detail.cv}</h2>
-        <p className="mb-3 text-sm text-gray-700">
+      <AdminSectionCard
+        className="mb-4"
+        icon={<FileText className={SECTION_ICON_CLASS} />}
+        title={copy.detail.cv}
+        action={
+          <a
+            href={`/api/admin/job-applications/${application.id}/cv`}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-[15px] bg-brand-red px-5 text-sm font-semibold text-white transition hover:bg-brand-red-hot"
+          >
+            <Download className="h-4 w-4" />
+            {copy.detail.downloadCv}
+          </a>
+        }
+      >
+        <p className="text-sm text-gray-500">
           {application.cvFileName} · {formatFileSize(application.cvByteSize)} ·{" "}
           {application.cvMimeType}
         </p>
-        <a
-          href={`/api/admin/job-applications/${application.id}/cv`}
-          className="inline-flex h-10 items-center justify-center rounded-[12px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot"
-        >
-          {copy.detail.downloadCv}
-        </a>
-      </Card>
+      </AdminSectionCard>
 
       {status ? (
         <UpdateApplicationStatusForm
@@ -162,6 +182,6 @@ export default async function AdminApplicationDetailPage({
       ) : (
         <p className="text-sm text-red-700">{common.unknownStatus}</p>
       )}
-    </section>
+    </>
   );
 }

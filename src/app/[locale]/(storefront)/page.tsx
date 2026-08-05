@@ -105,6 +105,26 @@ export default async function HomePage({ params }: HomePageProps) {
   const featuredCards = toCards(featuredProducts);
   const promotionCards = toCards(discountedProducts);
 
+  const hasPromotions = promotionCards.length > 0;
+  const [specialCard] = hasPromotions ? promotionCards : featuredCards;
+  const [specialSource] = hasPromotions ? discountedProducts : featuredProducts;
+  const specialSaveFormatted =
+    specialSource?.compareAtAmount != null &&
+    specialSource.compareAtAmount > specialSource.priceAmount
+      ? formatPrice(specialSource.compareAtAmount - specialSource.priceAmount)
+          .formatted
+      : null;
+  const specialOffer = specialCard
+    ? {
+        title: specialCard.title,
+        href: specialCard.href,
+        priceFormatted: specialCard.priceFormatted,
+        compareAtFormatted: specialCard.compareAtFormatted,
+        imageUrl: specialCard.imageUrl,
+        saveFormatted: specialSaveFormatted,
+      }
+    : null;
+
   return (
     <div className="storefront-bleed -my-10 overflow-x-clip bg-white">
       <HomeHero
@@ -157,32 +177,7 @@ export default async function HomePage({ params }: HomePageProps) {
         wasLabel={dictionary.home.specialWas}
         saveLabel={dictionary.home.specialSave}
         freshDealLabel={dictionary.home.specialFreshDeal}
-        prevLabel={dictionary.home.specialPrev}
-        nextLabel={dictionary.home.specialNext}
-        products={(promotionCards.length > 0
-          ? promotionCards
-          : featuredCards
-        ).map((card, cardIndex) => {
-          const source =
-            (promotionCards.length > 0
-              ? discountedProducts[cardIndex]
-              : featuredProducts[cardIndex]) ?? null;
-          const saveAmount =
-            source?.compareAtAmount != null &&
-            source.compareAtAmount > source.priceAmount
-              ? formatPrice(source.compareAtAmount - source.priceAmount)
-                  .formatted
-              : null;
-
-          return {
-            title: card.title,
-            href: card.href,
-            priceFormatted: card.priceFormatted,
-            compareAtFormatted: card.compareAtFormatted,
-            imageUrl: card.imageUrl,
-            saveFormatted: saveAmount,
-          };
-        })}
+        offer={specialOffer}
       />
 
       <HomeFeaturesLazy

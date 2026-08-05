@@ -12,6 +12,7 @@ import {
 import { createPortal } from "react-dom";
 
 import {
+  PROFILE_MOBILE_SHEET_BACKDROP_MS,
   PROFILE_MOBILE_SHEET_CONTENT_PAD_BOTTOM_PX,
   PROFILE_MOBILE_SHEET_CONTENT_PAD_TOP_PX,
   PROFILE_MOBILE_SHEET_CONTENT_PAD_X_PX,
@@ -26,6 +27,12 @@ import {
 } from "@/features/profile/ui/profile-ui";
 
 const DISMISS_VELOCITY = 0.5;
+
+/** Drag distance at which the backdrop reaches its most transparent state. */
+const BACKDROP_DRAG_FADE_PX = 360;
+
+/** Backdrop never fades out completely while the sheet is still being dragged. */
+const BACKDROP_MIN_DRAG_OPACITY = 0.25;
 
 type ProfileMobileSheetProps = {
   open: boolean;
@@ -108,17 +115,23 @@ export function ProfileMobileSheet({
     return () => window.removeEventListener("keydown", onKey);
   }, [mounted, onClose]);
 
-  function handleSheetAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
-    if (event.target !== event.currentTarget) {
+  // Closing is driven by transitions (not keyframes) so a drag-release keeps
+  // its current offset/opacity instead of snapping back to the open state.
+  useEffect(() => {
+    if (phase !== "exit") {
       return;
     }
-    if (phase === "enter") {
-      setPhase("open");
-      return;
-    }
-    if (phase === "exit") {
+    const timer = window.setTimeout(() => {
       setMounted(false);
+    }, PROFILE_MOBILE_SHEET_PANEL_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  function handleSheetAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
+    if (event.target !== event.currentTarget || phase !== "enter") {
+      return;
     }
+    setPhase("open");
   }
 
   const onPointerDown = useCallback(
@@ -178,35 +191,39 @@ export function ProfileMobileSheet({
     return null;
   }
 
+  const isEntering = phase === "enter";
   const isDragging = phase === "drag";
-  const sheetClassName =
-    phase === "enter"
-      ? "animate-profile-sheet-in"
-      : phase === "exit"
-        ? "animate-profile-sheet-out"
-        : "";
-  const backdropClassName =
-    phase === "exit"
-      ? "animate-profile-sheet-backdrop-out"
-      : "animate-profile-sheet-backdrop-in";
+  const isExiting = phase === "exit";
+  const settles = !isEntering && !isDragging;
 
   return createPortal(
     <div
       className="fixed inset-0 flex items-end overscroll-none lg:hidden"
       style={{ zIndex: PROFILE_MOBILE_SHEET_Z_INDEX }}
-      aria-hidden={phase === "exit"}
+      aria-hidden={isExiting}
     >
       <button
         type="button"
         tabIndex={-1}
         aria-label={closeLabel}
-        className={`fixed inset-0 rounded-none border-0 bg-[#11182759] ${backdropClassName}`}
+        className={`profile-sheet-settle fixed inset-0 rounded-none border-0 bg-[#11182759] ${
+          isEntering ? "animate-profile-sheet-backdrop-in" : ""
+        }`}
         style={{
-          opacity: isDragging
-            ? Math.max(0.08, 0.35 * (1 - dragY / 360))
+          opacity: isEntering
+            ? undefined
+            : isExiting
+              ? 0
+              : isDragging
+                ? Math.max(
+                    BACKDROP_MIN_DRAG_OPACITY,
+                    1 - dragY / BACKDROP_DRAG_FADE_PX,
+                  )
+                : 1,
+          transition: settles
+            ? `opacity ${PROFILE_MOBILE_SHEET_BACKDROP_MS}ms ${PROFILE_MOBILE_SHEET_PANEL_EASE}`
             : undefined,
-          animation: isDragging ? "none" : undefined,
-          pointerEvents: phase === "exit" ? "none" : "auto",
+          pointerEvents: isExiting ? "none" : "auto",
         }}
         onClick={onClose}
       />
@@ -214,18 +231,19 @@ export function ProfileMobileSheet({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative flex w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.18)] will-change-transform ${sheetClassName}`}
+        className={`profile-sheet-settle relative flex w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.18)] will-change-transform ${
+          isEntering ? "animate-profile-sheet-in" : ""
+        }`}
         style={{
           height: `${heightVh}dvh`,
-          transform: isDragging
-            ? `translate3d(0, ${dragY}px, 0)`
-            : phase === "open"
-              ? "translate3d(0, 0, 0)"
-              : undefined,
-          transition:
-            phase === "open" && dragY === 0
-              ? `transform ${PROFILE_MOBILE_SHEET_PANEL_MS}ms ${PROFILE_MOBILE_SHEET_PANEL_EASE}`
-              : undefined,
+          transform: isEntering
+            ? undefined
+            : isExiting
+              ? "translate3d(0, 100%, 0)"
+              : `translate3d(0, ${dragY}px, 0)`,
+          transition: settles
+            ? `transform ${PROFILE_MOBILE_SHEET_PANEL_MS}ms ${PROFILE_MOBILE_SHEET_PANEL_EASE}`
+            : undefined,
         }}
         onAnimationEnd={handleSheetAnimationEnd}
       >

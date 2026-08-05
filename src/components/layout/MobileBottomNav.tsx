@@ -16,6 +16,7 @@ import { HeaderUserIcon } from "@/components/layout/HeaderIcons";
 import { ShopNavIcon } from "@/components/layout/ShopNavIcon";
 import styles from "@/components/layout/MobileBottomNav.module.css";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
+import { useWishlistCount } from "@/features/wishlist/wishlist-client-sync";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -102,6 +103,7 @@ export function MobileBottomNav({
   wishlistCount,
 }: MobileBottomNavProps) {
   const pathname = usePathname() ?? `/${locale}`;
+  const wishlistBadgeCount = useWishlistCount(wishlistCount);
   const trackRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<NavTabId, HTMLElement>>(new Map());
   const [indicator, setIndicator] = useState<IndicatorBox | null>(null);
@@ -151,7 +153,7 @@ export function MobileBottomNav({
     href: `/${locale}/wishlist`,
     label: dictionary.nav.wishlist,
     icon: Heart,
-    badge: wishlistCount,
+    badge: wishlistBadgeCount,
   };
 
   const profileTab: NavTab = {

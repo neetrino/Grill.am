@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import type { StorefrontHeroSlide } from "@/features/hero/application/queries";
@@ -19,6 +19,40 @@ const HERO_CHICKEN = staticAssetUrl("/assets/home/hero-chicken.webp");
 const HERO_FLAME = staticAssetUrl("/assets/home/hero-flame.webp");
 const HERO_LOGO = staticAssetUrl("/assets/home/hero-logo.webp");
 const HERO_ACCENT = staticAssetUrl("/assets/home/hero-accent.webp");
+
+/**
+ * Hero art that rises in when its bitmap is ready instead of popping in,
+ * reusing the soft `page-enter--slow` motion of the about page.
+ * `next/image` also fires `onLoad` for images already in the browser cache,
+ * so a warm load still resolves to the visible state.
+ */
+function HeroArtImage({
+  alt,
+  className,
+  onLoad,
+  onError,
+  ...imageProps
+}: ComponentProps<typeof Image>) {
+  const [ready, setReady] = useState(false);
+
+  return (
+    <Image
+      {...imageProps}
+      alt={alt}
+      className={`hero-art-enter ${ready ? "hero-art-enter--ready" : ""} ${
+        className ?? ""
+      }`}
+      onLoad={(event) => {
+        setReady(true);
+        onLoad?.(event);
+      }}
+      onError={(event) => {
+        setReady(true);
+        onError?.(event);
+      }}
+    />
+  );
+}
 
 /**
  * Figma `165:1671` — white pill CTA (desktop).
@@ -57,7 +91,7 @@ function HeroChickenCollage() {
       aria-hidden
     >
       <div className="absolute top-0 right-[26%] left-[20.05%] h-[78.25%] overflow-hidden">
-        <Image
+        <HeroArtImage
           src={HERO_CHICKEN}
           alt=""
           fill
@@ -68,20 +102,22 @@ function HeroChickenCollage() {
       </div>
 
       <div className="absolute top-[41.82%] right-[63.35%] left-0 hidden h-[56.27%] overflow-hidden lg:block">
-        <Image
+        <HeroArtImage
           src={HERO_CHICKEN}
           alt=""
           fill
+          priority
           sizes="37vw"
           className="object-cover"
         />
       </div>
 
       <div className="absolute top-[31.98%] right-0 left-[52.05%] hidden h-[71.09%] overflow-hidden lg:block">
-        <Image
+        <HeroArtImage
           src={HERO_CHICKEN}
           alt=""
           fill
+          priority
           sizes="48vw"
           className="object-cover"
         />
@@ -108,10 +144,11 @@ function MobileHeroCard({
     <section className="px-4 pt-2 md:hidden">
       <div className="relative min-h-[280px] overflow-hidden rounded-[24px] bg-brand-red">
         <div className="pointer-events-none absolute inset-0 opacity-30" aria-hidden>
-          <Image
+          <HeroArtImage
             src={HERO_FLAME}
             alt=""
             fill
+            priority
             sizes="100vw"
             className="object-cover"
           />
@@ -119,7 +156,7 @@ function MobileHeroCard({
 
         <div className="pointer-events-none absolute top-[calc(32%+2px)] -right-[6%] h-[78%] w-[62%] overflow-hidden">
           <div className="relative h-full w-full scale-110">
-            <Image
+            <HeroArtImage
               src={slideImage ?? HERO_CHICKEN}
               alt=""
               fill
@@ -132,7 +169,7 @@ function MobileHeroCard({
 
         <div className="relative z-10 flex flex-col items-start px-5 pt-6 pb-5">
           <div className="relative h-[111px] w-full max-w-[280px]">
-            <Image
+            <HeroArtImage
               src={HERO_LOGO}
               alt="Grill.am"
               fill
@@ -197,17 +234,18 @@ export function HomeHero({
         <div className="relative mx-auto h-[clamp(400px,60vw,860px)] w-full max-w-[1440px] overflow-hidden lg:h-[860px]">
           <div className="absolute inset-x-0 top-[-20%] h-[125%]">
             <div className="pointer-events-none absolute inset-[13.4%_-34.36%_2.18%_-37.43%] z-0">
-              <Image
+              <HeroArtImage
                 src={HERO_FLAME}
                 alt=""
                 fill
+                priority
                 sizes="100vw"
                 className="object-contain"
               />
             </div>
 
             <div className="pointer-events-none absolute inset-[26.53%_18.58%_50.76%_18.54%] z-[1]">
-              <Image
+              <HeroArtImage
                 src={HERO_LOGO}
                 alt="Grill.am"
                 fill
@@ -218,10 +256,11 @@ export function HomeHero({
             </div>
 
             <div className="pointer-events-none absolute inset-[19.68%_21.46%_62.07%_65.56%] z-[1]">
-              <Image
+              <HeroArtImage
                 src={HERO_ACCENT}
                 alt=""
                 fill
+                priority
                 sizes="13vw"
                 className="object-contain"
               />
@@ -229,7 +268,7 @@ export function HomeHero({
 
             {slideImage ? (
               <div className="pointer-events-none absolute inset-x-[15%] top-[29.47%] bottom-0 z-[2]">
-                <Image
+                <HeroArtImage
                   src={slideImage}
                   alt=""
                   fill

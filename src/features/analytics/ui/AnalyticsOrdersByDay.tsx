@@ -134,7 +134,7 @@ export function AnalyticsOrdersByDay({
   }
 
   return (
-    <Card className="rounded-2xl p-5 sm:p-6">
+    <Card className="p-5 sm:p-6">
       <div className="mb-2 flex items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">{copy.title}</h2>

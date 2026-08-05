@@ -785,7 +785,6 @@
         "downloadCv": "Download CV"
       },
       "forms": {
-        "current": "Current",
         "newStatus": "New status",
         "updateStatus": "Update status",
         "noFurtherChanges": "No further status changes."

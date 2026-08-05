@@ -7,15 +7,23 @@ type FooterCornerShellProps = {
   children: ReactNode;
 };
 
+/** Routes whose desktop shell paints the gray page wash behind the footer. */
+const GRAY_SHELL_PATTERNS = [
+  /\/profile(?:\/|$)/,
+  /\/wishlist(?:\/|$)/,
+  // Product detail only — the catalog list keeps a white shell.
+  /\/products\/[^/]+(?:\/|$)/,
+];
+
 /**
  * Desktop footer sits on a wash that fills the rounded corner reveals.
- * Gray shells (profile / wishlist) match page wash; elsewhere white.
+ * Gray shells match the page wash; elsewhere white.
  */
 export function FooterCornerShell({ children }: FooterCornerShellProps) {
   const pathname = usePathname() ?? "";
-  const grayCorners =
-    /\/profile(?:\/|$)/.test(pathname) ||
-    /\/wishlist(?:\/|$)/.test(pathname);
+  const grayCorners = GRAY_SHELL_PATTERNS.some((pattern) =>
+    pattern.test(pathname),
+  );
 
   return (
     <div

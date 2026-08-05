@@ -1,8 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { LimitedOfferFireIcon } from "@/features/home/ui/LimitedOfferFireIcon";
@@ -30,9 +26,8 @@ type HomePromotionsProps = {
   wasLabel: string;
   saveLabel: string;
   freshDealLabel: string;
-  prevLabel: string;
-  nextLabel: string;
-  products: readonly SpecialProduct[];
+  /** Single promoted offer; falls back to the design defaults when absent. */
+  offer: SpecialProduct | null;
 };
 
 /** Figma `164:559` grilled chicken for promo banners. */
@@ -163,21 +158,9 @@ export function HomePromotions({
   wasLabel,
   saveLabel,
   freshDealLabel,
-  prevLabel,
-  nextLabel,
-  products,
+  offer,
 }: HomePromotionsProps) {
-  const slides = products.length > 0 ? products : [FALLBACK_PRODUCT];
-  const [index, setIndex] = useState(0);
-  const product = slides[index] ?? FALLBACK_PRODUCT;
-
-  function goPrev(): void {
-    setIndex((current) => (current - 1 + slides.length) % slides.length);
-  }
-
-  function goNext(): void {
-    setIndex((current) => (current + 1) % slides.length);
-  }
+  const product = offer ?? FALLBACK_PRODUCT;
 
   const compareAtFormatted = product.compareAtFormatted ?? "4 200 ֏";
   const saveFormatted = product.saveFormatted ?? "700 ֏";
@@ -187,27 +170,7 @@ export function HomePromotions({
   return (
     <section className="relative w-full py-5 md:py-10 lg:py-12">
       <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-visible lg:hidden">
-          {slides.length > 1 ? (
-            <>
-              <button
-                type="button"
-                aria-label={prevLabel}
-                onClick={goPrev}
-                className="absolute top-1/2 left-0 z-20 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105 sm:size-10"
-              >
-                <ChevronLeft className="size-4 sm:size-5" aria-hidden />
-              </button>
-              <button
-                type="button"
-                aria-label={nextLabel}
-                onClick={goNext}
-                className="absolute top-1/2 right-0 z-20 flex size-8 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105 sm:size-10"
-              >
-                <ChevronRight className="size-4 sm:size-5" aria-hidden />
-              </button>
-            </>
-          ) : null}
+        <div className="lg:hidden">
           <MobilePromoCard
             limitedOfferLabel={limitedOfferLabel}
             eyebrow={eyebrow}
@@ -220,29 +183,7 @@ export function HomePromotions({
           />
         </div>
 
-        <div className="relative mx-auto hidden w-full max-w-[1296px] lg:block">
-          {slides.length > 1 ? (
-            <>
-              <button
-                type="button"
-                aria-label={prevLabel}
-                onClick={goPrev}
-                className="absolute top-1/2 left-0 z-20 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105"
-              >
-                <ChevronLeft className="size-7" aria-hidden />
-              </button>
-
-              <button
-                type="button"
-                aria-label={nextLabel}
-                onClick={goNext}
-                className="absolute top-1/2 right-0 z-20 flex size-14 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#171717] text-white transition hover:scale-105"
-              >
-                <ChevronRight className="size-7" aria-hidden />
-              </button>
-            </>
-          ) : null}
-
+        <div className="mx-auto hidden w-full max-w-[1296px] lg:block">
           <div className="relative h-[553px] overflow-hidden rounded-[30px] bg-[#ffc12c]">
             <div className="relative z-10 flex h-full max-w-[55%] flex-col justify-center gap-3 px-14">
               <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#f52516] px-4 py-1.5 text-xs font-black tracking-[1.44px] text-[#0d0d0d] uppercase">
@@ -273,16 +214,20 @@ export function HomePromotions({
               </AppLink>
             </div>
 
-            <div className="pointer-events-none absolute inset-y-[24px] right-[-4%] w-[52%]">
-              <div className="relative h-full w-full">
-                <Image
-                  src={PROMO_CHICKEN}
-                  alt=""
-                  fill
-                  sizes="542px"
-                  className="object-contain object-right-bottom"
-                />
-              </div>
+            {/*
+              Figma `165:1524` — chicken art is 542×436 inside the 1296×553
+              card. The source webp is square with ~15% transparent padding,
+              so the box is oversized and overflows the card (clipped padding
+              only) to reach the design's visual size.
+            */}
+            <div className="pointer-events-none absolute top-1/2 right-[-7%] aspect-square w-[57%] -translate-y-1/2">
+              <Image
+                src={PROMO_CHICKEN}
+                alt=""
+                fill
+                sizes="740px"
+                className="object-contain"
+              />
             </div>
 
             <div className="absolute right-[72px] bottom-10 z-20 flex items-center gap-6">

@@ -1,12 +1,18 @@
 export type LegalSection = {
   heading: string;
   paragraphs: string[];
+  /** Rendered as a list after the section paragraphs. */
+  bullets?: string[];
+  /** Paragraphs rendered after the bullet list. */
+  closingParagraphs?: string[];
 };
 
 export type LegalDocumentCopy = {
   title: string;
   lastUpdated: string;
   intro: string;
+  /** Additional lead-in paragraphs rendered after the intro. */
+  introParagraphs?: string[];
   sections: LegalSection[];
 };
 
@@ -44,6 +50,14 @@ export function LegalDocumentView({
         <p className="text-base leading-relaxed text-[var(--foreground)]">
           {copy.intro}
         </p>
+        {copy.introParagraphs?.map((paragraph, index) => (
+          <p
+            key={`intro-${index}`}
+            className="text-base leading-relaxed text-[var(--foreground)]"
+          >
+            {paragraph}
+          </p>
+        ))}
       </header>
 
       <div className={isSheet ? "flex flex-col gap-6" : "flex flex-col gap-8"}>
@@ -61,6 +75,26 @@ export function LegalDocumentView({
             {section.paragraphs.map((paragraph, index) => (
               <p
                 key={`${section.heading}-${index}`}
+                className="text-base leading-relaxed text-[var(--foreground)]"
+              >
+                {paragraph}
+              </p>
+            ))}
+            {section.bullets ? (
+              <ul className="flex list-disc flex-col gap-2 pl-5">
+                {section.bullets.map((bullet) => (
+                  <li
+                    key={bullet}
+                    className="text-base leading-relaxed text-[var(--foreground)]"
+                  >
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {section.closingParagraphs?.map((paragraph, index) => (
+              <p
+                key={`${section.heading}-closing-${index}`}
                 className="text-base leading-relaxed text-[var(--foreground)]"
               >
                 {paragraph}

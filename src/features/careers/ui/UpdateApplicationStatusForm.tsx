@@ -1,15 +1,18 @@
 "use client";
 
+import { CircleCheckBig, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { SegmentedControl } from "@/components/layout/SegmentedControl";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { AdminSelect } from "@/features/admin/ui/AdminSelect";
+import { AdminSectionCard } from "@/features/admin/ui/AdminSectionCard";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
-import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import { updateJobApplicationStatusAction } from "@/features/careers/application/update-application-status";
-import type { JobApplicationStatus } from "@/features/careers/domain/application-rules";
+import {
+  JOB_APPLICATION_STATUSES,
+  type JobApplicationStatus,
+} from "@/features/careers/domain/application-rules";
 
 type UpdateApplicationStatusFormProps = {
   locale: string;
@@ -42,7 +45,7 @@ export function UpdateApplicationStatusForm({
   const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState(eligibleStatuses[0] ?? "");
+  const [status, setStatus] = useState<JobApplicationStatus>(currentStatus);
   const [isPending, startTransition] = useTransition();
 
   if (eligibleStatuses.length === 0) {
@@ -51,29 +54,36 @@ export function UpdateApplicationStatusForm({
     );
   }
 
-  const statusOptions = eligibleStatuses.map((item) => ({
+  const statusOptions = JOB_APPLICATION_STATUSES.filter(
+    (item) => item === currentStatus || eligibleStatuses.includes(item),
+  ).map((item) => ({
     value: item,
     label: applicationStatusLabel(item, copy.status),
   }));
 
   return (
-    <Card
-      className={`overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}
+    <AdminSectionCard
+      icon={<CircleCheckBig className="h-5 w-5" />}
+      title={
+        <>
+          {copy.detail.status}
+          {": "}
+          <span className="text-brand-red">
+            {applicationStatusLabel(currentStatus, copy.status)}
+          </span>
+        </>
+      }
     >
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          const nextStatus = String(
-            formData.get("status") ?? "",
-          ) as JobApplicationStatus;
 
           startTransition(async () => {
             setError(null);
             const result = await updateJobApplicationStatusAction(locale, {
               applicationId,
-              status: nextStatus,
+              status,
             });
             if (!result.ok) {
               setError(result.error.message);
@@ -83,27 +93,28 @@ export function UpdateApplicationStatusForm({
           });
         }}
       >
-        <p className="text-sm text-gray-700">
-          {copy.forms.current}:{" "}
-          <strong className="text-gray-900">
-            {applicationStatusLabel(currentStatus, copy.status)}
-          </strong>
-        </p>
-        <AdminSelect
-          name="status"
-          label={copy.forms.newStatus}
-          placeholder={copy.forms.newStatus}
-          required
-          options={statusOptions}
-          value={status}
-          disabled={isPending}
-          onChange={setStatus}
-        />
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <SegmentedControl
+            aria-label={copy.forms.newStatus}
+            value={status}
+            options={statusOptions}
+            size="md"
+            fitContent
+            disabled={isPending}
+            onSelect={setStatus}
+          />
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isPending || status === currentStatus}
+            className="w-full gap-2 sm:w-auto"
+          >
+            <Send className="h-4 w-4" />
+            {isPending ? common.updating : copy.forms.updateStatus}
+          </Button>
+        </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? common.updating : copy.forms.updateStatus}
-        </Button>
       </form>
-    </Card>
+    </AdminSectionCard>
   );
 }
