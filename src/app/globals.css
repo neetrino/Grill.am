@@ -43,6 +43,14 @@
   margin-left: calc(50% - 50vw);
 }
 
+@theme {
+  /*
+   * Desktop layout starts above iPad Pro portrait (1024px), so 12.9" tablets
+   * keep the tablet composition like iPad Air. Mirrored by DESKTOP_CHROME_MQ.
+   */
+  --breakpoint-lg: 1025px;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
