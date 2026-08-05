@@ -2,5 +2,7 @@
   "titleLead": "My",
   "titleAccent": "Wishlist",
   "empty": "Your wishlist is empty.",
+  "emptyHint": "Tap the heart on a product to keep it here.",
+  "browseCatalog": "Product catalog",
   "signInPrompt": "Sign in to save products to your wishlist."
 }

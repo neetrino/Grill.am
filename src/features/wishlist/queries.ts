@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { getDb } from "@/db/client";
 import { products, wishlistItems } from "@/db/schema";
 import {
+  activeCatalogWhere,
   getActiveProductsByIds,
   type CatalogProduct,
 } from "@/features/products/queries";
@@ -13,7 +14,10 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { createId } from "@/lib/id";
 import type { Locale } from "@/lib/i18n/config";
 
-/** Returns wishlist item count for the signed-in user (0 for guests). */
+/**
+ * Wishlist item count for the signed-in user (0 for guests). Counts only
+ * products the storefront can render, so the badge matches the wishlist page.
+ */
 export async function getWishlistCount(): Promise<number> {
   const user = await getCurrentUser();
   if (!user) {
@@ -25,7 +29,8 @@ export async function getWishlistCount(): Promise<number> {
       count: sql<number>`count(*)::int`,
     })
     .from(wishlistItems)
-    .where(eq(wishlistItems.userId, user.id));
+    .innerJoin(products, eq(products.id, wishlistItems.productId))
+    .where(and(eq(wishlistItems.userId, user.id), activeCatalogWhere));
 
   return row?.count ?? 0;
 }
