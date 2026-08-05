@@ -96,67 +96,105 @@
     ]
   },
   "terms": {
-    "title": "Terms & Conditions",
+    "title": "Terms and Conditions",
     "lastUpdated": "23 July 2026",
-    "intro": "By using the White-Shop website and placing an order, you agree to these terms. If you do not agree, please do not use the site.",
+    "intro": "Please read the terms governing the use of grill.am.",
     "sections": [
       {
-        "heading": "1. Service description",
+        "heading": "1. General Provisions",
         "paragraphs": [
-          "White-Shop provides an online catalog, cart, checkout, delivery or pickup, and customer account tools. Site content may change without prior notice."
+          "1.1. These Terms and Conditions govern the use of the grill.am website (hereinafter referred to as the “Website”).",
+          "1.2. By accessing or using the Website, you agree to these Terms.",
+          "1.3. If you do not agree to any part of these Terms, please do not use the Website.",
+          "1.4. The Website reserves the right to modify these Terms without prior notice. Changes become effective upon their publication on the Website.",
+          "1.5. Continued use of the Website implies acceptance of the updated Terms."
         ]
       },
       {
-        "heading": "2. Accounts",
-        "paragraphs": [
-          "You must provide accurate information and keep your login credentials confidential. You are responsible for activity under your account.",
-          "We may suspend or restrict an account in cases of fraud, abuse, or breach of these terms."
+        "heading": "2. Key Definitions",
+        "paragraphs": ["The following definitions apply in these Terms:"],
+        "bullets": [
+          "Website – The online platform grill.am offering services, content, and various functionalities.",
+          "User – Any individual or legal entity accessing or using the Website.",
+          "Services – All products, services, content, and tools available via the Website.",
+          "Content – Any text, images, videos, audio, or other materials available on the Website.",
+          "Intellectual Property – Website name, logo, texts, software, and other elements protected by copyright or trademark law.",
+          "Transaction – Any purchase, service registration, or other contractual agreement on the Website."
         ]
       },
       {
-        "heading": "3. Orders, pricing, and availability",
-        "paragraphs": [
-          "Product prices, discounts, and availability are shown on the site and may change until an order is confirmed. An order is accepted when we confirm and/or begin processing it.",
-          "If an item is unavailable or priced incorrectly, we may cancel the order or offer an alternative after notifying you."
+        "heading": "3. User Obligations",
+        "paragraphs": ["3.1. The User agrees to:"],
+        "bullets": [
+          "Use the Website only for lawful purposes.",
+          "Not interfere with the Website’s technical operation.",
+          "Not distribute viruses, malware, or any harmful code.",
+          "Not attempt to illegally access Website servers or data.",
+          "Not publish or distribute illegal, offensive, defamatory, or hate-inducing content."
+        ],
+        "closingParagraphs": [
+          "3.2. The Website reserves the right to block any User who violates these Terms."
         ]
       },
       {
-        "heading": "4. Payment",
+        "heading": "4. Limitation of Liability",
         "paragraphs": [
-          "The primary payment method is currently Cash on Delivery (COD), unless another method is enabled on the site. The order total includes product prices, applicable discounts, and delivery fees (if any)."
+          "4.1. The Website is provided “as is” without any warranties.",
+          "4.2. The Website is not responsible for:"
+        ],
+        "bullets": [
+          "Any errors or technical malfunctions.",
+          "Incorrect or false information entered by Users.",
+          "Damages resulting from third-party interactions with the Website.",
+          "The accuracy, reliability, or timeliness of the content provided."
+        ],
+        "closingParagraphs": [
+          "4.3. The Website is not liable for indirect damages, including lost revenue or data loss."
         ]
       },
       {
-        "heading": "5. Delivery and pickup",
+        "heading": "5. Intellectual Property",
         "paragraphs": [
-          "Delivery and pickup terms are described in the Delivery Policy. You must provide accurate address and contact details."
+          "5.1. All materials on the Website, including texts, images, logos, and software, belong to the Website or its rightful owners.",
+          "5.2. Copying, distributing, selling, or using any content without prior written permission is strictly prohibited.",
+          "5.3. The User has no right to use the Website’s trademark or domain name without written permission."
         ]
       },
       {
-        "heading": "6. Returns and refunds",
-        "paragraphs": ["Return and refund rules are set out in the Refund Policy."]
-      },
-      {
-        "heading": "7. Intellectual property",
+        "heading": "6. Payments and Refunds",
         "paragraphs": [
-          "Site design, text, logos, and other content are protected. You may not copy or reuse them for commercial purposes without our written consent."
+          "6.1. If the Website offers paid services, payments must be made under the specified conditions.",
+          "6.2. The Website may change prices or payment terms without prior notice.",
+          "6.3. If applicable, refund policies will be outlined separately on the Website."
         ]
       },
       {
-        "heading": "8. Limitation of liability",
+        "heading": "7. Dispute Resolution",
         "paragraphs": [
-          "To the maximum extent permitted by law, we are not liable for indirect, incidental, or consequential damages. Our total liability for a claim is limited to the amount of the related order, except where the law requires otherwise."
+          "7.1. These Terms are governed by the laws of the Republic of Armenia.",
+          "7.2. All disputes should first be resolved through negotiations.",
+          "7.3. If negotiations fail, disputes will be handled in the competent courts of Armenia."
         ]
       },
       {
-        "heading": "9. Governing law",
+        "heading": "8. Force Majeure",
         "paragraphs": [
-          "These terms are governed by the laws of the Republic of Armenia. Disputes are resolved through negotiation and, if needed, before competent courts in Armenia."
+          "8.1. The Website is not responsible for failure or delay in fulfilling obligations due to force majeure circumstances, including:"
+        ],
+        "bullets": [
+          "Natural disasters (earthquakes, floods, fires, etc.).",
+          "Governmental restrictions or prohibitions.",
+          "Military conflicts, terrorism, or civil unrest.",
+          "Technical failures beyond the Website’s control."
         ]
       },
       {
-        "heading": "10. Contact",
-        "paragraphs": ["For questions, use the Contact page or the details in the footer."]
+        "heading": "9. Privacy and Data Protection",
+        "paragraphs": [
+          "9.1. The Website commits to protecting user data in accordance with the Privacy Policy.",
+          "9.2. The Website may collect and process user data for legal purposes.",
+          "9.3. The Website reserves the right to disclose user data to authorities as required by law."
+        ]
       }
     ]
   },
