@@ -53,6 +53,15 @@ function formatMoney(amount: number, currency: string): string {
   return `${amount.toLocaleString("en-US")} ${currency}`;
 }
 
+/** Row cells with their own controls (checkbox, inline status selects). */
+const ROW_CONTROL_SELECTOR = "button, input, select, textarea, a, label";
+
+function isRowControl(target: EventTarget | null): boolean {
+  return (
+    target instanceof Element && target.closest(ROW_CONTROL_SELECTOR) !== null
+  );
+}
+
 export function BulkChangeOrderStatusForm({
   locale,
   orders,
@@ -179,7 +188,31 @@ export function BulkChangeOrderStatusForm({
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
               {orders.map((order) => (
-                <tr key={order.id} className={ADMIN_TABLE_ROW}>
+                <tr
+                  key={order.id}
+                  className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={formatAdminMessage(list.openOrder, {
+                    orderNumber: order.orderNumber,
+                  })}
+                  onClick={(event) => {
+                    if (isRowControl(event.target)) {
+                      return;
+                    }
+                    onOpenOrder(order.orderNumber);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") {
+                      return;
+                    }
+                    if (isRowControl(event.target)) {
+                      return;
+                    }
+                    event.preventDefault();
+                    onOpenOrder(order.orderNumber);
+                  }}
+                >
                   <td className={ADMIN_TABLE_TD_CHECK}>
                     <input
                       type="checkbox"
@@ -193,13 +226,9 @@ export function BulkChangeOrderStatusForm({
                     />
                   </td>
                   <td className={ADMIN_TABLE_TD}>
-                    <button
-                      type="button"
-                      onClick={() => onOpenOrder(order.orderNumber)}
-                      className="font-medium text-gray-900 hover:underline"
-                    >
+                    <span className="font-medium text-gray-900">
                       {order.orderNumber}
-                    </button>
+                    </span>
                     {order.isArchived ? (
                       <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
                         {list.archived}

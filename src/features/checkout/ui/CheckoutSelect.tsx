@@ -1,24 +1,17 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useCallback, useId, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
 
 import {
-  DROPDOWN_ANIMATION_MS,
   DROPDOWN_PANEL_PORTAL_CLASS,
   dropdownOptionClass,
   dropdownPanelStateClass,
   dropdownPortalStyle,
 } from "@/components/ui/dropdown-styles";
+import { useDropdownDisclosure } from "@/components/ui/use-dropdown-disclosure";
 import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 
 export type CheckoutSelectOption = {
@@ -84,17 +77,17 @@ export function CheckoutSelect({
   fitContent = false,
 }: CheckoutSelectProps) {
   const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [isDropdownExpanded, setIsDropdownExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLUListElement>(null);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listboxId = useId();
   const triggerId = useId();
+  const disclosure = useDropdownDisclosure({
+    disabled,
+    insideRefs: [containerRef, panelRef],
+  });
   const menuPosition = useDropdownPortalPosition(
-    isDropdownVisible,
+    disclosure.isVisible,
     triggerRef,
     { matchTriggerWidth: true, lockTriggerWidth: fitContent },
   );
@@ -103,44 +96,7 @@ export function CheckoutSelect({
   const displayLabel = selectedOption?.label ?? placeholder;
   const isPlaceholder = !selectedOption;
 
-  const clearCloseTimer = useCallback(() => {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-  }, []);
-
-  const closeDropdown = useCallback(() => {
-    clearCloseTimer();
-    setIsOpen(false);
-    setIsDropdownExpanded(false);
-    closeTimerRef.current = setTimeout(() => {
-      setIsDropdownVisible(false);
-      closeTimerRef.current = null;
-    }, DROPDOWN_ANIMATION_MS);
-  }, [clearCloseTimer]);
-
-  const openDropdown = useCallback(() => {
-    clearCloseTimer();
-    setIsOpen(true);
-    setIsDropdownVisible(true);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setIsDropdownExpanded(true);
-      });
-    });
-  }, [clearCloseTimer]);
-
-  const toggleDropdown = useCallback(() => {
-    if (disabled) {
-      return;
-    }
-    if (isOpen) {
-      closeDropdown();
-      return;
-    }
-    openDropdown();
-  }, [closeDropdown, disabled, isOpen, openDropdown]);
+  const { close: closeDropdown } = disclosure;
 
   const handleSelect = useCallback(
     (nextValue: string) => {
@@ -150,57 +106,18 @@ export function CheckoutSelect({
     [closeDropdown, onChange],
   );
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        containerRef.current?.contains(target) ||
-        panelRef.current?.contains(target)
-      ) {
-        return;
-      }
-      closeDropdown();
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") {
-        return;
-      }
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      closeDropdown();
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleEscape, true);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape, true);
-    };
-  }, [closeDropdown, isOpen]);
-
-  useEffect(() => {
-    return () => {
-      clearCloseTimer();
-    };
-  }, [clearCloseTimer]);
-
-  const triggerBorderClass = isOpen
+  const triggerBorderClass = disclosure.isOpen
     ? "border-brand-red"
     : "border-gray-200";
 
   const panel =
-    canPortal && isDropdownVisible && menuPosition
+    canPortal && disclosure.isVisible && menuPosition
       ? createPortal(
           <ul
             ref={panelRef}
             id={listboxId}
             role="listbox"
-            className={`${DROPDOWN_PANEL_PORTAL_CLASS} ${dropdownPanelStateClass(isDropdownExpanded)}`}
+            className={`${DROPDOWN_PANEL_PORTAL_CLASS} ${dropdownPanelStateClass(disclosure.isExpanded)}`}
             style={dropdownPortalStyle(menuPosition)}
           >
             {options.map((option) => {
@@ -256,12 +173,12 @@ export function CheckoutSelect({
         id={triggerId}
         type="button"
         role="combobox"
-        aria-expanded={isOpen}
+        aria-expanded={disclosure.isOpen}
         aria-controls={listboxId}
         aria-haspopup="listbox"
         aria-required={required || undefined}
         disabled={disabled}
-        onClick={toggleDropdown}
+        onClick={disclosure.toggle}
         className={`flex h-11 min-w-0 items-center justify-between gap-3 rounded-[15px] border bg-white px-3 text-left transition-colors outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:cursor-not-allowed disabled:bg-gray-50 ${
           fitContent ? "w-fit" : "w-full"
         } ${triggerBorderClass}`}
@@ -273,7 +190,7 @@ export function CheckoutSelect({
         >
           {displayLabel}
         </span>
-        <SelectChevron isOpen={isOpen} />
+        <SelectChevron isOpen={disclosure.isOpen} />
       </button>
 
       {panel}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { ADMIN_CARD_RADIUS_CLASS } from "@/features/admin/ui/admin-ui";
 import type { ModifierCatalogItem } from "@/features/products/domain/modifier-catalog";
 import type { ProductCustomization } from "@/features/products/domain/customization";
 import { ProductDrawerModifierPanels } from "@/features/products/ui/ProductDrawerModifierPanels";
@@ -173,7 +174,9 @@ export function ProductDrawerCustomization({
   );
 
   return (
-    <div className="space-y-3 rounded-lg border border-gray-200 p-4">
+    <div
+      className={`space-y-3 border border-gray-200 p-4 ${ADMIN_CARD_RADIUS_CLASS}`}
+    >
       <p className="text-sm font-semibold text-gray-900">{copy.sectionTitle}</p>
       <ProductDrawerModifierPanels
         addons={value.addons}

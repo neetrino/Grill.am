@@ -5,6 +5,7 @@ import { useRef, useState, useTransition } from "react";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
+import { DateField } from "@/components/ui/DateField";
 import {
   ADMIN_FIELD,
   ADMIN_FORM_STACK,
@@ -263,19 +264,17 @@ export function BlogPostDrawer({
                 {copy.common}
               </p>
               <div className={ADMIN_FORM_STACK}>
-                <label className={ADMIN_FIELD}>
-                  <span className={ADMIN_LABEL}>{copy.publicationDate}</span>
-                  <input
-                    type="date"
+                <div className={ADMIN_FIELD}>
+                  <DateField
+                    label={copy.publicationDate}
                     value={publishedAt}
-                    onChange={(event) => setPublishedAt(event.target.value)}
-                    className={ADMIN_INPUT}
+                    onChange={setPublishedAt}
                     disabled={isPending}
                   />
                   <span className="mt-1 block text-xs text-gray-500">
                     {copy.publicationHint}
                   </span>
-                </label>
+                </div>
                 <AdminSelect
                   label={copy.status}
                   placeholder={copy.status}

@@ -238,6 +238,7 @@
       "empty": "Այս զտիչներին համապատասխանող պատվերներ չկան։",
       "selectAll": "Ընտրել էջի բոլոր պատվերները",
       "selectOrder": "Ընտրել պատվեր {orderNumber}",
+      "openOrder": "Բացել պատվեր {orderNumber}",
       "selectedOnPage": "Այս էջում ընտրված է {count}"
     },
     "bulk": {

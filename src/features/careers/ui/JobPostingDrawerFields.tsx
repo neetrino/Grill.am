@@ -2,6 +2,7 @@
 
 import type { RefObject } from "react";
 
+import { DateField } from "@/components/ui/DateField";
 import {
   ADMIN_FIELD,
   ADMIN_FORM_STACK,
@@ -241,19 +242,17 @@ export function JobPostingDrawerFields({
                 disabled={disabled}
               />
             </label>
-            <label className={ADMIN_FIELD}>
-              <span className={ADMIN_LABEL}>{copy.publishedDate}</span>
-              <input
-                type="date"
+            <div className={ADMIN_FIELD}>
+              <DateField
+                label={copy.publishedDate}
                 value={publishedAt}
-                onChange={(event) => onPublishedAtChange(event.target.value)}
-                className={ADMIN_INPUT}
+                onChange={onPublishedAtChange}
                 disabled={disabled}
               />
               <span className="mt-1 block text-xs text-gray-500">
                 {copy.publishedHint}
               </span>
-            </label>
+            </div>
           </div>
         </div>
       </div>
