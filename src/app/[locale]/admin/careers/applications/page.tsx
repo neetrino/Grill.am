@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
 import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
-import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -26,7 +25,6 @@ import {
 } from "@/features/careers/domain/application-rules";
 import { adminJobApplicationFilterSchema } from "@/features/careers/schemas/application";
 import { AdminApplicationsFilters } from "@/features/careers/ui/AdminApplicationsFilters";
-import { AdminCareersTabs } from "@/features/careers/ui/AdminCareersTabs";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -119,21 +117,11 @@ export default async function AdminApplicationsPage({
     : null;
 
   return (
-    <section>
-      <div className="mb-6">
-        <AdminPageTitle>{careers.title}</AdminPageTitle>
-        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          {countLabel}
-          {statusFilterLabel ? ` · ${statusFilterLabel}` : ""}
-        </p>
-      </div>
-
-      <AdminCareersTabs
-        locale={locale}
-        active="applications"
-        postingsLabel={careers.tabs.postings}
-        applicationsLabel={careers.tabs.applications}
-      />
+    <>
+      <p className={`mb-4 ${ADMIN_PAGE_SUBTITLE}`}>
+        {countLabel}
+        {statusFilterLabel ? ` · ${statusFilterLabel}` : ""}
+      </p>
 
       <AdminApplicationsFilters
         q={filters.q}
@@ -220,6 +208,6 @@ export default async function AdminApplicationsPage({
           </span>
         </nav>
       ) : null}
-    </section>
+    </>
   );
 }

@@ -24,7 +24,6 @@ import {
   isJobApplicationStatus,
   type JobApplicationStatus,
 } from "@/features/careers/domain/application-rules";
-import { AdminCareersTabs } from "@/features/careers/ui/AdminCareersTabs";
 import { UpdateApplicationStatusForm } from "@/features/careers/ui/UpdateApplicationStatusForm";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -94,7 +93,7 @@ export default async function AdminApplicationDetailPage({
   const eligible = status ? getEligibleJobApplicationStatuses(status) : [];
 
   return (
-    <section>
+    <>
       <div className="mb-6">
         <p className={`mb-1 ${ADMIN_PAGE_SUBTITLE}`}>
           <Link
@@ -106,13 +105,6 @@ export default async function AdminApplicationDetailPage({
         </p>
         <AdminPageTitle>{application.name}</AdminPageTitle>
       </div>
-
-      <AdminCareersTabs
-        locale={locale}
-        active="applications"
-        postingsLabel={careers.tabs.postings}
-        applicationsLabel={careers.tabs.applications}
-      />
 
       <Card
         className={`mb-4 !border-0 !shadow-none p-5 sm:p-6 ${ADMIN_CARD_CLASS}`}
@@ -202,6 +194,6 @@ export default async function AdminApplicationDetailPage({
       ) : (
         <p className="text-sm text-red-700">{common.unknownStatus}</p>
       )}
-    </section>
+    </>
   );
 }
