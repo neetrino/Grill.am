@@ -5,7 +5,6 @@ import { Minus, Plus, X } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import type { CartDrawerItemView } from "@/features/cart/get-cart-drawer-view";
-import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type CartDrawerItemRowProps = {
   item: CartDrawerItemView;
@@ -32,8 +31,6 @@ export function CartDrawerItemRow({
   onChangeQuantity,
   onNavigate,
 }: CartDrawerItemRowProps) {
-  const imageSrc = item.imageUrl ?? PRODUCT_CARD_IMAGE;
-
   return (
     <article className="rounded-[20px] border border-gray-200 bg-white p-3 shadow-sm">
       <div className="flex items-stretch gap-3">
@@ -41,16 +38,18 @@ export function CartDrawerItemRow({
           href={productHref}
           prefetchPolicy="intent"
           onClick={onNavigate}
-          className="relative block shrink-0 self-stretch overflow-hidden rounded-2xl bg-brand-surface"
+          className="relative block shrink-0 self-stretch overflow-hidden rounded-2xl bg-white"
           style={{ width: THUMB_SIZE_PX, minHeight: THUMB_SIZE_PX }}
         >
-          <Image
-            src={imageSrc}
-            alt={item.title}
-            fill
-            sizes={`${THUMB_SIZE_PX}px`}
-            className="object-cover"
-          />
+          {item.imageUrl ? (
+            <Image
+              src={item.imageUrl}
+              alt={item.title}
+              fill
+              sizes={`${THUMB_SIZE_PX}px`}
+              className="object-cover"
+            />
+          ) : null}
         </AppLink>
 
         <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
