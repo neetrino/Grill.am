@@ -785,7 +785,6 @@
         "downloadCv": "Ներբեռնել CV"
       },
       "forms": {
-        "current": "Ընթացիկ",
         "newStatus": "Նոր կարգավիճակ",
         "updateStatus": "Թարմացնել կարգավիճակը",
         "noFurtherChanges": "Այլ կարգավիճակի փոփոխություններ չկան։"

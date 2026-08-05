@@ -8,7 +8,6 @@ import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
-import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -21,7 +20,6 @@ import {
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteJobPostingAction } from "@/features/careers/application/manage-job";
 import type { AdminJobListItem } from "@/features/careers/application/queries";
-import { AdminCareersTabs } from "@/features/careers/ui/AdminCareersTabs";
 import { JobPostingDrawer } from "@/features/careers/ui/JobPostingDrawer";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -121,33 +119,29 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
   }
 
   return (
-    <section>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <AdminPageTitle>{copy.title}</AdminPageTitle>
-        <Button type="button" size="sm" onClick={openCreate}>
+    <>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={copy.searchPlaceholder}
+          className={`${ADMIN_INPUT} min-w-[200px] flex-1`}
+          aria-label={copy.searchAria}
+        />
+        <Button
+          type="button"
+          size="sm"
+          onClick={openCreate}
+          className="shrink-0"
+        >
           {copy.addPosition}
         </Button>
       </div>
 
-      <AdminCareersTabs
-        locale={locale}
-        active="postings"
-        postingsLabel={copy.tabs.postings}
-        applicationsLabel={copy.tabs.applications}
-      />
-
-      <input
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder={copy.searchPlaceholder}
-        className={`${ADMIN_INPUT} mb-4`}
-        aria-label={copy.searchAria}
-      />
-
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
       {filtered.length === 0 ? (
-        <Card className="rounded-[15px] p-8">
+        <Card className="p-8">
           <p className="text-center text-sm text-gray-600">
             {postings.length === 0 ? copy.empty : copy.emptySearch}
           </p>
@@ -229,6 +223,6 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
         onClose={closeDrawer}
         posting={editingPosting}
       />
-    </section>
+    </>
   );
 }

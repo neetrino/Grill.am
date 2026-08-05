@@ -82,7 +82,7 @@ export function AdminHeroView({
       </div>
 
       {slides.length === 0 ? (
-        <Card className="rounded-[15px] p-6">
+        <Card className="p-6">
           <p className="text-center text-sm text-gray-600">{copy.empty}</p>
         </Card>
       ) : (

@@ -5,225 +5,308 @@
   "privacy": {
     "title": "Privacy Policy",
     "lastUpdated": "23 July 2026",
-    "intro": "This policy explains how White-Shop (“we”, “us”) collects, uses, and protects your personal data when you use our website and services.",
+    "intro": "By visiting the website grill.am (hereinafter referred to as the “Website”) and making purchases, you automatically consent to the collection, processing, and use of your personal data.",
+    "introParagraphs": [
+      "By “Personal Data,” we mean any information that allows or may allow us to directly or indirectly identify your identity, such as your name, surname, address, email, phone number, and other data (hereinafter referred to as “Data”).",
+      "In this Privacy Policy, “we,” “us,” and “our” refer to the Website (for more information, please visit the “About Us” section), while “you,” “your,” and “yours” refer to any individual who visits the Website or uses our services."
+    ],
     "sections": [
       {
-        "heading": "1. Who we are",
-        "paragraphs": [
-          "White-Shop is an online store operating in Armenia. You can reach us through the Contact page or the email address shown in the site footer."
+        "heading": "1. Collected Data",
+        "paragraphs": ["We may collect the following types of information:"],
+        "bullets": [
+          "Contact information – name, surname, address, phone number, email address",
+          "Purchase information – products purchased, payment methods",
+          "Technical information – device type, browser, operating system",
+          "Cookies and tracking technologies – for website usage analysis"
         ]
       },
       {
-        "heading": "2. Data we collect",
+        "heading": "2. Use of Data",
         "paragraphs": [
-          "We may collect your name, email, phone number, shipping/billing address, order and payment details, account data, contact-form messages, and technical data (IP address, browser type, device information) needed to operate and secure the service.",
-          "If you register or sign in, we also keep account status, session data, and preferences such as language and currency."
+          "Collected data is never sold or provided to third parties for marketing purposes. It is used only for the following purposes:"
+        ],
+        "bullets": [
+          "Processing and shipping orders",
+          "Providing user support",
+          "Improving website functionality",
+          "Complying with legal requirements"
         ]
       },
       {
-        "heading": "3. Why we process data",
-        "paragraphs": [
-          "We process data to place and fulfill orders, handle payments and accounting, create and manage accounts, provide support, maintain security and prevent fraud, and meet legal obligations."
+        "heading": "3. Data Retention Periods",
+        "paragraphs": ["Your personal data is stored as follows:"],
+        "bullets": [
+          "User account data – as long as the account is active",
+          "Purchase history – 5 years (to comply with tax and accounting regulations)",
+          "Marketing data – 2 years or until the user opts out"
         ]
       },
       {
-        "heading": "4. Sharing",
+        "heading": "4. Data Security",
         "paragraphs": [
-          "We may share data with service providers (hosting, email, payments, delivery) when needed to fulfill an order or run the site.",
-          "We do not sell your personal data. We may disclose data when required by law or a competent authority."
+          "We implement appropriate technical and organizational measures to ensure the protection of your data, including:"
+        ],
+        "bullets": [
+          "SSL encryption – to secure payment and personal data transmission",
+          "Access control – limited access to personal data",
+          "Regular audits – to detect potential security vulnerabilities"
         ]
       },
       {
-        "heading": "5. Retention",
-        "paragraphs": [
-          "We keep personal data only as long as needed to provide the service and meet legal and accounting requirements.",
-          "When you delete your account, profile, address, wishlist, and cart data are anonymized or removed. Financial order records may be retained for the legally required period without unnecessary personal contact details."
+        "heading": "5. Sharing Data with Third Parties",
+        "paragraphs": ["We do not sell or provide your data to third parties, except for:"],
+        "bullets": [
+          "Shipping services – to ensure order delivery",
+          "Payment systems – for secure payment processing",
+          "Law enforcement authorities – in cases required by law"
+        ],
+        "closingParagraphs": [
+          "All third parties are obligated to protect your data and cannot use it for other purposes."
         ]
       },
       {
-        "heading": "6. Your rights",
-        "paragraphs": [
-          "You may request access to your data, correction, restriction of processing, or account deletion through profile tools or by contacting us.",
-          "If you believe your rights have been violated, you may also contact the competent personal-data authority in Armenia."
+        "heading": "6. User Rights",
+        "paragraphs": ["You have the right to:"],
+        "bullets": [
+          "Receive a copy of your personal data",
+          "Edit or delete your data (through our website settings or customer support)",
+          "Opt out of marketing emails (via the “unsubscribe” link in each email)",
+          "Request that your data is not processed for specific purposes, except in cases required by law"
         ]
       },
       {
-        "heading": "7. Security and cookies",
-        "paragraphs": [
-          "We apply technical and organizational measures to protect data from unauthorized access. No system is fully secure, but we work to reduce risks.",
-          "The site may use necessary cookies and similar technologies for sign-in sessions, language/currency preferences, and security."
+        "heading": "7. Cookies Usage",
+        "paragraphs": ["Our website uses cookies to optimize user experience. We use:"],
+        "bullets": [
+          "Functional cookies – to ensure proper website operation",
+          "Analytical cookies – to understand user behavior and improve the website",
+          "Marketing cookies (only with your consent) – to provide more relevant advertisements"
+        ],
+        "closingParagraphs": [
+          "You can change your preferences at any time by managing cookies in your browser."
         ]
       },
       {
-        "heading": "8. Contact",
+        "heading": "8. Policy Changes",
         "paragraphs": [
-          "For privacy questions, use the Contact page or the email and phone listed in the footer."
+          "We reserve the right to make legally permitted changes to this page and the above sections. Updates will be posted on the Website."
         ]
       }
     ]
   },
   "terms": {
-    "title": "Terms & Conditions",
+    "title": "Terms and Conditions",
     "lastUpdated": "23 July 2026",
-    "intro": "By using the White-Shop website and placing an order, you agree to these terms. If you do not agree, please do not use the site.",
+    "intro": "Please read the terms governing the use of grill.am.",
     "sections": [
       {
-        "heading": "1. Service description",
+        "heading": "1. General Provisions",
         "paragraphs": [
-          "White-Shop provides an online catalog, cart, checkout, delivery or pickup, and customer account tools. Site content may change without prior notice."
+          "1.1. These Terms and Conditions govern the use of the grill.am website (hereinafter referred to as the “Website”).",
+          "1.2. By accessing or using the Website, you agree to these Terms.",
+          "1.3. If you do not agree to any part of these Terms, please do not use the Website.",
+          "1.4. The Website reserves the right to modify these Terms without prior notice. Changes become effective upon their publication on the Website.",
+          "1.5. Continued use of the Website implies acceptance of the updated Terms."
         ]
       },
       {
-        "heading": "2. Accounts",
-        "paragraphs": [
-          "You must provide accurate information and keep your login credentials confidential. You are responsible for activity under your account.",
-          "We may suspend or restrict an account in cases of fraud, abuse, or breach of these terms."
+        "heading": "2. Key Definitions",
+        "paragraphs": ["The following definitions apply in these Terms:"],
+        "bullets": [
+          "Website – The online platform grill.am offering services, content, and various functionalities.",
+          "User – Any individual or legal entity accessing or using the Website.",
+          "Services – All products, services, content, and tools available via the Website.",
+          "Content – Any text, images, videos, audio, or other materials available on the Website.",
+          "Intellectual Property – Website name, logo, texts, software, and other elements protected by copyright or trademark law.",
+          "Transaction – Any purchase, service registration, or other contractual agreement on the Website."
         ]
       },
       {
-        "heading": "3. Orders, pricing, and availability",
-        "paragraphs": [
-          "Product prices, discounts, and availability are shown on the site and may change until an order is confirmed. An order is accepted when we confirm and/or begin processing it.",
-          "If an item is unavailable or priced incorrectly, we may cancel the order or offer an alternative after notifying you."
+        "heading": "3. User Obligations",
+        "paragraphs": ["3.1. The User agrees to:"],
+        "bullets": [
+          "Use the Website only for lawful purposes.",
+          "Not interfere with the Website’s technical operation.",
+          "Not distribute viruses, malware, or any harmful code.",
+          "Not attempt to illegally access Website servers or data.",
+          "Not publish or distribute illegal, offensive, defamatory, or hate-inducing content."
+        ],
+        "closingParagraphs": [
+          "3.2. The Website reserves the right to block any User who violates these Terms."
         ]
       },
       {
-        "heading": "4. Payment",
+        "heading": "4. Limitation of Liability",
         "paragraphs": [
-          "The primary payment method is currently Cash on Delivery (COD), unless another method is enabled on the site. The order total includes product prices, applicable discounts, and delivery fees (if any)."
+          "4.1. The Website is provided “as is” without any warranties.",
+          "4.2. The Website is not responsible for:"
+        ],
+        "bullets": [
+          "Any errors or technical malfunctions.",
+          "Incorrect or false information entered by Users.",
+          "Damages resulting from third-party interactions with the Website.",
+          "The accuracy, reliability, or timeliness of the content provided."
+        ],
+        "closingParagraphs": [
+          "4.3. The Website is not liable for indirect damages, including lost revenue or data loss."
         ]
       },
       {
-        "heading": "5. Delivery and pickup",
+        "heading": "5. Intellectual Property",
         "paragraphs": [
-          "Delivery and pickup terms are described in the Delivery Policy. You must provide accurate address and contact details."
+          "5.1. All materials on the Website, including texts, images, logos, and software, belong to the Website or its rightful owners.",
+          "5.2. Copying, distributing, selling, or using any content without prior written permission is strictly prohibited.",
+          "5.3. The User has no right to use the Website’s trademark or domain name without written permission."
         ]
       },
       {
-        "heading": "6. Returns and refunds",
+        "heading": "6. Payments and Refunds",
         "paragraphs": [
-          "Return and refund rules are set out in the Refund Policy."
+          "6.1. If the Website offers paid services, payments must be made under the specified conditions.",
+          "6.2. The Website may change prices or payment terms without prior notice.",
+          "6.3. If applicable, refund policies will be outlined separately on the Website."
         ]
       },
       {
-        "heading": "7. Intellectual property",
+        "heading": "7. Dispute Resolution",
         "paragraphs": [
-          "Site design, text, logos, and other content are protected. You may not copy or reuse them for commercial purposes without our written consent."
+          "7.1. These Terms are governed by the laws of the Republic of Armenia.",
+          "7.2. All disputes should first be resolved through negotiations.",
+          "7.3. If negotiations fail, disputes will be handled in the competent courts of Armenia."
         ]
       },
       {
-        "heading": "8. Limitation of liability",
+        "heading": "8. Force Majeure",
         "paragraphs": [
-          "To the maximum extent permitted by law, we are not liable for indirect, incidental, or consequential damages. Our total liability for a claim is limited to the amount of the related order, except where the law requires otherwise."
+          "8.1. The Website is not responsible for failure or delay in fulfilling obligations due to force majeure circumstances, including:"
+        ],
+        "bullets": [
+          "Natural disasters (earthquakes, floods, fires, etc.).",
+          "Governmental restrictions or prohibitions.",
+          "Military conflicts, terrorism, or civil unrest.",
+          "Technical failures beyond the Website’s control."
         ]
       },
       {
-        "heading": "9. Governing law",
+        "heading": "9. Privacy and Data Protection",
         "paragraphs": [
-          "These terms are governed by the laws of the Republic of Armenia. Disputes are resolved through negotiation and, if needed, before competent courts in Armenia."
-        ]
-      },
-      {
-        "heading": "10. Contact",
-        "paragraphs": [
-          "For questions, use the Contact page or the details in the footer."
+          "9.1. The Website commits to protecting user data in accordance with the Privacy Policy.",
+          "9.2. The Website may collect and process user data for legal purposes.",
+          "9.3. The Website reserves the right to disclose user data to authorities as required by law."
         ]
       }
     ]
   },
   "refund": {
-    "title": "Refund Policy",
+    "title": "Return and Refund Policy",
     "lastUpdated": "23 July 2026",
-    "intro": "This policy explains how to request a product return or refund from White-Shop.",
+    "intro": "Grill.am is committed to ensuring that every order reaches the customer in proper quality and complete condition. Since the products offered on the website are food products, returns and refunds are handled in accordance with food safety and hygiene requirements.",
     "sections": [
       {
-        "heading": "1. General principles",
+        "heading": "1. General Return and Exchange Conditions",
         "paragraphs": [
-          "We want you to be satisfied with your purchase. If you received a wrong, damaged, or defective item, contact us as soon as possible with your order number and a description of the issue."
+          "Food products delivered in proper quality and in accordance with the confirmed order are not eligible for return or exchange.",
+          "A return, replacement, or refund may be considered if:"
+        ],
+        "bullets": [
+          "the delivered item does not match the confirmed order,",
+          "one or more ordered items are missing,",
+          "the delivered product is damaged, incomplete, or of unsatisfactory quality,",
+          "the product or its packaging was damaged during delivery."
         ]
       },
       {
-        "heading": "2. When returns are allowed",
+        "heading": "2. Reporting an Issue",
         "paragraphs": [
-          "Returns are generally possible if the product does not match the order, was damaged in transit, or has a manufacturing defect.",
-          "Items should be in resalable condition with original packaging and labels, unless safety or hygiene rules require otherwise."
+          "Please report any issue as soon as possible after receiving the order. To help us review the case promptly, please provide:"
+        ],
+        "bullets": [
+          "the order number,",
+          "a short description of the issue,",
+          "photos of the product and packaging, where possible."
+        ],
+        "closingParagraphs": [
+          "Each case is reviewed individually. Where appropriate, Grill.am may offer a replacement, delivery of the missing item, or a full or partial refund."
         ]
       },
       {
-        "heading": "3. Limitations",
+        "heading": "3. Refunds",
         "paragraphs": [
-          "Some items may not be returnable, such as personal-hygiene products, custom-made items, or goods that have been opened or used in a way that prevents resale.",
-          "Return conditions for discounted or promotional items may differ and will be noted on the product or order when applicable."
+          "If a refund is approved, it will be issued using the same payment method used for the original purchase.",
+          "For card or online payments, the refund may take up to 7 business days, depending on the bank or payment provider procedures.",
+          "The delivery fee is refundable only if the issue was caused by Grill.am or the delivery service."
         ]
       },
       {
-        "heading": "4. How to request a return",
+        "heading": "4. Order Changes or Cancellation",
         "paragraphs": [
-          "Contact us via the Contact page or by phone, including your order number, the product, and a description of the issue. We may ask for photos.",
-          "After approval, we will explain the return method and timing."
+          "An order may be changed or canceled before preparation begins.",
+          "Once preparation has started or the order has been handed over to the delivery service, changing or canceling the order may no longer be possible. Please contact us as soon as possible in such cases."
         ]
       },
       {
-        "heading": "5. Refunds",
-        "paragraphs": [
-          "If a refund is approved, funds are returned using the original payment method or another agreed method. For Cash on Delivery (COD), the refund method is arranged separately.",
-          "Processing usually takes several business days after approval, depending on the payment method and banking timelines."
+        "heading": "5. Non-Returnable or Non-Exchangeable Products",
+        "paragraphs": [],
+        "bullets": [
+          "food products delivered in proper quality and in accordance with the confirmed order,",
+          "opened or partially consumed products where no quality issue exists,",
+          "products damaged or spoiled due to improper storage by the customer,",
+          "custom-made orders that comply with the confirmed order details."
         ]
       },
       {
-        "heading": "6. Order cancellation",
+        "heading": "6. Damaged, Incorrect, or Incomplete Orders",
         "paragraphs": [
-          "If an order has not yet shipped, you may request cancellation by contacting us. If the order is already in transit or delivered, standard return rules apply."
+          "If you receive a damaged, incorrect, or incomplete order, please contact Grill.am immediately. We will review the situation as quickly as possible and offer an appropriate solution."
         ]
       }
     ]
   },
   "delivery": {
-    "title": "Delivery Policy",
+    "title": "Delivery Terms",
     "lastUpdated": "23 July 2026",
-    "intro": "This policy describes White-Shop delivery and pickup terms.",
+    "intro": "Grill.am aims to deliver your order quickly, safely, and in proper packaging. The main delivery terms are outlined below.",
     "sections": [
       {
-        "heading": "1. Delivery area",
-        "paragraphs": [
-          "We primarily serve the Republic of Armenia according to active delivery zones and rules on the site. Available locations are shown during checkout."
+        "heading": "1. Delivery Timeframes",
+        "paragraphs": [],
+        "bullets": [
+          "Delivery time depends on the order size, current workload, and delivery address.",
+          "Orders are usually delivered within 30–45 minutes.",
+          "In case of a possible delay, a Grill.am operator will contact you in advance."
         ]
       },
       {
-        "heading": "2. Delivery methods",
+        "heading": "2. Delivery Arrangements",
         "paragraphs": [
-          "Depending on available options, you may choose address delivery or pickup from a designated point. The cost and estimated timing for each method appear at checkout."
+          "Order delivery is organized under the following conditions:"
+        ],
+        "bullets": [
+          "Delivery is carried out by Grill.am or its partner courier services.",
+          "The customer must provide a correct address and an active phone number."
         ]
       },
       {
-        "heading": "3. Fees and timing",
-        "paragraphs": [
-          "Delivery fees are calculated from the selected zone/rule. Some zones may offer a free-delivery threshold.",
-          "Estimated delivery days are indicative and may change due to stock, weather, or other operational reasons. We will notify you of material delays."
+        "heading": "3. Receiving Your Order",
+        "paragraphs": [],
+        "bullets": [
+          "When receiving the order, please check that the items, quantities, and packaging are correct and intact.",
+          "If an item is incorrect, missing, damaged, or of inadequate quality, please contact us as soon as possible."
         ]
       },
       {
-        "heading": "4. Address and contact",
+        "heading": "4. Possible Delays",
         "paragraphs": [
-          "You must provide an accurate address and a working phone number. Failed delivery caused by an incorrect address or unavailability may require an extra fee or rescheduling."
-        ]
-      },
-      {
-        "heading": "5. Receipt and inspection",
-        "paragraphs": [
-          "On receipt, please check the outer condition of the package. If you notice damage or a mismatch, tell the courier and contact us immediately with your order number."
-        ]
-      },
-      {
-        "heading": "6. Failed delivery",
-        "paragraphs": [
-          "If delivery fails because you were unavailable, we will try to contact you to reschedule. A repeat delivery may be chargeable under the applicable rules."
-        ]
-      },
-      {
-        "heading": "7. Contact",
-        "paragraphs": [
-          "For delivery questions, use the Contact page or footer details and include your order number."
+          "Despite our efforts, delivery may occasionally be delayed due to:"
+        ],
+        "bullets": [
+          "Adverse weather conditions",
+          "Traffic or transportation issues",
+          "Holiday periods or high workload"
+        ],
+        "closingParagraphs": [
+          "Incorrect or incomplete delivery and contact information may also cause delays. In such cases, we will inform you as soon as possible."
         ]
       }
     ]

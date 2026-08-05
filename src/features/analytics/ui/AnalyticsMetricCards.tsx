@@ -84,7 +84,7 @@ export function AnalyticsMetricCards({
         return (
           <Card
             key={metric.label}
-            className={`rounded-2xl border p-5 shadow-sm ${tone.card}`}
+            className={`border p-5 shadow-sm ${tone.card}`}
           >
             <div
               className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${tone.iconWrap}`}
