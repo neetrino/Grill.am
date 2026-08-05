@@ -15,6 +15,7 @@ node_modules/
 dist/
 build/
 coverage/
+*.tsbuildinfo
 
 # Logs and temp
 *.log
@@ -32,5 +33,3 @@ public/uploads/
 # *.swp
 # *.swo
 #docs/reference/payment integration/Example only
-
-tsconfig.tsbuildinfo
