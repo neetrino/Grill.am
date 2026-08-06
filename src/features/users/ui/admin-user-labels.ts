@@ -11,6 +11,8 @@ export function adminUserRoleLabel(
   switch (role) {
     case "ADMIN":
       return labels.admin;
+    case "OPERATOR":
+      return labels.operator;
     case "CUSTOMER":
       return labels.customer;
     default:

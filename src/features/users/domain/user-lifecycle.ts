@@ -1,6 +1,14 @@
 /** Canonical user roles from the database enum. */
-export const USER_ROLES = ["ADMIN", "CUSTOMER"] as const;
+export const USER_ROLES = ["ADMIN", "OPERATOR", "CUSTOMER"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
+
+/** Roles that can enter the admin panel (with role-scoped routes). */
+export const STAFF_ROLES = ["ADMIN", "OPERATOR"] as const;
+export type StaffRole = (typeof STAFF_ROLES)[number];
+
+export function isStaffRole(value: string): value is StaffRole {
+  return (STAFF_ROLES as readonly string[]).includes(value);
+}
 
 /** Canonical account statuses from the database enum. */
 export const USER_STATUSES = ["ACTIVE", "SUSPENDED", "ANONYMIZED"] as const;
@@ -61,8 +69,10 @@ export function shouldRevokeSessions(input: {
     return true;
   }
 
-  if (input.fromRole === "ADMIN" && input.toRole === "CUSTOMER") {
-    return true;
+  if (input.fromRole !== input.toRole) {
+    if (isStaffRole(input.fromRole) || isStaffRole(input.toRole)) {
+      return true;
+    }
   }
 
   return false;

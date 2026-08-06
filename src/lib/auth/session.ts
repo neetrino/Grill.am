@@ -19,7 +19,7 @@ export type SessionUser = {
   firstName: string;
   lastName: string;
   phone: string | null;
-  role: "ADMIN" | "CUSTOMER";
+  role: "ADMIN" | "OPERATOR" | "CUSTOMER";
   status: "ACTIVE" | "SUSPENDED" | "ANONYMIZED";
 };
 

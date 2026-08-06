@@ -333,10 +333,12 @@
     "rolesFilter": {
       "all": "Բոլորը",
       "admins": "Ադմիններ",
+      "operators": "Օպերատորներ",
       "customers": "Հաճախորդներ"
     },
     "roles": {
       "admin": "Ադմին",
+      "operator": "Օպերատոր",
       "customer": "Հաճախորդ"
     },
     "statuses": {

@@ -4,6 +4,8 @@ import { HeaderUserIcon } from "@/components/layout/HeaderIcons";
 import { AppLink } from "@/components/ui/AppLink";
 import { IconDropdown } from "@/components/ui/IconDropdown";
 import { logoutAction } from "@/features/auth/logout-action";
+import { isStaffRole } from "@/features/users/domain/user-lifecycle";
+import { staffHomePath } from "@/lib/auth/role-paths";
 import type { Locale } from "@/lib/i18n/config";
 import type { SessionUser } from "@/lib/auth/session";
 
@@ -55,9 +57,9 @@ export function AccountControls({
       menuAlign="right"
       trigger={icon}
     >
-      {user.role === "ADMIN" ? (
+      {isStaffRole(user.role) ? (
         <AppLink
-          href={`/${locale}/admin`}
+          href={staffHomePath(locale, user.role) ?? `/${locale}/admin`}
           prefetchPolicy="intent"
           role="menuitem"
           className={menuItemClassName}

@@ -14,7 +14,7 @@ import {
   changePaymentStatusSchema,
   type ChangePaymentStatusInput,
 } from "@/features/orders/schemas/change-payment-status";
-import { requireAdmin } from "@/lib/auth/policies";
+import { requireOrdersStaff } from "@/lib/auth/policies";
 import { createId } from "@/lib/id";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
@@ -42,7 +42,7 @@ export async function changePaymentStatusAction(
     return err("VALIDATION_ERROR", "Invalid payment status payload.");
   }
 
-  const actor = await requireAdmin(locale as Locale);
+  const actor = await requireOrdersStaff(locale as Locale);
   const { orderNumber, toStatus, note } = parsed.data;
 
   try {

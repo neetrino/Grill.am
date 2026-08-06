@@ -11,21 +11,29 @@ import {
   readAuthFormValues,
   type AuthActionState,
 } from "@/features/auth/ui/auth-action-state";
+import { defaultPostLoginPath } from "@/lib/auth/role-paths";
 import { createSession } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
+import type { UserRole } from "@/features/users/domain/user-lifecycle";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
 export type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 
 const LOGIN_VALUE_KEYS = ["email", "password"] as const;
 
-function resolveSafeNextPath(locale: Locale, raw: FormDataEntryValue | null): string {
+function resolveSafeNextPath(
+  locale: Locale,
+  role: UserRole,
+  raw: FormDataEntryValue | null,
+): string {
+  const fallback = defaultPostLoginPath(locale, role);
+
   if (typeof raw !== "string" || !raw.startsWith("/") || raw.startsWith("//")) {
-    return `/${locale}/profile`;
+    return fallback;
   }
 
   if (!raw.startsWith(`/${locale}/`)) {
-    return `/${locale}/profile`;
+    return fallback;
   }
 
   return raw;
@@ -81,5 +89,5 @@ export async function loginAction(
     .set({ lastLoginAt: new Date(), updatedAt: new Date() })
     .where(eq(users.id, user.id));
   await createSession(user.id);
-  redirect(resolveSafeNextPath(locale, formData.get("next")));
+  redirect(resolveSafeNextPath(locale, user.role, formData.get("next")));
 }

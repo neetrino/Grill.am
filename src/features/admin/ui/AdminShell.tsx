@@ -13,22 +13,29 @@ import {
   ADMIN_PAGE_SHELL,
 } from "@/features/admin/ui/admin-shell-classes";
 import { ADMIN_NAV_TRANSITION_MS } from "@/features/admin/ui/admin-ui";
+import type { UserRole } from "@/features/users/domain/user-lifecycle";
 import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminShellProps = {
   locale: string;
   dictionary: AdminDictionary;
+  role: UserRole;
   children: ReactNode;
 };
 
-export function AdminShell({ locale, dictionary, children }: AdminShellProps) {
+export function AdminShell({
+  locale,
+  dictionary,
+  role,
+  children,
+}: AdminShellProps) {
   const pathname = usePathname();
 
   return (
     <AdminDictionaryProvider dictionary={dictionary}>
       <AdminSidebarCollapseProvider>
         <div className={ADMIN_PAGE_SHELL}>
-          <AdminSidebar locale={locale} />
+          <AdminSidebar locale={locale} role={role} />
           <div className={ADMIN_MAIN_COLUMN}>
             <div
               key={pathname}

@@ -123,6 +123,7 @@ export function AdminUsersView({
   const rolePills = [
     { label: copy.rolesFilter.all, value: undefined },
     { label: copy.rolesFilter.admins, value: "ADMIN" },
+    { label: copy.rolesFilter.operators, value: "OPERATOR" },
     { label: copy.rolesFilter.customers, value: "CUSTOMER" },
   ] as const;
 
@@ -286,7 +287,9 @@ export function AdminUsersView({
                           className={`${ADMIN_BADGE} uppercase ${
                             user.role === "ADMIN"
                               ? "bg-blue-100 text-blue-800"
-                              : "bg-sky-100 text-sky-800"
+                              : user.role === "OPERATOR"
+                                ? "bg-amber-100 text-amber-800"
+                                : "bg-sky-100 text-sky-800"
                           }`}
                         >
                           {adminUserRoleLabel(user.role, copy.roles)}
