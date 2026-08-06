@@ -9,6 +9,8 @@ export type PaymentResult = {
   provider: string;
   status: "pending" | "authorized" | "captured" | "failed";
   providerReference: string | null;
+  /** Hosted payment form URL when the provider requires a browser redirect. */
+  redirectUrl?: string | null;
 };
 
 export type PaymentWebhookEvent = {

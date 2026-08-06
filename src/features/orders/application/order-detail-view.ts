@@ -48,6 +48,17 @@ export type AdminOrderDetailView = {
   cashTenderedAmount: number | null;
   /** Change the courier should prepare (`tendered − total`). */
   cashChangeAmount: number | null;
+  /** Customer-safe payment attempt summaries (no secrets / full refs). */
+  paymentAttempts: Array<{
+    attemptNumber: number;
+    provider: string;
+    status: string;
+    amount: number;
+    currency: string;
+    createdAt: string;
+    capturedAt: string | null;
+    isLatest: boolean;
+  }>;
   items: AdminOrderDetailItemView[];
 };
 
@@ -126,6 +137,16 @@ export function toAdminOrderDetailView(
     paymentAmount: latestPayment?.amount ?? order.totalAmount,
     cashTenderedAmount,
     cashChangeAmount,
+    paymentAttempts: payments.map((payment, index) => ({
+      attemptNumber: payment.attemptNumber,
+      provider: payment.provider,
+      status: payment.status,
+      amount: payment.amount,
+      currency: payment.currency,
+      createdAt: payment.createdAt.toISOString(),
+      capturedAt: payment.capturedAt?.toISOString() ?? null,
+      isLatest: index === 0,
+    })),
     items: items.map((item) => ({
       id: item.id,
       title: item.productTitleSnapshot,

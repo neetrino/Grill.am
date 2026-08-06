@@ -220,12 +220,15 @@
       "pending": "Pending",
       "processing": "Processing",
       "completed": "Completed",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "requiresReview": "Requires review"
     },
     "paymentStatus": {
       "paid": "Paid",
-      "pending": "pending",
-      "failed": "Failed"
+      "pending": "Pending",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "authorized": "Authorized"
     },
     "list": {
       "order": "Order",

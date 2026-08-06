@@ -21,6 +21,7 @@ const ORDER_STATUS_FILTERS = [
   { statusKey: "processing", value: "PROCESSING" },
   { statusKey: "completed", value: "DELIVERED" },
   { statusKey: "cancelled", value: "CANCELLED" },
+  { statusKey: "requiresReview", value: "REQUIRES_REVIEW" },
 ] as const satisfies ReadonlyArray<{
   statusKey: keyof AdminDictionary["orders"]["status"];
   value: OrderStatus;
@@ -30,6 +31,8 @@ const PAYMENT_STATUS_FILTERS = [
   { statusKey: "paid", value: "CAPTURED" },
   { statusKey: "pending", value: "PENDING" },
   { statusKey: "failed", value: "FAILED" },
+  { statusKey: "cancelled", value: "CANCELLED" },
+  { statusKey: "authorized", value: "AUTHORIZED" },
 ] as const satisfies ReadonlyArray<{
   statusKey: keyof AdminDictionary["orders"]["paymentStatus"];
   value: PaymentStatus;

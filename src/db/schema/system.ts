@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -66,6 +67,24 @@ export const outboxEvents = pgTable(
       mode: "date",
     }),
     lastError: text("last_error"),
+    /** Deterministic unique key for idempotent enqueue (nullable for legacy). */
+    dedupeKey: text("dedupe_key"),
+    claimedAt: timestamp("claimed_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    claimedBy: text("claimed_by"),
+    maxAttempts: integer("max_attempts").notNull().default(8),
+    sentAt: timestamp("sent_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    failedAt: timestamp("failed_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    lastErrorCode: text("last_error_code"),
+    providerMessageId: text("provider_message_id"),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -78,5 +97,12 @@ export const outboxEvents = pgTable(
       table.aggregateType,
       table.aggregateId,
     ),
+    uniqueIndex("outbox_events_dedupe_key_uidx")
+      .on(table.dedupeKey)
+      .where(sql`${table.dedupeKey} IS NOT NULL AND ${table.dedupeKey} <> ''`),
+    index("outbox_events_claim_idx").on(table.status, table.availableAt),
+    index("outbox_events_processing_claimed_idx")
+      .on(table.status, table.claimedAt)
+      .where(sql`${table.status} = 'PROCESSING'`),
   ],
 );

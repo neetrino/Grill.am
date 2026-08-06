@@ -10,6 +10,7 @@ import {
   isPaymentStatus,
   type PaymentStatus,
 } from "@/features/orders/domain/payment-status";
+import { paymentLifecycleTimestampPatch } from "@/features/payments/domain/payment-lifecycle-timestamps";
 import {
   changePaymentStatusSchema,
   type ChangePaymentStatusInput,
@@ -88,9 +89,18 @@ export async function changePaymentStatusAction(
         .limit(1);
 
       if (latestPayment) {
+        const timestampPatch = paymentLifecycleTimestampPatch(
+          toStatus,
+          now,
+          latestPayment,
+        );
         await tx
           .update(payments)
-          .set({ status: toStatus, updatedAt: now })
+          .set({
+            status: toStatus,
+            updatedAt: now,
+            ...timestampPatch,
+          })
           .where(eq(payments.id, latestPayment.id));
       }
 

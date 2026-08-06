@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
 import {
   Check,
+  Clock,
   FileText,
   ShoppingBag,
   Package,
@@ -7,6 +9,8 @@ import {
 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+
+export type CheckoutSuccessVariant = "cod_placed" | "paid" | "pending";
 
 export type CheckoutSuccessCopy = {
   title: string;
@@ -26,6 +30,8 @@ type CheckoutSuccessViewProps = {
   productsHref: string;
   ordersHref: string | null;
   copy: CheckoutSuccessCopy;
+  variant: CheckoutSuccessVariant;
+  footer?: ReactNode;
 };
 
 export function CheckoutSuccessView({
@@ -34,15 +40,23 @@ export function CheckoutSuccessView({
   productsHref,
   ordersHref,
   copy,
+  variant,
+  footer,
 }: CheckoutSuccessViewProps) {
   const body = copy.body.replace("{orderNumber}", orderNumber);
+  const isPending = variant === "pending";
+  const Icon = isPending ? Clock : Check;
 
   return (
     <section className="storefront-bleed flex -mt-10 mb-[-2.5rem] min-h-[calc(100dvh-var(--storefront-header-offset))] items-center justify-center bg-white px-4 py-12 pb-28 sm:px-6 lg:px-8 lg:pb-12">
       <div className="relative w-full max-w-[560px]">
         <div className="relative w-full rounded-[28px] border border-gray-100 bg-white px-5 pb-7 pt-12 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:px-8 sm:pb-8 sm:pt-14">
-          <div className="absolute left-1/2 top-0 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand-yellow shadow-[0_8px_20px_rgba(255,193,44,0.45)] sm:size-16">
-            <Check
+          <div
+            className={`absolute left-1/2 top-0 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-[0_8px_20px_rgba(255,193,44,0.45)] sm:size-16 ${
+              isPending ? "bg-gray-400" : "bg-brand-yellow"
+            }`}
+          >
+            <Icon
               className="size-7 text-white sm:size-8"
               strokeWidth={3}
               aria-hidden
@@ -114,6 +128,8 @@ export function CheckoutSuccessView({
           <p className="mt-5 text-center text-xs text-gray-500 sm:text-sm">
             {copy.emailNote}
           </p>
+
+          {footer}
         </div>
       </div>
     </section>

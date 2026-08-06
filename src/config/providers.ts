@@ -6,7 +6,7 @@ import { createStubEmailAdapter } from "@/lib/email/stub-adapter";
 import type { EmailAdapter } from "@/lib/email/types";
 import { createStaticExchangeRateAdapter } from "@/lib/fx/static-adapter";
 import type { ExchangeRateAdapter } from "@/lib/fx/types";
-import { createCodPaymentAdapter } from "@/lib/payments/cod-adapter";
+import { getPaymentAdapter } from "@/lib/payments/registry";
 import type { PaymentAdapter } from "@/lib/payments/types";
 import {
   createR2ObjectStorageAdapter,
@@ -21,6 +21,10 @@ export type AppProviders = {
   redis: RedisAdapter;
   storage: ObjectStorageAdapter;
   email: EmailAdapter;
+  /**
+   * @deprecated Prefer {@link getPaymentAdapter} with an explicit provider.
+   * Kept as COD for legacy callers that do not select a method.
+   */
   payment: PaymentAdapter;
   exchangeRates: ExchangeRateAdapter;
 };
@@ -61,7 +65,7 @@ export function getProviders(): AppProviders {
     redis: createMemoryRedisAdapter(),
     storage: createStorageAdapter(),
     email: createStubEmailAdapter(),
-    payment: createCodPaymentAdapter(),
+    payment: getPaymentAdapter("cod"),
     exchangeRates: createStaticExchangeRateAdapter({
       getRatesFromAmd: async () => {
         const rates = await getStoreFxRates();
@@ -72,3 +76,5 @@ export function getProviders(): AppProviders {
 
   return cachedProviders;
 }
+
+export { getPaymentAdapter } from "@/lib/payments/registry";

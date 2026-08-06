@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { and, eq, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 
-import { getProviders } from "@/config/providers";
+import { getPaymentAdapter } from "@/config/providers";
 import {
   cartItems,
   carts,
@@ -13,7 +13,6 @@ import {
   orderEvents,
   orderItems,
   orders,
-  payments,
   products,
   promotions,
   stockMovements,
@@ -31,7 +30,33 @@ import {
   buildCodPaymentMetadata,
   validateCodCashTenderedAmount,
 } from "@/features/checkout/domain/cod-cash-change";
-import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
+import {
+  createPaymentAttempt,
+  getLatestPaymentAttempt,
+} from "@/features/payments/application/create-payment-attempt";
+import { enqueuePaymentNotification } from "@/features/payments/application/enqueue-payment-notification";
+import { fingerprintCartItems } from "@/features/payments/domain/cart-fingerprint";
+import {
+  isPaymentDomainError,
+  PaymentMethodDisabledError,
+  PaymentProviderNotConfiguredError,
+} from "@/features/payments/domain/errors";
+import { assertPaymentMethodEnabled } from "@/features/payments/application/get-payment-method-availability";
+import {
+  getPaymentFlowType,
+  isOnlinePaymentProvider,
+  toPaymentRecord,
+  type PaymentMethod,
+} from "@/features/payments/domain/payment-method";
+import { initializeArcaPayment } from "@/features/payments/providers/arca/initialize-arca-payment";
+import { createIdramPaymentForm } from "@/features/payments/providers/idram/create-idram-payment";
+import { isArcaProtocolError } from "@/lib/payments/arca/errors";
+import { isIdramProtocolError } from "@/lib/payments/idram/errors";
+import {
+  generateGuestOrderAccessToken,
+  ORDER_ACCESS_COOKIE_MAX_AGE,
+  orderAccessCookieName,
+} from "@/features/payments/domain/order-access-token";
 import {
   ORDER_NUMBER_LOCK_KEY,
   formatOrderNumber,
@@ -76,19 +101,103 @@ function deliveryLabel(countryCode: string, city: string | null): string {
 }
 
 export type CreateOrderResult =
-  | { ok: true; orderNumber: string }
-  | { ok: false; error: string };
+  | {
+      ok: true;
+      type: "offline_order_created";
+      orderId: string;
+      orderNumber: string;
+      paymentId: string;
+    }
+  | {
+      ok: true;
+      type: "payment_redirect_required";
+      provider: "arca";
+      orderId: string;
+      orderNumber: string;
+      paymentId: string;
+      redirectUrl: string;
+    }
+  | {
+      ok: true;
+      type: "payment_form_required";
+      provider: "idram";
+      orderId: string;
+      orderNumber: string;
+      paymentId: string;
+      action: string;
+      method: "POST";
+      fields: Record<string, string>;
+    }
+  | {
+      ok: true;
+      type: "payment_pending";
+      orderId: string;
+      orderNumber: string;
+      paymentId: string;
+      provider: "arca" | "idram";
+    }
+  | {
+      ok: true;
+      type: "payment_initialization_uncertain";
+      orderId: string;
+      orderNumber: string;
+      paymentId: string;
+      provider: "arca" | "idram";
+    }
+  | {
+      ok: true;
+      type: "payment_provider_unavailable";
+      orderId: string;
+      orderNumber: string;
+      paymentId: string;
+      provider: "arca" | "idram";
+    }
+  | {
+      /** @deprecated Prefer payment_pending / payment_initialization_uncertain. */
+      ok: true;
+      type: "online_payment_required";
+      orderId: string;
+      orderNumber: string;
+      paymentId: string;
+      provider: "arca" | "idram";
+    }
+  | { ok: false; error: string; code?: "validation_error" };
 
-/** Creates a COD order with server-side totals, stock decrement, and cart clear. */
+type CreatedOrderPayload = {
+  orderId: string;
+  orderNumber: string;
+  paymentId: string;
+  flow: "offline" | "online";
+  provider: "cod" | "arca" | "idram";
+  guestAccessRawToken: string | null;
+};
+
+/** Creates an order with server-side totals; COD fulfills, online stays unpaid. */
 export async function createOrderAction(
   raw: CheckoutInput,
 ): Promise<CreateOrderResult> {
   const parsed = checkoutSchema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, error: "Invalid checkout data." };
+    return {
+      ok: false,
+      error: "Invalid checkout data.",
+      code: "validation_error",
+    };
   }
 
   const input = parsed.data;
+  const paymentMethod = input.paymentMethod as PaymentMethod;
+
+  try {
+    assertPaymentMethodEnabled(paymentMethod);
+  } catch (error) {
+    if (error instanceof PaymentMethodDisabledError) {
+      return { ok: false, error: error.message };
+    }
+    throw error;
+  }
+
+  const flowType = getPaymentFlowType(paymentMethod);
   const user = await getCurrentUser();
   const { cart, items } = await getCartWithItems();
   const cookieStore = await cookies();
@@ -125,10 +234,20 @@ export async function createOrderAction(
     }),
   );
 
+  const sourceCartFingerprint = fingerprintCartItems(
+    items.map(({ item }) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+    })),
+  );
+
   try {
-    const orderNumber = await withTransaction(async (tx) => {
+    const created = await withTransaction(async (tx) => {
       const [existing] = await tx
-        .select({ orderNumber: orders.orderNumber })
+        .select({
+          id: orders.id,
+          orderNumber: orders.orderNumber,
+        })
         .from(orders)
         .where(
           and(
@@ -140,7 +259,18 @@ export async function createOrderAction(
         .limit(1);
 
       if (existing) {
-        return existing.orderNumber;
+        const latestPayment = await getLatestPaymentAttempt(tx, existing.id);
+        if (!latestPayment) {
+          throw new Error("Existing order is missing a payment attempt.");
+        }
+        return {
+          orderId: existing.id,
+          orderNumber: existing.orderNumber,
+          paymentId: latestPayment.id,
+          flow: flowType,
+          provider: toPaymentRecord(paymentMethod).provider,
+          guestAccessRawToken: null,
+        } satisfies CreatedOrderPayload;
       }
 
       let delivery: typeof deliveryRules.$inferSelect | null = null;
@@ -368,7 +498,7 @@ export async function createOrderAction(
 
       const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryAmount;
 
-      if (input.paymentMethod === "cash_on_delivery") {
+      if (paymentMethod === "cash_on_delivery") {
         const tender = validateCodCashTenderedAmount(
           totalAmount,
           input.cashTenderedAmount,
@@ -378,7 +508,17 @@ export async function createOrderAction(
         }
       }
 
+      const paymentRecord = toPaymentRecord(paymentMethod);
+      const adapter = getPaymentAdapter(paymentRecord.provider);
+      if (flowType === "online" && adapter.name === "cod") {
+        throw new Error("Online payment must not resolve to COD.");
+      }
+      // Phase 1: online provider APIs are not initialized; unpaid attempt only.
+
       const orderId = createId();
+      const now = new Date();
+      const guestAccess =
+        user?.id == null ? generateGuestOrderAccessToken(now) : null;
       await tx.execute(
         sql`select pg_advisory_xact_lock(${ORDER_NUMBER_LOCK_KEY})`,
       );
@@ -389,7 +529,6 @@ export async function createOrderAction(
         .from(orders)
         .where(sql`${orders.orderNumber} ~ '^p[0-9]+$'`);
       const number = formatOrderNumber(nextOrderSequence(maxRow?.maxSeq ?? null));
-      const now = new Date();
 
       await tx.insert(orders).values({
         id: orderId,
@@ -435,6 +574,9 @@ export async function createOrderAction(
         idempotencyKeyHash: keyHash,
         requestFingerprint: fingerprint,
         locale: input.locale,
+        sourceCartId: cart.id,
+        guestAccessTokenHash: guestAccess?.tokenHash ?? null,
+        guestAccessExpiresAt: guestAccess?.expiresAt ?? null,
         placedAt: now,
       });
 
@@ -454,50 +596,63 @@ export async function createOrderAction(
           currency: defaultCurrency,
           modifiersSnapshot: line.modifiersSnapshot,
         });
-
-        await tx
-          .update(products)
-          .set({
-            stockOnHand: line.nextStock,
-            version: sql`${products.version} + 1`,
-            updatedAt: now,
-          })
-          .where(eq(products.id, line.productId));
-
-        await tx.insert(stockMovements).values({
-          id: createId(),
-          productId: line.productId,
-          delta: -line.quantity,
-          reason: "ORDER",
-          orderId,
-          resultingBalance: line.nextStock,
-          correlationId: number,
-        });
       }
 
-      const payment = await getProviders().payment.createPayment({
-        orderId,
-        amount: BigInt(totalAmount),
-        currency: defaultCurrency,
-        idempotencyKey: input.idempotencyKey,
-      });
-      const paymentRecord = toPaymentRecord(input.paymentMethod);
-      const paymentMetadata =
-        input.paymentMethod === "cash_on_delivery" &&
-        input.cashTenderedAmount != null
-          ? buildCodPaymentMetadata(input.cashTenderedAmount)
-          : null;
+      // Offline (COD): decrement stock now. Online: validate only; confirm later.
+      if (flowType === "offline") {
+        for (const line of lineSnapshots) {
+          await tx
+            .update(products)
+            .set({
+              stockOnHand: line.nextStock,
+              version: sql`${products.version} + 1`,
+              updatedAt: now,
+            })
+            .where(eq(products.id, line.productId));
 
-      await tx.insert(payments).values({
-        id: createId(),
+          await tx.insert(stockMovements).values({
+            id: createId(),
+            productId: line.productId,
+            delta: -line.quantity,
+            reason: "ORDER",
+            orderId,
+            resultingBalance: line.nextStock,
+            correlationId: number,
+          });
+        }
+      }
+
+      let paymentMetadata: Record<string, unknown> | null = null;
+      if (
+        paymentMethod === "cash_on_delivery" &&
+        input.cashTenderedAmount != null
+      ) {
+        paymentMetadata = buildCodPaymentMetadata(input.cashTenderedAmount);
+      }
+      if (flowType === "online") {
+        paymentMetadata = {
+          ...(paymentMetadata ?? {}),
+          sourceCartFingerprint,
+        };
+      }
+
+      if (flowType === "offline") {
+        const adapterResult = await getPaymentAdapter("cod").createPayment({
+          orderId,
+          amount: BigInt(totalAmount),
+          currency: defaultCurrency,
+          idempotencyKey: input.idempotencyKey,
+        });
+        void adapterResult;
+      }
+
+      const paymentAttempt = await createPaymentAttempt({
+        tx,
         orderId,
         provider: paymentRecord.provider,
-        method: paymentRecord.method,
-        providerReference: payment.providerReference,
+        method: paymentMethod,
         amount: totalAmount,
         currency: defaultCurrency,
-        status: "PENDING",
-        attemptNumber: 1,
         metadata: paymentMetadata,
       });
 
@@ -509,21 +664,173 @@ export async function createOrderAction(
         toState: "PENDING",
         actorUserId: user?.id,
         isCustomerVisible: true,
-        payload: { source: "checkout" },
+        payload: {
+          source: "checkout",
+          paymentFlow: flowType,
+          paymentMethod,
+        },
       });
 
-      await tx.delete(cartItems).where(eq(cartItems.cartId, cart.id));
-      await tx
-        .update(carts)
-        .set({ status: "CONVERTED", updatedAt: now })
-        .where(eq(carts.id, cart.id));
+      if (flowType === "offline") {
+        await tx.delete(cartItems).where(eq(cartItems.cartId, cart.id));
+        await tx
+          .update(carts)
+          .set({ status: "CONVERTED", updatedAt: now })
+          .where(eq(carts.id, cart.id));
 
-      return number;
+        await enqueuePaymentNotification(tx, {
+          type: "COD_ORDER_CREATED",
+          orderId,
+          orderNumber: number,
+          locale: input.locale,
+          dedupeKey: `cod-order-created:${orderId}:customer`,
+          recipientRole: "customer",
+          safePayload: { paymentMethod: "cash_on_delivery" },
+        });
+      }
+
+      return {
+        orderId,
+        orderNumber: number,
+        paymentId: paymentAttempt.id,
+        flow: flowType,
+        provider: paymentRecord.provider,
+        guestAccessRawToken: guestAccess?.rawToken ?? null,
+      } satisfies CreatedOrderPayload;
     });
 
-    await revalidateCartPaths();
-    return { ok: true, orderNumber };
+    if (created.guestAccessRawToken) {
+      cookieStore.set(
+        orderAccessCookieName(created.orderNumber),
+        created.guestAccessRawToken,
+        {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+          path: "/",
+          maxAge: ORDER_ACCESS_COOKIE_MAX_AGE,
+        },
+      );
+    }
+
+    if (created.flow === "offline") {
+      await revalidateCartPaths();
+      return {
+        ok: true,
+        type: "offline_order_created",
+        orderId: created.orderId,
+        orderNumber: created.orderNumber,
+        paymentId: created.paymentId,
+      };
+    }
+
+    if (!isOnlinePaymentProvider(created.provider)) {
+      return { ok: false, error: "Unable to place order." };
+    }
+
+    // Cart intentionally unchanged for unpaid online orders.
+    if (created.provider === "arca") {
+      try {
+        const init = await initializeArcaPayment({
+          paymentId: created.paymentId,
+          locale: input.locale,
+        });
+        if (init.type === "redirect") {
+          return {
+            ok: true,
+            type: "payment_redirect_required",
+            provider: "arca",
+            orderId: init.orderId,
+            orderNumber: init.orderNumber,
+            paymentId: init.paymentId,
+            redirectUrl: init.redirectUrl,
+          };
+        }
+        if (init.type === "uncertain") {
+          return {
+            ok: true,
+            type: "payment_initialization_uncertain",
+            orderId: created.orderId,
+            orderNumber: created.orderNumber,
+            paymentId: created.paymentId,
+            provider: "arca",
+          };
+        }
+        return {
+          ok: true,
+          type: "payment_pending",
+          orderId: created.orderId,
+          orderNumber: created.orderNumber,
+          paymentId: created.paymentId,
+          provider: "arca",
+        };
+      } catch (arcaError) {
+        if (
+          arcaError instanceof PaymentProviderNotConfiguredError ||
+          isArcaProtocolError(arcaError) ||
+          isPaymentDomainError(arcaError)
+        ) {
+          return {
+            ok: true,
+            type: "payment_provider_unavailable",
+            orderId: created.orderId,
+            orderNumber: created.orderNumber,
+            paymentId: created.paymentId,
+            provider: "arca",
+          };
+        }
+        throw arcaError;
+      }
+    }
+
+    if (created.provider === "idram") {
+      try {
+        const form = await createIdramPaymentForm({
+          paymentId: created.paymentId,
+          locale: input.locale,
+        });
+        return {
+          ok: true,
+          type: "payment_form_required",
+          provider: "idram",
+          orderId: form.orderId,
+          orderNumber: form.orderNumber,
+          paymentId: form.paymentId,
+          action: form.action,
+          method: "POST",
+          fields: form.fields,
+        };
+      } catch (idramError) {
+        if (
+          idramError instanceof PaymentProviderNotConfiguredError ||
+          isIdramProtocolError(idramError) ||
+          isPaymentDomainError(idramError)
+        ) {
+          return {
+            ok: true,
+            type: "payment_provider_unavailable",
+            orderId: created.orderId,
+            orderNumber: created.orderNumber,
+            paymentId: created.paymentId,
+            provider: "idram",
+          };
+        }
+        throw idramError;
+      }
+    }
+
+    return {
+      ok: true,
+      type: "payment_pending",
+      orderId: created.orderId,
+      orderNumber: created.orderNumber,
+      paymentId: created.paymentId,
+      provider: created.provider,
+    };
   } catch (error) {
+    if (isPaymentDomainError(error)) {
+      return { ok: false, error: error.message };
+    }
     const message =
       error instanceof Error ? error.message : "Unable to place order.";
     return { ok: false, error: message };

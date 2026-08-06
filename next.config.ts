@@ -69,7 +69,8 @@ function buildImageRemotePatterns(): NonNullable<
 const nextConfig: NextConfig = {
   // Allow LAN access in `next dev` (phone / other Mac via local IP).
   // Without this, Next blocks `/_next/*` (JS/CSS/HMR) and the UI looks blank.
-  allowedDevOrigins: ["192.168.15.30"],
+  // Playwright E2E uses http://127.0.0.1:3100 — must be allowlisted too.
+  allowedDevOrigins: ["127.0.0.1", "localhost", "192.168.15.30"],
   turbopack: {
     root: projectRoot,
   },

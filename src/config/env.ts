@@ -21,6 +21,23 @@ function optionalEmail() {
   return z.preprocess(emptyToUndefined, z.string().email().optional());
 }
 
+function optionalBoolean(defaultValue: boolean) {
+  return z.preprocess((value) => {
+    if (value === undefined || value === null || value === "") {
+      return defaultValue;
+    }
+    if (typeof value === "boolean") {
+      return value;
+    }
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      if (normalized === "true" || normalized === "1") return true;
+      if (normalized === "false" || normalized === "0") return false;
+    }
+    return value;
+  }, z.boolean());
+}
+
 /**
  * Foundation env contract. Provider secrets become required when the
  * corresponding feature is wired (auth, DB, Redis, R2, email).
@@ -43,11 +60,59 @@ const envSchema = z.object({
   R2_ENDPOINT: optionalUrl(),
   EMAIL_FROM: optionalEmail(),
   RESEND_API_KEY: optionalNonEmptyString(),
+  /** Cash on delivery — default enabled for development. */
+  PAYMENT_ENABLE_COD: optionalBoolean(true),
+  /** ARCA card payments — disabled until provider phase. */
+  PAYMENT_ENABLE_ARCA: optionalBoolean(false),
+  /** iDram wallet payments — disabled until verified. */
+  PAYMENT_ENABLE_IDRAM: optionalBoolean(false),
+
+  /**
+   * ARCA EPG (server-only). Required when PAYMENT_ENABLE_ARCA=true.
+   * Administration GUI credentials must never be stored here.
+   */
+  ARCA_ENVIRONMENT: z.preprocess(
+    emptyToUndefined,
+    z.enum(["test", "production"]).optional(),
+  ),
+  /** Explicit API base — do not derive prod from test by string rewrite. */
+  ARCA_API_BASE_URL: optionalUrl(),
+  ARCA_API_USERNAME: optionalNonEmptyString(),
+  ARCA_API_PASSWORD: optionalNonEmptyString(),
+  /** Canonical public origin for return URLs (no preview deploy URLs). */
+  ARCA_RETURN_BASE_URL: optionalUrl(),
+  /** Merchant-configured payment scheme (Merchant Manual §7.1 vs §7.2). */
+  ARCA_PAYMENT_MODE: z.preprocess(
+    emptyToUndefined,
+    z.enum(["one_stage", "two_stage"]).optional(),
+  ),
+  /** ISO 4217 numeric; AMD = 051 per official manual examples. */
+  ARCA_CURRENCY_CODE: optionalNonEmptyString(),
+  /** ISO 639-1 language for ARCA messages (A2). */
+  ARCA_LANGUAGE: optionalNonEmptyString(),
+  /** Comma-separated extra allowlisted formUrl hosts. */
+  ARCA_FORM_URL_ALLOWED_HOSTS: optionalNonEmptyString(),
+
+  /**
+   * iDram Merchant API (server-only). Required when PAYMENT_ENABLE_IDRAM=true.
+   * SECRET_KEY must never use NEXT_PUBLIC_* or appear in form fields.
+   */
+  IDRAM_REC_ACCOUNT: optionalNonEmptyString(),
+  IDRAM_SECRET_KEY: optionalNonEmptyString(),
+  IDRAM_PAYMENT_URL: optionalUrl(),
+  IDRAM_RESULT_URL: optionalUrl(),
+  IDRAM_SUCCESS_URL: optionalUrl(),
+  IDRAM_FAIL_URL: optionalUrl(),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;
 
 let cachedEnv: AppEnv | undefined;
+
+/** Clears cached env — for unit tests only. */
+export function resetEnvCacheForTests(): void {
+  cachedEnv = undefined;
+}
 
 function resolvePublicBaseUrl(): string | undefined {
   return (
@@ -77,6 +142,32 @@ export function getEnv(): AppEnv {
     R2_ENDPOINT: process.env.R2_ENDPOINT,
     EMAIL_FROM: process.env.EMAIL_FROM,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    PAYMENT_ENABLE_COD: process.env.PAYMENT_ENABLE_COD,
+    PAYMENT_ENABLE_ARCA: process.env.PAYMENT_ENABLE_ARCA,
+    PAYMENT_ENABLE_IDRAM: process.env.PAYMENT_ENABLE_IDRAM,
+    ARCA_ENVIRONMENT:
+      process.env.ARCA_ENVIRONMENT ||
+      (process.env.ARCA_MODE === "test" ||
+      process.env.ARCA_MODE === "production"
+        ? process.env.ARCA_MODE
+        : undefined),
+    ARCA_API_BASE_URL: process.env.ARCA_API_BASE_URL,
+    // Prefer explicit API_* names; accept legacy username/password aliases.
+    ARCA_API_USERNAME:
+      process.env.ARCA_API_USERNAME || process.env.ARCA_USERNAME,
+    ARCA_API_PASSWORD:
+      process.env.ARCA_API_PASSWORD || process.env.ARCA_PASSWORD,
+    ARCA_RETURN_BASE_URL: process.env.ARCA_RETURN_BASE_URL,
+    ARCA_PAYMENT_MODE: process.env.ARCA_PAYMENT_MODE,
+    ARCA_CURRENCY_CODE: process.env.ARCA_CURRENCY_CODE,
+    ARCA_LANGUAGE: process.env.ARCA_LANGUAGE,
+    ARCA_FORM_URL_ALLOWED_HOSTS: process.env.ARCA_FORM_URL_ALLOWED_HOSTS,
+    IDRAM_REC_ACCOUNT: process.env.IDRAM_REC_ACCOUNT,
+    IDRAM_SECRET_KEY: process.env.IDRAM_SECRET_KEY,
+    IDRAM_PAYMENT_URL: process.env.IDRAM_PAYMENT_URL,
+    IDRAM_RESULT_URL: process.env.IDRAM_RESULT_URL,
+    IDRAM_SUCCESS_URL: process.env.IDRAM_SUCCESS_URL,
+    IDRAM_FAIL_URL: process.env.IDRAM_FAIL_URL,
   });
 
   if (!parsed.success) {
@@ -84,6 +175,35 @@ export function getEnv(): AppEnv {
       .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
       .join("; ");
     throw new Error(`Invalid environment configuration: ${details}`);
+  }
+
+  if (parsed.data.PAYMENT_ENABLE_ARCA) {
+    const missing: string[] = [];
+    if (!parsed.data.ARCA_ENVIRONMENT) missing.push("ARCA_ENVIRONMENT");
+    if (!parsed.data.ARCA_API_BASE_URL) missing.push("ARCA_API_BASE_URL");
+    if (!parsed.data.ARCA_API_USERNAME) missing.push("ARCA_API_USERNAME");
+    if (!parsed.data.ARCA_API_PASSWORD) missing.push("ARCA_API_PASSWORD");
+    if (!parsed.data.ARCA_PAYMENT_MODE) missing.push("ARCA_PAYMENT_MODE");
+    if (missing.length > 0) {
+      throw new Error(
+        `Invalid environment configuration: PAYMENT_ENABLE_ARCA=true requires ${missing.join(", ")}`,
+      );
+    }
+  }
+
+  if (parsed.data.PAYMENT_ENABLE_IDRAM) {
+    const missing: string[] = [];
+    if (!parsed.data.IDRAM_REC_ACCOUNT) missing.push("IDRAM_REC_ACCOUNT");
+    if (!parsed.data.IDRAM_SECRET_KEY) missing.push("IDRAM_SECRET_KEY");
+    if (!parsed.data.IDRAM_PAYMENT_URL) missing.push("IDRAM_PAYMENT_URL");
+    if (!parsed.data.IDRAM_RESULT_URL) missing.push("IDRAM_RESULT_URL");
+    if (!parsed.data.IDRAM_SUCCESS_URL) missing.push("IDRAM_SUCCESS_URL");
+    if (!parsed.data.IDRAM_FAIL_URL) missing.push("IDRAM_FAIL_URL");
+    if (missing.length > 0) {
+      throw new Error(
+        `Invalid environment configuration: PAYMENT_ENABLE_IDRAM=true requires ${missing.join(", ")}`,
+      );
+    }
   }
 
   cachedEnv = parsed.data;

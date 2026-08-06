@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: e2e
+          POSTGRES_PASSWORD: e2e
+          POSTGRES_DB: grill_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U e2e -d grill_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://e2e:e2e@localhost:5432/grill_test
+      TEST_DATABASE_URL: postgresql://e2e:e2e@localhost:5432/grill_test
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
+      AUTH_SECRET: ci-auth-secret-not-for-production
+      PAYMENT_ENABLE_COD: "true"
+      PAYMENT_ENABLE_ARCA: "false"
+      PAYMENT_ENABLE_IDRAM: "false"
+      E2E_EMAIL_MODE: mock
+      E2E_PROVIDER_MODE: mock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate
+      - run: pnpm test:integration
+      - run: pnpm outbox:once
+
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: e2e
+          POSTGRES_PASSWORD: e2e
+          POSTGRES_DB: grill_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U e2e -d grill_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://e2e:e2e@localhost:5432/grill_e2e
+      E2E_DATABASE_URL: postgresql://e2e:e2e@localhost:5432/grill_e2e
+      TEST_DATABASE_URL: postgresql://e2e:e2e@localhost:5432/grill_e2e
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3100
+      E2E_BASE_URL: http://127.0.0.1:3100
+      E2E_PORT: "3100"
+      AUTH_SECRET: ci-auth-secret-not-for-production
+      E2E_PROVIDER_MODE: mock
+      E2E_EMAIL_MODE: mock
+      PAYMENT_ENABLE_COD: "true"
+      PAYMENT_ENABLE_ARCA: "true"
+      PAYMENT_ENABLE_IDRAM: "true"
+      ARCA_ENVIRONMENT: test
+      ARCA_PAYMENT_MODE: one_stage
+      ARCA_API_BASE_URL: https://mock.arca.local
+      ARCA_API_USERNAME: e2e-user
+      ARCA_API_PASSWORD: e2e-pass
+      ARCA_RETURN_BASE_URL: http://127.0.0.1:3100
+      ARCA_CURRENCY_CODE: "051"
+      ARCA_LANGUAGE: en
+      ARCA_FORM_URL_ALLOWED_HOSTS: 127.0.0.1,localhost,mock.arca.local
+      E2E_ARCA_FORM_URL_BASE: http://127.0.0.1:3100/api/e2e/arca-form
+      IDRAM_REC_ACCOUNT: "100000000"
+      IDRAM_SECRET_KEY: e2e-idram-secret
+      IDRAM_PAYMENT_URL: http://127.0.0.1:3100/api/e2e/idram-payment
+      IDRAM_RESULT_URL: http://127.0.0.1:3100/api/v1/payments/idram/result
+      IDRAM_SUCCESS_URL: http://127.0.0.1:3100/api/v1/payments/idram/success
+      IDRAM_FAIL_URL: http://127.0.0.1:3100/api/v1/payments/idram/fail
+      OPS_ALERT_EMAIL: ops-e2e@example.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm e2e:db:prepare
+      - run: pnpm test:e2e:install
+      - run: pnpm test:e2e
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore

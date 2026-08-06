@@ -13,6 +13,13 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        find: "server-only",
+        replacement: path.resolve(
+          __dirname,
+          "./tests/integration/helpers/empty-module.ts",
+        ),
+      },
+      {
         find: "@/locales",
         replacement: path.resolve(__dirname, "./locales"),
       },

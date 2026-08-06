@@ -6,6 +6,7 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+!.env.e2e
 
 # Dependencies (if scripts use Node/npm)
 node_modules/
@@ -23,6 +24,11 @@ npm-debug.log*
 tmp/
 temp/
 .cache/
+e2e-run.log
+tests/e2e/.generated-product.json
+test-results/
+playwright-report/
+blob-report/
 
 # Local stub product uploads (until R2)
 public/uploads/

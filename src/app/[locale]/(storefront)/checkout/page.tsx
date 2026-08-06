@@ -8,6 +8,7 @@ import {
   resolveCheckoutDeliveryCity,
 } from "@/features/checkout/domain/checkout-delivery-cities";
 import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
+import { getPaymentMethodAvailability } from "@/features/payments/application/get-payment-method-availability";
 import {
   parseCartModifiers,
   parseProductCustomization,
@@ -32,6 +33,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
+  const paymentAvailability = getPaymentMethodAvailability();
   const [user, { items }, deliveryOptionsRaw, minimumOrder] = await Promise.all([
     getCurrentUser(),
     getCartWithItems(),
@@ -85,6 +87,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       subtotalAmount={subtotal}
       minimumOrderAmount={minimumOrder.amount}
       deliveryOptions={deliveryOptions}
+      paymentAvailability={paymentAvailability}
       labels={{
         title: copy.title,
         titleLead: copy.titleLead,
@@ -127,6 +130,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         idramDescription: copy.payment.idramDescription,
         arca: copy.payment.arca,
         arcaDescription: copy.payment.arcaDescription,
+        paymentUnavailable: copy.payment.unavailable,
+        onlineProviderPending: copy.errors.onlineProviderPending,
         couponTitle: copy.coupon.title,
         couponPlaceholder: copy.coupon.placeholder,
         couponApply: copy.coupon.apply,
@@ -142,6 +147,13 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         goToShop: copy.buttons.goToShop,
         cartEmpty: copy.errors.cartEmpty,
         minimumOrder: copy.errors.minimumOrder,
+        idramRedirecting: copy.payment.idramRedirecting,
+        idramSubmitFallback: copy.payment.idramSubmitFallback,
+        arcaRedirecting:
+          copy.payment.arcaRedirecting ?? copy.success.bodyRedirecting,
+        providerUnavailableSaved:
+          copy.payment.providerUnavailableSaved ??
+          copy.errors.onlineProviderPending,
       }}
     />
   );

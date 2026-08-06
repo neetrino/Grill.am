@@ -258,6 +258,8 @@ Country, optional region/city, AMD price, optional free threshold, estimated day
 | Address | `shipping_address JSONB`, `billing_address JSONB` immutable validated snapshots |
 | Promotion | nullable `promotion_id`, code/type/value/discount amount snapshot |
 | Delivery | nullable rule ID + label/estimate/price snapshot |
+| Cart origin | nullable `source_cart_id` → `carts` (`ON DELETE SET NULL`) |
+| Guest access | nullable `guest_access_token_hash` + `guest_access_expires_at` (raw token never stored) |
 | Idempotency | checkout scope hash + idempotency key hash + request fingerprint UNIQUE |
 | Context | locale, correlation ID |
 
@@ -271,13 +273,22 @@ Order, nullable product reference, product title/SKU/image/attributes snapshots,
 
 Միավորում է order status history, internal admin notes և verified payment provider events։ Fields՝ order, event type, from/to state, actor, visibility, safe structured payload, provider event ID, correlation ID և timestamp։
 
-- Provider event ID partial unique index ունի replay protection-ի համար։
+- Provider event ID partial unique index ունի replay protection-ի համար — namespaced as `(provider, provider_event_id)`.
 - Customer response-ը raw events չի վերադարձնում. միայն explicitly public event type allowlist է օգտագործվում, որպեսզի internal note-ը չարտահոսի։
 - Event rows immutable են։
 
 ### 10.4 `payments`
 
-Order, provider/method, provider reference, requested amount/currency, current status, attempt number, safe metadata և timestamps։ Մեկ order-ը կարող է ունենալ COD row կամ բազմաթիվ online attempts։ Card/secret/full sensitive payload չի պահվում։ COD-ի համար optional `metadata.cashTenderedAmount`՝ customer-ի նշած թղթադրամը (AMD), որպեսզի courier-ը պատրաստի մանրը։
+Order, provider/method, provider reference, requested amount/currency, current status, attempt number, safe metadata, lifecycle timestamps (`authorized_at`/`captured_at`/`failed_at`/`cancelled_at`/`refunded_at`/`expires_at`) և created/updated timestamps։
+
+Constraints:
+
+- UNIQUE `(order_id, attempt_number)`
+- UNIQUE `(provider, provider_reference)` where reference is non-null/non-empty
+- Partial UNIQUE `(order_id)` where `status = 'CAPTURED'`
+- `attempt_number > 0`
+
+Մեկ order-ը կարող է ունենալ COD row կամ բազմաթիվ online attempts, բայց առավելագույնը մեկ `CAPTURED` payment։ Card/secret/full sensitive payload չի պահվում։ COD-ի համար optional `metadata.cashTenderedAmount`։ Online confirm-ի համար optional `metadata.sourceCartFingerprint` որպես secondary cart-cleanup guard։
 
 ## 11. Reviews և support
 

@@ -7,6 +7,7 @@ export const ORDER_STATUSES = [
   "DELIVERED",
   "CANCELLED",
   "REFUNDED",
+  "REQUIRES_REVIEW",
 ] as const;
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
@@ -17,6 +18,7 @@ export const ADMIN_ORDER_STATUS_OPTIONS = [
   { value: "PROCESSING", label: "Processing" },
   { value: "DELIVERED", label: "Completed" },
   { value: "CANCELLED", label: "Cancelled" },
+  { value: "REQUIRES_REVIEW", label: "Requires review" },
 ] as const satisfies ReadonlyArray<{ value: OrderStatus; label: string }>;
 
 /**
@@ -24,13 +26,14 @@ export const ADMIN_ORDER_STATUS_OPTIONS = [
  * Admin list allows free moves among Pending / Processing / Completed / Cancelled.
  */
 const TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
-  PENDING: ["PROCESSING", "DELIVERED", "CANCELLED", "CONFIRMED"],
-  CONFIRMED: ["PROCESSING", "DELIVERED", "CANCELLED", "PENDING"],
-  PROCESSING: ["PENDING", "DELIVERED", "CANCELLED", "SHIPPED"],
+  PENDING: ["PROCESSING", "DELIVERED", "CANCELLED", "CONFIRMED", "REQUIRES_REVIEW"],
+  CONFIRMED: ["PROCESSING", "DELIVERED", "CANCELLED", "PENDING", "REQUIRES_REVIEW"],
+  PROCESSING: ["PENDING", "DELIVERED", "CANCELLED", "SHIPPED", "REQUIRES_REVIEW"],
   SHIPPED: ["DELIVERED", "CANCELLED", "PROCESSING"],
   DELIVERED: ["PENDING", "PROCESSING", "CANCELLED", "REFUNDED"],
   CANCELLED: ["PENDING", "PROCESSING", "DELIVERED"],
   REFUNDED: ["PENDING"],
+  REQUIRES_REVIEW: ["PROCESSING", "PENDING", "CANCELLED", "DELIVERED"],
 };
 
 const STOCK_RESTORING_CANCEL_FROM: ReadonlySet<OrderStatus> = new Set([
@@ -47,6 +50,7 @@ const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   DELIVERED: "Completed",
   CANCELLED: "Cancelled",
   REFUNDED: "Cancelled",
+  REQUIRES_REVIEW: "Requires review",
 };
 
 export function isOrderStatus(value: string): value is OrderStatus {

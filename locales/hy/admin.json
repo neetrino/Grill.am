@@ -220,12 +220,15 @@
       "pending": "Սպասող",
       "processing": "Մշակվում է",
       "completed": "Ավարտված",
-      "cancelled": "Չեղարկված"
+      "cancelled": "Չեղարկված",
+      "requiresReview": "Պահանջում է վերանայում"
     },
     "paymentStatus": {
       "paid": "Վճարված",
-      "pending": "սպասող",
-      "failed": "Ձախողված"
+      "pending": "Սպասող",
+      "failed": "Ձախողված",
+      "cancelled": "Չեղարկված",
+      "authorized": "Հաստատված"
     },
     "list": {
       "order": "Պատվեր",

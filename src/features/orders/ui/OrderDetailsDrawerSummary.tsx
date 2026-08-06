@@ -16,12 +16,13 @@ type OrderDetailsDrawerSummaryProps = {
   detail: AdminOrderDetailView;
 };
 
-/** Order status card — badges only (matches order-sheet design). */
+/** Order status card — badges + customer-safe payment attempt history. */
 export function OrderDetailsDrawerSummary({
   detail,
 }: OrderDetailsDrawerSummaryProps) {
   const dictionary = useAdminDictionary();
   const drawer = dictionary.orders.drawer;
+  const attempts = detail.paymentAttempts ?? [];
 
   return (
     <section className={ORDER_DETAIL_CARD}>
@@ -38,6 +39,27 @@ export function OrderDetailsDrawerSummary({
           )}
         </span>
       </div>
+      <p className="mt-3 text-sm text-gray-600">
+        {detail.paymentMethod} ·{" "}
+        {detail.paymentAmount.toLocaleString("en-US")} {detail.baseCurrency}
+      </p>
+      {detail.status === "REQUIRES_REVIEW" &&
+      detail.paymentStatus === "CAPTURED" ? (
+        <p className="mt-2 text-sm text-amber-800" role="status">
+          Payment was received. The order is under review — support will
+          contact you if needed.
+        </p>
+      ) : null}
+      {attempts.length > 1 ? (
+        <ul className="mt-3 space-y-1 text-sm text-gray-600">
+          {attempts.map((attempt) => (
+            <li key={`${attempt.provider}-${attempt.attemptNumber}`}>
+              Attempt {attempt.attemptNumber} — {attempt.status}
+              {attempt.isLatest ? " (latest)" : ""}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </section>
   );
 }

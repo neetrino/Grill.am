@@ -89,6 +89,10 @@
 | `/api/uploads/intents` | POST | Admin upload intent; auth, purpose/MIME/size validation, rate limit |
 | `/api/uploads/[id]/finalize` | POST | Ownership/object metadata verification |
 | `/api/webhooks/payments/[provider]` | POST | Signature verification, raw body requirements, provider-event idempotency |
+| `/api/v1/payments/arca/return` | GET | ARCA browser return (UX); capture only via `getOrderStatusExtended` |
+| `/api/v1/payments/idram/result` | POST | Official iDram RESULT_URL; form-urlencoded; precheck or confirmation; exact `OK`/`NO`; no-store |
+| `/api/v1/payments/idram/success` | GET/POST | Official SUCCESS_URL; UX only; redirects to localized success by DB state |
+| `/api/v1/payments/idram/fail` | GET/POST | Official FAIL_URL; UX only; never fails payment authoritatively |
 | `/api/exports/admin/analytics` | GET/POST | Admin-only, bounded date range, CSV injection protection |
 | `/sitemap.xml` | GET | Locale-aware generated sitemap |
 | `/robots.txt` | GET | Environment-aware crawler policy |

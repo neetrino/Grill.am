@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { products } from "@/db/schema/catalog";
+import { carts } from "@/db/schema/commerce";
 import {
   createdAtColumn,
   idColumn,
@@ -82,6 +83,16 @@ export const orders = pgTable(
     }),
     deliveryLabelSnapshot: text("delivery_label_snapshot"),
     deliveryEstimateSnapshot: text("delivery_estimate_snapshot"),
+    /** Originating checkout cart; SET NULL if the cart row is deleted. */
+    sourceCartId: uuid("source_cart_id").references(() => carts.id, {
+      onDelete: "set null",
+    }),
+    /** SHA-256 hex of the opaque guest access token (raw token never stored). */
+    guestAccessTokenHash: text("guest_access_token_hash"),
+    guestAccessExpiresAt: timestamp("guest_access_expires_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
     idempotencyScopeHash: text("idempotency_scope_hash").notNull(),
     idempotencyKeyHash: text("idempotency_key_hash").notNull(),
     requestFingerprint: text("request_fingerprint").notNull(),
@@ -114,6 +125,10 @@ export const orders = pgTable(
       table.userId,
       table.status,
     ),
+    index("orders_source_cart_idx").on(table.sourceCartId),
+    uniqueIndex("orders_guest_access_hash_uidx")
+      .on(table.guestAccessTokenHash)
+      .where(sql`${table.guestAccessTokenHash} IS NOT NULL`),
     check("orders_money_nonneg_chk", sql`${table.totalAmount} >= 0`),
   ],
 );
@@ -174,6 +189,8 @@ export const orderEvents = pgTable(
     }),
     isCustomerVisible: boolean("is_customer_visible").notNull().default(false),
     payload: jsonb("payload").$type<Record<string, unknown>>(),
+    /** Payment provider namespace for callback event IDs (nullable for non-payment events). */
+    provider: text("provider"),
     providerEventId: text("provider_event_id"),
     correlationId: text("correlation_id"),
     createdAt: createdAtColumn(),
@@ -182,8 +199,10 @@ export const orderEvents = pgTable(
     index("order_events_order_created_idx").on(table.orderId, table.createdAt),
     index("order_events_type_idx").on(table.eventType),
     uniqueIndex("order_events_provider_event_uidx")
-      .on(table.providerEventId)
-      .where(sql`${table.providerEventId} IS NOT NULL`),
+      .on(table.provider, table.providerEventId)
+      .where(
+        sql`${table.provider} IS NOT NULL AND ${table.providerEventId} IS NOT NULL`,
+      ),
   ],
 );
 
@@ -197,16 +216,62 @@ export const payments = pgTable(
     provider: text("provider").notNull(),
     method: text("method").notNull(),
     providerReference: text("provider_reference"),
+    /**
+     * Provider-facing local bill / registration number.
+     * iDram: EDP_BILL_NO. Distinct from providerReference (EDP_TRANS_ID).
+     */
+    providerOrderNumber: text("provider_order_number"),
     amount: integer("amount").notNull(),
     currency: text("currency").notNull().default("AMD"),
     status: paymentStatusEnum("status").notNull().default("PENDING"),
     attemptNumber: integer("attempt_number").notNull().default(1),
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    authorizedAt: timestamp("authorized_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    capturedAt: timestamp("captured_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    failedAt: timestamp("failed_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    cancelledAt: timestamp("cancelled_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    refundedAt: timestamp("refunded_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    index("payments_order_attempt_idx").on(table.orderId, table.attemptNumber),
+    uniqueIndex("payments_order_attempt_uidx").on(
+      table.orderId,
+      table.attemptNumber,
+    ),
+    uniqueIndex("payments_provider_ref_uidx")
+      .on(table.provider, table.providerReference)
+      .where(
+        sql`${table.providerReference} IS NOT NULL AND ${table.providerReference} <> ''`,
+      ),
+    uniqueIndex("payments_provider_order_number_uidx")
+      .on(table.provider, table.providerOrderNumber)
+      .where(
+        sql`${table.providerOrderNumber} IS NOT NULL AND ${table.providerOrderNumber} <> ''`,
+      ),
+    index("payments_provider_order_number_idx").on(table.providerOrderNumber),
+    uniqueIndex("payments_one_captured_per_order_uidx")
+      .on(table.orderId)
+      .where(sql`${table.status} = 'CAPTURED'`),
     index("payments_provider_ref_status_idx").on(
       table.providerReference,
       table.status,
