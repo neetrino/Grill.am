@@ -27,11 +27,11 @@
     "city": "Քաղաք"
   },
   "shipping": {
-    "storePickup": "Ինքնաառաքում",
-    "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
+    "storePickup": "Take Away",
+    "storePickupDescription": "Վերցրեք պատվերը մասնաճյուղից (Անվճար)",
     "delivery": "Առաքում",
     "deliveryDescription": "Կառաքենք ձեր հասցեով",
-    "freePickup": "Անվճար (Ինքնաառաքում)",
+    "freePickup": "Անվճար (Take Away)",
     "enterCity": "Մուտքագրեք քաղաքը",
     "selectDeliveryLocation": "Ընտրեք առաքման վայրը"
   },
