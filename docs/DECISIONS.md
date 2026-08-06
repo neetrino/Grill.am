@@ -26,6 +26,11 @@
 | DEC-005 | Locale | Approved by brief | `hy`, `en`, `ru`; default `hy`; locale URL segment-ում | Missing translation-ը CI error է production namespace-ների համար |
 | DEC-006 | Money | Approved by brief | Base AMD, integer amounts, display conversion | Order-ը պահում է exchange-rate snapshot |
 | DEC-007 | Initial payment | Approved by brief | Payment abstraction; provider չլինելու դեպքում COD | COD-ը P0 adapter է |
+| DEC-022 | Payment DB hardening | Approved by task | Unique attempt numbers, namespaced provider refs, lifecycle timestamps, `source_cart_id`, DB guest token hash, at-most-one CAPTURED | See `docs/payment-lifecycle.md` + migration `0010_payment_db_hardening` |
+| DEC-023 | ARCA EPG Phase 3 | Approved by task | Official Merchant Manual 1.55.1.0; hosted form `register`/`registerPreAuth` + `getOrderStatusExtended`; no S2S callback; `REQUIRES_REVIEW` on provider-paid/stock-unavailable | See `docs/payment-lifecycle.md` + migration `0011_arca_requires_review` |
+| DEC-024 | iDram Merchant Phase 4 | Approved by task | Official Idram Merchant API; POST GetPayment form; RESULT_URL precheck+confirm; MD5 checksum; SUCCESS/FAIL UX-only; `provider_order_number`=EDP_BILL_NO; no status-query API | See `docs/payment-lifecycle.md`, `docs/ops/IDRAM-RUNBOOK.md`, migration `0012_idram_provider_order_number` |
+| DEC-025 | Payment UX Phase 5 | Approved by task | Unified presentation states; DB-authoritative result pages; admin attempt panel + review workflow; durable outbox consumer (SKIP LOCKED); Playwright E2E + CI | See `docs/ops/PAYMENT-OPERATIONS.md`, `docs/ops/OUTBOX-RUNBOOK.md`, migration `0013_outbox_hardening` |
+| DEF-003 | Background jobs | Partial | Outbox worker CLI/cron delivered for payment notifications; broader queue platform still deferred | `pnpm outbox:once` / `pnpm outbox:work` |
 | DEC-008 | Durable cart | Approved by brief | PostgreSQL source of truth; guest session cart; login merge | Redis-ը optional accelerator է |
 | DEC-009 | Deletes | Approved by brief | Finance/audit hard delete չի արվում | Archive/soft delete/anonymize |
 | DEC-010 | Images | Approved by brief | R2 object key database-ում, public URL config-ից | Presigned upload, delayed old-object cleanup |
@@ -37,7 +42,7 @@
 | DEC-015 | Order model | Approved by user | Address snapshots-ը `orders` JSONB-ում, status/notes/provider events-ը `order_events`-ում | `order_items` և `payments` առանձին են մնում |
 | DEC-016 | Media ownership | Approved by user | Product/category/hero/blog ownership-ը `media_assets` typed FKs/roles-ով | Generic polymorphic owner առանց FK չի օգտագործվում |
 | OPEN-001 | Hosting/runtime | Open | Vercel, այլ Node hosting, region և runtime սահմաններ | Next.js Node runtime, deployment չի արվում մինչև approval |
-| OPEN-002 | Online payments | Open | Որ provider-ներն են launch scope-ում և ինչ webhook/refund flows են պետք | Միայն COD |
+| OPEN-002 | Online payments | Partial | ARCA EPG + iDram Merchant integrated (Phases 3–4); refund/reverse automation remaining | Controlled iDram activation + ARCA sandbox verification |
 | OPEN-003 | Exchange rates | Open | Provider, update schedule, fallback և margin/rounding policy | Admin-maintained AMD rates + Redis cache |
 | OPEN-004 | Tax | Open | Prices tax-inclusive՞ են, tax zones/rates և invoice behavior | Tax amount 0, բայց schema/summary field-ը նախատեսված է |
 | OPEN-005 | Order status model | Open | Allowed statuses և revenue-generating status-ներ | Draft set՝ pending/confirmed/processing/shipped/delivered/cancelled/refunded |
@@ -54,7 +59,7 @@
 | OPEN-016 | Inventory policy | Open | Overselling/backorder և reservation timeout | Backorder չկա; stock decrement order creation-ի transaction-ում |
 | DEF-001 | Granular staff roles | Deferred | ADMIN/CUSTOMER-ից ավելի մանր permissions | Future RBAC extension |
 | DEF-002 | Advanced search | Deferred | Algolia/Meilisearch/Elastic | PostgreSQL indexed search initial release-ում |
-| DEF-003 | Background jobs | Deferred | Durable queue provider | Synchronous/outbox-ready flows; critical work չի կորցվում |
+| DEF-003 | Background jobs | Partial | Outbox worker CLI/cron for payment notifications; broader queue platform still deferred | `pnpm outbox:once` / `pnpm outbox:work` |
 
 ## Assumptions requiring validation
 

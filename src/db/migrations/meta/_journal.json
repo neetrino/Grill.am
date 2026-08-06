@@ -64,6 +64,34 @@
       "when": 1786010517075,
       "tag": "0009_needy_stranger",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1786015409620,
+      "tag": "0010_payment_db_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1786030000000,
+      "tag": "0011_arca_requires_review",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1786040000000,
+      "tag": "0012_idram_provider_order_number",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1786050000000,
+      "tag": "0013_outbox_hardening",
+      "breakpoints": true
     }
   ]
 }

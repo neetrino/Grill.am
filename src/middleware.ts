@@ -17,6 +17,7 @@ export function middleware(request: NextRequest): NextResponse {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
+    pathname.startsWith("/wc-api") ||
     pathname.includes(".")
   ) {
     return nextWithPathname(request, pathname);

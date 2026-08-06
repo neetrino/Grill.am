@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition, type FormEvent } from "react";
+import { useMemo, useRef, useState, useTransition, type FormEvent } from "react";
 
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
@@ -16,6 +16,7 @@ import { CheckoutCodCashChange } from "@/features/checkout/ui/CheckoutCodCashCha
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
+import { IdramAutoSubmitForm } from "@/features/checkout/ui/IdramAutoSubmitForm";
 import {
   CHECKOUT_ALERT_CLASS,
   CHECKOUT_PRIMARY_BUTTON_CLASS,
@@ -74,6 +75,8 @@ type CheckoutLabels = {
   idramDescription: string;
   arca: string;
   arcaDescription: string;
+  paymentUnavailable: string;
+  onlineProviderPending: string;
   couponTitle: string;
   couponPlaceholder: string;
   couponApply: string;
@@ -89,6 +92,10 @@ type CheckoutLabels = {
   goToShop: string;
   cartEmpty: string;
   minimumOrder: string;
+  idramRedirecting: string;
+  idramSubmitFallback: string;
+  arcaRedirecting: string;
+  providerUnavailableSaved: string;
 };
 
 type CheckoutFormProps = {
@@ -107,6 +114,12 @@ type CheckoutFormProps = {
   minimumOrderAmount: number | null;
   deliveryOptions: CheckoutDeliveryOption[];
   hasItems: boolean;
+  /** Server-authoritative payment method flags (booleans only). */
+  paymentAvailability: {
+    cash_on_delivery: boolean;
+    arca: boolean;
+    idram: boolean;
+  };
 };
 
 function quoteDeliveryAmount(
@@ -163,6 +176,7 @@ export function CheckoutForm({
   minimumOrderAmount,
   deliveryOptions,
   hasItems,
+  paymentAvailability,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => createId(), []);
@@ -187,6 +201,12 @@ export function CheckoutForm({
   const [couponError, setCouponError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [applyingCoupon, startApplyCoupon] = useTransition();
+  const [idramForm, setIdramForm] = useState<{
+    action: string;
+    fields: Record<string, string>;
+  } | null>(null);
+  const [redirecting, setRedirecting] = useState(false);
+  const submitLockRef = useRef(false);
 
   const selectedDelivery = deliveryOptions.find(
     (option) => option.id === deliveryRuleId,
@@ -198,16 +218,22 @@ export function CheckoutForm({
         id: "cash_on_delivery" as const,
         name: labels.cashOnDelivery,
         description: labels.cashOnDeliveryDescription,
+        enabled: paymentAvailability.cash_on_delivery,
+        unavailableLabel: labels.paymentUnavailable,
       },
       {
         id: "idram" as const,
         name: labels.idram,
         description: labels.idramDescription,
+        enabled: paymentAvailability.idram,
+        unavailableLabel: labels.paymentUnavailable,
       },
       {
         id: "arca" as const,
         name: labels.arca,
         description: labels.arcaDescription,
+        enabled: paymentAvailability.arca,
+        unavailableLabel: labels.paymentUnavailable,
       },
     ],
     [
@@ -217,6 +243,10 @@ export function CheckoutForm({
       labels.cashOnDeliveryDescription,
       labels.idram,
       labels.idramDescription,
+      labels.paymentUnavailable,
+      paymentAvailability.arca,
+      paymentAvailability.cash_on_delivery,
+      paymentAvailability.idram,
     ],
   );
 
@@ -320,44 +350,120 @@ export function CheckoutForm({
       setError(minimumOrderMessage);
       return;
     }
+    if (pending || submitLockRef.current || redirecting) {
+      return;
+    }
     const data = new FormData(event.currentTarget);
     setError(null);
+    submitLockRef.current = true;
 
     startTransition(async () => {
-      const result = await createOrderAction({
-        locale,
-        idempotencyKey,
-        firstName: String(data.get("firstName") ?? ""),
-        lastName: String(data.get("lastName") ?? ""),
-        contactEmail: String(data.get("contactEmail") ?? ""),
-        contactPhone: String(data.get("contactPhone") ?? ""),
-        shippingMethod,
-        paymentMethod,
-        cashTenderedAmount:
-          paymentMethod === "cash_on_delivery"
-            ? (resolvedCashTendered ?? undefined)
-            : undefined,
-        deliveryRuleId:
-          shippingMethod === "delivery" ? deliveryRuleId || undefined : undefined,
-        city:
-          shippingMethod === "delivery"
-            ? selectedDelivery?.city
-            : undefined,
-        line1:
-          shippingMethod === "delivery"
-            ? String(data.get("line1") ?? "")
-            : undefined,
-        couponCode: appliedCouponCode ?? undefined,
-      });
+      try {
+        const result = await createOrderAction({
+          locale,
+          idempotencyKey,
+          firstName: String(data.get("firstName") ?? ""),
+          lastName: String(data.get("lastName") ?? ""),
+          contactEmail: String(data.get("contactEmail") ?? ""),
+          contactPhone: String(data.get("contactPhone") ?? ""),
+          shippingMethod,
+          paymentMethod,
+          cashTenderedAmount:
+            paymentMethod === "cash_on_delivery"
+              ? (resolvedCashTendered ?? undefined)
+              : undefined,
+          deliveryRuleId:
+            shippingMethod === "delivery"
+              ? deliveryRuleId || undefined
+              : undefined,
+          city:
+            shippingMethod === "delivery" ? selectedDelivery?.city : undefined,
+          line1:
+            shippingMethod === "delivery"
+              ? String(data.get("line1") ?? "")
+              : undefined,
+          couponCode: appliedCouponCode ?? undefined,
+        });
 
-      if (!result.ok) {
-        setError(result.error);
-        return;
+        if (!result.ok) {
+          setError(result.error);
+          submitLockRef.current = false;
+          return;
+        }
+
+        if (result.type === "payment_redirect_required") {
+          setRedirecting(true);
+          window.location.assign(result.redirectUrl);
+          return;
+        }
+
+        if (result.type === "payment_form_required") {
+          setIdramForm({
+            action: result.action,
+            fields: result.fields,
+          });
+          return;
+        }
+
+        if (result.type === "payment_provider_unavailable") {
+          setError(labels.providerUnavailableSaved);
+          router.push(
+            `/${locale}/checkout/success/${result.orderNumber}?state=pending`,
+          );
+          return;
+        }
+
+        if (result.type === "payment_initialization_uncertain") {
+          router.push(
+            `/${locale}/checkout/success/${result.orderNumber}?state=pending`,
+          );
+          router.refresh();
+          return;
+        }
+
+        if (
+          result.type === "payment_pending" ||
+          result.type === "online_payment_required"
+        ) {
+          router.push(
+            `/${locale}/checkout/success/${result.orderNumber}?state=pending`,
+          );
+          router.refresh();
+          return;
+        }
+
+        router.push(`/${locale}/checkout/success/${result.orderNumber}`);
+        router.refresh();
+      } catch {
+        setError(labels.onlineProviderPending);
+        submitLockRef.current = false;
       }
-
-      router.push(`/${locale}/checkout/success/${result.orderNumber}`);
-      router.refresh();
     });
+  }
+
+  if (idramForm) {
+    return (
+      <IdramAutoSubmitForm
+        action={idramForm.action}
+        fields={idramForm.fields}
+        redirectingLabel={labels.idramRedirecting}
+        submitFallbackLabel={labels.idramSubmitFallback}
+      />
+    );
+  }
+
+  if (redirecting) {
+    return (
+      <div
+        className="flex min-h-[40vh] flex-col items-center justify-center gap-3 px-4"
+        role="status"
+        aria-live="polite"
+      >
+        <p className="text-center text-sm text-gray-700">
+          {labels.arcaRedirecting}
+        </p>
+      </div>
+    );
   }
 
   return (

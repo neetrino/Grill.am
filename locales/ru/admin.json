@@ -220,12 +220,15 @@
       "pending": "Ожидает",
       "processing": "В обработке",
       "completed": "Завершён",
-      "cancelled": "Отменён"
+      "cancelled": "Отменён",
+      "requiresReview": "Требует проверки"
     },
     "paymentStatus": {
       "paid": "Оплачен",
-      "pending": "ожидает",
-      "failed": "Ошибка"
+      "pending": "Ожидает",
+      "failed": "Ошибка",
+      "cancelled": "Отменён",
+      "authorized": "Авторизован"
     },
     "list": {
       "order": "Заказ",

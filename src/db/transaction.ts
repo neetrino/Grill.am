@@ -12,11 +12,13 @@ neonConfig.webSocketConstructor = ws;
 type TransactionCallback = Parameters<
   ReturnType<typeof drizzle<typeof schema>>["transaction"]
 >[0];
-type Transaction = Parameters<TransactionCallback>[0];
+
+/** Drizzle transaction handle used by commerce payment/order services. */
+export type DatabaseTransaction = Parameters<TransactionCallback>[0];
 
 /** Executes a critical commerce mutation in a PostgreSQL transaction. */
 export async function withTransaction<T>(
-  operation: (tx: Transaction) => Promise<T>,
+  operation: (tx: DatabaseTransaction) => Promise<T>,
 ): Promise<T> {
   const pool = new Pool({ connectionString: requireDatabaseUrl() });
   const db = drizzle({ client: pool, schema });

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // CLI preload shim uses CommonJS require by design.
+    "scripts/preload-server-only.cjs",
   ]),
 ]);
 

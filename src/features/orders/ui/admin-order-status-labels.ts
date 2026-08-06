@@ -22,6 +22,8 @@ export function adminOrderStatusLabel(
     case "CANCELLED":
     case "REFUNDED":
       return labels.cancelled;
+    case "REQUIRES_REVIEW":
+      return labels.requiresReview;
     default:
       return status;
   }
@@ -38,12 +40,15 @@ export function adminPaymentStatusLabel(
     case "CAPTURED":
       return labels.paid;
     case "PENDING":
-    case "AUTHORIZED":
       return labels.pending;
+    case "AUTHORIZED":
+      return labels.authorized ?? labels.pending;
     case "FAILED":
-    case "REFUNDED":
-    case "CANCELLED":
       return labels.failed;
+    case "REFUNDED":
+      return labels.failed;
+    case "CANCELLED":
+      return labels.cancelled ?? labels.failed;
     default:
       return status;
   }

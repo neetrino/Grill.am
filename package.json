@@ -16,6 +16,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
@@ -26,7 +27,18 @@
     "sync:static-assets": "node scripts/sync-static-assets-to-r2.mjs",
     "products:wc-import:dry": "tsx scripts/import-woocommerce-products/cli.ts --mode dry-run",
     "products:wc-import:apply": "tsx scripts/import-woocommerce-products/cli.ts --mode apply",
-    "products:wc-import:verify": "tsx scripts/import-woocommerce-products/cli.ts --mode verify"
+    "products:wc-import:verify": "tsx scripts/import-woocommerce-products/cli.ts --mode verify",
+    "payments:arca:reconcile": "tsx --require ./scripts/preload-server-only.cjs scripts/reconcile-arca-payments.ts",
+    "payments:idram:audit-pending": "tsx --require ./scripts/preload-server-only.cjs scripts/audit-idram-pending.ts",
+    "payments:reconcile:dry": "tsx --require ./scripts/preload-server-only.cjs scripts/payments-reconcile-dry.ts",
+    "payments:readiness": "tsx scripts/payments-readiness.ts",
+    "outbox:once": "tsx --require ./scripts/preload-server-only.cjs scripts/outbox-once.ts",
+    "outbox:work": "tsx --require ./scripts/preload-server-only.cjs scripts/outbox-work.ts",
+    "outbox:stats": "tsx --require ./scripts/preload-server-only.cjs scripts/outbox-stats.ts",
+    "e2e:db:prepare": "tsx tests/e2e/prepare-db.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:install": "playwright install chromium"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1090.0",
@@ -57,6 +69,7 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.1",
     "typescript": "^5",
-    "vitest": "^3.2.7"
+    "vitest": "^3.2.7",
+    "@playwright/test": "^1.55.0"
   }
 }

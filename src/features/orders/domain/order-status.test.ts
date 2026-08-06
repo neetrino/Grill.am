@@ -28,6 +28,13 @@ describe("order status transitions", () => {
     ]);
   });
 
+  it("allows operator moves from REQUIRES_REVIEW", () => {
+    expect(canTransitionOrderStatus("REQUIRES_REVIEW", "PROCESSING")).toBe(
+      true,
+    );
+    expect(canTransitionOrderStatus("PENDING", "REQUIRES_REVIEW")).toBe(true);
+  });
+
   it("restores stock only when cancelling before shipment", () => {
     expect(shouldRestoreStockOnCancel("PENDING")).toBe(true);
     expect(shouldRestoreStockOnCancel("CONFIRMED")).toBe(true);

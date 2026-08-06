@@ -41,6 +41,8 @@ type PaymentOption = {
   id: CheckoutPaymentMethod;
   name: string;
   description: string;
+  enabled: boolean;
+  unavailableLabel?: string;
 };
 
 type CheckoutDetailsSectionsProps = {

@@ -16,6 +16,8 @@ type PaymentOption = {
   id: CheckoutPaymentMethod;
   name: string;
   description: string;
+  enabled: boolean;
+  unavailableLabel?: string;
 };
 
 type CheckoutPaymentMethodsProps = {
@@ -27,10 +29,11 @@ type CheckoutPaymentMethodsProps = {
   cashOnDeliveryExtra?: ReactNode;
 };
 
-function optionClass(selected: boolean): string {
-  return `${CHECKOUT_OPTION_BASE_CLASS} ${
+function optionClass(selected: boolean, enabled: boolean): string {
+  const base = `${CHECKOUT_OPTION_BASE_CLASS} ${
     selected ? CHECKOUT_OPTION_SELECTED_CLASS : CHECKOUT_OPTION_DEFAULT_CLASS
   }`;
+  return enabled ? base : `${base} cursor-not-allowed opacity-55`;
 }
 
 export function CheckoutPaymentMethods({
@@ -48,18 +51,24 @@ export function CheckoutPaymentMethods({
         {options.map((option) => {
           const selected = value === option.id;
           const isCardMethod = option.id === "arca";
+          const optionDisabled = disabled || !option.enabled;
 
           return (
             <div key={option.id}>
-              <label className={optionClass(selected)}>
+              <label className={optionClass(selected, option.enabled)}>
                 <input
                   type="radio"
                   name="paymentMethod"
                   value={option.id}
                   checked={selected}
-                  onChange={() => onChange(option.id)}
+                  onChange={() => {
+                    if (option.enabled) {
+                      onChange(option.id);
+                    }
+                  }}
                   className="mr-3 accent-brand-red self-center"
-                  disabled={disabled}
+                  disabled={optionDisabled}
+                  aria-describedby={`payment-desc-${option.id}`}
                   suppressHydrationWarning
                 />
 
@@ -67,23 +76,52 @@ export function CheckoutPaymentMethods({
                   <div className="flex w-full min-w-0 flex-1 flex-col items-start gap-1.5">
                     <span className="font-medium text-gray-900">
                       {option.name}
+                      {!option.enabled && option.unavailableLabel ? (
+                        <span className="ml-2 text-xs font-normal text-gray-500">
+                          ({option.unavailableLabel})
+                        </span>
+                      ) : null}
                     </span>
                     <CheckoutPaymentMethodIcons methodId={option.id} />
+                    {option.description ? (
+                      <div
+                        id={`payment-desc-${option.id}`}
+                        className="text-sm text-gray-600"
+                      >
+                        {option.description}
+                      </div>
+                    ) : (
+                      <span id={`payment-desc-${option.id}`} className="sr-only">
+                        {option.name}
+                      </span>
+                    )}
                   </div>
                 ) : option.id === "idram" ? (
                   <div className="flex w-full min-w-0 flex-1 flex-col items-start gap-1.5">
                     <span className="font-medium text-gray-900">
                       {option.name}
+                      {!option.enabled && option.unavailableLabel ? (
+                        <span className="ml-2 text-xs font-normal text-gray-500">
+                          ({option.unavailableLabel})
+                        </span>
+                      ) : null}
                     </span>
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="flex shrink-0 items-center">
                         <CheckoutPaymentMethodIcons methodId={option.id} />
                       </div>
                       {option.description ? (
-                        <div className="min-w-0 text-sm text-gray-600">
+                        <div
+                          id={`payment-desc-${option.id}`}
+                          className="min-w-0 text-sm text-gray-600"
+                        >
                           {option.description}
                         </div>
-                      ) : null}
+                      ) : (
+                        <span id={`payment-desc-${option.id}`} className="sr-only">
+                          {option.name}
+                        </span>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -91,7 +129,7 @@ export function CheckoutPaymentMethods({
                     <div className="flex shrink-0 items-center">
                       <CheckoutPaymentMethodIcons methodId={option.id} />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0" id={`payment-desc-${option.id}`}>
                       <span className="font-medium text-gray-900 lg:hidden">
                         {option.name}
                       </span>

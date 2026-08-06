@@ -1,0 +1,77 @@
+/** Safe ARCA protocol / transport errors (no credentials in messages). */
+export class ArcaProtocolError extends Error {
+  readonly code: string;
+
+  constructor(code: string, message: string) {
+    super(message);
+    this.name = "ArcaProtocolError";
+    this.code = code;
+  }
+}
+
+export class ArcaConfigError extends ArcaProtocolError {
+  constructor(message: string) {
+    super("ARCA_CONFIG", message);
+    this.name = "ArcaConfigError";
+  }
+}
+
+export class ArcaHttpError extends ArcaProtocolError {
+  readonly httpStatus: number;
+
+  constructor(httpStatus: number) {
+    super("ARCA_HTTP", `ARCA HTTP request failed with status ${httpStatus}.`);
+    this.name = "ArcaHttpError";
+    this.httpStatus = httpStatus;
+  }
+}
+
+export class ArcaTimeoutError extends ArcaProtocolError {
+  constructor() {
+    super("ARCA_TIMEOUT", "ARCA request timed out.");
+    this.name = "ArcaTimeoutError";
+  }
+}
+
+export class ArcaMalformedResponseError extends ArcaProtocolError {
+  constructor() {
+    super("ARCA_MALFORMED_RESPONSE", "ARCA response could not be validated.");
+    this.name = "ArcaMalformedResponseError";
+  }
+}
+
+export class ArcaBusinessError extends ArcaProtocolError {
+  readonly providerErrorCode: string;
+
+  constructor(providerErrorCode: string, safeMessage?: string) {
+    super(
+      "ARCA_BUSINESS_ERROR",
+      safeMessage ?? `ARCA business error code ${providerErrorCode}.`,
+    );
+    this.name = "ArcaBusinessError";
+    this.providerErrorCode = providerErrorCode;
+  }
+}
+
+export class ArcaFormUrlRejectedError extends ArcaProtocolError {
+  constructor() {
+    super(
+      "ARCA_FORM_URL_REJECTED",
+      "ARCA form URL host is not allowlisted.",
+    );
+    this.name = "ArcaFormUrlRejectedError";
+  }
+}
+
+export class ArcaAmountError extends ArcaProtocolError {
+  constructor(message: string) {
+    super("ARCA_AMOUNT", message);
+    this.name = "ArcaAmountError";
+  }
+}
+
+export function isArcaProtocolError(
+  error: unknown,
+): error is ArcaProtocolError {
+  return error instanceof ArcaProtocolError;
+}

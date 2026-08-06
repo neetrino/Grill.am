@@ -27,6 +27,7 @@ import {
   adminOrderStatusLabel,
   adminPaymentStatusLabel,
 } from "@/features/orders/ui/admin-order-status-labels";
+import { AdminPaymentAttemptsPanel } from "@/features/payments/ui/AdminPaymentAttemptsPanel";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -65,7 +66,7 @@ export default async function AdminOrderDetailPage({
     notFound();
   }
 
-  const { order, items, events } = detail;
+  const { order, items, events, payments } = detail;
   const address = order.shippingAddress;
 
   return (
@@ -157,6 +158,20 @@ export default async function AdminOrderDetailPage({
           </p>
         </Card>
       </div>
+
+      <AdminPaymentAttemptsPanel
+        locale={locale}
+        orderNumber={order.orderNumber}
+        orderId={order.id}
+        orderStatus={order.status}
+        paymentStatus={order.paymentStatus}
+        sourceCartId={order.sourceCartId}
+        contactName={order.contactName}
+        contactEmail={order.contactEmail}
+        contactPhone={order.contactPhone}
+        payments={payments}
+        events={events}
+      />
 
       <Card className={`mb-6 ${ADMIN_TABLE_CARD}`}>
         <div className="border-b border-gray-200 px-4 py-3 sm:px-5">
