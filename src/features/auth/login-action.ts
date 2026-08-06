@@ -19,13 +19,26 @@ export type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 
 const LOGIN_VALUE_KEYS = ["email", "password"] as const;
 
-function resolveSafeNextPath(locale: Locale, raw: FormDataEntryValue | null): string {
+function defaultPostLoginPath(
+  locale: Locale,
+  role: "ADMIN" | "CUSTOMER",
+): string {
+  return role === "ADMIN" ? `/${locale}/admin` : `/${locale}/profile`;
+}
+
+function resolveSafeNextPath(
+  locale: Locale,
+  role: "ADMIN" | "CUSTOMER",
+  raw: FormDataEntryValue | null,
+): string {
+  const fallback = defaultPostLoginPath(locale, role);
+
   if (typeof raw !== "string" || !raw.startsWith("/") || raw.startsWith("//")) {
-    return `/${locale}/profile`;
+    return fallback;
   }
 
   if (!raw.startsWith(`/${locale}/`)) {
-    return `/${locale}/profile`;
+    return fallback;
   }
 
   return raw;
@@ -81,5 +94,5 @@ export async function loginAction(
     .set({ lastLoginAt: new Date(), updatedAt: new Date() })
     .where(eq(users.id, user.id));
   await createSession(user.id);
-  redirect(resolveSafeNextPath(locale, formData.get("next")));
+  redirect(resolveSafeNextPath(locale, user.role, formData.get("next")));
 }
