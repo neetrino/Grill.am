@@ -27,11 +27,11 @@
     "city": "Город"
   },
   "shipping": {
-    "storePickup": "Самовывоз",
-    "storePickupDescription": "Заберите заказ в магазине (Бесплатно)",
+    "storePickup": "Take Away",
+    "storePickupDescription": "Заберите заказ в филиале (Бесплатно)",
     "delivery": "Доставка",
     "deliveryDescription": "Доставим заказ по вашему адресу",
-    "freePickup": "Бесплатно (Самовывоз)",
+    "freePickup": "Бесплатно (Take Away)",
     "enterCity": "Укажите город",
     "selectDeliveryLocation": "Выберите место доставки"
   },

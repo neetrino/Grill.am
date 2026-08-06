@@ -1,8 +1,9 @@
 import Image from "next/image";
-import { Mail, Phone } from "lucide-react";
+import { Mail } from "lucide-react";
 
 import { FooterCornerShell } from "@/components/layout/FooterCornerShell";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
+import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
 import { FOOTER_PAYMENT_ASSETS } from "@/lib/payment-assets";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import {
@@ -13,7 +14,6 @@ import {
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
-import { telHref } from "@/lib/phone";
 
 type SiteFooterProps = {
   dictionary: Dictionary;
@@ -180,17 +180,13 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 {dictionary.footer.contactInfo}
               </h4>
               <ul className="mt-5 space-y-4 text-sm text-white/60">
-                {dictionary.contact.storePhones.map((phone) => (
-                  <li key={phone} className="flex items-center gap-3">
-                    <Phone className={CONTACT_ICON_CLASS} aria-hidden />
-                    <a
-                      href={telHref(phone)}
-                      className="transition hover:text-white"
-                    >
-                      {phone}
-                    </a>
-                  </li>
-                ))}
+                <li>
+                  <StorePhoneDropdown
+                    phones={dictionary.contact.storePhones}
+                    toggleLabel={dictionary.contact.callTitle}
+                    variant="footer"
+                  />
+                </li>
                 <li className="flex items-center gap-3">
                   <Mail className={CONTACT_ICON_CLASS} aria-hidden />
                   <a

@@ -27,11 +27,11 @@
     "city": "City"
   },
   "shipping": {
-    "storePickup": "Store Pickup",
-    "storePickupDescription": "Pick up your order from our store (Free)",
+    "storePickup": "Take Away",
+    "storePickupDescription": "Pick up your order from the branch (Free)",
     "delivery": "Delivery",
     "deliveryDescription": "We will deliver your order to your address",
-    "freePickup": "Free (Store Pickup)",
+    "freePickup": "Free (Take Away)",
     "enterCity": "Enter City",
     "selectDeliveryLocation": "Select delivery location"
   },
