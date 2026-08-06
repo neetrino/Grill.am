@@ -2,7 +2,7 @@
 
 import { getAdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import { requireAdmin } from "@/lib/auth/policies";
+import { requireOrdersStaff } from "@/lib/auth/policies";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
@@ -22,7 +22,7 @@ export async function getAdminOrderDetailAction(
     return err("VALIDATION_ERROR", "Invalid order number.");
   }
 
-  await requireAdmin(locale as Locale);
+  await requireOrdersStaff(locale as Locale);
 
   const detail = await getAdminOrderDetailView(trimmed);
   if (!detail) {

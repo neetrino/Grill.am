@@ -9,7 +9,7 @@ import {
   bulkArchiveOrdersSchema,
   type BulkArchiveOrdersInput,
 } from "@/features/orders/schemas/change-status";
-import { requireAdmin } from "@/lib/auth/policies";
+import { requireOrdersStaff } from "@/lib/auth/policies";
 import { createId } from "@/lib/id";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
@@ -28,7 +28,7 @@ export async function bulkArchiveOrdersAction(
     return err("VALIDATION_ERROR", "Invalid bulk archive payload.");
   }
 
-  const actor = await requireAdmin(locale as Locale);
+  const actor = await requireOrdersStaff(locale as Locale);
   let archived = 0;
   let skipped = 0;
 

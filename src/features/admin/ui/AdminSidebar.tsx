@@ -11,10 +11,11 @@ import {
 } from "react";
 
 import {
-  getAdminMenuItems,
+  getAdminMenuItemsForRole,
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
+import type { UserRole } from "@/features/users/domain/user-lifecycle";
 import { AdminBrandLogo } from "@/features/admin/ui/AdminBrandLogo";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminMenuDrawer } from "@/features/admin/ui/AdminMenuDrawer";
@@ -39,6 +40,7 @@ import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProd
 
 type AdminSidebarProps = {
   locale: string;
+  role: UserRole;
 };
 
 type IndicatorBox = {
@@ -59,10 +61,10 @@ function isNestedVisible(
   return productsNestedExpanded;
 }
 
-export function AdminSidebar({ locale }: AdminSidebarProps) {
+export function AdminSidebar({ locale, role }: AdminSidebarProps) {
   const pathname = usePathname() ?? `/${locale}/admin`;
   const dictionary = useAdminDictionary();
-  const tabs = getAdminMenuItems(locale, dictionary.menu);
+  const tabs = getAdminMenuItemsForRole(locale, dictionary.menu, role);
   const { collapsed } = useAdminSidebarCollapse();
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
@@ -153,7 +155,7 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
             brandName={dictionary.menu.brandName}
             storeHomeLabel={dictionary.menu.storeHome}
           />
-          <AdminMenuDrawer locale={locale} pathname={pathname} />
+          <AdminMenuDrawer locale={locale} pathname={pathname} role={role} />
         </div>
       </div>
       <aside

@@ -57,6 +57,13 @@
       "when": 1785876198743,
       "tag": "0008_faithful_mantis",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786010517075,
+      "tag": "0009_needy_stranger",
+      "breakpoints": true
     }
   ]
 }

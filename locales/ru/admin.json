@@ -332,10 +332,12 @@
     "rolesFilter": {
       "all": "Все",
       "admins": "Админы",
+      "operators": "Операторы",
       "customers": "Клиенты"
     },
     "roles": {
       "admin": "Админ",
+      "operator": "Оператор",
       "customer": "Клиент"
     },
     "statuses": {

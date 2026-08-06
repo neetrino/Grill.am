@@ -332,10 +332,12 @@
     "rolesFilter": {
       "all": "All",
       "admins": "Admins",
+      "operators": "Operators",
       "customers": "Customers"
     },
     "roles": {
       "admin": "Admin",
+      "operator": "Operator",
       "customer": "Customer"
     },
     "statuses": {

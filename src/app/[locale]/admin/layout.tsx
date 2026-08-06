@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { AdminShell } from "@/features/admin/ui/AdminShell";
-import { requireAdmin } from "@/lib/auth/policies";
+import { requireAdminPanel } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -16,12 +16,16 @@ export default async function AdminLayout({
 }: AdminLayoutProps) {
   const { locale } = (await params) as { locale: string };
   if (!isLocale(locale)) notFound();
-  await requireAdmin(locale);
+  const user = await requireAdminPanel(locale);
 
   const dictionary = getDictionary(locale);
 
   return (
-    <AdminShell locale={locale} dictionary={dictionary.admin}>
+    <AdminShell
+      locale={locale}
+      dictionary={dictionary.admin}
+      role={user.role}
+    >
       {children}
     </AdminShell>
   );

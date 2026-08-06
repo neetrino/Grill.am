@@ -11,24 +11,19 @@ import {
   readAuthFormValues,
   type AuthActionState,
 } from "@/features/auth/ui/auth-action-state";
+import { defaultPostLoginPath } from "@/lib/auth/role-paths";
 import { createSession } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
+import type { UserRole } from "@/features/users/domain/user-lifecycle";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
 export type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 
 const LOGIN_VALUE_KEYS = ["email", "password"] as const;
 
-function defaultPostLoginPath(
-  locale: Locale,
-  role: "ADMIN" | "CUSTOMER",
-): string {
-  return role === "ADMIN" ? `/${locale}/admin` : `/${locale}/profile`;
-}
-
 function resolveSafeNextPath(
   locale: Locale,
-  role: "ADMIN" | "CUSTOMER",
+  role: UserRole,
   raw: FormDataEntryValue | null,
 ): string {
   const fallback = defaultPostLoginPath(locale, role);

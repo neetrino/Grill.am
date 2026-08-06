@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import {
-  getAdminMenuItems,
+  getAdminMenuItemsForRole,
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
@@ -18,10 +18,12 @@ import {
   ADMIN_NAV_ROW_BASE_CLASS,
 } from "@/features/admin/ui/admin-ui";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
+import type { UserRole } from "@/features/users/domain/user-lifecycle";
 
 type AdminMenuDrawerProps = {
   locale: string;
   pathname: string;
+  role: UserRole;
 };
 
 function isNestedVisible(
@@ -47,11 +49,11 @@ function isProductsGroupActive(
   );
 }
 
-export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
+export function AdminMenuDrawer({ locale, pathname, role }: AdminMenuDrawerProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const dictionary = useAdminDictionary();
-  const tabs = getAdminMenuItems(locale, dictionary.menu);
+  const tabs = getAdminMenuItemsForRole(locale, dictionary.menu, role);
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
   const productsGroupActive = isProductsGroupActive(tabs, pathname, locale);

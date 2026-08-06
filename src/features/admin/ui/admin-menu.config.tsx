@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import type { UserRole } from "@/features/users/domain/user-lifecycle";
 import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
 
 export type AdminMenuItem = {
@@ -167,6 +168,19 @@ export function getAdminMenuItems(
       icon: <SettingsIcon />,
     },
   ];
+}
+
+/** Menu items visible for the given staff role (operators see orders only). */
+export function getAdminMenuItemsForRole(
+  locale: string,
+  labels: AdminDictionary["menu"],
+  role: UserRole,
+): AdminMenuItem[] {
+  const items = getAdminMenuItems(locale, labels);
+  if (role === "OPERATOR") {
+    return items.filter((item) => item.id === "orders");
+  }
+  return items;
 }
 
 export function isAdminTabActive(tabHref: string, pathname: string, locale: string): boolean {
