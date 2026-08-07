@@ -119,7 +119,9 @@ export async function retryPaymentAction(
       };
     }
 
-    const availability = getPaymentMethodAvailability();
+    const availability = getPaymentMethodAvailability({
+      actorRole: user?.role,
+    });
     const preferred =
       parsed.data.provider ??
       (latestAttempt?.provider === "idram" || latestAttempt?.provider === "arca"

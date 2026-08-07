@@ -184,7 +184,9 @@
     },
     "errors": {
       "titleRequired": "Լրացրեք անունը առնվազն մեկ լեզվով։",
-      "slugRequired": "Slug-ը պարտադիր է։"
+      "slugRequired": "Slug-ը պարտադիր է։",
+      "skuExists": "Այս SKU-ով ապրանք արդեն գոյություն ունի։",
+      "slugExists": "Այս slug-ով ապրանք արդեն գոյություն ունի։"
     },
     "images": {
       "mainTitle": "Հիմնական նկար",

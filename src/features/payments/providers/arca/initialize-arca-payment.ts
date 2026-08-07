@@ -23,6 +23,7 @@ import {
 import {
   ArcaBusinessError,
   ArcaFormUrlRejectedError,
+  ArcaHttpError,
   ArcaTimeoutError,
   isArcaProtocolError,
 } from "@/lib/payments/arca/errors";
@@ -297,6 +298,15 @@ export async function initializeArcaPayment(input: {
         .for("update")
         .limit(1);
       if (!payment) return;
+      const httpMeta =
+        error instanceof ArcaHttpError
+          ? {
+              httpStatus: error.httpStatus,
+              httpStatusText: error.httpStatusText,
+              responseContentType: error.responseContentType ?? undefined,
+              endpointPath: error.endpointPath,
+            }
+          : {};
       await tx
         .update(payments)
         .set({
@@ -306,6 +316,7 @@ export async function initializeArcaPayment(input: {
             providerErrorCode: isArcaProtocolError(error)
               ? error.code
               : "ARCA_REGISTER_FAILED",
+            ...httpMeta,
           }),
           updatedAt: new Date(),
         })

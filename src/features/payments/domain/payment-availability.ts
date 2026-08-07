@@ -3,6 +3,7 @@ import {
   type PaymentMethod,
   getPaymentFlowType,
 } from "@/features/payments/domain/payment-method";
+import type { UserRole } from "@/features/users/domain/user-lifecycle";
 
 export type PaymentMethodAvailability = {
   cash_on_delivery: boolean;
@@ -16,6 +17,8 @@ export type PaymentAvailabilityFlags = {
   PAYMENT_ENABLE_IDRAM: boolean;
 };
 
+export type PaymentActorRole = UserRole | null | undefined;
+
 /** Pure mapping from validated env flags → checkout availability. */
 export function resolvePaymentMethodAvailability(
   flags: PaymentAvailabilityFlags,
@@ -24,6 +27,24 @@ export function resolvePaymentMethodAvailability(
     cash_on_delivery: flags.PAYMENT_ENABLE_COD,
     arca: flags.PAYMENT_ENABLE_ARCA,
     idram: flags.PAYMENT_ENABLE_IDRAM,
+  };
+}
+
+/**
+ * Testing / rollout gate: online methods (ARCA, iDram) only for logged-in ADMIN.
+ * Guests, customers, and operators keep cash on delivery only.
+ */
+export function applyOnlinePaymentsAdminOnlyGate(
+  availability: PaymentMethodAvailability,
+  actorRole: PaymentActorRole,
+): PaymentMethodAvailability {
+  if (actorRole === "ADMIN") {
+    return availability;
+  }
+  return {
+    ...availability,
+    arca: false,
+    idram: false,
   };
 }
 

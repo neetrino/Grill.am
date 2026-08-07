@@ -184,7 +184,9 @@
     },
     "errors": {
       "titleRequired": "Fill the title in at least one language.",
-      "slugRequired": "Slug is required."
+      "slugRequired": "Slug is required.",
+      "skuExists": "A product with this SKU already exists.",
+      "slugExists": "A product with this slug already exists."
     },
     "images": {
       "mainTitle": "Main Product Image",
