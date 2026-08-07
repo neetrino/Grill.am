@@ -12,7 +12,7 @@ type OrderDetailsDrawerTotalsProps = {
   detail: AdminOrderDetailView;
 };
 
-/** Money summary card — subtotal, shipping, tax, total. */
+/** Money summary card — subtotal, shipping, total. */
 export function OrderDetailsDrawerTotals({
   detail,
 }: OrderDetailsDrawerTotalsProps) {
@@ -37,13 +37,6 @@ export function OrderDetailsDrawerTotals({
         <div className="flex items-center justify-between gap-4">
           <dt className="text-gray-600">{drawer.delivery}</dt>
           <dd className="font-medium text-gray-900">{shippingLabel}</dd>
-        </div>
-
-        <div className="flex items-center justify-between gap-4">
-          <dt className="text-gray-600">{drawer.tax}</dt>
-          <dd className="font-medium tabular-nums text-gray-900">
-            {formatOrderDrawerMoney(0, detail.baseCurrency)}
-          </dd>
         </div>
 
         {detail.discountAmount > 0 ? (

@@ -52,8 +52,10 @@ export function CheckoutSuccessView({
       <div className="relative w-full max-w-[560px]">
         <div className="relative w-full rounded-[28px] border border-gray-100 bg-white px-5 pb-7 pt-12 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:px-8 sm:pb-8 sm:pt-14">
           <div
-            className={`absolute left-1/2 top-0 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-[0_8px_20px_rgba(255,193,44,0.45)] sm:size-16 ${
-              isPending ? "bg-gray-400" : "bg-brand-yellow"
+            className={`absolute left-1/2 top-0 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full sm:size-16 ${
+              isPending
+                ? "bg-gray-400 shadow-[0_8px_20px_rgba(156,163,175,0.45)]"
+                : "bg-green-500 shadow-[0_8px_20px_rgba(34,197,94,0.45)]"
             }`}
           >
             <Icon
