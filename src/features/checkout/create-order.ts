@@ -440,16 +440,19 @@ export async function createOrderAction(
         });
       }
 
-      const { amount: minimumOrderAmount } = await getStoreMinimumOrder();
-      if (!meetsMinimumOrder(subtotal, minimumOrderAmount)) {
-        const amountLabel = formatMoneyAmount(
-          minimumOrderAmount ?? 0,
-          "AMD",
-          input.locale,
-        );
-        const template =
-          getDictionary(input.locale).checkout.errors.minimumOrder;
-        throw new Error(template.replace("{amount}", amountLabel));
+      // Admins may place test/small orders below the storefront minimum.
+      if (user?.role !== "ADMIN") {
+        const { amount: minimumOrderAmount } = await getStoreMinimumOrder();
+        if (!meetsMinimumOrder(subtotal, minimumOrderAmount)) {
+          const amountLabel = formatMoneyAmount(
+            minimumOrderAmount ?? 0,
+            "AMD",
+            input.locale,
+          );
+          const template =
+            getDictionary(input.locale).checkout.errors.minimumOrder;
+          throw new Error(template.replace("{amount}", amountLabel));
+        }
       }
 
       const deliveryAmount =

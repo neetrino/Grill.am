@@ -87,7 +87,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       defaultLine1={defaultAddress?.line1 ?? ""}
       defaultCity={defaultAddress?.city ?? ""}
       subtotalAmount={subtotal}
-      minimumOrderAmount={minimumOrder.amount}
+      minimumOrderAmount={
+        user?.role === "ADMIN" ? null : minimumOrder.amount
+      }
       deliveryOptions={deliveryOptions}
       paymentAvailability={paymentAvailability}
       labels={{
