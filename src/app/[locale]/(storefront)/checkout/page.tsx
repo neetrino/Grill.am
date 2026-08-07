@@ -33,13 +33,15 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const paymentAvailability = getPaymentMethodAvailability();
   const [user, { items }, deliveryOptionsRaw, minimumOrder] = await Promise.all([
     getCurrentUser(),
     getCartWithItems(),
     getCheckoutDeliveryOptions(),
     getStoreMinimumOrder(),
   ]);
+  const paymentAvailability = getPaymentMethodAvailability({
+    actorRole: user?.role,
+  });
   const deliveryOptions = deliveryOptionsRaw.map((option) => {
     const city = resolveCheckoutDeliveryCity(option.city);
     if (!city) {

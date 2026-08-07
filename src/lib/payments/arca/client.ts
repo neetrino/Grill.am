@@ -42,6 +42,12 @@ export type ArcaPaymentClient = {
   ): Promise<ArcaStatusResponse>;
 };
 
+/**
+ * ARCA returns JSON as `text/plain`. `Accept: application/json` triggers HTTP 406
+ * on the production gateway (WebLogic content negotiation).
+ */
+export const ARCA_REQUEST_ACCEPT = "*/*";
+
 function buildFormBody(
   fields: Record<string, string | undefined>,
 ): URLSearchParams {
@@ -71,7 +77,7 @@ async function postArca(
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        Accept: "application/json",
+        Accept: ARCA_REQUEST_ACCEPT,
         "Cache-Control": "no-store",
       },
       body: buildFormBody(fields),
@@ -81,7 +87,20 @@ async function postArca(
     });
 
     if (!response.ok) {
-      throw new ArcaHttpError(response.status);
+      const contentType = response.headers.get("content-type");
+      logger.warn("arca.http_error", {
+        provider: "arca",
+        endpointPath: path,
+        httpStatus: response.status,
+        httpStatusText: response.statusText || undefined,
+        responseContentType: contentType,
+      });
+      throw new ArcaHttpError({
+        httpStatus: response.status,
+        httpStatusText: response.statusText || undefined,
+        responseContentType: contentType,
+        endpointPath: path,
+      });
     }
 
     const text = await response.text();

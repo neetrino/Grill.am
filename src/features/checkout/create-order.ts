@@ -187,9 +187,10 @@ export async function createOrderAction(
 
   const input = parsed.data;
   const paymentMethod = input.paymentMethod as PaymentMethod;
+  const user = await getCurrentUser();
 
   try {
-    assertPaymentMethodEnabled(paymentMethod);
+    assertPaymentMethodEnabled(paymentMethod, { actorRole: user?.role });
   } catch (error) {
     if (error instanceof PaymentMethodDisabledError) {
       return { ok: false, error: error.message };
@@ -198,7 +199,6 @@ export async function createOrderAction(
   }
 
   const flowType = getPaymentFlowType(paymentMethod);
-  const user = await getCurrentUser();
   const { cart, items } = await getCartWithItems();
   const cookieStore = await cookies();
   const displayCurrency = parseCurrencyCookie(

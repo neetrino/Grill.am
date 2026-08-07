@@ -14,6 +14,11 @@ export type ArcaPaymentMetadata = {
     lastOrderStatus?: number | null;
     lastNormalizedState?: ArcaNormalizedState;
     providerErrorCode?: string;
+    /** Present when providerErrorCode is ARCA_HTTP (safe transport metadata). */
+    httpStatus?: number;
+    httpStatusText?: string;
+    responseContentType?: string;
+    endpointPath?: string;
   };
 };
 
@@ -63,6 +68,21 @@ export function readArcaPaymentMetadata(
         typeof arca.providerErrorCode === "string"
           ? arca.providerErrorCode
           : undefined,
+      httpStatus:
+        typeof arca.httpStatus === "number" &&
+        Number.isInteger(arca.httpStatus)
+          ? arca.httpStatus
+          : undefined,
+      httpStatusText:
+        typeof arca.httpStatusText === "string"
+          ? arca.httpStatusText
+          : undefined,
+      responseContentType:
+        typeof arca.responseContentType === "string"
+          ? arca.responseContentType
+          : undefined,
+      endpointPath:
+        typeof arca.endpointPath === "string" ? arca.endpointPath : undefined,
     },
   };
 }

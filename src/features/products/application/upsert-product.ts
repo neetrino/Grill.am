@@ -13,6 +13,10 @@ import {
   type LocaleTranslation,
   type TranslationsJson,
 } from "@/db/schema";
+import {
+  assertProductIdentityAvailable,
+  mapProductUniqueViolation,
+} from "@/features/products/application/product-identity";
 import { persistProductMedia } from "@/features/products/application/persist-product-media";
 import { syncCustomizationToModifierCatalog } from "@/features/products/application/modifier-catalog";
 import {
@@ -215,16 +219,32 @@ export async function createProductFromDrawerAction(
   }
   const slug = normalizeProductSlug(data.slug);
 
-  await getDb().insert(products).values({
-    id,
-    sku: data.sku,
-    priceAmount: data.priceAmount,
-    compareAtAmount: data.compareAtAmount,
-    stockOnHand: data.stockOnHand,
-    status: data.status,
-    translations,
-    customization: normalizeCustomization(data.customization),
-  });
+  const identityConflict = await assertProductIdentityAvailable(
+    data.sku,
+    slug,
+  );
+  if (identityConflict) {
+    return identityConflict;
+  }
+
+  try {
+    await getDb().insert(products).values({
+      id,
+      sku: data.sku,
+      priceAmount: data.priceAmount,
+      compareAtAmount: data.compareAtAmount,
+      stockOnHand: data.stockOnHand,
+      status: data.status,
+      translations,
+      customization: normalizeCustomization(data.customization),
+    });
+  } catch (error) {
+    const conflict = mapProductUniqueViolation(error);
+    if (conflict) {
+      return conflict;
+    }
+    throw error;
+  }
 
   await syncCustomizationToModifierCatalog(
     normalizeCustomization(data.customization),
@@ -313,19 +333,36 @@ export async function updateProductFromDrawerAction(
   }
   const slug = normalizeProductSlug(data.slug);
 
-  await getDb()
-    .update(products)
-    .set({
-      sku: data.sku,
-      priceAmount: data.priceAmount,
-      compareAtAmount: data.compareAtAmount,
-      stockOnHand: data.stockOnHand,
-      status: data.status || existing.status,
-      translations,
-      customization: normalizeCustomization(data.customization),
-      updatedAt: new Date(),
-    })
-    .where(eq(products.id, existing.id));
+  const identityConflict = await assertProductIdentityAvailable(
+    data.sku,
+    slug,
+    existing.id,
+  );
+  if (identityConflict) {
+    return identityConflict;
+  }
+
+  try {
+    await getDb()
+      .update(products)
+      .set({
+        sku: data.sku,
+        priceAmount: data.priceAmount,
+        compareAtAmount: data.compareAtAmount,
+        stockOnHand: data.stockOnHand,
+        status: data.status || existing.status,
+        translations,
+        customization: normalizeCustomization(data.customization),
+        updatedAt: new Date(),
+      })
+      .where(eq(products.id, existing.id));
+  } catch (error) {
+    const conflict = mapProductUniqueViolation(error);
+    if (conflict) {
+      return conflict;
+    }
+    throw error;
+  }
 
   await syncCustomizationToModifierCatalog(
     normalizeCustomization(data.customization),

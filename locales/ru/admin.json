@@ -184,7 +184,9 @@
     },
     "errors": {
       "titleRequired": "Заполните название хотя бы на одном языке.",
-      "slugRequired": "Slug обязателен."
+      "slugRequired": "Slug обязателен.",
+      "skuExists": "Товар с таким SKU уже существует.",
+      "slugExists": "Товар с таким slug уже существует."
     },
     "images": {
       "mainTitle": "Главное изображение",

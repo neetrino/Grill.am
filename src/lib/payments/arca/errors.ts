@@ -16,13 +16,34 @@ export class ArcaConfigError extends ArcaProtocolError {
   }
 }
 
+export type ArcaHttpErrorDetails = {
+  httpStatus: number;
+  httpStatusText?: string;
+  responseContentType?: string | null;
+  /** Path suffix only (e.g. `/register.do`), never credentials. */
+  endpointPath?: string;
+};
+
 export class ArcaHttpError extends ArcaProtocolError {
   readonly httpStatus: number;
+  readonly httpStatusText: string | undefined;
+  readonly responseContentType: string | null | undefined;
+  readonly endpointPath: string | undefined;
 
-  constructor(httpStatus: number) {
-    super("ARCA_HTTP", `ARCA HTTP request failed with status ${httpStatus}.`);
+  constructor(httpStatusOrDetails: number | ArcaHttpErrorDetails) {
+    const details =
+      typeof httpStatusOrDetails === "number"
+        ? { httpStatus: httpStatusOrDetails }
+        : httpStatusOrDetails;
+    super(
+      "ARCA_HTTP",
+      `ARCA HTTP request failed with status ${details.httpStatus}.`,
+    );
     this.name = "ArcaHttpError";
-    this.httpStatus = httpStatus;
+    this.httpStatus = details.httpStatus;
+    this.httpStatusText = details.httpStatusText;
+    this.responseContentType = details.responseContentType;
+    this.endpointPath = details.endpointPath;
   }
 }
 

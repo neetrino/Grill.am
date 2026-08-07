@@ -524,6 +524,15 @@ export function ProductDrawer({
                   : await createProductFromDrawerAction(locale, formData);
 
               if (!result.ok) {
+                const productErrors = dictionary.products.errors;
+                if (result.error.code === "SKU_EXISTS") {
+                  setError(productErrors.skuExists);
+                  return;
+                }
+                if (result.error.code === "SLUG_EXISTS") {
+                  setError(productErrors.slugExists);
+                  return;
+                }
                 setError(result.error.message);
                 return;
               }
