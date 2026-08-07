@@ -39,9 +39,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     getCheckoutDeliveryOptions(),
     getStoreMinimumOrder(),
   ]);
-  const paymentAvailability = getPaymentMethodAvailability({
-    actorRole: user?.role,
-  });
+  const paymentAvailability = getPaymentMethodAvailability();
   const deliveryOptions = deliveryOptionsRaw.map((option) => {
     const city = resolveCheckoutDeliveryCity(option.city);
     if (!city) {

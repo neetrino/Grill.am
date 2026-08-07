@@ -66,11 +66,6 @@ const envSchema = z.object({
   PAYMENT_ENABLE_ARCA: optionalBoolean(false),
   /** iDram wallet payments — disabled until verified. */
   PAYMENT_ENABLE_IDRAM: optionalBoolean(false),
-  /**
-   * When true, ARCA/iDram are selectable only for a logged-in ADMIN.
-   * Guests, customers, and operators see cash only. Default on for testing.
-   */
-  PAYMENT_ONLINE_ADMIN_ONLY: optionalBoolean(true),
 
   /**
    * ARCA EPG (server-only). Required when PAYMENT_ENABLE_ARCA=true.
@@ -150,7 +145,6 @@ export function getEnv(): AppEnv {
     PAYMENT_ENABLE_COD: process.env.PAYMENT_ENABLE_COD,
     PAYMENT_ENABLE_ARCA: process.env.PAYMENT_ENABLE_ARCA,
     PAYMENT_ENABLE_IDRAM: process.env.PAYMENT_ENABLE_IDRAM,
-    PAYMENT_ONLINE_ADMIN_ONLY: process.env.PAYMENT_ONLINE_ADMIN_ONLY,
     ARCA_ENVIRONMENT:
       process.env.ARCA_ENVIRONMENT ||
       (process.env.ARCA_MODE === "test" ||
