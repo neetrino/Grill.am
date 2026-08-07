@@ -57,8 +57,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/ws": "^8.18.1",
@@ -66,10 +68,10 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "pg": "^8.22.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.1",
     "typescript": "^5",
-    "vitest": "^3.2.7",
-    "@playwright/test": "^1.55.0"
+    "vitest": "^3.2.7"
   }
 }

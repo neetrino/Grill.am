@@ -24,7 +24,7 @@ const securityHeaders = [
       "frame-src 'self' https://www.google.com https://maps.google.com https://yandex.ru https://yandex.com https://*.yandex.ru https://*.yandex.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self' https://banking.idram.am",
     ].join("; "),
   },
 ];
