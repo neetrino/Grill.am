@@ -190,7 +190,7 @@ export async function createOrderAction(
   const user = await getCurrentUser();
 
   try {
-    assertPaymentMethodEnabled(paymentMethod, { actorRole: user?.role });
+    assertPaymentMethodEnabled(paymentMethod);
   } catch (error) {
     if (error instanceof PaymentMethodDisabledError) {
       return { ok: false, error: error.message };
