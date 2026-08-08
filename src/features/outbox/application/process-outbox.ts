@@ -19,11 +19,14 @@ import {
 import { getOutboxEmailDelivery } from "@/features/outbox/application/email-delivery";
 import { renderAdminOrderEmail } from "@/features/outbox/templates/admin-order-email-template";
 import {
-  renderCodOrderCreatedEmail,
-  renderPaymentCapturedEmail,
-  renderPaymentFailedEmail,
-  renderReviewCustomerEmail,
+  renderCustomerCodOrderCreatedEmail,
+  renderCustomerPaymentCapturedEmail,
+  renderCustomerPaymentFailedEmail,
+  renderCustomerReviewEmail,
+} from "@/features/outbox/templates/customer-order-email-template";
+import {
   renderReviewOperatorEmail,
+  type PaymentEmailTemplateInput,
 } from "@/features/outbox/templates/payment-email-templates";
 import {
   getAdminOrderById,
@@ -46,6 +49,14 @@ export type ProcessOutboxBatchResult = {
 };
 
 type OutboxOrderRow = typeof orders.$inferSelect;
+
+const RICH_CUSTOMER_ORDER_EVENTS = new Set([
+  "COD_ORDER_CREATED",
+  "ONLINE_PAYMENT_CAPTURED",
+  "ONLINE_PAYMENT_FAILED",
+  "ONLINE_PAYMENT_CANCELLED",
+  "PAYMENT_REQUIRES_REVIEW_CUSTOMER",
+]);
 
 type ProcessOutboxDeps = {
   batchSize?: number;
@@ -122,6 +133,62 @@ async function buildAdminOrderMessage(
   };
 }
 
+async function buildRichCustomerOrderMessage(
+  row: typeof outboxEvents.$inferSelect,
+  order: OutboxOrderRow,
+  locale: Locale,
+  eventType: string,
+): Promise<{
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+} | null> {
+  const detail = await getAdminOrderById(row.aggregateId);
+  if (!detail) {
+    return null;
+  }
+
+  const identity = await getStoreIdentity();
+  const view = toAdminOrderDetailView(detail, identity.name);
+  const currency = isCurrency(order.baseCurrency)
+    ? order.baseCurrency
+    : defaultCurrency;
+  const amountFormatted = formatMoneyAmount(order.totalAmount, currency, locale);
+  const customerInput = {
+    locale,
+    storeName: identity.name,
+    detail: view,
+    amountFormatted,
+  };
+
+  let rendered;
+  switch (eventType) {
+    case "COD_ORDER_CREATED":
+      rendered = renderCustomerCodOrderCreatedEmail(customerInput);
+      break;
+    case "ONLINE_PAYMENT_CAPTURED":
+      rendered = renderCustomerPaymentCapturedEmail(customerInput);
+      break;
+    case "ONLINE_PAYMENT_FAILED":
+    case "ONLINE_PAYMENT_CANCELLED":
+      rendered = renderCustomerPaymentFailedEmail(customerInput);
+      break;
+    case "PAYMENT_REQUIRES_REVIEW_CUSTOMER":
+      rendered = renderCustomerReviewEmail(customerInput);
+      break;
+    default:
+      return null;
+  }
+
+  return {
+    to: order.contactEmail,
+    subject: rendered.subject,
+    html: rendered.html,
+    text: rendered.text,
+  };
+}
+
 async function buildMessageForRow(
   row: typeof outboxEvents.$inferSelect,
   loadOrder: (orderId: string) => Promise<OutboxOrderRow | null>,
@@ -148,6 +215,13 @@ async function buildMessageForRow(
     return null;
   }
 
+  if (
+    recipientRole === "customer" &&
+    RICH_CUSTOMER_ORDER_EVENTS.has(row.eventType)
+  ) {
+    return buildRichCustomerOrderMessage(row, order, locale, row.eventType);
+  }
+
   const currency = isCurrency(order.baseCurrency)
     ? order.baseCurrency
     : defaultCurrency;
@@ -157,7 +231,7 @@ async function buildMessageForRow(
     locale,
   );
 
-  const templateInput = {
+  const templateInput: PaymentEmailTemplateInput = {
     locale,
     orderNumber: orderNumber || order.orderNumber,
     amountFormatted,
@@ -166,19 +240,6 @@ async function buildMessageForRow(
 
   let rendered;
   switch (row.eventType) {
-    case "COD_ORDER_CREATED":
-      rendered = renderCodOrderCreatedEmail(templateInput);
-      break;
-    case "ONLINE_PAYMENT_CAPTURED":
-      rendered = renderPaymentCapturedEmail(templateInput);
-      break;
-    case "ONLINE_PAYMENT_FAILED":
-    case "ONLINE_PAYMENT_CANCELLED":
-      rendered = renderPaymentFailedEmail(templateInput);
-      break;
-    case "PAYMENT_REQUIRES_REVIEW_CUSTOMER":
-      rendered = renderReviewCustomerEmail(templateInput);
-      break;
     case "PAYMENT_REQUIRES_REVIEW_OPERATOR":
       rendered = renderReviewOperatorEmail(templateInput);
       break;
