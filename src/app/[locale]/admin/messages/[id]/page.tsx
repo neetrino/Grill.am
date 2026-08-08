@@ -109,8 +109,7 @@ export default async function AdminMessageDetailPage({
           </p>
           <p className="text-gray-700">
             {copy.detail.received}:{" "}
-            {formatAppDateTimeSeconds(message.createdAt)}{" "}
-            {common.utc}
+            {formatAppDateTimeSeconds(message.createdAt)}
           </p>
         </div>
       </Card>

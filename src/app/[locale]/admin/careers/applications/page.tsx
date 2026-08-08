@@ -189,8 +189,7 @@ export default async function AdminApplicationsPage({
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <span className="text-xs text-gray-500">
-                        {formatAppDateTimeMinutes(application.createdAt)}{" "}
-                        {common.utc}
+                        {formatAppDateTimeMinutes(application.createdAt)}
                       </span>
                     </td>
                   </tr>
