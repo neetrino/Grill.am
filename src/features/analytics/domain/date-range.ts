@@ -127,6 +127,17 @@ export function formatPeriodDelta(current: number, previous: number): string {
   return `${sign}${pct.toFixed(1)}%`;
 }
 
+/** Tailwind text color class for a formatted period delta string. */
+export function periodDeltaToneClass(delta: string): string {
+  if (delta.startsWith("+") && delta !== "+0.0%") {
+    return "text-emerald-600";
+  }
+  if (delta.startsWith("-")) {
+    return "text-brand-red";
+  }
+  return "text-gray-500";
+}
+
 /** Inclusive UTC instants for an app-timezone calendar from/to range. */
 export function analyticsPeriodUtcBounds(
   from: string,

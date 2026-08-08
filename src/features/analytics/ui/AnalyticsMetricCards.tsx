@@ -1,103 +1,99 @@
 "use client";
 
-import {
-  ClipboardList,
-  DollarSign,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
-
-import { Card } from "@/components/ui/Card";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
-
-type MetricTone = "blue" | "green" | "purple";
-
-type MetricCard = {
-  label: string;
-  value: string;
-  tone: MetricTone;
-  icon: LucideIcon;
-};
-
-const TONE_CLASSES: Record<
-  MetricTone,
-  { card: string; iconWrap: string; icon: string; value: string }
-> = {
-  blue: {
-    card: "border-blue-100 bg-gradient-to-br from-blue-50 to-sky-50",
-    iconWrap: "bg-blue-100 text-blue-600",
-    icon: "text-blue-600",
-    value: "text-blue-700",
-  },
-  green: {
-    card: "border-emerald-100 bg-gradient-to-br from-emerald-50 to-green-50",
-    iconWrap: "bg-emerald-100 text-emerald-600",
-    icon: "text-emerald-600",
-    value: "text-emerald-600",
-  },
-  purple: {
-    card: "border-violet-100 bg-gradient-to-br from-violet-50 to-purple-50",
-    iconWrap: "bg-violet-100 text-violet-600",
-    icon: "text-violet-600",
-    value: "text-violet-700",
-  },
-};
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import { periodDeltaToneClass } from "@/features/analytics/domain/date-range";
 
 type AnalyticsMetricCardsProps = {
   orderCount: number;
   revenueLabel: string;
+  averageOrderValueLabel: string;
   userCount: number;
+  orderDelta: string;
+  revenueDelta: string;
+  aovDelta: string;
 };
+
+function MetricCell({
+  label,
+  value,
+  delta,
+  tone,
+}: {
+  label: string;
+  value: string;
+  delta?: string;
+  tone: "red" | "yellow" | "ink" | "surface";
+}) {
+  const toneClass =
+    tone === "red"
+      ? "bg-brand-red/10 ring-brand-red/15"
+      : tone === "yellow"
+        ? "bg-brand-yellow/20 ring-brand-yellow/35"
+        : tone === "ink"
+          ? "bg-brand-ink/5 ring-gray-200"
+          : "bg-brand-surface ring-gray-100";
+
+  return (
+    <div className={`rounded-[12px] px-3 py-2.5 ring-1 ${toneClass}`}>
+      <p className="text-[11px] font-medium text-gray-500">{label}</p>
+      <p className="mt-0.5 break-words text-lg font-bold leading-snug text-gray-900">
+        {value}
+      </p>
+      {delta ? (
+        <p
+          className={`mt-0.5 text-[11px] font-semibold ${periodDeltaToneClass(delta)}`}
+        >
+          {delta}
+        </p>
+      ) : null}
+    </div>
+  );
+}
 
 export function AnalyticsMetricCards({
   orderCount,
   revenueLabel,
+  averageOrderValueLabel,
   userCount,
+  orderDelta,
+  revenueDelta,
+  aovDelta,
 }: AnalyticsMetricCardsProps) {
-  const copy = useAdminDictionary().analytics.metrics;
-  const metrics: MetricCard[] = [
-    {
-      label: copy.totalOrders,
-      value: String(orderCount),
-      tone: "blue",
-      icon: ClipboardList,
-    },
-    {
-      label: copy.totalRevenue,
-      value: revenueLabel,
-      tone: "green",
-      icon: DollarSign,
-    },
-    {
-      label: copy.totalUsers,
-      value: String(userCount),
-      tone: "purple",
-      icon: Users,
-    },
-  ];
+  const metrics = useAdminDictionary().analytics.metrics;
+  const dashboard = useAdminDictionary().dashboard;
 
   return (
-    <div className="mb-6 grid gap-4 sm:grid-cols-3">
-      {metrics.map((metric) => {
-        const tone = TONE_CLASSES[metric.tone];
-        const Icon = metric.icon;
-        return (
-          <Card
-            key={metric.label}
-            className={`border p-5 shadow-sm ${tone.card}`}
-          >
-            <div
-              className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${tone.iconWrap}`}
-            >
-              <Icon className={`h-5 w-5 ${tone.icon}`} aria-hidden />
-            </div>
-            <p className="text-sm font-medium text-gray-600">{metric.label}</p>
-            <p className={`mt-1 text-3xl font-bold tracking-tight ${tone.value}`}>
-              {metric.value}
-            </p>
-          </Card>
-        );
-      })}
+    <div className="mb-3">
+      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500">
+        {metrics.rangeTitle}
+      </h2>
+      <div className={`grid grid-cols-2 gap-2 lg:grid-cols-4 ${ADMIN_CARD_CLASS} p-3`}>
+        <MetricCell
+          label={dashboard.chartRevenue}
+          value={revenueLabel}
+          delta={revenueDelta}
+          tone="red"
+        />
+        <MetricCell
+          label={dashboard.chartOrders}
+          value={String(orderCount)}
+          delta={orderDelta}
+          tone="yellow"
+        />
+        <MetricCell
+          label={dashboard.aov}
+          value={averageOrderValueLabel}
+          delta={aovDelta}
+          tone="ink"
+        />
+        <MetricCell
+          label={metrics.totalUsers}
+          value={String(userCount)}
+          tone="surface"
+        />
+      </div>
+      <p className="mt-1.5 text-[11px] text-gray-500">{metrics.vsPreviousHint}</p>
     </div>
   );
 }

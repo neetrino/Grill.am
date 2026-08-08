@@ -877,9 +877,11 @@
       "custom": "Custom Range"
     },
     "metrics": {
+      "rangeTitle": "Selected range",
       "totalOrders": "Total Orders",
       "totalRevenue": "Total Revenue",
-      "totalUsers": "Total Users"
+      "totalUsers": "Customers in range",
+      "vsPreviousHint": "Deltas compare to the previous period of equal length."
     },
     "rankings": {
       "topProducts": "Top Selling Products",
@@ -891,10 +893,11 @@
       "noCategorySales": "No category sales in this range."
     },
     "ordersByDay": {
-      "title": "Orders by Day",
-      "subtitle": "Daily Order Trends and Revenue",
-      "chartAria": "Orders by day trend chart",
+      "title": "Trend",
+      "subtitle": "Revenue and orders over the selected range",
+      "chartAria": "Revenue and orders trend chart",
       "empty": "No orders in this range.",
+      "peakDay": "Best day",
       "ordersCount": "{count} orders",
       "revenue": "revenue"
     }

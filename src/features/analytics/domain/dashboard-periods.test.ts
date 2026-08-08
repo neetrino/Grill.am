@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
 import {
+  buildAnalyticsDailySeries,
+  buildAnalyticsTrendSeries,
   buildDashboardMonthlySeries,
+  countAnalyticsRangeDays,
   parseDashboardChartRange,
   rangeForDashboardChartRange,
   rangeForDashboardMetricPeriod,
@@ -101,6 +104,47 @@ describe("buildDashboardMonthlySeries", () => {
         revenueAmount: 200,
       },
     ]);
+  });
+});
+
+describe("buildAnalyticsDailySeries", () => {
+  it("fills missing days with zero totals", () => {
+    const rows: AnalyticsCsvRow[] = [
+      {
+        date: "2026-01-02",
+        orderCount: 2,
+        revenueAmount: 100,
+        averageOrderValue: 50,
+      },
+    ];
+
+    const series = buildAnalyticsDailySeries(rows, {
+      from: "2026-01-01",
+      to: "2026-01-03",
+    });
+
+    expect(series).toHaveLength(3);
+    expect(series[0]?.orderCount).toBe(0);
+    expect(series[1]?.orderCount).toBe(2);
+    expect(series[2]?.orderCount).toBe(0);
+  });
+});
+
+describe("buildAnalyticsTrendSeries", () => {
+  it("uses daily points for ranges up to 45 days", () => {
+    const range = { from: "2026-01-01", to: "2026-01-07" };
+    expect(countAnalyticsRangeDays(range)).toBe(7);
+    const series = buildAnalyticsTrendSeries([], range);
+    expect(series).toHaveLength(7);
+    expect(series[0]?.key).toBe("2026-01-01");
+  });
+
+  it("aggregates monthly when the range exceeds 45 days", () => {
+    const range = { from: "2026-01-01", to: "2026-03-15" };
+    expect(countAnalyticsRangeDays(range)).toBeGreaterThan(45);
+    const series = buildAnalyticsTrendSeries([], range);
+    expect(series).toHaveLength(3);
+    expect(series[0]?.key).toBe("2026-01");
   });
 });
 

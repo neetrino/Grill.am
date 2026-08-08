@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
+import { CalendarRange, Download } from "lucide-react";
 
-import { Card } from "@/components/ui/Card";
 import { DateField } from "@/components/ui/DateField";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
@@ -99,17 +99,29 @@ export function AnalyticsPeriodCard({
   }));
 
   return (
-    <Card
-      className={`mb-6 overflow-visible !border-0 !shadow-none p-5 sm:p-6 ${ADMIN_CARD_CLASS}`}
-    >
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        <h2 className="text-lg font-semibold text-gray-900">{copy.title}</h2>
-        <p className="text-sm font-medium text-gray-500">
-          {formatAnalyticsDisplayDate(from)} – {formatAnalyticsDisplayDate(to)}
-        </p>
+    <div className={`mb-3 ${ADMIN_CARD_CLASS} p-4`}>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-yellow/25 text-brand-ink">
+            <CalendarRange className="h-4 w-4" aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
+            <p className="text-xs text-gray-500">
+              {formatAnalyticsDisplayDate(from)} – {formatAnalyticsDisplayDate(to)}
+            </p>
+          </div>
+        </div>
+        <a
+          href={`/api/exports/admin/analytics?${exportQuery}`}
+          className="inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-xs font-semibold text-brand-red ring-1 ring-brand-red/20 transition hover:bg-brand-red/5"
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden />
+          {copy.downloadCsv}
+        </a>
       </div>
 
-      <div className="max-w-md">
+      <div className="grid gap-3 sm:grid-cols-[minmax(0,14rem)_1fr] sm:items-end">
         <AdminSelect
           label={copy.label}
           placeholder={copy.label}
@@ -118,40 +130,32 @@ export function AnalyticsPeriodCard({
           disabled={pending}
           onChange={onPeriodChange}
         />
-      </div>
 
-      {selectedPreset === "custom" ? (
-        <form
-          onSubmit={onCustomSubmit}
-          className="mt-4 flex flex-wrap items-end gap-3"
-        >
-          <div className="min-w-[140px] flex-1">
-            <DateField label={copy.from} name="from" defaultValue={from} />
-          </div>
-          <div className="min-w-[140px] flex-1">
-            <DateField label={copy.to} name="to" defaultValue={to} />
-          </div>
-          <button
-            type="submit"
-            disabled={pending}
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-60"
+        {selectedPreset === "custom" ? (
+          <form
+            onSubmit={onCustomSubmit}
+            className="flex flex-wrap items-end gap-2"
           >
-            {copy.apply}
-          </button>
-        </form>
-      ) : null}
-
-      <div className="mt-4 flex flex-wrap items-center gap-4">
-        <a
-          href={`/api/exports/admin/analytics?${exportQuery}`}
-          className="text-sm font-medium text-gray-700 underline-offset-2 hover:underline"
-        >
-          {copy.downloadCsv}
-        </a>
-        {rangeInvalid ? (
-          <p className="text-sm text-red-700">{copy.invalidRange}</p>
+            <div className="min-w-[120px] flex-1">
+              <DateField label={copy.from} name="from" defaultValue={from} />
+            </div>
+            <div className="min-w-[120px] flex-1">
+              <DateField label={copy.to} name="to" defaultValue={to} />
+            </div>
+            <button
+              type="submit"
+              disabled={pending}
+              className="rounded-[10px] bg-brand-red px-3 py-2 text-xs font-semibold text-white hover:bg-brand-red/90 disabled:opacity-60"
+            >
+              {copy.apply}
+            </button>
+          </form>
         ) : null}
       </div>
-    </Card>
+
+      {rangeInvalid ? (
+        <p className="mt-2 text-xs text-brand-red">{copy.invalidRange}</p>
+      ) : null}
+    </div>
   );
 }

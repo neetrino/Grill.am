@@ -5,6 +5,7 @@ import {
   DASHBOARD_METRIC_PERIODS,
   type DashboardMetricPeriod,
 } from "@/features/analytics/domain/dashboard-periods";
+import { periodDeltaToneClass } from "@/features/analytics/domain/date-range";
 import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -21,6 +22,8 @@ type DashboardPeriodOverviewProps = {
   locale: string;
   snapshots: DashboardPeriodSnapshot[];
   labels: AdminDictionary["dashboard"];
+  /** When false, hides the link to the full analytics page (e.g. on analytics itself). */
+  showAnalyticsLink?: boolean;
 };
 
 function periodTitle(
@@ -39,20 +42,11 @@ function periodTitle(
   }
 }
 
-function deltaClass(delta: string): string {
-  if (delta.startsWith("+") && delta !== "+0.0%") {
-    return "text-emerald-600";
-  }
-  if (delta.startsWith("-")) {
-    return "text-brand-red";
-  }
-  return "text-gray-500";
-}
-
 export function DashboardPeriodOverview({
   locale,
   snapshots,
   labels,
+  showAnalyticsLink = true,
 }: DashboardPeriodOverviewProps) {
   const byPeriod = new Map(
     snapshots.map((snapshot) => [snapshot.period, snapshot]),
@@ -64,12 +58,14 @@ export function DashboardPeriodOverview({
         <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
           {labels.periodsTitle}
         </h2>
-        <Link
-          href={`/${locale}/admin/analytics`}
-          className="text-xs font-medium text-brand-red hover:underline"
-        >
-          {labels.viewAnalytics}
-        </Link>
+        {showAnalyticsLink ? (
+          <Link
+            href={`/${locale}/admin/analytics`}
+            className="text-xs font-medium text-brand-red hover:underline"
+          >
+            {labels.viewAnalytics}
+          </Link>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
@@ -89,7 +85,7 @@ export function DashboardPeriodOverview({
                   {periodTitle(period, labels)}
                 </p>
                 <span
-                  className={`text-[11px] font-semibold ${deltaClass(snapshot.revenueDelta)}`}
+                  className={`text-[11px] font-semibold ${periodDeltaToneClass(snapshot.revenueDelta)}`}
                 >
                   {snapshot.revenueDelta}
                 </span>
@@ -109,7 +105,7 @@ export function DashboardPeriodOverview({
                     {labels.chartOrders}
                   </p>
                   <p
-                    className={`mt-0.5 text-[11px] font-medium ${deltaClass(snapshot.orderDelta)}`}
+                    className={`mt-0.5 text-[11px] font-medium ${periodDeltaToneClass(snapshot.orderDelta)}`}
                   >
                     {snapshot.orderDelta}
                   </p>

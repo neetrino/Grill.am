@@ -5,7 +5,10 @@ import {
   appDayStartUtc,
 } from "@/lib/datetime/app-timezone";
 import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
-import type { AnalyticsDateRange } from "@/features/analytics/domain/date-range";
+import {
+  formatAnalyticsShortDate,
+  type AnalyticsDateRange,
+} from "@/features/analytics/domain/date-range";
 
 export const DASHBOARD_METRIC_PERIODS = [
   "today",
@@ -123,6 +126,75 @@ export function parseDashboardChartRange(
  * Builds a continuous monthly series for the dashboard trend chart.
  * Sparse daily rows are summed into calendar months; empty months stay at zero.
  */
+const ANALYTICS_DAILY_SERIES_MAX_DAYS = 45;
+
+/** Inclusive day count for an analytics date range. */
+export function countAnalyticsRangeDays(range: AnalyticsDateRange): number {
+  const start = appDayStartUtc(range.from);
+  const end = appDayStartUtc(range.to);
+  return (
+    Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1
+  );
+}
+
+function listDayKeys(from: string, to: string): string[] {
+  const keys: string[] = [];
+  let cursor = appDayStartUtc(from);
+  const end = appDayStartUtc(to);
+  while (cursor.getTime() <= end.getTime()) {
+    keys.push(formatAppIsoDate(cursor));
+    cursor = shiftAppDays(cursor, 1);
+  }
+  return keys;
+}
+
+/**
+ * Builds a continuous daily series for analytics trend charts.
+ * Sparse rows are mapped to calendar days; missing days stay at zero.
+ */
+export function buildAnalyticsDailySeries(
+  rows: AnalyticsCsvRow[],
+  range: AnalyticsDateRange,
+): DashboardTrendPoint[] {
+  const byDate = new Map<
+    string,
+    { orderCount: number; revenueAmount: number }
+  >();
+
+  for (const row of rows) {
+    byDate.set(row.date, {
+      orderCount: row.orderCount,
+      revenueAmount: row.revenueAmount,
+    });
+  }
+
+  return listDayKeys(range.from, range.to).map((key) => {
+    const totalsForDay = byDate.get(key) ?? {
+      orderCount: 0,
+      revenueAmount: 0,
+    };
+    return {
+      key,
+      label: formatAnalyticsShortDate(key),
+      orderCount: totalsForDay.orderCount,
+      revenueAmount: Math.round(totalsForDay.revenueAmount * 100) / 100,
+    };
+  });
+}
+
+/**
+ * Daily points for short ranges; monthly aggregation when the range exceeds 45 days.
+ */
+export function buildAnalyticsTrendSeries(
+  rows: AnalyticsCsvRow[],
+  range: AnalyticsDateRange,
+): DashboardTrendPoint[] {
+  if (countAnalyticsRangeDays(range) > ANALYTICS_DAILY_SERIES_MAX_DAYS) {
+    return buildDashboardMonthlySeries(rows, range);
+  }
+  return buildAnalyticsDailySeries(rows, range);
+}
+
 export function buildDashboardMonthlySeries(
   rows: AnalyticsCsvRow[],
   range: AnalyticsDateRange,
