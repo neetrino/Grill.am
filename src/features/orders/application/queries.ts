@@ -28,6 +28,10 @@ import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status"
 import { analyticsPeriodUtcBounds } from "@/features/analytics/domain/date-range";
 import { getStoreRevenue } from "@/features/settings/application/queries";
 import {
+  latestPaymentMethodSelect,
+  orderItemsCountSelect,
+} from "@/features/orders/application/order-list-selects";
+import {
   appDayEndUtc,
   appDayStartUtc,
   formatAppIsoDate,
@@ -49,18 +53,6 @@ export type AdminOrderListItem = {
   placedAt: Date;
   isArchived: boolean;
 };
-
-function latestPaymentMethodSelect() {
-  return sql<string | null>`
-    (
-      select ${payments.method}
-      from ${payments}
-      where ${payments.orderId} = ${orders.id}
-      order by ${payments.attemptNumber} desc
-      limit 1
-    )
-  `;
-}
 
 /** Customer profile list row — includes line-item quantity for order cards. */
 export type CustomerOrderListItem = AdminOrderListItem & {
@@ -185,16 +177,7 @@ export async function listCustomerOrders(
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
-        itemsCount: sql<number>`
-          coalesce(
-            (
-              select sum(${orderItems.quantity})
-              from ${orderItems}
-              where ${orderItems.orderId} = ${orders.id}
-            ),
-            0
-          )
-        `.mapWith(Number),
+        itemsCount: orderItemsCountSelect(),
       })
       .from(orders)
       .where(where)

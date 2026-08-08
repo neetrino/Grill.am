@@ -1,9 +1,10 @@
 import "server-only";
 
-import { and, asc, eq, gte, sql } from "drizzle-orm";
+import { and, asc, eq, gte } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { orders, payments } from "@/db/schema";
+import { orders } from "@/db/schema";
+import { latestPaymentMethodSelect } from "@/features/orders/application/order-list-selects";
 
 /** How far back the alert poll looks for candidate orders. */
 export const NEW_ORDER_ALERT_LOOKBACK_MS = 4 * 60 * 60 * 1000;
@@ -35,15 +36,7 @@ export async function listRecentOrdersForAlert(
       contactName: orders.contactName,
       totalAmount: orders.totalAmount,
       baseCurrency: orders.baseCurrency,
-      paymentMethod: sql<string | null>`
-        (
-          select ${payments.method}
-          from ${payments}
-          where ${payments.orderId} = ${orders.id}
-          order by ${payments.attemptNumber} desc
-          limit 1
-        )
-      `,
+      paymentMethod: latestPaymentMethodSelect(),
       placedAt: orders.placedAt,
     })
     .from(orders)
