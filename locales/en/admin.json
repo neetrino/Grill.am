@@ -337,6 +337,7 @@
       "payment": "Payment",
       "placedAt": "Placed",
       "acknowledge": "I heard it",
+      "enableSound": "Enable sound",
       "audioBlocked": "Sound is blocked by the browser. Click the button or interact with the page to enable the alert tone."
     }
   },

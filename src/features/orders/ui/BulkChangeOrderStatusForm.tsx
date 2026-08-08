@@ -30,7 +30,7 @@ import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { formatPaymentMethodDisplay } from "@/features/orders/domain/payment-method-label";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
-import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
+import { AdminOrderPlacedAt } from "@/features/orders/ui/AdminOrderPlacedAt";
 
 type BulkOrderRow = {
   id: string;
@@ -183,11 +183,11 @@ export function BulkChangeOrderStatusForm({
                 </th>
                 <th className={ADMIN_TABLE_TH}>{list.order}</th>
                 <th className={ADMIN_TABLE_TH}>{list.customer}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.total}</th>
+                <th className={ADMIN_TABLE_TH}>{list.placed}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.status}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.payment}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.paymentMethod}</th>
-                <th className={ADMIN_TABLE_TH_CENTER}>{list.total}</th>
-                <th className={ADMIN_TABLE_TH}>{list.placed}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
@@ -244,6 +244,14 @@ export function BulkChangeOrderStatusForm({
                     <p className="text-xs text-gray-500">{order.contactEmail}</p>
                   </td>
                   <td className={ADMIN_TABLE_TD_CENTER}>
+                    <span className="text-base font-semibold tabular-nums text-gray-900">
+                      {formatMoney(order.totalAmount, order.baseCurrency)}
+                    </span>
+                  </td>
+                  <td className={ADMIN_TABLE_TD}>
+                    <AdminOrderPlacedAt placedAt={order.placedAt} />
+                  </td>
+                  <td className={ADMIN_TABLE_TD_CENTER}>
                     <div className="flex justify-center">
                       <AdminInlineStatusSelect
                         locale={locale}
@@ -268,16 +276,6 @@ export function BulkChangeOrderStatusForm({
                   <td className={ADMIN_TABLE_TD_CENTER}>
                     <span className="text-sm font-medium text-gray-800">
                       {formatPaymentMethodDisplay(order.latestPaymentMethod)}
-                    </span>
-                  </td>
-                  <td className={ADMIN_TABLE_TD_CENTER}>
-                    <span className="font-medium text-gray-900">
-                      {formatMoney(order.totalAmount, order.baseCurrency)}
-                    </span>
-                  </td>
-                  <td className={ADMIN_TABLE_TD}>
-                    <span className="text-xs text-gray-500">
-                      {formatAppDateTimeMinutes(order.placedAt)}
                     </span>
                   </td>
                 </tr>

@@ -336,6 +336,7 @@ export async function sendOrderEmails(
         orderNumber: input.orderNumber,
         to: maskEmail(message.to),
         idempotencyKey: message.idempotencyKey,
+        provider: delivery.name,
         errorCode: result.errorCode,
         safeMessage: result.safeMessage,
         retryable: result.retryable,

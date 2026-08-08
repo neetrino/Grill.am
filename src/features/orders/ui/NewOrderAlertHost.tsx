@@ -56,7 +56,12 @@ export function NewOrderAlertHost({ locale }: NewOrderAlertHostProps) {
     >
       <div
         className={`w-full max-w-lg border border-gray-200 bg-white p-6 shadow-xl sm:p-8 ${ADMIN_CARD_RADIUS_CLASS}`}
-        onPointerDown={(event) => event.stopPropagation()}
+        onPointerDown={(event) => {
+          event.stopPropagation();
+          if (audioBlocked) {
+            unlockAudio();
+          }
+        }}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-brand-red">
           {title}
@@ -107,10 +112,22 @@ export function NewOrderAlertHost({ locale }: NewOrderAlertHostProps) {
         <button
           type="button"
           className={`${ADMIN_BTN_PRIMARY_CLASS} mt-6 w-full text-base`}
-          onClick={acknowledgeCurrent}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            if (audioBlocked) {
+              event.preventDefault();
+              unlockAudio();
+            }
+          }}
+          onClick={() => {
+            if (audioBlocked) {
+              return;
+            }
+            acknowledgeCurrent();
+          }}
           autoFocus
         >
-          {copy.acknowledge}
+          {audioBlocked ? copy.enableSound : copy.acknowledge}
         </button>
       </div>
     </div>

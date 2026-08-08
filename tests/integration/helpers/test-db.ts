@@ -1,22 +1,18 @@
 import { config as loadEnv } from "dotenv";
 import path from "node:path";
-import { Pool, neonConfig } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-serverless";
-import ws from "ws";
 
-import * as schema from "@/db/schema";
+import {
+  openPgDrizzle,
+  type PgDrizzleDb,
+} from "../../helpers/open-pg-drizzle";
 
 loadEnv({ path: path.resolve(process.cwd(), ".env") });
 loadEnv({ path: path.resolve(process.cwd(), ".env.test"), override: true });
 
-neonConfig.webSocketConstructor = ws;
-
-type Db = ReturnType<typeof drizzle<typeof schema>>;
-type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
+type Tx = Parameters<Parameters<PgDrizzleDb["transaction"]>[0]>[0];
 
 export type IntegrationDb = {
-  db: Db;
-  pool: Pool;
+  db: PgDrizzleDb;
   withTx: <T>(operation: (tx: Tx) => Promise<T>) => Promise<T>;
   close: () => Promise<void>;
 };
@@ -62,15 +58,11 @@ export function resolveTestDatabaseUrl(): string {
 
 export async function openIntegrationDb(): Promise<IntegrationDb> {
   const connectionString = resolveTestDatabaseUrl();
-  const pool = new Pool({ connectionString });
-  const db = drizzle({ client: pool, schema });
+  const { db, close } = openPgDrizzle(connectionString);
 
   return {
     db,
-    pool,
     withTx: async (operation) => db.transaction(operation),
-    close: async () => {
-      await pool.end();
-    },
+    close,
   };
 }
