@@ -1,12 +1,12 @@
 "use client";
 
-import { Package, ShoppingBag, Tag, TrendingUp } from "lucide-react";
+import { Package } from "lucide-react";
 
-import { Card } from "@/components/ui/Card";
 import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import type {
   AnalyticsTopCategory,
   AnalyticsTopProduct,
@@ -18,27 +18,6 @@ type AnalyticsTopRankingsProps = {
   products: AnalyticsTopProduct[];
   categories: AnalyticsTopCategory[];
 };
-
-function RankBadge({
-  rank,
-  tone,
-}: {
-  rank: number;
-  tone: "amber" | "violet";
-}) {
-  const classes =
-    tone === "amber"
-      ? "bg-amber-400 text-white"
-      : "bg-violet-500 text-white";
-
-  return (
-    <div
-      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${classes}`}
-    >
-      {rank}
-    </div>
-  );
-}
 
 export function AnalyticsTopRankings({
   locale,
@@ -52,24 +31,21 @@ export function AnalyticsTopRankings({
   }
 
   return (
-    <div className="mb-6 grid gap-4 lg:grid-cols-2">
-      <Card className="p-5 sm:p-6">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {copy.topProducts}
-          </h2>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <TrendingUp className="h-4 w-4" aria-hidden />
-          </div>
-        </div>
-        <div className="space-y-3">
+    <div className="mb-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
+      <div className={`${ADMIN_CARD_CLASS} p-4`}>
+        <h2 className="mb-2 text-base font-semibold text-gray-900">
+          {copy.topProducts}
+        </h2>
+        <div className="space-y-2">
           {products.map((product, index) => (
             <div
               key={product.productId}
-              className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/40 p-3"
+              className="flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80"
             >
-              <RankBadge rank={index + 1} tone="amber" />
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow/25 text-[11px] font-bold text-brand-ink">
+                {index + 1}
+              </div>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-brand-surface">
                 {product.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element -- remote R2 URLs; admin list pattern
                   <img
@@ -78,88 +54,75 @@ export function AnalyticsTopRankings({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <Package className="h-5 w-5 text-gray-400" aria-hidden />
+                  <Package className="h-4 w-4 text-gray-400" aria-hidden />
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-gray-900">
+                <p className="truncate text-sm font-medium text-gray-900">
                   {product.title}
                 </p>
-                <p className="truncate text-xs text-gray-500">{product.sku}</p>
-                <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                  <span className="inline-flex items-center gap-1">
-                    <ShoppingBag className="h-3 w-3" aria-hidden />
-                    {formatAdminMessage(copy.soldCount, {
-                      quantity: String(product.quantitySold),
-                    })}
-                  </span>
-                  <span>|</span>
-                  <span>
-                    {formatAdminMessage(copy.ordersCount, {
-                      count: String(product.orderCount),
-                    })}
-                  </span>
+                <p className="text-[11px] text-gray-500">
+                  {formatAdminMessage(copy.soldCount, {
+                    quantity: String(product.quantitySold),
+                  })}
+                  {" · "}
+                  {formatAdminMessage(copy.ordersCount, {
+                    count: String(product.orderCount),
+                  })}
                 </p>
               </div>
-              <p className="shrink-0 text-sm font-bold text-gray-900">
+              <p className="shrink-0 text-sm font-semibold text-gray-900">
                 {formatMoney(product.unitPriceAmount)}
               </p>
             </div>
           ))}
           {products.length === 0 ? (
-            <p className="py-8 text-center text-sm text-gray-500">
+            <p className="py-6 text-center text-sm text-gray-600">
               {copy.noProductSales}
             </p>
           ) : null}
         </div>
-      </Card>
+      </div>
 
-      <Card className="p-5 sm:p-6">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {copy.topCategories}
-          </h2>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
-            <Tag className="h-4 w-4" aria-hidden />
-          </div>
-        </div>
-        <div className="space-y-3">
+      <div className={`${ADMIN_CARD_CLASS} p-4`}>
+        <h2 className="mb-2 text-base font-semibold text-gray-900">
+          {copy.topCategories}
+        </h2>
+        <div className="space-y-2">
           {categories.map((category, index) => (
             <div
               key={category.categoryId}
-              className="flex items-center gap-3 rounded-xl border border-violet-100 bg-violet-50/40 p-3"
+              className="flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80"
             >
-              <RankBadge rank={index + 1} tone="violet" />
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-red/10 text-[11px] font-bold text-brand-red">
+                {index + 1}
+              </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-gray-900">
+                <p className="truncate text-sm font-medium text-gray-900">
                   {category.title}
                 </p>
-                <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                  <span>
-                    {formatAdminMessage(copy.itemsCount, {
-                      count: String(category.itemCount),
-                    })}
-                  </span>
-                  <span>|</span>
-                  <span>
-                    {formatAdminMessage(copy.ordersCount, {
-                      count: String(category.orderCount),
-                    })}
-                  </span>
+                <p className="text-[11px] text-gray-500">
+                  {formatAdminMessage(copy.itemsCount, {
+                    count: String(category.itemCount),
+                  })}
+                  {" · "}
+                  {formatAdminMessage(copy.ordersCount, {
+                    count: String(category.orderCount),
+                  })}
                 </p>
               </div>
-              <p className="shrink-0 text-sm font-bold text-gray-900">
+              <p className="shrink-0 text-sm font-semibold text-gray-900">
                 {formatMoney(category.revenueAmount)}
               </p>
             </div>
           ))}
           {categories.length === 0 ? (
-            <p className="py-8 text-center text-sm text-gray-500">
+            <p className="py-6 text-center text-sm text-gray-600">
               {copy.noCategorySales}
             </p>
           ) : null}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

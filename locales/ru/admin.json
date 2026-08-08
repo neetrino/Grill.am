@@ -81,6 +81,31 @@
     "activeProducts": "Активные товары",
     "ordersRange": "Заказы (период)",
     "revenueRange": "Выручка (период)",
+    "ordersToday": "Заказы сегодня",
+    "ordersWeek": "Заказы за неделю",
+    "ordersMonth": "Заказы за месяц",
+    "revenueToday": "Выручка сегодня",
+    "revenueWeek": "Выручка за неделю",
+    "revenueMonth": "Выручка за месяц",
+    "periodsTitle": "Продажи по периодам",
+    "viewAnalytics": "Полная аналитика",
+    "periodLabel": "Период дашборда",
+    "periodToday": "Сегодня",
+    "periodWeek": "Неделя",
+    "periodMonth": "Месяц",
+    "periodQuarter": "Квартал",
+    "aov": "Средний чек",
+    "chartTitle": "Динамика выручки и заказов",
+    "chartSubtitle": "Помесячная динамика за выбранный период",
+    "chartRangeLabel": "Период графика",
+    "chartRange6Months": "6 месяцев",
+    "chartRangeYear": "Год",
+    "chartRevenue": "Выручка",
+    "chartOrders": "Заказы",
+    "chartAria": "График помесячной выручки и заказов",
+    "chartEmpty": "В этом периоде пока нет заказов.",
+    "chartEmptyShort": "—",
+    "chartBestMonth": "Лучший месяц",
     "vsPrev": "{delta} к пред.",
     "recentOrders": "Недавние заказы",
     "topProducts": "Топ товары",
@@ -852,9 +877,11 @@
       "custom": "Произвольный диапазон"
     },
     "metrics": {
+      "rangeTitle": "Выбранный период",
       "totalOrders": "Всего заказов",
       "totalRevenue": "Общая выручка",
-      "totalUsers": "Всего пользователей"
+      "totalUsers": "Клиенты за период",
+      "vsPreviousHint": "Изменения сравниваются с предыдущим периодом той же длины."
     },
     "rankings": {
       "topProducts": "Топ продаваемых товаров",
@@ -866,10 +893,11 @@
       "noCategorySales": "В этом периоде нет продаж по категориям."
     },
     "ordersByDay": {
-      "title": "Заказы по дням",
-      "subtitle": "Ежедневные тренды заказов и выручки",
-      "chartAria": "График заказов по дням",
+      "title": "Динамика",
+      "subtitle": "Выручка и заказы за выбранный период",
+      "chartAria": "График выручки и заказов",
       "empty": "В этом периоде нет заказов.",
+      "peakDay": "Лучший день",
       "ordersCount": "{count} заказов",
       "revenue": "выручка"
     }

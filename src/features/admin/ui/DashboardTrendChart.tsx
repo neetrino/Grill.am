@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { TrendingUp } from "lucide-react";
 
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
@@ -9,16 +11,31 @@ import {
   DASHBOARD_REVENUE_COLOR,
   DashboardTrendSvg,
 } from "@/features/admin/ui/DashboardTrendSvg";
-import type { DashboardTrendPoint } from "@/features/analytics/domain/dashboard-periods";
+import {
+  DASHBOARD_CHART_RANGES,
+  type DashboardChartRange,
+  type DashboardTrendPoint,
+} from "@/features/analytics/domain/dashboard-periods";
 import { formatMoneyAmount } from "@/lib/money/format";
 
-type AnalyticsOrdersByDayProps = {
+type DashboardTrendChartProps = {
   locale: string;
+  chart: DashboardChartRange;
   points: DashboardTrendPoint[];
-  aggregatedMonthly: boolean;
 };
 
-function pickBestPoint(
+function buildHref(
+  pathname: string,
+  searchParams: URLSearchParams,
+  nextChart: DashboardChartRange,
+): string {
+  const params = new URLSearchParams(searchParams.toString());
+  params.delete("period");
+  params.set("chart", nextChart);
+  return `${pathname}?${params.toString()}`;
+}
+
+function pickBestMonth(
   points: DashboardTrendPoint[],
 ): DashboardTrendPoint | null {
   if (points.length === 0) {
@@ -64,13 +81,14 @@ function StackStat({
   );
 }
 
-export function AnalyticsOrdersByDay({
+export function DashboardTrendChart({
   locale,
+  chart,
   points,
-  aggregatedMonthly,
-}: AnalyticsOrdersByDayProps) {
-  const copy = useAdminDictionary().analytics.ordersByDay;
-  const dashboard = useAdminDictionary().dashboard;
+}: DashboardTrendChartProps) {
+  const copy = useAdminDictionary().dashboard;
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const totalRevenue = points.reduce(
     (sum, point) => sum + point.revenueAmount,
@@ -81,33 +99,65 @@ export function AnalyticsOrdersByDay({
     totalOrders > 0
       ? Math.round((totalRevenue / totalOrders) * 100) / 100
       : 0;
-  const bestPoint = pickBestPoint(points);
+  const bestMonth = pickBestMonth(points);
+
+  const rangeLabels: Record<DashboardChartRange, string> = {
+    months_6: copy.chartRange6Months,
+    year: copy.chartRangeYear,
+  };
 
   const isEmpty = points.every(
     (point) => point.orderCount === 0 && point.revenueAmount === 0,
   );
 
-  const peakLabel = aggregatedMonthly
-    ? dashboard.chartBestMonth
-    : copy.peakDay;
-
   return (
     <div className={`mb-3 ${ADMIN_CARD_CLASS} p-4`}>
-      <div className="mb-3 flex min-w-0 items-center gap-2">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-red/10 text-brand-red">
-          <TrendingUp className="h-4 w-4" aria-hidden />
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-red/10 text-brand-red">
+            <TrendingUp className="h-4 w-4" aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold text-gray-900">
+              {copy.chartTitle}
+            </h2>
+            <p className="text-xs text-gray-500">{copy.chartSubtitle}</p>
+          </div>
         </div>
-        <div className="min-w-0">
-          <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
-          <p className="text-xs text-gray-500">{copy.subtitle}</p>
+
+        <div
+          className="inline-flex rounded-[12px] bg-brand-surface p-0.5"
+          role="tablist"
+          aria-label={copy.chartRangeLabel}
+        >
+          {DASHBOARD_CHART_RANGES.map((option) => {
+            const active = option === chart;
+            return (
+              <Link
+                key={option}
+                href={buildHref(pathname, searchParams, option)}
+                role="tab"
+                aria-selected={active}
+                className={`rounded-[10px] px-2.5 py-1 text-xs font-semibold transition ${
+                  active
+                    ? "bg-white text-gray-900 shadow-sm ring-1 ring-gray-100"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {rangeLabels[option]}
+              </Link>
+            );
+          })}
         </div>
       </div>
 
       {isEmpty ? (
-        <p className="py-8 text-center text-sm text-gray-500">{copy.empty}</p>
+        <p className="py-10 text-center text-sm text-gray-500">
+          {copy.chartEmpty}
+        </p>
       ) : (
-        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_15rem]">
-          <div className="order-2 min-w-0 rounded-[12px] bg-gradient-to-b from-brand-surface/70 to-white p-2 ring-1 ring-gray-100/80 lg:order-1">
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_15rem]">
+          <div className="min-w-0 rounded-[12px] bg-gradient-to-b from-brand-surface/70 to-white p-2 ring-1 ring-gray-100/80">
             <DashboardTrendSvg points={points} chartAria={copy.chartAria} />
             <div className="mt-1 flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500">
               <span className="inline-flex items-center gap-1.5">
@@ -115,44 +165,44 @@ export function AnalyticsOrdersByDay({
                   className="h-2 w-2 rounded-full"
                   style={{ backgroundColor: DASHBOARD_REVENUE_COLOR }}
                 />
-                {dashboard.chartRevenue}
+                {copy.chartRevenue}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span
                   className="h-2 w-2 rounded-full"
                   style={{ backgroundColor: DASHBOARD_ORDERS_COLOR }}
                 />
-                {dashboard.chartOrders}
+                {copy.chartOrders}
               </span>
             </div>
           </div>
 
-          <div className="order-1 flex flex-col gap-2 lg:order-2">
+          <div className="flex flex-col gap-2">
             <StackStat
-              label={dashboard.chartRevenue}
+              label={copy.chartRevenue}
               value={formatMoneyAmount(totalRevenue, "AMD", locale)}
               tone="red"
             />
             <StackStat
-              label={dashboard.chartOrders}
+              label={copy.chartOrders}
               value={String(totalOrders)}
               tone="yellow"
             />
             <StackStat
-              label={dashboard.aov}
+              label={copy.aov}
               value={formatMoneyAmount(averageOrderValue, "AMD", locale)}
               tone="ink"
             />
             <StackStat
-              label={peakLabel}
+              label={copy.chartBestMonth}
               value={
-                bestPoint && bestPoint.revenueAmount > 0
-                  ? bestPoint.label
-                  : dashboard.chartEmptyShort
+                bestMonth && bestMonth.revenueAmount > 0
+                  ? bestMonth.label
+                  : copy.chartEmptyShort
               }
               hint={
-                bestPoint && bestPoint.revenueAmount > 0
-                  ? formatMoneyAmount(bestPoint.revenueAmount, "AMD", locale)
+                bestMonth && bestMonth.revenueAmount > 0
+                  ? formatMoneyAmount(bestMonth.revenueAmount, "AMD", locale)
                   : undefined
               }
               tone="surface"
