@@ -92,6 +92,13 @@
       "when": 1786050000000,
       "tag": "0013_outbox_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1786060000000,
+      "tag": "0014_drop_outbox_events",
+      "breakpoints": true
     }
   ]
 }
