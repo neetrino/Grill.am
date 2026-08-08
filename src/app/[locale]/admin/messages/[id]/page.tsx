@@ -15,6 +15,7 @@ import {
   type ContactStatus,
 } from "@/features/contact/domain/contact-rules";
 import { UpdateContactStatusForm } from "@/features/contact/ui/UpdateContactStatusForm";
+import { formatAppDateTimeSeconds } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -108,7 +109,7 @@ export default async function AdminMessageDetailPage({
           </p>
           <p className="text-gray-700">
             {copy.detail.received}:{" "}
-            {message.createdAt.toISOString().slice(0, 19).replace("T", " ")}{" "}
+            {formatAppDateTimeSeconds(message.createdAt)}{" "}
             {common.utc}
           </p>
         </div>

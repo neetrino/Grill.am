@@ -22,6 +22,7 @@ import {
   formatCouponSavings,
 } from "@/features/promotions/domain/format-coupon-offer";
 import { PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS } from "@/features/profile/ui/profile-ui";
+import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 export type CustomerPromoCodesLabels = {
   title: string;
@@ -111,11 +112,7 @@ export function CustomerPromoCodesView({
                   </td>
                   <td className={ADMIN_TABLE_TD}>
                     <span className="text-xs text-gray-500">
-                      {new Date(row.placedAt)
-                        .toISOString()
-                        .slice(0, 16)
-                        .replace("T", " ")}{" "}
-                      UTC
+                      {formatAppDateTimeMinutes(row.placedAt)} UTC+4
                     </span>
                   </td>
                 </tr>

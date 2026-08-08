@@ -1,5 +1,6 @@
 import type { Locale } from "@/lib/i18n/config";
 import { isLocale } from "@/lib/i18n/config";
+import { toAppZonedParts } from "@/lib/datetime/app-timezone";
 
 const EN_MONTHS = [
   "Jan",
@@ -51,29 +52,19 @@ function normalizeDateLocale(locale: string): Locale {
   return isLocale(base) ? base : "en";
 }
 
-function toDate(value: Date | string | number): Date {
-  return value instanceof Date ? value : new Date(value);
-}
-
 /**
- * Short calendar date, identical on Node and every browser.
- * Uses UTC calendar fields so SSR (often UTC) and clients in other
- * timezones hydrate to the same string. Avoids `Intl.DateTimeFormat`
- * ICU gaps (e.g. `hy` falling back to Russian).
+ * Short calendar date in app timezone (UTC+4 / Asia/Yerevan).
+ * Identical on Node and every browser (fixed offset, no Intl ICU gaps).
  */
 export function formatShortDate(
   value: Date | string | number,
   locale: string,
 ): string {
-  const date = toDate(value);
-  if (Number.isNaN(date.getTime())) {
-    throw new Error("Invalid date");
-  }
-
+  const parts = toAppZonedParts(value);
   const appLocale = normalizeDateLocale(locale);
-  const day = date.getUTCDate();
-  const monthIndex = date.getUTCMonth();
-  const year = date.getUTCFullYear();
+  const day = parts.day;
+  const monthIndex = parts.monthIndex;
+  const year = parts.year;
 
   switch (appLocale) {
     case "en":

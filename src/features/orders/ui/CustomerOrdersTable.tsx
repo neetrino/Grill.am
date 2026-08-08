@@ -23,6 +23,7 @@ import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
 } from "@/features/orders/ui/order-drawer-format";
+import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 type CustomerOrderRow = {
   id: string;
@@ -99,11 +100,7 @@ export function CustomerOrdersTable({
                 </td>
                 <td className={ADMIN_TABLE_TD}>
                   <span className="text-xs text-gray-500">
-                    {new Date(order.placedAt)
-                      .toISOString()
-                      .slice(0, 16)
-                      .replace("T", " ")}{" "}
-                    UTC
+                    {formatAppDateTimeMinutes(order.placedAt)} UTC+4
                   </span>
                 </td>
               </tr>

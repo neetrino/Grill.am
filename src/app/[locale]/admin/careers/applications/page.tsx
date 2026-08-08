@@ -27,6 +27,7 @@ import {
 } from "@/features/careers/domain/application-rules";
 import { adminJobApplicationFilterSchema } from "@/features/careers/schemas/application";
 import { AdminApplicationsFilters } from "@/features/careers/ui/AdminApplicationsFilters";
+import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -188,10 +189,7 @@ export default async function AdminApplicationsPage({
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <span className="text-xs text-gray-500">
-                        {application.createdAt
-                          .toISOString()
-                          .slice(0, 16)
-                          .replace("T", " ")}{" "}
+                        {formatAppDateTimeMinutes(application.createdAt)}{" "}
                         {common.utc}
                       </span>
                     </td>

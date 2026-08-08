@@ -21,6 +21,10 @@ import {
 } from "@/features/promotions/application/upsert-promotion";
 import type { AdminPromotionListItem } from "@/features/promotions/application/queries";
 import type { DiscountType } from "@/features/promotions/domain/promotion-rules";
+import {
+  formatAppDateTimeLocalInput,
+  parseAppDateTimeLocal,
+} from "@/lib/datetime/app-timezone";
 
 const COUPON_DRAWER_FORM_ID = "coupon-drawer-form";
 
@@ -44,9 +48,11 @@ type CouponDrawerProps = {
 
 function toDateTimeLocal(value: Date | string | null | undefined): string {
   if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toISOString().slice(0, 16);
+  try {
+    return formatAppDateTimeLocalInput(value);
+  } catch {
+    return "";
+  }
 }
 
 export function CouponDrawer({
@@ -160,7 +166,7 @@ export function CouponDrawer({
             allowStacking: false,
             isActive: coupon?.isActive ?? true,
             startsAt: null,
-            endsAt: expiresAt ? new Date(expiresAt) : null,
+            endsAt: expiresAt ? parseAppDateTimeLocal(expiresAt) : null,
           };
 
           startTransition(async () => {
