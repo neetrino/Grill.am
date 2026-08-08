@@ -1,5 +1,5 @@
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import type { RenderedEmail } from "@/features/outbox/templates/payment-email-templates";
+import type { RenderedEmail } from "@/features/notifications/templates/payment-email-templates";
 import type { Locale } from "@/lib/i18n/config";
 import {
   bodySection,
@@ -17,7 +17,7 @@ import {
   row,
   sectionHeading,
   textRow,
-} from "@/features/outbox/templates/email-template-primitives";
+} from "@/features/notifications/templates/email-template-primitives";
 
 export type AdminOrderEmailInput = {
   locale: string;

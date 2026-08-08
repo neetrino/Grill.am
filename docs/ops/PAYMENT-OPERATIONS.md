@@ -43,9 +43,9 @@ Resolution: `resolvePaymentReviewAction` + audit + `PAYMENT_REVIEW_RESOLVED`.
 
 ## Notifications
 
-Outbox enqueue + durable consumer (`claimOutboxBatch` / `processOutboxOnce`).  
-Dedupe via UNIQUE `dedupe_key`. Default delivery: sink. E2E: `E2E_EMAIL_MODE=mock`.  
-Production Resend adapter remains an activation follow-up. See `docs/ops/OUTBOX-RUNBOOK.md`.
+Immediate send via Next.js `after()` after successful COD create / payment capture / fail / requires-review.  
+Module: `scheduleOrderEmails` → `sendOrderEmails`. Delivery: `getEmailDelivery()` (E2E capture → Resend → sink).  
+See `docs/ops/OUTBOX-RUNBOOK.md` (now the immediate-email runbook; outbox table dropped in `0014_drop_outbox_events`).
 
 ## Logging / metrics
 
@@ -75,5 +75,5 @@ Do not automate real charges.
 ## Incident notes
 
 - False success: never trust SUCCESS_URL / return query flags.
-- Duplicate side effects: confirm/fail are idempotent; outbox uses dedupeKey.
+- Duplicate side effects: confirm/fail are idempotent; emails schedule only on fresh transitions (not replay).
 - Manual refunds: external process; no automated reverse in Phase 5.

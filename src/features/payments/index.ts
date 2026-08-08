@@ -10,7 +10,6 @@ export {
 } from "@/features/payments/application/create-payment-attempt";
 export { failPayment } from "@/features/payments/application/fail-payment";
 export { expirePaymentAttempt } from "@/features/payments/application/expire-payment-attempt";
-export { enqueuePaymentNotification } from "@/features/payments/application/enqueue-payment-notification";
 export { retryPaymentAction } from "@/features/payments/application/retry-payment";
 export {
   assertPaymentMethodEnabled,

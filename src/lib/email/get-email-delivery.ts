@@ -10,10 +10,10 @@ import { createResendEmailDelivery } from "@/lib/email/resend-adapter";
 import { logger } from "@/lib/observability/logger";
 
 /**
- * Selects outbox delivery provider.
+ * Selects email delivery provider.
  * Priority: E2E capture → Resend (when credentials present) → sink.
  */
-export function getOutboxEmailDelivery(): EmailDeliveryProvider {
+export function getEmailDelivery(): EmailDeliveryProvider {
   const mode = process.env.E2E_EMAIL_MODE?.trim().toLowerCase();
   if (mode === "mock" || mode === "capture") {
     if (process.env.NODE_ENV === "production") {

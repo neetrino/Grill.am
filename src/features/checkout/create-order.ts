@@ -34,7 +34,7 @@ import {
   createPaymentAttempt,
   getLatestPaymentAttempt,
 } from "@/features/payments/application/create-payment-attempt";
-import { enqueuePaymentNotification } from "@/features/payments/application/enqueue-payment-notification";
+import { scheduleOrderEmails } from "@/features/notifications/application/schedule-order-emails";
 import { fingerprintCartItems } from "@/features/payments/domain/cart-fingerprint";
 import {
   isPaymentDomainError,
@@ -170,6 +170,9 @@ type CreatedOrderPayload = {
   flow: "offline" | "online";
   provider: "cod" | "arca" | "idram";
   guestAccessRawToken: string | null;
+  locale: string;
+  /** Fresh COD create only — skip on idempotent replay. */
+  notifyCod: boolean;
 };
 
 /** Creates an order with server-side totals; COD fulfills, online stays unpaid. */
@@ -270,6 +273,8 @@ export async function createOrderAction(
           flow: flowType,
           provider: toPaymentRecord(paymentMethod).provider,
           guestAccessRawToken: null,
+          locale: input.locale,
+          notifyCod: false,
         } satisfies CreatedOrderPayload;
       }
 
@@ -680,29 +685,6 @@ export async function createOrderAction(
           .update(carts)
           .set({ status: "CONVERTED", updatedAt: now })
           .where(eq(carts.id, cart.id));
-
-        await enqueuePaymentNotification(tx, {
-          type: "COD_ORDER_CREATED",
-          orderId,
-          orderNumber: number,
-          locale: input.locale,
-          dedupeKey: `cod-order-created:${orderId}:customer`,
-          recipientRole: "customer",
-          safePayload: { paymentMethod: "cash_on_delivery" },
-        });
-
-        await enqueuePaymentNotification(tx, {
-          type: "ADMIN_ORDER_NOTIFY",
-          orderId,
-          orderNumber: number,
-          locale: input.locale,
-          dedupeKey: `admin-order:${orderId}`,
-          recipientRole: "operator",
-          safePayload: {
-            trigger: "cod_order_created",
-            paymentMethod: "cash_on_delivery",
-          },
-        });
       }
 
       return {
@@ -712,6 +694,8 @@ export async function createOrderAction(
         flow: flowType,
         provider: paymentRecord.provider,
         guestAccessRawToken: guestAccess?.rawToken ?? null,
+        locale: input.locale,
+        notifyCod: flowType === "offline",
       } satisfies CreatedOrderPayload;
     });
 
@@ -730,6 +714,15 @@ export async function createOrderAction(
     }
 
     if (created.flow === "offline") {
+      if (created.notifyCod) {
+        scheduleOrderEmails({
+          kind: "cod_created",
+          orderId: created.orderId,
+          orderNumber: created.orderNumber,
+          locale: created.locale,
+          paymentId: created.paymentId,
+        });
+      }
       await revalidateCartPaths();
       return {
         ok: true,

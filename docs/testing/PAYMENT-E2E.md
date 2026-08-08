@@ -29,7 +29,7 @@ Reuse a running server only with `E2E_REUSE_SERVER=true` (never in CI).
 - Local form shim: `/api/e2e/arca-form` (allowlisted host `127.0.0.1`).
 - Local iDram GetPayment: `/api/e2e/idram-payment`.
 - Mock control: `POST /api/e2e/arca-mock`.
-- Capture inbox: `GET/DELETE /api/e2e/inbox` + `POST /api/e2e/outbox/process`.
+- Capture inbox: `GET/DELETE /api/e2e/inbox` (emails send immediately via `after()`; no outbox process step).
 - All `/api/e2e/*` return 404 outside mock mode / in production.
 
 ## Commands

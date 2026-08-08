@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import { renderAdminOrderEmail } from "@/features/outbox/templates/admin-order-email-template";
+import { renderAdminOrderEmail } from "@/features/notifications/templates/admin-order-email-template";
 
 function sampleDetail(
   overrides?: Partial<AdminOrderDetailView>,

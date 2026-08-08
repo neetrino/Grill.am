@@ -132,10 +132,3 @@ export const jobApplicationStatusEnum = pgEnum("job_application_status", [
   "READ",
   "ARCHIVED",
 ]);
-
-export const outboxStatusEnum = pgEnum("outbox_status", [
-  "PENDING",
-  "PROCESSING",
-  "COMPLETED",
-  "FAILED",
-]);

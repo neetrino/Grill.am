@@ -18,8 +18,6 @@ async function main(): Promise<void> {
     pending: report.counts.pending_beyond_threshold,
     failedMayBePaid: report.counts.failed_may_be_paid,
     requiresReview: report.counts.requires_review,
-    missingNotification: report.counts.missing_capture_notification,
-    outboxFailed: report.counts.outbox_permanently_failed,
     totalCandidates: report.candidates.length,
   });
   console.log(JSON.stringify(report, null, 2));

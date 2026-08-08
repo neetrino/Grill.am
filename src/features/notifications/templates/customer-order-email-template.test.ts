@@ -5,7 +5,7 @@ import {
   renderCustomerCodOrderCreatedEmail,
   renderCustomerPaymentCapturedEmail,
   renderCustomerPaymentFailedEmail,
-} from "@/features/outbox/templates/customer-order-email-template";
+} from "@/features/notifications/templates/customer-order-email-template";
 
 function sampleDetail(
   overrides?: Partial<AdminOrderDetailView>,

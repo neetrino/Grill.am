@@ -33,13 +33,6 @@ export type E2eOrderStateResponse = {
       toState: string | null;
       kind: string | null;
     }>;
-    outbox: Array<{
-      id: string;
-      eventType: string;
-      status: string;
-      dedupeKey: string | null;
-      aggregateId: string;
-    }>;
     cart: { id: string; status: string; itemCount: number } | null;
     productStock: number | null;
     adminReview: { visible: boolean; title: string };
@@ -205,14 +198,6 @@ export async function awaitCheckoutSuccessUrl(
   }
 }
 
-export async function processOutboxCapture(
-  request: APIRequestContext,
-  baseURL: string,
-): Promise<void> {
-  const response = await request.post(`${baseURL}/api/e2e/outbox/process`);
-  expect(response.ok()).toBeTruthy();
-}
-
 export async function getInboxMessages(
   request: APIRequestContext,
   baseURL: string,
@@ -224,6 +209,32 @@ export async function getInboxMessages(
     messages: Array<{ id: string; to: string; subject: string; text: string }>;
   };
   return json.messages;
+}
+
+/** Poll capture inbox until enough messages match (after() may finish after response). */
+export async function waitForOrderInboxMessages(
+  request: APIRequestContext,
+  baseURL: string,
+  orderNumber: string,
+  minCount: number,
+  timeoutMs = 15_000,
+): Promise<Array<{ id: string; to: string; subject: string; text: string }>> {
+  const started = Date.now();
+  let messages: Array<{ id: string; to: string; subject: string; text: string }> =
+    [];
+  while (Date.now() - started < timeoutMs) {
+    const all = await getInboxMessages(request, baseURL);
+    messages = all.filter(
+      (m) => m.subject.includes(orderNumber) || m.text.includes(orderNumber),
+    );
+    if (messages.length >= minCount) {
+      return messages;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error(
+    `Expected >= ${minCount} inbox messages for ${orderNumber}; got ${messages.length}`,
+  );
 }
 
 export function computeIdramChecksum(fields: {

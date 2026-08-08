@@ -1,7 +1,7 @@
 # Payments — reconciliation (Phase 6)
 
 **Status.** Read-only dry report first; apply modes reuse idempotent confirmation only.  
-**Last updated.** 2026-08-06
+**Last updated.** 2026-08-08
 
 ## Commands
 
@@ -16,7 +16,6 @@ pnpm payments:arca:reconcile
 pnpm payments:idram:audit-pending
 
 pnpm payments:readiness
-pnpm outbox:stats
 ```
 
 ## Dry-report categories
@@ -28,8 +27,6 @@ pnpm outbox:stats
 | `authorized_stale` | Two-stage ARCA AUTHORIZED aged | Recheck / merchant deposit workflow |
 | `captured_cart_not_converted` | CAPTURED but cart not CONVERTED | Audit side effects; do not re-capture |
 | `requires_review` | Order `REQUIRES_REVIEW` | Admin resolve with audit |
-| `missing_capture_notification` | CAPTURED without `payment-captured:*` outbox | Re-enqueue / outbox worker |
-| `outbox_permanently_failed` | Outbox `FAILED` | Fix transport; retry with same dedupe |
 
 ## Limitations
 
