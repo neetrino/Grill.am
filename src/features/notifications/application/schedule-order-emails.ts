@@ -24,13 +24,18 @@ export function scheduleOrderEmails(input: SendOrderEmailsInput): void {
         orderNumber: input.orderNumber,
         paymentId: input.paymentId,
         errorName: error instanceof Error ? error.name : "UNKNOWN",
+        errorMessage:
+          error instanceof Error ? error.message.slice(0, 200) : "unknown",
       });
     }
   };
 
   try {
-    after(() => {
-      void run();
+    // Must return/await the Promise — `void run()` drops waitUntil tracking and
+    // Vercel may freeze the isolate before Resend finishes (common on short
+    // iDram RESULT_URL responses that return plain-text OK immediately).
+    after(async () => {
+      await run();
     });
   } catch (error) {
     logger.warn("order_email.after_unavailable", {
