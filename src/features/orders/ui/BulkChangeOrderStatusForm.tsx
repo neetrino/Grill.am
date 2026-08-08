@@ -30,7 +30,7 @@ import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { formatPaymentMethodDisplay } from "@/features/orders/domain/payment-method-label";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
-import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
+import { AdminOrderPlacedAt } from "@/features/orders/ui/AdminOrderPlacedAt";
 
 type BulkOrderRow = {
   id: string;
@@ -276,9 +276,7 @@ export function BulkChangeOrderStatusForm({
                     </span>
                   </td>
                   <td className={ADMIN_TABLE_TD}>
-                    <span className="text-xs text-gray-500">
-                      {formatAppDateTimeMinutes(order.placedAt)}
-                    </span>
+                    <AdminOrderPlacedAt placedAt={order.placedAt} />
                   </td>
                 </tr>
               ))}
