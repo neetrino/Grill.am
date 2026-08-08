@@ -113,11 +113,8 @@ export function useNewOrderAlert({
       });
     };
 
-    const gestureEvents: Array<keyof DocumentEventMap> = [
-      "pointerdown",
-      "keydown",
-      "touchstart",
-    ];
+    // Omit pointerdown: it races with the alert primary button (unlock then ack on one click).
+    const gestureEvents: Array<keyof DocumentEventMap> = ["keydown", "touchstart"];
     for (const eventName of gestureEvents) {
       document.addEventListener(eventName, unlockOnGesture, {
         capture: true,
@@ -163,12 +160,16 @@ export function useNewOrderAlert({
   }, []);
 
   const acknowledgeCurrent = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio && !audio.isUnlocked()) {
+      unlockAudio();
+      return;
+    }
+
     const current = queue[0];
     if (!current) {
       return;
     }
-
-    unlockAudio();
 
     const storage = storageRef.current ?? loadOrderAlertStorage();
     storageRef.current = acknowledgeOrderId(storage, current.id);
