@@ -145,6 +145,7 @@
 | CHK-009 | COD adapter-ը P0 է; online provider-ը միայն approved adapter/webhook contract-ից հետո է ակտիվանում։ |
 | CHK-010 | Success page-ը refresh/retry-safe է և order ownership check ունի։ |
 | CHK-011 | COD-ի դեպքում customer-ը կարող է նշել մանրի համար թղթադրամը (5000/10000/20000/50000/100000 AMD) կամ «առանց մանրի»․ արժեքը պահվում է `payments.metadata.cashTenderedAmount`-ում և երևում է admin order detail-ում։ |
+| CHK-012 | Checkout-ում optional customer comment (`orders.customer_note`, max 1000 plain text) պահվում է order snapshot-ում և երևում է admin order detail-ում։ |
 
 ## 8. Customer profile
 
@@ -234,7 +235,7 @@
 | AORD-001 | Table-ը ունի selection, number, customer, total, order/payment statuses, date, details և actions։ |
 | AORD-002 | Search, status/payment/date filters, pagination, bulk selection և eligible bulk status update կան։ |
 | AORD-003 | Default delete-ը archive է; financial/audit records hard delete չեն արվում։ |
-| AORD-004 | Full-height detail drawer-ը ցույց է տալիս customer, dates, items/media/title/SKU/qty/prices, totals, address, status history և admin notes։ |
+| AORD-004 | Full-height detail drawer-ը ցույց է տալիս customer, optional customer checkout note, dates, items/media/title/SKU/qty/prices, totals, address, status history և admin notes։ |
 | AORD-005 | Status transition-ը server-side state machine-ով է և history row է ստեղծում նույն transaction-ում։ |
 | AORD-006 | Payment status-ը միայն authorized admin կամ verified provider event կարող է փոխել։ |
 

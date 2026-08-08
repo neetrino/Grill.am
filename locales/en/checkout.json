@@ -10,6 +10,7 @@
   "shippingMethod": "Shipping Method",
   "shippingAddress": "Shipping Address",
   "paymentMethod": "Payment Method",
+  "orderComment": "Order comment",
   "orderSummary": "Order Summary",
   "form": {
     "firstName": "First Name",
@@ -24,7 +25,8 @@
   "placeholders": {
     "phone": "+374XXXXXXXX",
     "address": "Street, apartment, office, etc.",
-    "city": "City"
+    "city": "City",
+    "orderComment": "Add a note for the kitchen or courier (optional)"
   },
   "shipping": {
     "storePickup": "Take Away",

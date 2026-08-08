@@ -45,6 +45,7 @@ type CheckoutLabels = {
   shippingMethod: string;
   shippingAddress: string;
   paymentMethod: string;
+  orderComment: string;
   orderSummary: string;
   firstName: string;
   lastName: string;
@@ -57,6 +58,7 @@ type CheckoutLabels = {
   phonePlaceholder: string;
   cityPlaceholder: string;
   addressPlaceholder: string;
+  orderCommentPlaceholder: string;
   storePickup: string;
   storePickupDescription: string;
   delivery: string;
@@ -382,6 +384,7 @@ export function CheckoutForm({
             shippingMethod === "delivery"
               ? String(data.get("line1") ?? "")
               : undefined,
+          customerNote: String(data.get("customerNote") ?? "") || undefined,
           couponCode: appliedCouponCode ?? undefined,
         });
 

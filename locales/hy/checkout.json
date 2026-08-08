@@ -10,6 +10,7 @@
   "shippingMethod": "Առաքման եղանակ",
   "shippingAddress": "Առաքման հասցե",
   "paymentMethod": "Վճարման եղանակ",
+  "orderComment": "Մեկնաբանություն պատվերի վերաբերյալ",
   "orderSummary": "Պատվերի ամփոփում",
   "form": {
     "firstName": "Անուն",
@@ -24,7 +25,8 @@
   "placeholders": {
     "phone": "+374XXXXXXXX",
     "address": "Փողոց, բնակարան, գրասենյակ և այլն",
-    "city": "Քաղաք"
+    "city": "Քաղաք",
+    "orderComment": "Գրեք նշում խոհանոցի կամ առաքչի համար (ոչ պարտադիր)"
   },
   "shipping": {
     "storePickup": "Take Away",

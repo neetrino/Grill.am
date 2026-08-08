@@ -251,7 +251,7 @@ Country, optional region/city, AMD price, optional free threshold, estimated day
 
 | Group | Պարտադիր snapshot/data |
 |---|---|
-| Identity | ID, unique order number, nullable user, guest/customer contact snapshot |
+| Identity | ID, unique order number, nullable user, guest/customer contact snapshot, optional `customer_note` (plain-text checkout comment) |
 | State | order status, payment status, archive flag, placed/updated timestamps |
 | Money | base/display currency, exchange-rate source/effective/rate snapshot, subtotal/discount/tax/delivery/total |
 | Address | `shipping_address JSONB`, `billing_address JSONB` immutable validated snapshots |

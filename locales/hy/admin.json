@@ -269,6 +269,7 @@
       "name": "Անուն",
       "phone": "Հեռախոսահամար",
       "email": "Էլ․ փոստ",
+      "customerNote": "Հաճախորդի մեկնաբանություն",
       "shippingMethod": "Առաքման եղանակ",
       "pickupStore": "Ինքնաառաքում",
       "pickupMethod": "Ինքնավերցում",

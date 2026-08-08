@@ -129,6 +129,17 @@ export function OrderDetailsDrawerShipping({
               </div>
             </dl>
           </section>
+
+          {detail.customerNote ? (
+            <section className={ORDER_DETAIL_CARD}>
+              <h3 className={ORDER_DETAIL_SECTION_TITLE}>
+                {drawer.customerNote}
+              </h3>
+              <p className="whitespace-pre-wrap text-sm font-medium text-gray-900">
+                {detail.customerNote}
+              </p>
+            </section>
+          ) : null}
         </>
       )}
     </>
