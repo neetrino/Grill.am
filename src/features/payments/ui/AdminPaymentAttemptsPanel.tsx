@@ -15,6 +15,7 @@ import {
 import { toAdminPaymentAttemptViews } from "@/features/payments/presentation/payment-attempt-view";
 import { ResolvePaymentReviewForm } from "@/features/payments/ui/ResolvePaymentReviewForm";
 import { AdminPaymentActions } from "@/features/payments/ui/AdminPaymentActions";
+import { formatAppDateTimeSeconds } from "@/lib/datetime/app-timezone";
 
 type PaymentRow = {
   id: string;
@@ -62,7 +63,11 @@ type AdminPaymentAttemptsPanelProps = {
 
 function formatTs(value: string | null): string {
   if (!value) return "—";
-  return value.slice(0, 19).replace("T", " ");
+  try {
+    return formatAppDateTimeSeconds(value);
+  } catch {
+    return value;
+  }
 }
 
 function eventKind(payload: Record<string, unknown> | null): string {
@@ -201,7 +206,7 @@ export function AdminPaymentAttemptsPanel({
           <table className={ADMIN_TABLE}>
             <thead className={ADMIN_TABLE_THEAD}>
               <tr>
-                <th className={ADMIN_TABLE_TH}>When (UTC)</th>
+                <th className={ADMIN_TABLE_TH}>When (UTC+4)</th>
                 <th className={ADMIN_TABLE_TH}>Type</th>
                 <th className={ADMIN_TABLE_TH}>Kind</th>
                 <th className={ADMIN_TABLE_TH}>From → To</th>
@@ -219,10 +224,7 @@ export function AdminPaymentAttemptsPanel({
                 paymentEvents.map((event) => (
                   <tr key={event.id} className={ADMIN_TABLE_ROW}>
                     <td className={ADMIN_TABLE_TD}>
-                      {event.createdAt
-                        .toISOString()
-                        .slice(0, 19)
-                        .replace("T", " ")}
+                      {formatAppDateTimeSeconds(event.createdAt)}
                     </td>
                     <td className={ADMIN_TABLE_TD}>{event.eventType}</td>
                     <td className={ADMIN_TABLE_TD}>

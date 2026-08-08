@@ -28,6 +28,10 @@ import {
   adminPaymentStatusLabel,
 } from "@/features/orders/ui/admin-order-status-labels";
 import { AdminPaymentAttemptsPanel } from "@/features/payments/ui/AdminPaymentAttemptsPanel";
+import {
+  formatAppDateTimeMinutes,
+  formatAppDateTimeSeconds,
+} from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -150,10 +154,7 @@ export default async function AdminOrderDetailPage({
           </p>
           <p className="mt-2 text-sm text-gray-500">
             {fillTemplate(detailCopy.placedUtc, {
-              datetime: order.placedAt
-                .toISOString()
-                .slice(0, 16)
-                .replace("T", " "),
+              datetime: formatAppDateTimeMinutes(order.placedAt),
             })}
           </p>
         </Card>
@@ -223,7 +224,7 @@ export default async function AdminOrderDetailPage({
                   : null}
               </p>
               <p className="text-gray-500">
-                {event.createdAt.toISOString().slice(0, 19).replace("T", " ")}{" "}
+                {formatAppDateTimeSeconds(event.createdAt)}{" "}
                 {common.utc}
                 {event.isCustomerVisible
                   ? ` · ${detailCopy.customerVisible}`

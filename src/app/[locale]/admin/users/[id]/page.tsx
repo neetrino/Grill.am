@@ -18,6 +18,10 @@ import {
 } from "@/features/orders/ui/admin-order-status-labels";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
+  formatAppDateTimeMinutes,
+  formatAppIsoDate,
+} from "@/lib/datetime/app-timezone";
+import {
   getEligibleUserStatuses,
   isUserRole,
   isUserStatus,
@@ -122,18 +126,18 @@ export default async function AdminUserDetailPage({
           <p className="text-gray-700">
             {detailCopy.emailVerified}:{" "}
             {user.emailVerifiedAt
-              ? user.emailVerifiedAt.toISOString().slice(0, 10)
+              ? formatAppIsoDate(user.emailVerifiedAt)
               : common.no}
           </p>
           <p className="text-gray-700">
             {detailCopy.lastLogin}:{" "}
             {user.lastLoginAt
-              ? user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")
+              ? formatAppDateTimeMinutes(user.lastLoginAt)
               : common.never}{" "}
             {common.utc}
           </p>
           <p className="text-gray-700">
-            {detailCopy.created}: {user.createdAt.toISOString().slice(0, 10)}
+            {detailCopy.created}: {formatAppIsoDate(user.createdAt)}
           </p>
         </div>
       </Card>

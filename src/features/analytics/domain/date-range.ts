@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+import {
+  formatAppIsoDate,
+  appDayEndUtc,
+  appDayStartUtc,
+} from "@/lib/datetime/app-timezone";
+
 const MAX_RANGE_DAYS = 366;
 
 export const ANALYTICS_PERIOD_PRESETS = [
@@ -24,8 +30,8 @@ export const analyticsDateRangeSchema = z
   })
   .refine(
     (value) => {
-      const start = new Date(`${value.from}T00:00:00.000Z`);
-      const end = new Date(`${value.to}T00:00:00.000Z`);
+      const start = appDayStartUtc(value.from);
+      const end = appDayStartUtc(value.to);
       const days =
         Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) +
         1;
@@ -36,38 +42,40 @@ export const analyticsDateRangeSchema = z
 
 export type AnalyticsDateRange = z.infer<typeof analyticsDateRangeSchema>;
 
-function utcToday(): Date {
-  const now = new Date();
-  return new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
+function appToday(): Date {
+  const iso = formatAppIsoDate(new Date());
+  return appDayStartUtc(iso);
 }
 
-function toIsoDate(date: Date): string {
-  return date.toISOString().slice(0, 10);
+function shiftAppDays(date: Date, deltaDays: number): Date {
+  return new Date(date.getTime() + deltaDays * 24 * 60 * 60 * 1000);
 }
 
-/** Inclusive UTC date range for a named analytics period preset. */
+/** Inclusive app-timezone (UTC+4) date range for a named analytics period preset. */
 export function rangeForAnalyticsPeriod(
   preset: Exclude<AnalyticsPeriodPreset, "custom">,
 ): AnalyticsDateRange {
-  const toDate = utcToday();
-  const fromDate = new Date(toDate);
+  const toDate = appToday();
+  let fromDate = toDate;
 
   if (preset === "last_7_days") {
-    fromDate.setUTCDate(fromDate.getUTCDate() - 6);
+    fromDate = shiftAppDays(toDate, -6);
   } else if (preset === "last_30_days") {
-    fromDate.setUTCDate(fromDate.getUTCDate() - 29);
+    fromDate = shiftAppDays(toDate, -29);
   } else if (preset === "last_90_days") {
-    fromDate.setUTCDate(fromDate.getUTCDate() - 89);
+    fromDate = shiftAppDays(toDate, -89);
   } else {
-    fromDate.setUTCDate(1);
+    const iso = formatAppIsoDate(toDate);
+    const [year, month] = iso.split("-").map(Number) as [number, number];
+    fromDate = appDayStartUtc(
+      `${year}-${String(month).padStart(2, "0")}-01`,
+    );
   }
 
-  return { from: toIsoDate(fromDate), to: toIsoDate(toDate) };
+  return { from: formatAppIsoDate(fromDate), to: formatAppIsoDate(toDate) };
 }
 
-/** Default inclusive last-30-days range in UTC ISO dates. */
+/** Default inclusive last-30-days range in app-timezone ISO dates. */
 export function defaultAnalyticsDateRange(): AnalyticsDateRange {
   return rangeForAnalyticsPeriod("last_30_days");
 }
@@ -92,7 +100,7 @@ export function matchAnalyticsPeriodPreset(
 
 /** Formats an ISO date for analytics headers (e.g. Jul 12, 2026). */
 export function formatAnalyticsDisplayDate(isoDate: string): string {
-  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString("en-US", {
+  return new Date(`${isoDate}T12:00:00.000Z`).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -102,7 +110,7 @@ export function formatAnalyticsDisplayDate(isoDate: string): string {
 
 /** Formats a short chart/list date (e.g. Jul 13). */
 export function formatAnalyticsShortDate(isoDate: string): string {
-  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString("en-US", {
+  return new Date(`${isoDate}T12:00:00.000Z`).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     timeZone: "UTC",
@@ -117,4 +125,15 @@ export function formatPeriodDelta(current: number, previous: number): string {
   const pct = ((current - previous) / previous) * 100;
   const sign = pct >= 0 ? "+" : "";
   return `${sign}${pct.toFixed(1)}%`;
+}
+
+/** Inclusive UTC instants for an app-timezone calendar from/to range. */
+export function analyticsPeriodUtcBounds(
+  from: string,
+  to: string,
+): { start: Date; end: Date } {
+  return {
+    start: appDayStartUtc(from),
+    end: appDayEndUtc(to),
+  };
 }

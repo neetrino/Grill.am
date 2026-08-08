@@ -22,6 +22,10 @@ import type {
   PromotionKind,
 } from "@/features/promotions/domain/promotion-rules";
 import type { UpsertPromotionInput } from "@/features/promotions/schemas/admin-promotions";
+import {
+  formatAppDateTimeLocalInput,
+  parseAppDateTimeLocal,
+} from "@/lib/datetime/app-timezone";
 
 type TargetOptions = {
   products: Array<{ id: string; sku: string; title: string }>;
@@ -58,7 +62,7 @@ function toDateInput(value: Date | null | undefined): string {
   if (!value) {
     return "";
   }
-  return value.toISOString().slice(0, 16);
+  return formatAppDateTimeLocalInput(value);
 }
 
 export function PromotionForm({
@@ -125,10 +129,10 @@ export function PromotionForm({
             allowStacking: formData.get("allowStacking") === "on",
             isActive: formData.get("isActive") === "on",
             startsAt: String(formData.get("startsAt") ?? "")
-              ? new Date(String(formData.get("startsAt")))
+              ? parseAppDateTimeLocal(String(formData.get("startsAt")))
               : null,
             endsAt: String(formData.get("endsAt") ?? "")
-              ? new Date(String(formData.get("endsAt")))
+              ? parseAppDateTimeLocal(String(formData.get("endsAt")))
               : null,
           };
 

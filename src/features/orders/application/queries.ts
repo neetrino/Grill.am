@@ -25,7 +25,13 @@ import {
 } from "@/db/schema";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
+import { analyticsPeriodUtcBounds } from "@/features/analytics/domain/date-range";
 import { getStoreRevenue } from "@/features/settings/application/queries";
+import {
+  appDayEndUtc,
+  appDayStartUtc,
+  formatAppIsoDate,
+} from "@/lib/datetime/app-timezone";
 
 const PAGE_SIZE = 20;
 
@@ -73,14 +79,12 @@ function buildOrderFilters(filters: AdminOrdersFilter): SQL | undefined {
 
   if (filters.dateFrom) {
     conditions.push(
-      gte(orders.placedAt, new Date(`${filters.dateFrom}T00:00:00.000Z`)),
+      gte(orders.placedAt, appDayStartUtc(filters.dateFrom)),
     );
   }
 
   if (filters.dateTo) {
-    conditions.push(
-      lte(orders.placedAt, new Date(`${filters.dateTo}T23:59:59.999Z`)),
-    );
+    conditions.push(lte(orders.placedAt, appDayEndUtc(filters.dateTo)));
   }
 
   if (filters.q) {
@@ -247,9 +251,11 @@ function periodBounds(from: string, to: string): {
   previousFrom: string;
   previousTo: string;
 } {
-  const start = new Date(`${from}T00:00:00.000Z`);
-  const end = new Date(`${to}T23:59:59.999Z`);
-  const durationMs = Math.max(end.getTime() - start.getTime(), 24 * 60 * 60 * 1000 - 1);
+  const { start, end } = analyticsPeriodUtcBounds(from, to);
+  const durationMs = Math.max(
+    end.getTime() - start.getTime(),
+    24 * 60 * 60 * 1000 - 1,
+  );
   const previousEnd = new Date(start.getTime() - 1);
   const previousStart = new Date(previousEnd.getTime() - durationMs);
 
@@ -258,8 +264,8 @@ function periodBounds(from: string, to: string): {
     end,
     previousStart,
     previousEnd,
-    previousFrom: previousStart.toISOString().slice(0, 10),
-    previousTo: previousEnd.toISOString().slice(0, 10),
+    previousFrom: formatAppIsoDate(previousStart),
+    previousTo: formatAppIsoDate(previousEnd),
   };
 }
 

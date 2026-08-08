@@ -29,7 +29,7 @@
 - **MAY** — optional/extension capability։
 - Requirement ID-երը կայուն են և կիրառվում են task-երում, tests-ում և PR description-ներում։
 - Money field-երի suffix-ը `_amount`; դրանք integer են և իմաստավորվում են համապատասխան currency code-ով։
-- Date/time-երը database-ում UTC են, UI-ում locale-aware են։
+- Date/time-երը database-ում UTC են, UI-ում՝ `Asia/Yerevan` (UTC+4)։
 - Delete-ը financial/audit domain-ում նշանակում է archive/anonymize, ոչ hard delete։
 
 ## Approval gate

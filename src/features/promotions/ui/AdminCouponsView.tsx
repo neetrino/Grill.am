@@ -32,6 +32,7 @@ import {
 } from "@/features/promotions/application/upsert-promotion";
 import type { AdminPromotionListItem } from "@/features/promotions/application/queries";
 import { CouponDrawer } from "@/features/promotions/ui/CouponDrawer";
+import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 type AdminCouponsViewProps = {
   locale: string;
@@ -46,11 +47,10 @@ function valueLabel(discountType: string, discountValue: number): string {
 
 function formatValidUntil(
   endsAt: Date | string | null,
-  locale: string,
   dash: string,
 ): string {
   if (!endsAt) return dash;
-  return new Date(endsAt).toLocaleString(locale);
+  return formatAppDateTimeMinutes(endsAt);
 }
 
 export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
@@ -165,7 +165,7 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
                       <span className="text-sm text-gray-700">
-                        {formatValidUntil(promo.endsAt, locale, common.dash)}
+                        {formatValidUntil(promo.endsAt, common.dash)}
                       </span>
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>

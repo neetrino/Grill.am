@@ -20,6 +20,7 @@ import { AdminMessagesFilters } from "@/features/contact/ui/AdminMessagesFilters
 import { listAdminContactMessages } from "@/features/contact/application/queries";
 import { type ContactStatus } from "@/features/contact/domain/contact-rules";
 import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
+import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -163,10 +164,7 @@ export default async function AdminMessagesPage({
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <span className="text-xs text-gray-500">
-                        {message.createdAt
-                          .toISOString()
-                          .slice(0, 16)
-                          .replace("T", " ")}{" "}
+                        {formatAppDateTimeMinutes(message.createdAt)}{" "}
                         {common.utc}
                       </span>
                     </td>

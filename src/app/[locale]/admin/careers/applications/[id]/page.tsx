@@ -23,6 +23,7 @@ import {
   type JobApplicationStatus,
 } from "@/features/careers/domain/application-rules";
 import { UpdateApplicationStatusForm } from "@/features/careers/ui/UpdateApplicationStatusForm";
+import { formatAppDateTimeSeconds } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -136,7 +137,7 @@ export default async function AdminApplicationDetailPage({
             icon={<CalendarDays className={FIELD_ICON_CLASS} />}
             label={copy.detail.received}
           >
-            {application.createdAt.toISOString().slice(0, 19).replace("T", " ")}{" "}
+            {formatAppDateTimeSeconds(application.createdAt)}{" "}
             {common.utc}
           </AdminDetailField>
         </div>

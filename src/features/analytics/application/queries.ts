@@ -20,8 +20,10 @@ import {
   type AnalyticsTopProduct,
 } from "@/features/analytics/application/top-rankings";
 import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
+import { analyticsPeriodUtcBounds } from "@/features/analytics/domain/date-range";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { getStoreRevenue } from "@/features/settings/application/queries";
+import { formatAppIsoDate } from "@/lib/datetime/app-timezone";
 import type { Locale } from "@/lib/i18n/config";
 
 export type {
@@ -59,8 +61,7 @@ function periodBounds(from: string, to: string): {
   previousFrom: string;
   previousTo: string;
 } {
-  const start = new Date(`${from}T00:00:00.000Z`);
-  const end = new Date(`${to}T23:59:59.999Z`);
+  const { start, end } = analyticsPeriodUtcBounds(from, to);
   const durationMs = Math.max(
     end.getTime() - start.getTime(),
     24 * 60 * 60 * 1000 - 1,
@@ -73,8 +74,8 @@ function periodBounds(from: string, to: string): {
     end,
     previousStart,
     previousEnd,
-    previousFrom: previousStart.toISOString().slice(0, 10),
-    previousTo: previousEnd.toISOString().slice(0, 10),
+    previousFrom: formatAppIsoDate(previousStart),
+    previousTo: formatAppIsoDate(previousEnd),
   };
 }
 
@@ -130,7 +131,7 @@ async function queryDailyRows(input: {
   );
   const rows = await getDb()
     .select({
-      date: sql<string>`to_char(${orders.placedAt} at time zone 'UTC', 'YYYY-MM-DD')`,
+      date: sql<string>`to_char(${orders.placedAt} at time zone 'Asia/Yerevan', 'YYYY-MM-DD')`,
       orderCount: count(),
       revenueAmount: sql<number>`coalesce(sum(case when ${orders.status} in (${revenueStatusSql}) then ${orders.totalAmount} else 0 end), 0)`.mapWith(
         Number,
@@ -144,8 +145,8 @@ async function queryDailyRows(input: {
         lte(orders.placedAt, bounds.end),
       ),
     )
-    .groupBy(sql`to_char(${orders.placedAt} at time zone 'UTC', 'YYYY-MM-DD')`)
-    .orderBy(sql`to_char(${orders.placedAt} at time zone 'UTC', 'YYYY-MM-DD')`);
+    .groupBy(sql`to_char(${orders.placedAt} at time zone 'Asia/Yerevan', 'YYYY-MM-DD')`)
+    .orderBy(sql`to_char(${orders.placedAt} at time zone 'Asia/Yerevan', 'YYYY-MM-DD')`);
 
   return rows.map((row) => ({
     date: row.date,

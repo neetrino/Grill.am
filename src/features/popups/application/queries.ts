@@ -10,6 +10,7 @@ import {
   PUBLIC_CACHE_REVALIDATE_SECONDS,
 } from "@/lib/cache/tags";
 import { mediaPublicUrl } from "@/lib/media/public-url";
+import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 export type AdminPopupListItem = {
   id: string;
@@ -66,7 +67,7 @@ export async function listAdminPopups(): Promise<AdminPopupListItem[]> {
     id: row.id,
     isActive: row.isActive,
     imageUrl: images.get(row.id) ?? null,
-    createdAtLabel: row.createdAt.toLocaleString(),
+    createdAtLabel: formatAppDateTimeMinutes(row.createdAt),
   }));
 }
 

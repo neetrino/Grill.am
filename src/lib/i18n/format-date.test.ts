@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { formatShortDate } from "@/lib/i18n/format-date";
 
 describe("formatShortDate", () => {
-  const sample = new Date(Date.UTC(2026, 7, 4));
+  const sample = new Date(Date.UTC(2026, 7, 4, 12));
 
   it("formats English without Intl", () => {
     expect(formatShortDate(sample, "en")).toBe("Aug 4, 2026");
@@ -23,10 +23,10 @@ describe("formatShortDate", () => {
     );
   });
 
-  it("matches across local timezones near UTC midnight", () => {
-    // 2026-08-03 22:00 UTC → still Aug 3 in UTC (would be Aug 4 in UTC+4).
+  it("uses UTC+4 calendar day near UTC midnight", () => {
+    // 2026-08-03 22:00 UTC → Aug 4 in UTC+4.
     expect(formatShortDate("2026-08-03T22:00:00.000Z", "en")).toBe(
-      "Aug 3, 2026",
+      "Aug 4, 2026",
     );
   });
 });

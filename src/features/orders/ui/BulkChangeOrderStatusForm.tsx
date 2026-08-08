@@ -29,6 +29,7 @@ import {
 import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
+import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 type BulkOrderRow = {
   id: string;
@@ -239,10 +240,7 @@ export function BulkChangeOrderStatusForm({
                   </td>
                   <td className={ADMIN_TABLE_TD}>
                     <span className="text-xs text-gray-500">
-                      {new Date(order.placedAt)
-                        .toISOString()
-                        .slice(0, 16)
-                        .replace("T", " ")}{" "}
+                      {formatAppDateTimeMinutes(order.placedAt)}{" "}
                       {common.utc}
                     </span>
                   </td>
