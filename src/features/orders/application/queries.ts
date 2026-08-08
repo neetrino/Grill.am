@@ -40,6 +40,8 @@ export type AdminOrderListItem = {
   orderNumber: string;
   status: string;
   paymentStatus: string;
+  /** Latest payment attempt method code, if any. */
+  latestPaymentMethod: string | null;
   contactName: string;
   contactEmail: string;
   totalAmount: number;
@@ -47,6 +49,18 @@ export type AdminOrderListItem = {
   placedAt: Date;
   isArchived: boolean;
 };
+
+function latestPaymentMethodSelect() {
+  return sql<string | null>`
+    (
+      select ${payments.method}
+      from ${payments}
+      where ${payments.orderId} = ${orders.id}
+      order by ${payments.attemptNumber} desc
+      limit 1
+    )
+  `;
+}
 
 /** Customer profile list row — includes line-item quantity for order cards. */
 export type CustomerOrderListItem = AdminOrderListItem & {
@@ -116,6 +130,7 @@ export async function listAdminOrders(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        latestPaymentMethod: latestPaymentMethodSelect(),
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
@@ -163,6 +178,7 @@ export async function listCustomerOrders(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        latestPaymentMethod: latestPaymentMethodSelect(),
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
@@ -338,6 +354,7 @@ export async function getAdminDashboardMetrics(input: {
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        latestPaymentMethod: latestPaymentMethodSelect(),
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,

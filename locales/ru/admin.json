@@ -236,6 +236,7 @@
       "customer": "Клиент",
       "status": "Статус",
       "payment": "Оплата",
+      "paymentMethod": "Способ оплаты",
       "total": "Итого",
       "placed": "Оформлен",
       "archived": "В архиве",

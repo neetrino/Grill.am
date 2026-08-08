@@ -236,6 +236,7 @@
       "customer": "Customer",
       "status": "Status",
       "payment": "Payment",
+      "paymentMethod": "Payment method",
       "total": "Total",
       "placed": "Placed",
       "archived": "Archived",
