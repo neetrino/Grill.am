@@ -327,6 +327,17 @@
       "restoreOrder": "Restore order",
       "archiveHint": "Archive hides the order from default admin lists without deleting data.",
       "archivedHint": "This order is archived. Restore it to show in default lists."
+    },
+    "alert": {
+      "title": "New order",
+      "titleWithCount": "New order ({remaining} waiting)",
+      "orderNumber": "Order #{orderNumber}",
+      "customer": "Customer",
+      "total": "Total",
+      "payment": "Payment",
+      "placedAt": "Placed",
+      "acknowledge": "I heard it",
+      "audioBlocked": "Sound is blocked by the browser. Click the button or interact with the page to enable the alert tone."
     }
   },
   "users": {

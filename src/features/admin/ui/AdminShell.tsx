@@ -13,6 +13,7 @@ import {
   ADMIN_PAGE_SHELL,
 } from "@/features/admin/ui/admin-shell-classes";
 import { ADMIN_NAV_TRANSITION_MS } from "@/features/admin/ui/admin-ui";
+import { NewOrderAlertHost } from "@/features/orders/ui/NewOrderAlertHost";
 import type { UserRole } from "@/features/users/domain/user-lifecycle";
 import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -49,6 +50,7 @@ export function AdminShell({
               {children}
             </div>
           </div>
+          <NewOrderAlertHost locale={locale} />
         </div>
       </AdminSidebarCollapseProvider>
     </AdminDictionaryProvider>
