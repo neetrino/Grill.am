@@ -61,7 +61,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:migrate
       - run: pnpm test:integration
-      - run: pnpm outbox:once
 
   e2e:
     runs-on: ubuntu-latest
