@@ -9,10 +9,30 @@ import type {
 } from "@/lib/email/delivery";
 import { logger } from "@/lib/observability/logger";
 
+const RESEND_ERROR_MESSAGE_MAX_LEN = 200;
+
 function maskEmail(value: string): string {
   const at = value.indexOf("@");
   if (at <= 1) return "***";
   return `${value.slice(0, 1)}***${value.slice(at)}`;
+}
+
+/** Truncates and redacts Resend error text for logs and safeMessage. */
+function toSafeResendErrorMessage(raw: unknown): string | undefined {
+  if (typeof raw !== "string") {
+    return undefined;
+  }
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  const redacted = trimmed
+    .replace(/re_[A-Za-z0-9_]+/gi, "[REDACTED]")
+    .replace(/\bsk_[A-Za-z0-9_]+/gi, "[REDACTED]");
+  if (redacted.length <= RESEND_ERROR_MESSAGE_MAX_LEN) {
+    return redacted;
+  }
+  return `${redacted.slice(0, RESEND_ERROR_MESSAGE_MAX_LEN - 3)}...`;
 }
 
 export type ResendEmailDeliveryOptions = {
@@ -48,6 +68,7 @@ export function createResendEmailDelivery(
 
         if (result.error) {
           const statusCode = result.error.statusCode;
+          const errorMessage = toSafeResendErrorMessage(result.error.message);
           const retryable =
             statusCode == null ||
             statusCode === 408 ||
@@ -58,12 +79,16 @@ export function createResendEmailDelivery(
             name: result.error.name,
             statusCode,
             retryable,
+            ...(errorMessage ? { errorMessage } : {}),
           });
+          const safeMessage = errorMessage
+            ? `Resend delivery failed: ${errorMessage}`
+            : "Resend delivery failed";
           return {
             ok: false,
             retryable,
             errorCode: result.error.name || "RESEND_ERROR",
-            safeMessage: "Resend delivery failed",
+            safeMessage,
           };
         }
 
