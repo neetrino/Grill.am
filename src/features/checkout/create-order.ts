@@ -690,6 +690,19 @@ export async function createOrderAction(
           recipientRole: "customer",
           safePayload: { paymentMethod: "cash_on_delivery" },
         });
+
+        await enqueuePaymentNotification(tx, {
+          type: "ADMIN_ORDER_NOTIFY",
+          orderId,
+          orderNumber: number,
+          locale: input.locale,
+          dedupeKey: `admin-order:${orderId}`,
+          recipientRole: "operator",
+          safePayload: {
+            trigger: "cod_order_created",
+            paymentMethod: "cash_on_delivery",
+          },
+        });
       }
 
       return {

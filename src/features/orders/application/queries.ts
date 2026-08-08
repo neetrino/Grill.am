@@ -211,20 +211,9 @@ export async function listCustomerOrders(
   };
 }
 
-/** Loads a single order with line items and immutable event history. */
-export async function getAdminOrderByNumber(
-  orderNumber: string,
-): Promise<AdminOrderDetail | null> {
-  const [order] = await getDb()
-    .select()
-    .from(orders)
-    .where(eq(orders.orderNumber, orderNumber))
-    .limit(1);
-
-  if (!order) {
-    return null;
-  }
-
+async function loadAdminOrderDetail(
+  order: typeof orders.$inferSelect,
+): Promise<AdminOrderDetail> {
   const [items, events, paymentRows] = await Promise.all([
     getDb()
       .select()
@@ -243,6 +232,40 @@ export async function getAdminOrderByNumber(
   ]);
 
   return { order, items, events, payments: paymentRows };
+}
+
+/** Loads a single order with line items and immutable event history. */
+export async function getAdminOrderByNumber(
+  orderNumber: string,
+): Promise<AdminOrderDetail | null> {
+  const [order] = await getDb()
+    .select()
+    .from(orders)
+    .where(eq(orders.orderNumber, orderNumber))
+    .limit(1);
+
+  if (!order) {
+    return null;
+  }
+
+  return loadAdminOrderDetail(order);
+}
+
+/** Loads a single order by id with line items, events, and payments. */
+export async function getAdminOrderById(
+  orderId: string,
+): Promise<AdminOrderDetail | null> {
+  const [order] = await getDb()
+    .select()
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
+
+  if (!order) {
+    return null;
+  }
+
+  return loadAdminOrderDetail(order);
 }
 
 export type DashboardMetrics = {

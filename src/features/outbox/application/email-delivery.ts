@@ -1,14 +1,17 @@
 import "server-only";
 
+import { getEnv } from "@/config/env";
 import {
   createCaptureEmailDelivery,
   createSinkEmailDelivery,
 } from "@/lib/email/capture-adapter";
 import type { EmailDeliveryProvider } from "@/lib/email/delivery";
+import { createResendEmailDelivery } from "@/lib/email/resend-adapter";
+import { logger } from "@/lib/observability/logger";
 
 /**
  * Selects outbox delivery provider.
- * Production: sink until Resend (or other) is wired — never accidental mock inbox.
+ * Priority: E2E capture → Resend (when credentials present) → sink.
  */
 export function getOutboxEmailDelivery(): EmailDeliveryProvider {
   const mode = process.env.E2E_EMAIL_MODE?.trim().toLowerCase();
@@ -19,5 +22,16 @@ export function getOutboxEmailDelivery(): EmailDeliveryProvider {
     return createCaptureEmailDelivery("e2e");
   }
 
+  const env = getEnv();
+  if (env.RESEND_API_KEY && env.EMAIL_FROM) {
+    return createResendEmailDelivery({
+      apiKey: env.RESEND_API_KEY,
+      from: env.EMAIL_FROM,
+    });
+  }
+
+  logger.info("email.delivery.sink_fallback", {
+    reason: "missing_resend_credentials",
+  });
   return createSinkEmailDelivery();
 }

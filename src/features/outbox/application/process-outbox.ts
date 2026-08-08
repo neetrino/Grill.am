@@ -1,5 +1,8 @@
+import "server-only";
+
 import { eq } from "drizzle-orm";
 
+import { getEnv } from "@/config/env";
 import { getDb } from "@/db/client";
 import { orders, outboxEvents } from "@/db/schema";
 import {
@@ -14,6 +17,7 @@ import {
   markOutboxSent,
 } from "@/features/outbox/application/claim-outbox";
 import { getOutboxEmailDelivery } from "@/features/outbox/application/email-delivery";
+import { renderAdminOrderEmail } from "@/features/outbox/templates/admin-order-email-template";
 import {
   renderCodOrderCreatedEmail,
   renderPaymentCapturedEmail,
@@ -21,6 +25,11 @@ import {
   renderReviewCustomerEmail,
   renderReviewOperatorEmail,
 } from "@/features/outbox/templates/payment-email-templates";
+import {
+  getAdminOrderById,
+} from "@/features/orders/application/queries";
+import { toAdminOrderDetailView } from "@/features/orders/application/order-detail-view";
+import { getStoreIdentity } from "@/features/settings/application/queries";
 import type { EmailDeliveryProvider } from "@/lib/email/delivery";
 import { createId } from "@/lib/id";
 import { formatMoneyAmount } from "@/lib/money/format";
@@ -55,6 +64,16 @@ function maskEmail(value: string): string {
   return `${value.slice(0, 1)}***${value.slice(at)}`;
 }
 
+/** Prefer ADMIN_EMAIL, then OPS_ALERT_EMAIL for operator destinations. */
+function resolveOperatorEmail(): string | undefined {
+  const adminEmail = getEnv().ADMIN_EMAIL?.trim();
+  if (adminEmail) {
+    return adminEmail;
+  }
+  const opsAlert = process.env.OPS_ALERT_EMAIL?.trim();
+  return opsAlert || undefined;
+}
+
 async function defaultLoadOrder(orderId: string): Promise<OutboxOrderRow | null> {
   const [order] = await getDb()
     .select()
@@ -62,6 +81,45 @@ async function defaultLoadOrder(orderId: string): Promise<OutboxOrderRow | null>
     .where(eq(orders.id, orderId))
     .limit(1);
   return order ?? null;
+}
+
+async function buildAdminOrderMessage(
+  row: typeof outboxEvents.$inferSelect,
+  locale: Locale,
+): Promise<{
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+} | null> {
+  const to = resolveOperatorEmail();
+  if (!to) {
+    logger.warn("outbox.admin_order.missing_recipient", {
+      outboxId: row.id,
+      orderId: row.aggregateId,
+    });
+    return null;
+  }
+
+  const detail = await getAdminOrderById(row.aggregateId);
+  if (!detail) {
+    return null;
+  }
+
+  const identity = await getStoreIdentity();
+  const view = toAdminOrderDetailView(detail, identity.name);
+  const rendered = renderAdminOrderEmail({
+    locale,
+    storeName: identity.name,
+    detail: view,
+  });
+
+  return {
+    to,
+    subject: rendered.subject,
+    html: rendered.html,
+    text: rendered.text,
+  };
 }
 
 async function buildMessageForRow(
@@ -80,6 +138,10 @@ async function buildMessageForRow(
   const locale: Locale = isLocale(localeRaw) ? localeRaw : "en";
   const recipientRole =
     payload.recipientRole === "operator" ? "operator" : "customer";
+
+  if (row.eventType === "ADMIN_ORDER_NOTIFY") {
+    return buildAdminOrderMessage(row, locale);
+  }
 
   const order = await loadOrder(row.aggregateId);
   if (!order) {
@@ -126,7 +188,7 @@ async function buildMessageForRow(
 
   const to =
     recipientRole === "operator"
-      ? (process.env.OPS_ALERT_EMAIL?.trim() || order.contactEmail)
+      ? (resolveOperatorEmail() || order.contactEmail)
       : order.contactEmail;
 
   return {

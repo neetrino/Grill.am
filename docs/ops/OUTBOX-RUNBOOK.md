@@ -1,7 +1,7 @@
 # Outbox runbook
 
 **Status.** Phase 5 durable consumer  
-**Last updated.** 2026-08-06
+**Last updated.** 2026-08-08
 
 ## State model
 
@@ -31,14 +31,20 @@ Examples:
 
 - `cod-order-created:<orderId>:customer`
 - `payment-captured:<paymentId>:customer`
+- `admin-order:<orderId>`
 - `payment-review:<orderId>:customer`
 - `payment-review:<orderId>:operators`
 
 ## Email
 
-Default sink (no external send).  
-`E2E_EMAIL_MODE=mock` → capture inbox (non-production only).  
-Production Resend (or other) adapter is an activation follow-up — worker is ready with sink.
+Delivery selection:
+
+1. `E2E_EMAIL_MODE=mock|capture` → in-process capture inbox (non-production only).
+2. `RESEND_API_KEY` + `EMAIL_FROM` set → Resend delivery.
+3. Otherwise → sink (logs only, no external send).
+
+Admin order emails (`ADMIN_ORDER_NOTIFY`) go to `ADMIN_EMAIL`, with `OPS_ALERT_EMAIL` as fallback for operator review alerts.  
+Rich admin content includes items, modifiers, totals, contact, fulfillment, and COD cash tendered/change when present.
 
 ## CLI notes
 
@@ -48,7 +54,7 @@ Outbox scripts preload `scripts/preload-server-only.cjs` and load `.env` via `do
 
 Exactly-once email requires provider idempotency end-to-end.  
 Guarantees: exactly-once claim/state locally, DB dedupe on enqueue, at-least-once delivery with bounded retry.
-Production Resend adapter remains a follow-up activation item.
+Resend idempotency key is passed from the outbox `dedupe_key` when using the Resend adapter.
 
 ## Exactly-once caveats
 

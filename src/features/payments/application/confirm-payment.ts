@@ -215,6 +215,20 @@ export async function confirmPayment(
       },
     });
 
+    await enqueuePaymentNotification(tx, {
+      type: "ADMIN_ORDER_NOTIFY",
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      locale: order.locale,
+      dedupeKey: `admin-order:${order.id}`,
+      recipientRole: "operator",
+      safePayload: {
+        trigger: "online_payment_captured",
+        provider: payment.provider,
+        attemptNumber: payment.attemptNumber,
+      },
+    });
+
     paymentMetrics.increment(PAYMENT_METRIC_NAMES.captured, {
       provider: payment.provider,
       operation: "confirm",

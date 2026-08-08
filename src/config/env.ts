@@ -60,6 +60,8 @@ const envSchema = z.object({
   R2_ENDPOINT: optionalUrl(),
   EMAIL_FROM: optionalEmail(),
   RESEND_API_KEY: optionalNonEmptyString(),
+  /** Destination for rich admin order notification emails. */
+  ADMIN_EMAIL: optionalEmail(),
   /** Cash on delivery — default enabled for development. */
   PAYMENT_ENABLE_COD: optionalBoolean(true),
   /** ARCA card payments — disabled until provider phase. */
@@ -142,6 +144,7 @@ export function getEnv(): AppEnv {
     R2_ENDPOINT: process.env.R2_ENDPOINT,
     EMAIL_FROM: process.env.EMAIL_FROM,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     PAYMENT_ENABLE_COD: process.env.PAYMENT_ENABLE_COD,
     PAYMENT_ENABLE_ARCA: process.env.PAYMENT_ENABLE_ARCA,
     PAYMENT_ENABLE_IDRAM: process.env.PAYMENT_ENABLE_IDRAM,
