@@ -99,6 +99,13 @@
       "when": 1786060000000,
       "tag": "0014_drop_outbox_events",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1786070000000,
+      "tag": "0015_orders_customer_note",
+      "breakpoints": true
     }
   ]
 }

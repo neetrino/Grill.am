@@ -31,6 +31,8 @@ export type AdminOrderDetailView = {
   contactName: string;
   contactEmail: string;
   contactPhone: string;
+  /** Customer checkout note; null when none. */
+  customerNote: string | null;
   baseCurrency: string;
   subtotalAmount: number;
   deliveryAmount: number;
@@ -102,6 +104,7 @@ export function toAdminOrderDetailView(
     contactName: order.contactName,
     contactEmail: order.contactEmail,
     contactPhone: order.contactPhone,
+    customerNote: order.customerNote ?? null,
     baseCurrency: order.baseCurrency,
     subtotalAmount: order.subtotalAmount,
     deliveryAmount: order.deliveryAmount,

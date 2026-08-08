@@ -269,6 +269,7 @@
       "name": "Имя",
       "phone": "Телефон",
       "email": "Email",
+      "customerNote": "Комментарий клиента",
       "shippingMethod": "Способ доставки",
       "pickupStore": "Самовывоз",
       "pickupMethod": "Самовывоз",
@@ -337,6 +338,7 @@
       "payment": "Оплата",
       "placedAt": "Время",
       "acknowledge": "Услышал",
+      "acknowledgeAll": "Услышал — закрыть все ({remaining})",
       "enableSound": "Включить звук",
       "audioBlocked": "Браузер заблокировал звук. Нажмите кнопку или взаимодействуйте со страницей, чтобы включить сигнал."
     }

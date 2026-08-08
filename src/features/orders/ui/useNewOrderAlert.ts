@@ -8,7 +8,7 @@ import {
 } from "@/features/orders/application/poll-new-order-alerts";
 import { OrderAlertAudio } from "@/features/orders/ui/orderAlertAudio";
 import {
-  acknowledgeOrderId,
+  acknowledgeOrderIds,
   isOrderAcknowledged,
   loadOrderAlertStorage,
   type OrderAlertStorageState,
@@ -24,7 +24,8 @@ type UseNewOrderAlertResult = {
   current: NewOrderAlertDto | null;
   remainingCount: number;
   audioBlocked: boolean;
-  acknowledgeCurrent: () => void;
+  /** Dismisses every queued alert in one action (sound + overlay). */
+  acknowledgeAll: () => void;
   unlockAudio: () => void;
 };
 
@@ -159,33 +160,32 @@ export function useNewOrderAlert({
     });
   }, []);
 
-  const acknowledgeCurrent = useCallback(() => {
+  const acknowledgeAll = useCallback(() => {
     const audio = audioRef.current;
     if (audio && !audio.isUnlocked()) {
       unlockAudio();
       return;
     }
 
-    const current = queue[0];
-    if (!current) {
+    if (queue.length === 0) {
       return;
     }
 
     const storage = storageRef.current ?? loadOrderAlertStorage();
-    storageRef.current = acknowledgeOrderId(storage, current.id);
+    storageRef.current = acknowledgeOrderIds(
+      storage,
+      queue.map((order) => order.id),
+    );
 
-    setQueue((prev) => {
-      const next = prev.filter((order) => order.id !== current.id);
-      syncAudio(next.length > 0);
-      return next;
-    });
+    setQueue([]);
+    syncAudio(false);
   }, [queue, syncAudio, unlockAudio]);
 
   return {
     current: queue[0] ?? null,
     remainingCount: queue.length,
     audioBlocked,
-    acknowledgeCurrent,
+    acknowledgeAll,
     unlockAudio,
   };
 }

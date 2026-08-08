@@ -14,6 +14,7 @@ function sampleDetail(
     contactName: "Anna <script>",
     contactEmail: "anna@example.com",
     contactPhone: "+37400000000",
+    customerNote: null,
     baseCurrency: "AMD",
     subtotalAmount: 5000,
     deliveryAmount: 500,

@@ -3,6 +3,7 @@
 import { type ReactNode } from "react";
 
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import { CUSTOMER_NOTE_MAX_LENGTH } from "@/features/checkout/domain/customer-note";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
 import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import {
@@ -20,6 +21,7 @@ type CheckoutDetailsLabels = {
   shippingMethod: string;
   shippingAddress: string;
   paymentMethod: string;
+  orderComment: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -31,6 +33,7 @@ type CheckoutDetailsLabels = {
   phonePlaceholder: string;
   cityPlaceholder: string;
   addressPlaceholder: string;
+  orderCommentPlaceholder: string;
   storePickup: string;
   storePickupDescription: string;
   delivery: string;
@@ -247,6 +250,25 @@ export function CheckoutDetailsSections({
         disabled={pending}
         cashOnDeliveryExtra={cashOnDeliveryExtra}
       />
+
+      <section className={CHECKOUT_SECTION_CARD_CLASS}>
+        <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
+          {labels.orderComment}
+        </h2>
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+          <span className="sr-only">{labels.orderComment}</span>
+          <textarea
+            name="customerNote"
+            rows={4}
+            maxLength={CUSTOMER_NOTE_MAX_LENGTH}
+            placeholder={labels.orderCommentPlaceholder}
+            disabled={pending}
+            className={`${CHECKOUT_FIELD_CLASS} min-h-[96px] resize-y`}
+            autoComplete="off"
+            suppressHydrationWarning
+          />
+        </label>
+      </section>
     </div>
   );
 }

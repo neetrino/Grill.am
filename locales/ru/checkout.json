@@ -10,6 +10,7 @@
   "shippingMethod": "Способ доставки",
   "shippingAddress": "Адрес доставки",
   "paymentMethod": "Способ оплаты",
+  "orderComment": "Комментарий к заказу",
   "orderSummary": "Итог заказа",
   "form": {
     "firstName": "Имя",
@@ -24,7 +25,8 @@
   "placeholders": {
     "phone": "+374XXXXXXXX",
     "address": "Улица, квартира, офис и т.д.",
-    "city": "Город"
+    "city": "Город",
+    "orderComment": "Оставьте заметку для кухни или курьера (необязательно)"
   },
   "shipping": {
     "storePickup": "Take Away",

@@ -30,6 +30,7 @@ import {
   buildCodPaymentMetadata,
   validateCodCashTenderedAmount,
 } from "@/features/checkout/domain/cod-cash-change";
+import { sanitizeCustomerNote } from "@/features/checkout/domain/customer-note";
 import {
   createPaymentAttempt,
   getLatestPaymentAttempt,
@@ -220,6 +221,7 @@ export async function createOrderAction(
   }
 
   const contactName = `${input.firstName} ${input.lastName}`.trim();
+  const customerNote = sanitizeCustomerNote(input.customerNote);
   const scopeHash = hashValue(user?.id ?? cart.guestTokenHash ?? cart.id);
   const keyHash = hashValue(input.idempotencyKey);
   const fingerprint = hashValue(
@@ -234,6 +236,7 @@ export async function createOrderAction(
       paymentMethod: input.paymentMethod,
       cashTenderedAmount: input.cashTenderedAmount ?? null,
       deliveryRuleId: input.deliveryRuleId ?? null,
+      customerNote,
     }),
   );
 
@@ -545,6 +548,7 @@ export async function createOrderAction(
         contactEmail: input.contactEmail.toLowerCase(),
         contactPhone: input.contactPhone,
         contactName,
+        customerNote,
         status: "PENDING",
         paymentStatus: "PENDING",
         baseCurrency: defaultCurrency,
