@@ -1,58 +1,57 @@
-# Outbox runbook
+# Order email delivery
 
-**Status.** Phase 5 durable consumer  
-**Last updated.** 2026-08-06
+**Status.** Immediate send via Next.js `after()`  
+**Last updated.** 2026-08-08
 
-## State model
+## Decision
 
-`PENDING` → `PROCESSING` → `COMPLETED` (sent) | `FAILED`  
-Retries return to `PENDING` with future `available_at`.
+Order/payment emails are nice-to-have for this product. Prefer simplicity over durable queue delivery so Neon is not woken by per-minute outbox cron.
 
-## Claim
+## How it works
 
-`FOR UPDATE SKIP LOCKED` via `claimOutboxBatch`.  
-Delivery runs **outside** the claim transaction.
+After the DB transaction that creates a COD order, captures/fails a payment, or marks requires-review **commits**, the application schedules:
 
-## Commands
-
-```text
-pnpm outbox:once
-pnpm outbox:work
-pnpm outbox:stats
+```ts
+import { after } from "next/server";
+after(async () => { /* render + send */ });
 ```
 
-Deploy as a separate worker process or cron calling `outbox:once`.  
-Do not expose a public consumer route.
+Module: `src/features/notifications/application/schedule-order-emails.ts`  
+Send/render: `src/features/notifications/application/send-order-emails.ts`
 
-## Dedupe
+Failures inside `after()` are logged and never fail the HTTP/checkout response.
 
-PostgreSQL unique partial index on `dedupe_key`.  
-Examples:
+## Triggers
 
-- `cod-order-created:<orderId>:customer`
-- `payment-captured:<paymentId>:customer`
-- `payment-review:<orderId>:customer`
-- `payment-review:<orderId>:operators`
+| Moment | Emails |
+| --- | --- |
+| COD order created | Customer COD + admin order |
+| Online payment CAPTURED | Customer captured + admin order |
+| Payment failed/cancelled | Customer failed (skips `PAYMENT_ATTEMPT_EXPIRED`) |
+| Requires review | Customer review + operator review |
 
-## Email
+Operator recipient: `ADMIN_EMAIL`, then `OPS_ALERT_EMAIL`.
 
-Default sink (no external send).  
-`E2E_EMAIL_MODE=mock` → capture inbox (non-production only).  
-Production Resend (or other) adapter is an activation follow-up — worker is ready with sink.
+## Delivery selection
 
-## CLI notes
+`getEmailDelivery()` (`src/lib/email/get-email-delivery.ts`):
 
-Outbox scripts preload `scripts/preload-server-only.cjs` and load `.env` via `dotenv`.
+1. `E2E_EMAIL_MODE=mock|capture` → in-process capture inbox (non-production only).
+2. `RESEND_API_KEY` + `EMAIL_FROM` → Resend.
+3. Otherwise → sink (logs only).
 
-## Limitations
+## Outbox removed
 
-Exactly-once email requires provider idempotency end-to-end.  
-Guarantees: exactly-once claim/state locally, DB dedupe on enqueue, at-least-once delivery with bounded retry.
-Production Resend adapter remains a follow-up activation item.
+Table `outbox_events` and enum `outbox_status` are dropped by migration `0014_drop_outbox_events`.  
+`pnpm outbox:*` scripts removed. Do not schedule outbox cron.
 
-## Exactly-once caveats
+## Smoke test (manual)
 
-- Exactly-once **claim/state** locally.
-- Deduped **enqueue**.
-- At-least-once **delivery attempt** with bounded retry.
-- Unknown network timeouts may duplicate without provider idempotency.
+1. Ensure `RESEND_API_KEY` + `EMAIL_FROM` (or sink in staging).
+2. Place a COD order → customer + admin email.
+3. Complete a mock/test capture → customer + admin email.
+4. Confirm checkout HTTP succeeds even if Resend is misconfigured (check logs for `order_email.*`).
+
+## Deploy note
+
+Apply `pnpm db:migrate` (includes `0014_drop_outbox_events`) after deploying application code that no longer writes outbox rows. Developer runs migrate; do not rely on agent production migrate.

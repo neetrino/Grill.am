@@ -1,7 +1,7 @@
 # Payments — incident runbook (Phase 6)
 
-**Status.** Operational guidance for ARCA / iDram / outbox.  
-**Last updated.** 2026-08-06  
+**Status.** Operational guidance for ARCA / iDram / order emails.  
+**Last updated.** 2026-08-08  
 **Never log.** Credentials, checksum source strings, full tokens, card data, guest access tokens, raw callback bodies.
 
 ## Alert matrix
@@ -15,7 +15,7 @@
 | PENDING older than threshold | ARCA >20m or iDram >60m (local TTL) | Medium | Dry reconcile; ARCA recheck; iDram portal; expire abandoned via admin |
 | REQUIRES_REVIEW created | Any | High | Admin order detail → fulfill or resolve with audit; payment remains CAPTURED |
 | Reconciliation mismatch | Any dry-report `failed_may_be_paid` / cart mismatch | High | Follow `PAYMENTS-RECONCILIATION.md`; never SQL-override status |
-| Outbox permanently failed | Any `FAILED` row | High | `pnpm outbox:stats`; fix email transport; re-enqueue with same dedupe |
+| Order email send failures | Repeated `order_email.send_*` / `order_email.after_failed` | Medium | Check Resend/`EMAIL_FROM`; emails are best-effort and must not block checkout |
 | Neon transaction disconnects | Repeated `Connection terminated unexpectedly` during checkout | Medium | Correlate with failed checkouts; consider local Postgres for E2E; escalate Neon if prod impact |
 
 ## Log events to watch
@@ -25,7 +25,7 @@ Safe structured messages (subset):
 - `payment.captured` / `payment.failed` / `payment.requires_review` (via metrics + domain logs)
 - `arca.registered` / `arca.provider_paid_stock_unavailable`
 - `idram.precheck_accepted` / `idram.checksum_invalid` / `idram.confirmation_processed`
-- `outbox.sent` / outbox failure markers
+- `order_email.sent` / `order_email.send_rejected` / `order_email.after_failed`
 - `payments.reconcile.dry`
 
 Metrics sink: in-process `paymentMetrics` (`src/features/payments/domain/payment-metrics.ts`).  
@@ -37,7 +37,7 @@ Authorized staff (`ADMIN` | `OPERATOR`):
 
 1. Open admin order detail — payment attempts + event timeline.
 2. Recheck ARCA where protocol supports (`getOrderStatusExtended`).
-3. Retry notification via outbox tooling (same dedupe key).
+3. If a customer missed an email, re-send manually outside the app (emails are best-effort immediate sends).
 4. Resolve `REQUIRES_REVIEW` with audit entry (fulfillment only).
 5. **Never** manually mark CAPTURED without verified provider result + privileged workflow.
 

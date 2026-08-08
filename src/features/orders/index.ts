@@ -15,6 +15,7 @@ export {
 } from "@/features/orders/application/order-detail-view";
 export {
   getAdminDashboardMetrics,
+  getAdminOrderById,
   getAdminOrderByNumber,
   listAdminOrders,
   listCustomerOrders,

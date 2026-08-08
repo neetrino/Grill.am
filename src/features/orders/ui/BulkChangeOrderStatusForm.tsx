@@ -27,6 +27,7 @@ import {
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
+import { formatPaymentMethodDisplay } from "@/features/orders/domain/payment-method-label";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
 import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
@@ -36,6 +37,7 @@ type BulkOrderRow = {
   orderNumber: string;
   status: string;
   paymentStatus: string;
+  latestPaymentMethod: string | null;
   contactName: string;
   contactEmail: string;
   totalAmount: number;
@@ -183,6 +185,7 @@ export function BulkChangeOrderStatusForm({
                 <th className={ADMIN_TABLE_TH}>{list.customer}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.status}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.payment}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.paymentMethod}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.total}</th>
                 <th className={ADMIN_TABLE_TH}>{list.placed}</th>
               </tr>
@@ -261,6 +264,11 @@ export function BulkChangeOrderStatusForm({
                         disabled={isPending || order.isArchived}
                       />
                     </div>
+                  </td>
+                  <td className={ADMIN_TABLE_TD_CENTER}>
+                    <span className="text-sm font-medium text-gray-800">
+                      {formatPaymentMethodDisplay(order.latestPaymentMethod)}
+                    </span>
                   </td>
                   <td className={ADMIN_TABLE_TD_CENTER}>
                     <span className="font-medium text-gray-900">

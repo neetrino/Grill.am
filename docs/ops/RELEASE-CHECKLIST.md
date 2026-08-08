@@ -8,12 +8,12 @@
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:integration`, `pnpm build` green on release commit
 - [ ] `pnpm payments:readiness` shows safe config; do not enable providers with missing env names
 - [ ] `pnpm test:e2e` green (`docs/testing/PAYMENT-E2E.md`); CI Playwright job green
-- [ ] Outbox worker scheduled (`pnpm outbox:once` cron or `pnpm outbox:work`); migration `0013_outbox_hardening` applied
+- [ ] Migration `0014_drop_outbox_events` applied; order emails use immediate `after()` (no outbox cron)
 - [ ] Neon production DB provisioned; app role is not owner; migrations reviewed
 - [ ] Payment migration `0010_payment_db_hardening` applied before/with code that writes new payment columns
 - [ ] Payment migration `0011_arca_requires_review` applied before enabling ARCA capture-with-review
 - [ ] Payment migration `0012_idram_provider_order_number` applied before enabling iDram
-- [ ] Payment migration `0013_outbox_hardening` applied before enabling outbox worker
+- [ ] Payment migration `0014_drop_outbox_events` applied after deploying immediate-email app code
 - [ ] Phase 6 readiness reviewed: `docs/ops/PAYMENTS-PRODUCTION-READINESS.md`, `docs/ops/PAYMENTS-INCIDENT-RUNBOOK.md`, `docs/ops/PAYMENTS-RECONCILIATION.md`
 - [ ] Phase 5 ops checklist reviewed: `docs/ops/PAYMENT-OPERATIONS.md`, `docs/ops/OUTBOX-RUNBOOK.md`, `docs/ops/ARCA-RUNBOOK.md`, `docs/ops/IDRAM-RUNBOOK.md`
 - [ ] `pnpm payments:reconcile:dry` reviewed on staging (read-only)

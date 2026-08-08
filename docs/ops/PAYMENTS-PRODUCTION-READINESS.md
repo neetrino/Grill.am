@@ -53,7 +53,8 @@ Never put secrets in `NEXT_PUBLIC_*` or docs.
 - [ ] Callback responses use `Cache-Control: no-store`
 - [ ] Locale middleware does not rewrite `/api/*`
 - [ ] Log redaction verified (no secrets/checksum sources/card data)
-- [ ] Outbox worker scheduled (`pnpm outbox:once` cron or `pnpm outbox:work`) — not inside a Vercel request
+- [ ] `RESEND_API_KEY` + `EMAIL_FROM` (or accept sink) for order emails via `after()`
+- [ ] Migration `0014_drop_outbox_events` applied (`pnpm db:migrate`) — removes unused outbox table
 - [ ] Monitoring + alerts configured (see incident runbook)
 - [ ] Rollback: set `PAYMENT_ENABLE_*=false` immediately
 

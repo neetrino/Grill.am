@@ -5,7 +5,7 @@ import { and, eq } from "drizzle-orm";
 import { orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
 import { confirmPayment } from "@/features/payments/application/confirm-payment";
-import { enqueuePaymentNotification } from "@/features/payments/application/enqueue-payment-notification";
+import { scheduleOrderEmails } from "@/features/notifications/application/schedule-order-emails";
 import {
   InsufficientStockAtConfirmationError,
   isPaymentDomainError,
@@ -185,14 +185,14 @@ async function captureWithReview(
   payload: IdramConfirmationPayload,
   providerEventId: string,
 ): Promise<void> {
-  await withTransaction(async (tx) => {
+  const notify = await withTransaction(async (tx) => {
     const [locked] = await tx
       .select()
       .from(payments)
       .where(eq(payments.id, payment.id))
       .for("update")
       .limit(1);
-    if (!locked) return;
+    if (!locked) return null;
 
     const [order] = await tx
       .select()
@@ -200,13 +200,13 @@ async function captureWithReview(
       .where(eq(orders.id, locked.orderId))
       .for("update")
       .limit(1);
-    if (!order) return;
+    if (!order) return null;
 
     if (locked.status === "CAPTURED") {
-      return;
+      return null;
     }
     if (!canProviderTransitionPaymentStatus(locked.status, "CAPTURED")) {
-      return;
+      return null;
     }
 
     const now = new Date();
@@ -251,25 +251,6 @@ async function captureWithReview(
       }),
     });
 
-    await enqueuePaymentNotification(tx, {
-      type: "PAYMENT_REQUIRES_REVIEW_CUSTOMER",
-      orderId: order.id,
-      orderNumber: order.orderNumber,
-      locale: order.locale,
-      dedupeKey: `payment-review:${order.id}:customer`,
-      recipientRole: "customer",
-      safePayload: { provider: "idram" },
-    });
-    await enqueuePaymentNotification(tx, {
-      type: "PAYMENT_REQUIRES_REVIEW_OPERATOR",
-      orderId: order.id,
-      orderNumber: order.orderNumber,
-      locale: order.locale,
-      dedupeKey: `payment-review:${order.id}:operators`,
-      recipientRole: "operator",
-      safePayload: { provider: "idram", severity: "high" },
-    });
-
     paymentMetrics.increment(PAYMENT_METRIC_NAMES.requiresReview, {
       provider: "idram",
       operation: "confirm_review",
@@ -282,7 +263,24 @@ async function captureWithReview(
       orderId: order.id,
       severity: "high",
     });
+
+    return {
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      locale: order.locale,
+      paymentId: locked.id,
+    };
   });
+
+  if (notify) {
+    scheduleOrderEmails({
+      kind: "requires_review",
+      orderId: notify.orderId,
+      orderNumber: notify.orderNumber,
+      locale: notify.locale,
+      paymentId: notify.paymentId,
+    });
+  }
 }
 
 async function recordSecurityEvent(

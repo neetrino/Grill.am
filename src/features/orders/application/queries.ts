@@ -28,6 +28,10 @@ import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status"
 import { analyticsPeriodUtcBounds } from "@/features/analytics/domain/date-range";
 import { getStoreRevenue } from "@/features/settings/application/queries";
 import {
+  latestPaymentMethodSelect,
+  orderItemsCountSelect,
+} from "@/features/orders/application/order-list-selects";
+import {
   appDayEndUtc,
   appDayStartUtc,
   formatAppIsoDate,
@@ -40,6 +44,8 @@ export type AdminOrderListItem = {
   orderNumber: string;
   status: string;
   paymentStatus: string;
+  /** Latest payment attempt method code, if any. */
+  latestPaymentMethod: string | null;
   contactName: string;
   contactEmail: string;
   totalAmount: number;
@@ -116,6 +122,7 @@ export async function listAdminOrders(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        latestPaymentMethod: latestPaymentMethodSelect(),
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
@@ -163,22 +170,14 @@ export async function listCustomerOrders(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        latestPaymentMethod: latestPaymentMethodSelect(),
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
-        itemsCount: sql<number>`
-          coalesce(
-            (
-              select sum(${orderItems.quantity})
-              from ${orderItems}
-              where ${orderItems.orderId} = ${orders.id}
-            ),
-            0
-          )
-        `.mapWith(Number),
+        itemsCount: orderItemsCountSelect(),
       })
       .from(orders)
       .where(where)
@@ -195,20 +194,9 @@ export async function listCustomerOrders(
   };
 }
 
-/** Loads a single order with line items and immutable event history. */
-export async function getAdminOrderByNumber(
-  orderNumber: string,
-): Promise<AdminOrderDetail | null> {
-  const [order] = await getDb()
-    .select()
-    .from(orders)
-    .where(eq(orders.orderNumber, orderNumber))
-    .limit(1);
-
-  if (!order) {
-    return null;
-  }
-
+async function loadAdminOrderDetail(
+  order: typeof orders.$inferSelect,
+): Promise<AdminOrderDetail> {
   const [items, events, paymentRows] = await Promise.all([
     getDb()
       .select()
@@ -227,6 +215,40 @@ export async function getAdminOrderByNumber(
   ]);
 
   return { order, items, events, payments: paymentRows };
+}
+
+/** Loads a single order with line items and immutable event history. */
+export async function getAdminOrderByNumber(
+  orderNumber: string,
+): Promise<AdminOrderDetail | null> {
+  const [order] = await getDb()
+    .select()
+    .from(orders)
+    .where(eq(orders.orderNumber, orderNumber))
+    .limit(1);
+
+  if (!order) {
+    return null;
+  }
+
+  return loadAdminOrderDetail(order);
+}
+
+/** Loads a single order by id with line items, events, and payments. */
+export async function getAdminOrderById(
+  orderId: string,
+): Promise<AdminOrderDetail | null> {
+  const [order] = await getDb()
+    .select()
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
+
+  if (!order) {
+    return null;
+  }
+
+  return loadAdminOrderDetail(order);
 }
 
 export type DashboardMetrics = {
@@ -338,6 +360,7 @@ export async function getAdminDashboardMetrics(input: {
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        latestPaymentMethod: latestPaymentMethodSelect(),
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,

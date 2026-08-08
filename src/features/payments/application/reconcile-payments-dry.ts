@@ -3,16 +3,14 @@ import "server-only";
 import { and, asc, eq, inArray, isNotNull, lt, ne, or, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { carts, orders, outboxEvents, payments } from "@/db/schema";
+import { carts, orders, payments } from "@/db/schema";
 
 export type ReconcileDryCategory =
   | "pending_beyond_threshold"
   | "failed_may_be_paid"
   | "authorized_stale"
   | "captured_cart_not_converted"
-  | "requires_review"
-  | "missing_capture_notification"
-  | "outbox_permanently_failed";
+  | "requires_review";
 
 export type ReconcileDryCandidate = {
   category: ReconcileDryCategory;
@@ -241,97 +239,12 @@ export async function reconcilePaymentsDry(options?: {
     });
   }
 
-  const capturedOnline = await db
-    .select({
-      paymentId: payments.id,
-      orderNumber: orders.orderNumber,
-      provider: payments.provider,
-      attemptNumber: payments.attemptNumber,
-      paymentStatus: payments.status,
-      orderStatus: orders.status,
-      capturedAt: payments.capturedAt,
-    })
-    .from(payments)
-    .innerJoin(orders, eq(orders.id, payments.orderId))
-    .where(
-      and(
-        eq(payments.status, "CAPTURED"),
-        inArray(payments.provider, ["arca", "idram"]),
-      ),
-    )
-    .orderBy(asc(payments.capturedAt))
-    .limit(200);
-
-  if (capturedOnline.length > 0) {
-    const expectedKeys = capturedOnline.map(
-      (row) => `payment-captured:${row.paymentId}:customer`,
-    );
-    const existing = await db
-      .select({ dedupeKey: outboxEvents.dedupeKey })
-      .from(outboxEvents)
-      .where(inArray(outboxEvents.dedupeKey, expectedKeys));
-    const present = new Set(
-      existing.map((row) => row.dedupeKey).filter((key): key is string => Boolean(key)),
-    );
-
-    for (const row of capturedOnline) {
-      const key = `payment-captured:${row.paymentId}:customer`;
-      if (present.has(key)) continue;
-      candidates.push({
-        category: "missing_capture_notification",
-        orderNumber: row.orderNumber,
-        provider: row.provider,
-        attemptNumber: row.attemptNumber,
-        paymentStatus: row.paymentStatus,
-        orderStatus: row.orderStatus,
-        paymentId: row.paymentId,
-        ageMinutes: row.capturedAt ? ageMinutes(row.capturedAt, now) : null,
-        recommendedAction:
-          "Enqueue/retry customer capture notification via outbox; verify dedupe key.",
-      });
-      if (
-        candidates.filter((c) => c.category === "missing_capture_notification")
-          .length >= MAX_ROWS_PER_CATEGORY
-      ) {
-        break;
-      }
-    }
-  }
-
-  const failedOutbox = await db
-    .select({
-      aggregateId: outboxEvents.aggregateId,
-      eventType: outboxEvents.eventType,
-      failedAt: outboxEvents.failedAt,
-      lastErrorCode: outboxEvents.lastErrorCode,
-    })
-    .from(outboxEvents)
-    .where(eq(outboxEvents.status, "FAILED"))
-    .orderBy(asc(outboxEvents.failedAt))
-    .limit(MAX_ROWS_PER_CATEGORY);
-
-  for (const row of failedOutbox) {
-    candidates.push({
-      category: "outbox_permanently_failed",
-      orderNumber: row.aggregateId,
-      provider: "outbox",
-      attemptNumber: null,
-      paymentStatus: null,
-      orderStatus: null,
-      paymentId: null,
-      ageMinutes: row.failedAt ? ageMinutes(row.failedAt, now) : null,
-      recommendedAction: `Inspect outbox ${row.eventType} (errorCode=${row.lastErrorCode ?? "n/a"}); fix transport then re-enqueue with same dedupe.`,
-    });
-  }
-
   const counts = {
     pending_beyond_threshold: 0,
     failed_may_be_paid: 0,
     authorized_stale: 0,
     captured_cart_not_converted: 0,
     requires_review: 0,
-    missing_capture_notification: 0,
-    outbox_permanently_failed: 0,
   } satisfies Record<ReconcileDryCategory, number>;
 
   for (const row of candidates) {
@@ -345,11 +258,12 @@ export async function reconcilePaymentsDry(options?: {
     counts,
     candidates,
     limitations: [
-      "Never mutates payment/order/outbox state.",
+      "Never mutates payment/order state.",
       "Does not call ARCA or iDram APIs.",
       "Cannot prove 'provider paid but local not CAPTURED' without provider query or portal.",
       "Provider reference collisions are prevented by DB unique constraints; not listed here.",
       "Stock-decrement verification beyond cart conversion is not included in this dry report.",
+      "Order emails are sent immediately via after(); this report does not verify email delivery.",
     ],
   };
 }

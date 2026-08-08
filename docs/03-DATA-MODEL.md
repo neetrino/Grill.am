@@ -61,7 +61,6 @@
 | 26 | `contact_messages` | Support | Contact inbox |
 | 27 | `job_applications` | Careers | Job applications + CV object metadata |
 | 28 | `audit_logs` | Security | Immutable admin/security audit |
-| 29 | `outbox_events` | Reliability | Transactional outbox for async side effects |
 
 ### Count assumptions
 
@@ -310,11 +309,9 @@ Name, normalized email, optional phone, subject, message, status (`UNREAD`,`READ
 
 Immutable admin/security log՝ actor, action, target type/id, safe before/after diff, request/correlation ID, policy-compliant request context և timestamp։ Secrets, password hashes, tokens և full payment payloads չեն պահվում։
 
-### 12.2 `outbox_events`
+### 12.2 Order emails (no outbox table)
 
-Reliable post-commit work՝ event type, aggregate type/id, versioned payload, status, attempt count, `available_at`, processed/error timestamps։ Օգտագործվում է order emails, cache invalidation coordination և provider follow-up-ի համար։
-
-Outbox-ը audit log-ի հետ չի միավորվում. audit-ը immutable evidence է, outbox-ը mutable processing queue state։
+Order/payment notification emails are sent immediately after successful business commits via Next.js `after()` (`scheduleOrderEmails`). The former `outbox_events` table was removed in migration `0014_drop_outbox_events`.
 
 ## 13. Redis-only data — PostgreSQL tables չեն
 
@@ -359,7 +356,7 @@ Redis loss-ը չի կորցնում order/cart/product/user durable source of tr
 - Order items order/product; order events order/time/type և provider event partial unique։
 - Payments order/attempt, provider reference/status։
 - Reviews user/product unique, product/status/date։
-- Contact status/date; audit actor/target/time; outbox status/available time։
+- Contact status/date; audit actor/target/time։
 
 Actual indexes-ը validate են արվում representative data-ի `EXPLAIN (ANALYZE, BUFFERS)`-ով։
 
@@ -373,7 +370,6 @@ Actual indexes-ը validate են արվում representative data-ի `EXPLAIN (AN
 | `products` / `categories` | Many-to-many և independent hierarchy/lifecycle |
 | `orders` / `payments` | Multiple attempts/providers և webhook reconciliation |
 | `order_events` / `audit_logs` | Customer-facing domain history vs global sensitive audit |
-| `audit_logs` / `outbox_events` | Immutable evidence vs mutable retry queue |
 | `users` / `addresses` | Multiple saved addresses և independent defaults |
 
 ## 17. Optional future tables — canonical 25-ի մեջ չեն
