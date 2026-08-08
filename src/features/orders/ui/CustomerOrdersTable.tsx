@@ -100,7 +100,7 @@ export function CustomerOrdersTable({
                 </td>
                 <td className={ADMIN_TABLE_TD}>
                   <span className="text-xs text-gray-500">
-                    {formatAppDateTimeMinutes(order.placedAt)} UTC+4
+                    {formatAppDateTimeMinutes(order.placedAt)}
                   </span>
                 </td>
               </tr>

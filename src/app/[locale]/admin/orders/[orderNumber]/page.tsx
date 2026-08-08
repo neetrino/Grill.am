@@ -224,8 +224,7 @@ export default async function AdminOrderDetailPage({
                   : null}
               </p>
               <p className="text-gray-500">
-                {formatAppDateTimeSeconds(event.createdAt)}{" "}
-                {common.utc}
+                {formatAppDateTimeSeconds(event.createdAt)}
                 {event.isCustomerVisible
                   ? ` · ${detailCopy.customerVisible}`
                   : ` · ${detailCopy.internal}`}

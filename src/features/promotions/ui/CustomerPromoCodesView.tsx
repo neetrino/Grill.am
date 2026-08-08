@@ -112,7 +112,7 @@ export function CustomerPromoCodesView({
                   </td>
                   <td className={ADMIN_TABLE_TD}>
                     <span className="text-xs text-gray-500">
-                      {formatAppDateTimeMinutes(row.placedAt)} UTC+4
+                      {formatAppDateTimeMinutes(row.placedAt)}
                     </span>
                   </td>
                 </tr>

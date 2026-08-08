@@ -164,8 +164,7 @@ export default async function AdminMessagesPage({
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <span className="text-xs text-gray-500">
-                        {formatAppDateTimeMinutes(message.createdAt)}{" "}
-                        {common.utc}
+                        {formatAppDateTimeMinutes(message.createdAt)}
                       </span>
                     </td>
                   </tr>

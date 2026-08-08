@@ -137,8 +137,7 @@ export default async function AdminApplicationDetailPage({
             icon={<CalendarDays className={FIELD_ICON_CLASS} />}
             label={copy.detail.received}
           >
-            {formatAppDateTimeSeconds(application.createdAt)}{" "}
-            {common.utc}
+            {formatAppDateTimeSeconds(application.createdAt)}
           </AdminDetailField>
         </div>
       </Card>

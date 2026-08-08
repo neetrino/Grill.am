@@ -133,8 +133,7 @@ export default async function AdminUserDetailPage({
             {detailCopy.lastLogin}:{" "}
             {user.lastLoginAt
               ? formatAppDateTimeMinutes(user.lastLoginAt)
-              : common.never}{" "}
-            {common.utc}
+              : common.never}
           </p>
           <p className="text-gray-700">
             {detailCopy.created}: {formatAppIsoDate(user.createdAt)}

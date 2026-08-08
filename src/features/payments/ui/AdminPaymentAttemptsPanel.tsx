@@ -206,7 +206,7 @@ export function AdminPaymentAttemptsPanel({
           <table className={ADMIN_TABLE}>
             <thead className={ADMIN_TABLE_THEAD}>
               <tr>
-                <th className={ADMIN_TABLE_TH}>When (UTC+4)</th>
+                <th className={ADMIN_TABLE_TH}>When</th>
                 <th className={ADMIN_TABLE_TH}>Type</th>
                 <th className={ADMIN_TABLE_TH}>Kind</th>
                 <th className={ADMIN_TABLE_TH}>From → To</th>
