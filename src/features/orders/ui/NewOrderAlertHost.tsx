@@ -30,7 +30,7 @@ export function NewOrderAlertHost({ locale }: NewOrderAlertHostProps) {
     current,
     remainingCount,
     audioBlocked,
-    acknowledgeCurrent,
+    acknowledgeAll,
     unlockAudio,
   } = useNewOrderAlert({ locale });
 
@@ -123,11 +123,17 @@ export function NewOrderAlertHost({ locale }: NewOrderAlertHostProps) {
             if (audioBlocked) {
               return;
             }
-            acknowledgeCurrent();
+            acknowledgeAll();
           }}
           autoFocus
         >
-          {audioBlocked ? copy.enableSound : copy.acknowledge}
+          {audioBlocked
+            ? copy.enableSound
+            : remainingCount > 1
+              ? formatAdminMessage(copy.acknowledgeAll, {
+                  remaining: String(remainingCount),
+                })
+              : copy.acknowledge}
         </button>
       </div>
     </div>

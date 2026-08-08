@@ -24,7 +24,7 @@ export type NewOrderAlertItem = {
 
 /**
  * Lists recent non-archived orders for the admin new-order alert poll.
- * Ordered oldest-first so the client can present a FIFO acknowledge queue.
+ * Ordered oldest-first so the client can show the earliest pending alert first.
  */
 export async function listRecentOrdersForAlert(
   since: Date,

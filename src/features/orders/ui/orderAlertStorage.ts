@@ -68,13 +68,34 @@ export function acknowledgeOrderId(
   state: OrderAlertStorageState,
   orderId: string,
 ): OrderAlertStorageState {
-  if (state.ackedIds.includes(orderId)) {
+  return acknowledgeOrderIds(state, [orderId]);
+}
+
+/** Persists many acknowledged IDs in one write (bounded). */
+export function acknowledgeOrderIds(
+  state: OrderAlertStorageState,
+  orderIds: readonly string[],
+): OrderAlertStorageState {
+  if (orderIds.length === 0) {
+    return state;
+  }
+
+  const known = new Set(state.ackedIds);
+  const additions: string[] = [];
+  for (const orderId of orderIds) {
+    if (!known.has(orderId)) {
+      known.add(orderId);
+      additions.push(orderId);
+    }
+  }
+
+  if (additions.length === 0) {
     return state;
   }
 
   const next: OrderAlertStorageState = {
     baselineAt: state.baselineAt,
-    ackedIds: [...state.ackedIds, orderId].slice(-MAX_ACKED_IDS),
+    ackedIds: [...state.ackedIds, ...additions].slice(-MAX_ACKED_IDS),
   };
   writeRaw(next);
   return next;

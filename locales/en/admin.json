@@ -338,6 +338,7 @@
       "payment": "Payment",
       "placedAt": "Placed",
       "acknowledge": "I heard it",
+      "acknowledgeAll": "I heard it — dismiss all ({remaining})",
       "enableSound": "Enable sound",
       "audioBlocked": "Sound is blocked by the browser. Click the button or interact with the page to enable the alert tone."
     }
