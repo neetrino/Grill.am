@@ -46,8 +46,8 @@ type CatalogFiltersProps = {
   priceBounds: { min: number; max: number } | null;
   currencySymbol: string;
   labels: CatalogLabels;
-  /** Desktop rail vs mobile accordion content. */
-  variant?: "sidebar" | "panel";
+  /** Desktop rail, mobile accordion, or mobile price-only panel. */
+  variant?: "sidebar" | "panel" | "price";
 };
 
 const PRICE_INPUT_CLASS =
@@ -66,15 +66,17 @@ export function CatalogFilters({
   const router = useRouter();
   const selectedSlug = filters.category[0] ?? null;
   const isPanel = variant === "panel";
-  const shellClass = isPanel
-    ? "flex max-h-[min(55dvh,360px)] flex-col bg-white"
-    : "flex h-full flex-col border-r border-[#f3f4f6] bg-white shadow-[1px_0_8px_rgba(0,0,0,0.03)]";
+  const isPriceOnly = variant === "price";
+  const shellClass = isPriceOnly
+    ? "bg-white"
+    : isPanel
+      ? "flex max-h-[min(55dvh,360px)] flex-col bg-white"
+      : "flex h-full flex-col border-r border-[#f3f4f6] bg-white shadow-[1px_0_8px_rgba(0,0,0,0.03)]";
   const categoriesScrollClass = isPanel
     ? "min-h-0 flex-1 overflow-y-auto overscroll-contain px-3.5 pt-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     : "min-h-0 flex-1 overflow-y-auto px-3.5 pt-4 pb-2";
-  const priceFieldsClass = isPanel
-    ? "mt-3 grid grid-cols-2 gap-3"
-    : "mt-3 space-y-3";
+  const priceFieldsClass =
+    isPanel || isPriceOnly ? "mt-3 grid grid-cols-2 gap-3" : "mt-3 space-y-3";
   const { absoluteMin, absoluteMax } = resolvePriceBounds(priceBounds);
 
   const [minDraft, setMinDraft] = useState(
@@ -205,6 +207,68 @@ export function CatalogFilters({
     navigate({ maxPrice });
   }
 
+  const priceSection = (
+    <div
+      className={
+        isPriceOnly
+          ? "px-4 pt-3.5 pb-4"
+          : "border-t border-[#f3f4f6] px-4 pt-[17px] pb-4"
+      }
+    >
+      <p className="px-1 text-xs font-semibold tracking-[0.6px] text-[#99a1af] uppercase">
+        {labels.price}
+      </p>
+      <div className={priceFieldsClass}>
+        <label className="block space-y-1.5">
+          <span className="text-xs font-medium text-[#4a5565]">
+            {labels.minPrice}
+          </span>
+          <input
+            ref={minInputRef}
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            value={minDraft}
+            onFocus={(event) => beginPriceEdit("min", event)}
+            onChange={(event) => changePriceDraft("min", event)}
+            onBlur={(event) => commitPrice("min", event.currentTarget.value)}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              event.preventDefault();
+              commitPrice("min", event.currentTarget.value);
+            }}
+            className={PRICE_INPUT_CLASS}
+          />
+        </label>
+        <label className="block space-y-1.5">
+          <span className="text-xs font-medium text-[#4a5565]">
+            {labels.maxPrice}
+          </span>
+          <input
+            ref={maxInputRef}
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            value={maxDraft}
+            onFocus={(event) => beginPriceEdit("max", event)}
+            onChange={(event) => changePriceDraft("max", event)}
+            onBlur={(event) => commitPrice("max", event.currentTarget.value)}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              event.preventDefault();
+              commitPrice("max", event.currentTarget.value);
+            }}
+            className={PRICE_INPUT_CLASS}
+          />
+        </label>
+      </div>
+    </div>
+  );
+
+  if (isPriceOnly) {
+    return <aside className={shellClass}>{priceSection}</aside>;
+  }
+
   return (
     <aside className={shellClass}>
       <div className={categoriesScrollClass}>
@@ -244,55 +308,7 @@ export function CatalogFilters({
         </nav>
       </div>
 
-      <div className="border-t border-[#f3f4f6] px-4 pt-[17px] pb-4">
-        <p className="px-1 text-xs font-semibold tracking-[0.6px] text-[#99a1af] uppercase">
-          {labels.price}
-        </p>
-        <div className={priceFieldsClass}>
-          <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-[#4a5565]">
-              {labels.minPrice}
-            </span>
-            <input
-              ref={minInputRef}
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              value={minDraft}
-              onFocus={(event) => beginPriceEdit("min", event)}
-              onChange={(event) => changePriceDraft("min", event)}
-              onBlur={(event) => commitPrice("min", event.currentTarget.value)}
-              onKeyDown={(event) => {
-                if (event.key !== "Enter") return;
-                event.preventDefault();
-                commitPrice("min", event.currentTarget.value);
-              }}
-              className={PRICE_INPUT_CLASS}
-            />
-          </label>
-          <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-[#4a5565]">
-              {labels.maxPrice}
-            </span>
-            <input
-              ref={maxInputRef}
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              value={maxDraft}
-              onFocus={(event) => beginPriceEdit("max", event)}
-              onChange={(event) => changePriceDraft("max", event)}
-              onBlur={(event) => commitPrice("max", event.currentTarget.value)}
-              onKeyDown={(event) => {
-                if (event.key !== "Enter") return;
-                event.preventDefault();
-                commitPrice("max", event.currentTarget.value);
-              }}
-              className={PRICE_INPUT_CLASS}
-            />
-          </label>
-        </div>
-      </div>
+      {priceSection}
     </aside>
   );
 }
