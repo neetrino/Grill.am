@@ -214,7 +214,7 @@
     },
     "images": {
       "mainTitle": "Главное изображение",
-      "upload": "+ Загрузить изображение",
+      "upload": "Загрузить изображение",
       "hint": "Загрузите одно или несколько изображений, затем отметьте главное галочкой.",
       "main": "Главное",
       "remove": "Удалить изображение"
@@ -223,7 +223,7 @@
       "title": "Категории",
       "select": "Выберите категории",
       "empty": "Категорий пока нет.",
-      "addCategory": "+ Добавить категорию",
+      "addCategory": "Добавить категорию",
       "categoryTitle": "Название категории",
       "categoryTitlePlaceholder": "Введите название категории",
       "adding": "Добавление…",
@@ -464,41 +464,41 @@
     }
   },
   "categories": {
-    "title": "Categories",
-    "addCategory": "Add Category",
-    "searchPlaceholder": "Enter category title",
-    "searchAria": "Search categories",
-    "reorderHint": "Clear search to reorder categories.",
-    "empty": "No categories yet.",
-    "emptySearch": "No categories match this search.",
-    "rootCategory": "None (Root Category)",
-    "reorder": "Reorder",
-    "reorderNamed": "Reorder {title}",
-    "editNamed": "Edit {title}",
-    "deleteNamed": "Delete {title}",
-    "confirmDelete": "Delete this category? This cannot be undone.",
+    "title": "Категории",
+    "addCategory": "Добавить категорию",
+    "searchPlaceholder": "Введите название категории",
+    "searchAria": "Поиск категорий",
+    "reorderHint": "Очистите поиск, чтобы изменить порядок категорий.",
+    "empty": "Категорий пока нет.",
+    "emptySearch": "Категории по этому запросу не найдены.",
+    "rootCategory": "Нет (корневая категория)",
+    "reorder": "Изменить порядок",
+    "reorderNamed": "Изменить порядок: {title}",
+    "editNamed": "Редактировать {title}",
+    "deleteNamed": "Удалить {title}",
+    "confirmDelete": "Удалить эту категорию? Это действие нельзя отменить.",
     "table": {
-      "categoryTitle": "Category Title",
-      "category": "Category"
+      "categoryTitle": "Название категории",
+      "category": "Родительская категория"
     },
-    "subcategoriesCount": "{count} subcategories",
+    "subcategoriesCount": "Подкатегории: {count}",
     "drawer": {
-      "addTitle": "Add Category",
-      "editTitle": "Edit Category",
-      "categoryTitle": "Category Title",
-      "titlePlaceholder": "Enter category title",
+      "addTitle": "Добавить категорию",
+      "editTitle": "Редактировать категорию",
+      "categoryTitle": "Название категории",
+      "titlePlaceholder": "Введите название категории",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Generated automatically from the title and used on /products.",
-      "parent": "Parent Category",
-      "rootOption": "None (Root Category)",
-      "status": "Status",
-      "published": "Published",
-      "archived": "Archived",
-      "image": "Image",
-      "changeImage": "Change image",
-      "uploadImage": "+ Upload Image",
-      "createCategory": "Create Category"
+      "slugHint": "Создаётся автоматически из названия и используется в /products.",
+      "parent": "Родительская категория",
+      "rootOption": "Нет (корневая категория)",
+      "status": "Статус",
+      "published": "Опубликована",
+      "archived": "В архиве",
+      "image": "Изображение",
+      "changeImage": "Изменить изображение",
+      "uploadImage": "Загрузить изображение",
+      "createCategory": "Создать категорию"
     }
   },
   "delivery": {
@@ -669,7 +669,7 @@
       "subtitle": "Подзаголовок",
       "uploadImage": "Загрузить изображение",
       "changeImage": "Изменить изображение",
-      "uploadButton": "+ Загрузить"
+      "uploadButton": "Загрузить"
     }
   },
   "popups": {
@@ -693,7 +693,7 @@
       "editTitle": "Редактировать попап",
       "uploadImage": "Загрузить изображение",
       "changeImage": "Изменить изображение",
-      "uploadButton": "+ Загрузить",
+      "uploadButton": "Загрузить",
       "imageHint": "На витрине попап показывается как полное изображение."
     }
   },
@@ -725,7 +725,7 @@
       "status": "Статус",
       "coverImage": "Обложка",
       "changeImage": "Изменить изображение",
-      "uploadImage": "+ Загрузить",
+      "uploadImage": "Загрузить",
       "imageHint": "JPEG, PNG, WebP или GIF. Макс. 5MB.",
       "titleRequired": "Заголовок и полный текст обязательны."
     },

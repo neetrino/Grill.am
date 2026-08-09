@@ -214,7 +214,7 @@
     },
     "images": {
       "mainTitle": "Հիմնական նկար",
-      "upload": "+ Վերբեռնել նկար",
+      "upload": "Վերբեռնել նկար",
       "hint": "Վերբեռնեք մեկ կամ մի քանի նկար, ապա նշեք հիմնականը նշման վանդակով։",
       "main": "Հիմնական",
       "remove": "Հեռացնել նկարը"
@@ -223,7 +223,7 @@
       "title": "Կատեգորիաներ",
       "select": "Ընտրել կատեգորիաներ",
       "empty": "Կատեգորիաներ դեռ չկան։",
-      "addCategory": "+ Ավելացնել կատեգորիա",
+      "addCategory": "Ավելացնել կատեգորիա",
       "categoryTitle": "Կատեգորիայի անուն",
       "categoryTitlePlaceholder": "Մուտքագրեք կատեգորիայի անունը",
       "adding": "Ավելացում…",
@@ -464,41 +464,41 @@
     }
   },
   "categories": {
-    "title": "Categories",
-    "addCategory": "Add Category",
-    "searchPlaceholder": "Enter category title",
-    "searchAria": "Search categories",
-    "reorderHint": "Clear search to reorder categories.",
-    "empty": "No categories yet.",
-    "emptySearch": "No categories match this search.",
-    "rootCategory": "None (Root Category)",
-    "reorder": "Reorder",
-    "reorderNamed": "Reorder {title}",
-    "editNamed": "Edit {title}",
-    "deleteNamed": "Delete {title}",
-    "confirmDelete": "Delete this category? This cannot be undone.",
+    "title": "Կատեգորիաներ",
+    "addCategory": "Ավելացնել կատեգորիա",
+    "searchPlaceholder": "Մուտքագրեք կատեգորիայի անունը",
+    "searchAria": "Կատեգորիաների որոնում",
+    "reorderHint": "Մաքրեք որոնումը՝ կատեգորիաները վերադասավորելու համար։",
+    "empty": "Կատեգորիաներ դեռ չկան։",
+    "emptySearch": "Այս որոնմանը համապատասխանող կատեգորիաներ չկան։",
+    "rootCategory": "Չկա (արմատային կատեգորիա)",
+    "reorder": "Վերադասավորել",
+    "reorderNamed": "Վերադասավորել {title}",
+    "editNamed": "Խմբագրել {title}",
+    "deleteNamed": "Ջնջել {title}",
+    "confirmDelete": "Ջնջե՞լ այս կատեգորիան։ Այս գործողությունը հնարավոր չէ հետարկել։",
     "table": {
-      "categoryTitle": "Category Title",
-      "category": "Category"
+      "categoryTitle": "Կատեգորիայի անուն",
+      "category": "Ծնող կատեգորիա"
     },
-    "subcategoriesCount": "{count} subcategories",
+    "subcategoriesCount": "{count} ենթակատեգորիա",
     "drawer": {
-      "addTitle": "Add Category",
-      "editTitle": "Edit Category",
-      "categoryTitle": "Category Title",
-      "titlePlaceholder": "Enter category title",
+      "addTitle": "Ավելացնել կատեգորիա",
+      "editTitle": "Խմբագրել կատեգորիան",
+      "categoryTitle": "Կատեգորիայի անուն",
+      "titlePlaceholder": "Մուտքագրեք կատեգորիայի անունը",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Generated automatically from the title and used on /products.",
-      "parent": "Parent Category",
-      "rootOption": "None (Root Category)",
-      "status": "Status",
-      "published": "Published",
-      "archived": "Archived",
-      "image": "Image",
-      "changeImage": "Change image",
-      "uploadImage": "+ Upload Image",
-      "createCategory": "Create Category"
+      "slugHint": "Ավտոմատ ստեղծվում է անունից և օգտագործվում /products-ում։",
+      "parent": "Ծնող կատեգորիա",
+      "rootOption": "Չկա (արմատային կատեգորիա)",
+      "status": "Կարգավիճակ",
+      "published": "Հրապարակված",
+      "archived": "Արխիվացված",
+      "image": "Նկար",
+      "changeImage": "Փոխել նկարը",
+      "uploadImage": "Վերբեռնել նկար",
+      "createCategory": "Ստեղծել կատեգորիա"
     }
   },
   "delivery": {
@@ -669,7 +669,7 @@
       "subtitle": "Ենթավերնագիր",
       "uploadImage": "Վերբեռնել նկար",
       "changeImage": "Փոխել նկարը",
-      "uploadButton": "+ Վերբեռնել"
+      "uploadButton": "Վերբեռնել"
     }
   },
   "popups": {
@@ -693,7 +693,7 @@
       "editTitle": "Խմբագրել popup-ը",
       "uploadImage": "Վերբեռնել նկար",
       "changeImage": "Փոխել նկարը",
-      "uploadButton": "+ Վերբեռնել",
+      "uploadButton": "Վերբեռնել",
       "imageHint": "Popup-ը կայքում ցուցադրվում է որպես ամբողջական նկար։"
     }
   },
@@ -725,7 +725,7 @@
       "status": "Կարգավիճակ",
       "coverImage": "Կազմի նկար",
       "changeImage": "Փոխել նկարը",
-      "uploadImage": "+ Վերբեռնել",
+      "uploadImage": "Վերբեռնել",
       "imageHint": "JPEG, PNG, WebP կամ GIF։ Առավելագույնը 5MB։",
       "titleRequired": "Վերնագիրը և ամբողջական տեքստը պարտադիր են։"
     },

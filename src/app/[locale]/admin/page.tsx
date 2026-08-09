@@ -14,7 +14,10 @@ import {
   ADMIN_BADGE,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
-import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import {
+  ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
+} from "@/features/admin/ui/admin-ui";
 import { getAnalyticsSummary } from "@/features/analytics/application/queries";
 import {
   buildDashboardMonthlySeries,
@@ -177,7 +180,7 @@ export default async function AdminPage({
               <Link
                 key={order.id}
                 href={`/${locale}/admin/orders/${order.orderNumber}`}
-                className="block rounded-[12px] px-3 py-2 ring-1 ring-gray-100/80 transition-colors hover:bg-brand-surface/60"
+                className={`block rounded-[12px] px-3 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -225,7 +228,7 @@ export default async function AdminPage({
             {metrics.topProducts.map((product, index) => (
               <div
                 key={product.productId}
-                className="flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80"
+                className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow/25 text-[11px] font-bold text-brand-ink">
                   {index + 1}

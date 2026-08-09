@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
@@ -106,7 +106,8 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <AdminPageTitle>{copy.title}</AdminPageTitle>
-        <Button type="button" size="sm" onClick={openCreate}>
+        <Button type="button" size="sm" onClick={openCreate} className="gap-2">
+          <Plus className="h-4 w-4" aria-hidden />
           {copy.addPost}
         </Button>
       </div>

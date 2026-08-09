@@ -22,6 +22,8 @@ type CatalogListingViewProps = {
     three: string;
     four: string;
   };
+  /** Mobile price filter control — sits next to sort tabs. */
+  mobilePriceFilter?: ReactNode;
   chips: ReactNode;
   empty: ReactNode | null;
   children: ReactNode;
@@ -82,6 +84,7 @@ export function CatalogListingView({
   filters,
   sortLabels,
   viewLabels,
+  mobilePriceFilter,
   chips,
   empty,
   children,
@@ -114,12 +117,15 @@ export function CatalogListingView({
 
   return (
     <>
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <CatalogSortBar
-          locale={locale}
-          filters={filters}
-          labels={sortLabels}
-        />
+      <div className="relative z-20 mt-0 flex flex-wrap items-center gap-3 lg:mt-6">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <CatalogSortBar
+            locale={locale}
+            filters={filters}
+            labels={sortLabels}
+          />
+          {mobilePriceFilter}
+        </div>
 
         <div
           role="group"

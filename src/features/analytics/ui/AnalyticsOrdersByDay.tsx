@@ -3,7 +3,10 @@
 import { TrendingUp } from "lucide-react";
 
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
-import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import {
+  ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
+} from "@/features/admin/ui/admin-ui";
 import {
   DASHBOARD_ORDERS_COLOR,
   DASHBOARD_REVENUE_COLOR,
@@ -50,7 +53,9 @@ function StackStat({
           : "bg-brand-surface ring-gray-100";
 
   return (
-    <div className={`rounded-[12px] px-3.5 py-3 ring-1 ${toneClass}`}>
+    <div
+      className={`rounded-[12px] px-3.5 py-3 ring-1 ${toneClass} ${ADMIN_CARD_HOVER_CLASS}`}
+    >
       <p className="text-[11px] font-medium text-gray-500">{label}</p>
       <p className="mt-1 break-words text-base font-bold leading-snug text-gray-900">
         {value}

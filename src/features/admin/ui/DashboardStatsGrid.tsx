@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import {
   ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
   ADMIN_CHIP_RED,
   ADMIN_CHIP_YELLOW,
 } from "@/features/admin/ui/admin-ui";
@@ -32,7 +33,7 @@ function CompactStat({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 px-4 py-3 transition hover:bg-brand-surface/70 ${ADMIN_CARD_CLASS}`}
+      className={`flex items-center gap-3 px-4 py-3 ${ADMIN_CARD_CLASS} ${ADMIN_CARD_HOVER_CLASS}`}
     >
       <div
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${iconBg}`}
