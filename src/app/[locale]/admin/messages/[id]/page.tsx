@@ -1,12 +1,21 @@
+import {
+  CalendarDays,
+  CircleCheckBig,
+  Mail,
+  MessageSquare,
+  Phone,
+  ShieldAlert,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
+import { AdminSectionCard } from "@/features/admin/ui/AdminSectionCard";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminContactMessageById } from "@/features/contact/application/queries";
 import {
@@ -22,6 +31,9 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 type AdminMessageDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
+
+const FIELD_ICON_CLASS = "h-4 w-4";
+const SECTION_ICON_CLASS = "h-5 w-5";
 
 function contactStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
@@ -83,43 +95,62 @@ export default async function AdminMessageDetailPage({
         <AdminPageTitle>{message.subject}</AdminPageTitle>
       </div>
 
-      <Card className="mb-6 p-6">
-        <div className="grid gap-3 text-sm md:grid-cols-2">
-          <p className="text-gray-700">
-            {copy.detail.from}:{" "}
-            <strong className="text-gray-900">{message.name}</strong>
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.email}: {message.email}
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.phone}: {message.phone ?? common.dash}
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.status}:{" "}
+      <Card
+        className={`mb-4 !border-0 !shadow-none p-5 sm:p-6 ${ADMIN_CARD_CLASS}`}
+      >
+        <div className="grid gap-4 md:grid-cols-2 md:gap-x-10">
+          <AdminDetailField
+            icon={<User className={FIELD_ICON_CLASS} />}
+            label={copy.detail.from}
+          >
+            {message.name}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Mail className={FIELD_ICON_CLASS} />}
+            label={copy.detail.email}
+          >
+            {message.email}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Phone className={FIELD_ICON_CLASS} />}
+            label={copy.detail.phone}
+          >
+            {message.phone ?? common.dash}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
+            label={copy.detail.status}
+          >
             <span
               className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
             >
               {contactStatusLabel(message.status, copy.status)}
             </span>
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.spamScore}:{" "}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<ShieldAlert className={FIELD_ICON_CLASS} />}
+            label={copy.detail.spamScore}
+          >
             {message.spamScore === null ? common.dash : message.spamScore}
-          </p>
-          <p className="text-gray-700">
-            {copy.detail.received}:{" "}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
+            label={copy.detail.received}
+          >
             {formatAppDateTimeSeconds(message.createdAt)}
-          </p>
+          </AdminDetailField>
         </div>
       </Card>
 
-      <Card className="mb-6 p-6">
-        <h2 className={`mb-3 ${ADMIN_SECTION_TITLE}`}>{copy.detail.message}</h2>
+      <AdminSectionCard
+        className="mb-4"
+        icon={<MessageSquare className={SECTION_ICON_CLASS} />}
+        title={copy.detail.message}
+      >
         <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
           {message.message}
         </p>
-      </Card>
+      </AdminSectionCard>
 
       {status ? (
         <UpdateContactStatusForm

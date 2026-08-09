@@ -135,11 +135,14 @@ export default async function AdminMessagesPage({
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
                 {rows.map((message) => (
-                  <tr key={message.id} className={ADMIN_TABLE_ROW}>
+                  <tr
+                    key={message.id}
+                    className={`${ADMIN_TABLE_ROW} group relative`}
+                  >
                     <td className={ADMIN_TABLE_TD}>
                       <Link
                         href={`/${locale}/admin/messages/${message.id}`}
-                        className="font-medium text-gray-900 hover:underline"
+                        className="font-medium text-gray-900 after:absolute after:inset-0 group-hover:underline"
                       >
                         {message.subject}
                       </Link>
