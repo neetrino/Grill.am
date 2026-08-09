@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_CARD_RADIUS_CLASS } from "@/features/admin/ui/admin-ui";
@@ -265,7 +265,6 @@ export function ProductDrawerModifierPanels({
               onClick={onAddAddon}
               className={addButtonClassName}
             >
-              <Plus className="h-4 w-4" aria-hidden />
               {copy.addButton}
             </button>
           </div>
@@ -346,7 +345,6 @@ export function ProductDrawerModifierPanels({
               onClick={onAddExclusion}
               className={addButtonClassName}
             >
-              <Plus className="h-4 w-4" aria-hidden />
               {copy.addButton}
             </button>
           </div>

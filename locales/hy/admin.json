@@ -214,7 +214,7 @@
     },
     "images": {
       "mainTitle": "Հիմնական նկար",
-      "upload": "+ Վերբեռնել նկար",
+      "upload": "Վերբեռնել նկար",
       "hint": "Վերբեռնեք մեկ կամ մի քանի նկար, ապա նշեք հիմնականը նշման վանդակով։",
       "main": "Հիմնական",
       "remove": "Հեռացնել նկարը"
@@ -223,7 +223,7 @@
       "title": "Կատեգորիաներ",
       "select": "Ընտրել կատեգորիաներ",
       "empty": "Կատեգորիաներ դեռ չկան։",
-      "addCategory": "+ Ավելացնել կատեգորիա",
+      "addCategory": "Ավելացնել կատեգորիա",
       "categoryTitle": "Կատեգորիայի անուն",
       "categoryTitlePlaceholder": "Մուտքագրեք կատեգորիայի անունը",
       "adding": "Ավելացում…",
@@ -497,7 +497,7 @@
       "archived": "Արխիվացված",
       "image": "Նկար",
       "changeImage": "Փոխել նկարը",
-      "uploadImage": "+ Վերբեռնել նկար",
+      "uploadImage": "Վերբեռնել նկար",
       "createCategory": "Ստեղծել կատեգորիա"
     }
   },
@@ -669,7 +669,7 @@
       "subtitle": "Ենթավերնագիր",
       "uploadImage": "Վերբեռնել նկար",
       "changeImage": "Փոխել նկարը",
-      "uploadButton": "+ Վերբեռնել"
+      "uploadButton": "Վերբեռնել"
     }
   },
   "popups": {
@@ -693,7 +693,7 @@
       "editTitle": "Խմբագրել popup-ը",
       "uploadImage": "Վերբեռնել նկար",
       "changeImage": "Փոխել նկարը",
-      "uploadButton": "+ Վերբեռնել",
+      "uploadButton": "Վերբեռնել",
       "imageHint": "Popup-ը կայքում ցուցադրվում է որպես ամբողջական նկար։"
     }
   },
@@ -725,7 +725,7 @@
       "status": "Կարգավիճակ",
       "coverImage": "Կազմի նկար",
       "changeImage": "Փոխել նկարը",
-      "uploadImage": "+ Վերբեռնել",
+      "uploadImage": "Վերբեռնել",
       "imageHint": "JPEG, PNG, WebP կամ GIF։ Առավելագույնը 5MB։",
       "titleRequired": "Վերնագիրը և ամբողջական տեքստը պարտադիր են։"
     },

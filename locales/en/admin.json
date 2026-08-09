@@ -214,7 +214,7 @@
     },
     "images": {
       "mainTitle": "Main Product Image",
-      "upload": "+ Upload Image",
+      "upload": "Upload Image",
       "hint": "Upload one or more images, then mark the main image with the checkbox.",
       "main": "Main",
       "remove": "Remove image"
@@ -223,7 +223,7 @@
       "title": "Categories",
       "select": "Select categories",
       "empty": "No categories yet.",
-      "addCategory": "+ Add category",
+      "addCategory": "Add category",
       "categoryTitle": "Category title",
       "categoryTitlePlaceholder": "Enter category title",
       "adding": "Adding…",
@@ -497,7 +497,7 @@
       "archived": "Archived",
       "image": "Image",
       "changeImage": "Change image",
-      "uploadImage": "+ Upload Image",
+      "uploadImage": "Upload Image",
       "createCategory": "Create Category"
     }
   },
@@ -669,7 +669,7 @@
       "subtitle": "Subtitle",
       "uploadImage": "Upload image",
       "changeImage": "Change image",
-      "uploadButton": "+ Upload"
+      "uploadButton": "Upload"
     }
   },
   "popups": {
@@ -693,7 +693,7 @@
       "editTitle": "Edit popup",
       "uploadImage": "Upload image",
       "changeImage": "Change image",
-      "uploadButton": "+ Upload",
+      "uploadButton": "Upload",
       "imageHint": "The popup is shown as a full image on the storefront."
     }
   },
@@ -725,7 +725,7 @@
       "status": "Status",
       "coverImage": "Cover image",
       "changeImage": "Change image",
-      "uploadImage": "+ Upload",
+      "uploadImage": "Upload",
       "imageHint": "JPEG, PNG, WebP, or GIF. Max 5MB.",
       "titleRequired": "Title and full text are required."
     },

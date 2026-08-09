@@ -1,6 +1,5 @@
 "use client";
 
-import { Plus } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
@@ -443,11 +442,7 @@ export function ProductDrawer({
             type="submit"
             form={PRODUCT_DRAWER_FORM_ID}
             disabled={isPending}
-            className="gap-2"
           >
-            {!isEdit && !isPending ? (
-              <Plus className="h-4 w-4" aria-hidden />
-            ) : null}
             {isPending
               ? isEdit
                 ? dictionary.common.saving

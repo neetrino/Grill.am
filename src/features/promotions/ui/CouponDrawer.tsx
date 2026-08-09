@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
@@ -121,11 +121,7 @@ export function CouponDrawer({
             type="submit"
             form={COUPON_DRAWER_FORM_ID}
             disabled={isPending}
-            className="gap-2"
           >
-            {!isEdit && !isPending ? (
-              <Plus className="h-4 w-4" aria-hidden />
-            ) : null}
             {isPending
               ? isEdit
                 ? common.saving
