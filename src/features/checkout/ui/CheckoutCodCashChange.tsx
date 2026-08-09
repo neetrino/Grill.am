@@ -8,6 +8,7 @@ import { eligibleCodCashDenominations } from "@/features/checkout/domain/cod-cas
 /** Local `public/` paths — not on R2 yet; do not wrap with `staticAssetUrl`. */
 const NOTE_IMAGE_BY_AMOUNT: Record<CodCashDenomination, string> = {
   1_000: "/assets/checkout/note-1000.webp",
+  2_000: "/assets/checkout/note-2000.png",
   5_000: "/assets/checkout/note-5000.webp",
   10_000: "/assets/checkout/note-10000.webp",
   20_000: "/assets/checkout/note-20000.webp",
