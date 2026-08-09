@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 
@@ -345,7 +346,10 @@ export function PromotionForm({
         </label>
 
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending} className="gap-2">
+          {mode !== "edit" && !isPending ? (
+            <Plus className="h-4 w-4" aria-hidden />
+          ) : null}
           {isPending
             ? common.saving
             : mode === "edit"

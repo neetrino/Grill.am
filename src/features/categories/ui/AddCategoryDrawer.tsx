@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
@@ -140,7 +141,11 @@ export function AddCategoryDrawer({
             type="submit"
             form={CATEGORY_DRAWER_FORM_ID}
             disabled={isPending || !draft.title.trim()}
+            className="gap-2"
           >
+            {!isEdit && !isPending ? (
+              <Plus className="h-4 w-4" aria-hidden />
+            ) : null}
             {isPending
               ? isEdit
                 ? common.saving

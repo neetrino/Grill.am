@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
@@ -132,8 +132,9 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
           type="button"
           size="sm"
           onClick={openCreate}
-          className="shrink-0"
+          className="shrink-0 gap-2"
         >
+          <Plus className="h-4 w-4" aria-hidden />
           {copy.addPosition}
         </Button>
       </div>

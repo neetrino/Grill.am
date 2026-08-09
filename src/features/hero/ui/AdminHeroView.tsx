@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
@@ -68,7 +69,8 @@ export function AdminHeroView({
             })}
           </p>
         </div>
-        <Button type="button" onClick={openCreate}>
+        <Button type="button" onClick={openCreate} className="gap-2">
+          <Plus className="h-4 w-4" aria-hidden />
           {copy.create}
         </Button>
       </div>
