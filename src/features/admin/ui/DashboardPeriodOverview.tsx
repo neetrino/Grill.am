@@ -1,6 +1,9 @@
 import Link from "next/link";
 
-import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import {
+  ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
+} from "@/features/admin/ui/admin-ui";
 import {
   DASHBOARD_METRIC_PERIODS,
   type DashboardMetricPeriod,
@@ -78,7 +81,7 @@ export function DashboardPeriodOverview({
           return (
             <div
               key={period}
-              className={`${ADMIN_CARD_CLASS} px-3.5 py-3`}
+              className={`${ADMIN_CARD_CLASS} ${ADMIN_CARD_HOVER_CLASS} px-3.5 py-3`}
             >
               <div className="mb-2 flex items-center justify-between gap-2">
                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">

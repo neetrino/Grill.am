@@ -5,7 +5,10 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { TrendingUp } from "lucide-react";
 
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
-import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import {
+  ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
+} from "@/features/admin/ui/admin-ui";
 import {
   DASHBOARD_ORDERS_COLOR,
   DASHBOARD_REVENUE_COLOR,
@@ -67,7 +70,9 @@ function StackStat({
           : "bg-brand-surface ring-gray-100";
 
   return (
-    <div className={`rounded-[12px] px-3.5 py-3 ring-1 ${toneClass}`}>
+    <div
+      className={`rounded-[12px] px-3.5 py-3 ring-1 ${toneClass} ${ADMIN_CARD_HOVER_CLASS}`}
+    >
       <p className="text-[11px] font-medium text-gray-500">{label}</p>
       <p className="mt-1 break-words text-base font-bold leading-snug text-gray-900">
         {value}
@@ -126,10 +131,16 @@ export function DashboardTrendChart({
         </div>
 
         <div
-          className="inline-flex rounded-[12px] bg-brand-surface p-0.5"
+          className="relative inline-grid grid-cols-2 rounded-[12px] bg-brand-surface p-0.5"
           role="tablist"
           aria-label={copy.chartRangeLabel}
         >
+          <span
+            aria-hidden
+            className={`pointer-events-none absolute top-0.5 bottom-0.5 left-0.5 w-[calc(50%-0.125rem)] rounded-[10px] bg-white shadow-sm ring-1 ring-gray-100 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none ${
+              chart === "year" ? "translate-x-full" : ""
+            }`}
+          />
           {DASHBOARD_CHART_RANGES.map((option) => {
             const active = option === chart;
             return (
@@ -138,9 +149,9 @@ export function DashboardTrendChart({
                 href={buildHref(pathname, searchParams, option)}
                 role="tab"
                 aria-selected={active}
-                className={`rounded-[10px] px-2.5 py-1 text-xs font-semibold transition ${
+                className={`relative z-[1] rounded-[10px] px-2.5 py-1 text-center text-xs font-semibold transition-colors duration-300 ${
                   active
-                    ? "bg-white text-gray-900 shadow-sm ring-1 ring-gray-100"
+                    ? "text-gray-900"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >

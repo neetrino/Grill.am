@@ -6,7 +6,10 @@ import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
-import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import {
+  ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
+} from "@/features/admin/ui/admin-ui";
 import type {
   AnalyticsTopCategory,
   AnalyticsTopProduct,
@@ -40,7 +43,7 @@ export function AnalyticsTopRankings({
           {products.map((product, index) => (
             <div
               key={product.productId}
-              className="flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80"
+              className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
             >
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow/25 text-[11px] font-bold text-brand-ink">
                 {index + 1}
@@ -92,7 +95,7 @@ export function AnalyticsTopRankings({
           {categories.map((category, index) => (
             <div
               key={category.categoryId}
-              className="flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80"
+              className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
             >
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-red/10 text-[11px] font-bold text-brand-red">
                 {index + 1}
