@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/features/products/ui/ProductCard";
@@ -47,17 +46,15 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   if (!user) {
     return (
       <section className={WISHLIST_SHELL_CLASS}>
-        <div className={`${WISHLIST_INNER_CLASS} gap-4`}>
+        <div className={`${WISHLIST_INNER_CLASS} gap-8`}>
           {title}
-          <p className="text-gray-600">
-            <Link
-              href={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
-              className="font-medium text-gray-900 underline underline-offset-2"
-            >
-              {dictionary.header.login}
-            </Link>{" "}
-            — {dictionary.wishlist.signInPrompt}
-          </p>
+          <WishlistEmptyState
+            title={dictionary.wishlist.signInTitle}
+            hint={dictionary.wishlist.signInPrompt}
+            actionLabel={dictionary.header.login}
+            actionHref={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
+            actionIcon="login"
+          />
         </div>
       </section>
     );
@@ -88,8 +85,8 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
           <WishlistEmptyState
             title={dictionary.wishlist.empty}
             hint={dictionary.wishlist.emptyHint}
-            catalogLabel={dictionary.wishlist.browseCatalog}
-            catalogHref={`/${rawLocale}/products`}
+            actionLabel={dictionary.wishlist.browseCatalog}
+            actionHref={`/${rawLocale}/products`}
           />
         ) : (
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
