@@ -57,8 +57,8 @@ export function ProductDetailView({
 
   return (
     <article className="storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0]">
-      <div className="page-container">
-        <div className="mx-auto w-full max-w-7xl px-4 pt-3 pb-16 sm:px-6">
+      <div className="mx-auto w-full max-w-[1470px] px-4 pt-3 pb-16 sm:px-6 lg:max-w-[var(--page-max-width)] lg:px-[var(--page-padding-inline)]">
+        <div className="lg:mx-auto lg:w-full lg:max-w-7xl lg:px-6">
           <CatalogBreadcrumbs
             backLabel={dictionary.catalog.back}
             backHref={`/${locale}/products`}
