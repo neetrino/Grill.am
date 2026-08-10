@@ -81,7 +81,7 @@ export function ProductGallery({
     <div className="flex flex-col gap-[35px]">
       <div
         data-product-fly-origin
-        className="relative aspect-[764/420] w-full overflow-hidden rounded-[30px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.09)]"
+        className="relative aspect-[744/600] w-full overflow-hidden rounded-[30px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.09)] lg:aspect-[764/580]"
       >
         {selected?.url ? (
           <button

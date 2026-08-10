@@ -1,21 +1,26 @@
-import { Heart } from "lucide-react";
+import { Heart, LogIn } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 
 type WishlistEmptyStateProps = {
   title: string;
   hint: string;
-  catalogLabel: string;
-  catalogHref: string;
+  actionLabel: string;
+  actionHref: string;
+  /** Heart for empty wishlist; login for guests. */
+  actionIcon?: "heart" | "login";
 };
 
-/** Empty wishlist content — brand illustration, copy and catalog CTA. */
+/** Empty / guest wishlist — brand illustration, copy and primary CTA. */
 export function WishlistEmptyState({
   title,
   hint,
-  catalogLabel,
-  catalogHref,
+  actionLabel,
+  actionHref,
+  actionIcon = "heart",
 }: WishlistEmptyStateProps) {
+  const ActionIcon = actionIcon === "login" ? LogIn : Heart;
+
   return (
     <div className="flex min-h-[380px] flex-1 flex-col items-center justify-center gap-6 px-2 py-6 text-center sm:min-h-[440px] sm:gap-8 sm:py-10">
       <div
@@ -40,12 +45,12 @@ export function WishlistEmptyState({
       </div>
 
       <AppLink
-        href={catalogHref}
+        href={actionHref}
         prefetchPolicy="intent"
         className="inline-flex h-12 min-w-[220px] items-center justify-center gap-2 rounded-full bg-brand-red px-6 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
       >
-        <Heart className="size-4 shrink-0" aria-hidden />
-        {catalogLabel}
+        <ActionIcon className="size-4 shrink-0" aria-hidden />
+        {actionLabel}
       </AppLink>
     </div>
   );

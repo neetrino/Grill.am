@@ -7,7 +7,7 @@ type ContactMapProps = {
 /** Contact map — Yandex constructor embed with all store pins. */
 export function ContactMap({ title }: ContactMapProps) {
   return (
-    <section className="mx-auto max-w-7xl py-10 lg:py-14">
+    <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:py-14">
       <div className="overflow-hidden rounded-[15px] border border-gray-100 bg-white shadow-[0_4px_15px_rgba(0,0,0,0.05)]">
         <div className="relative h-[280px] bg-gray-100 sm:h-[340px] lg:h-[400px]">
           <iframe
