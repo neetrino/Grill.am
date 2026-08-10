@@ -57,92 +57,94 @@ export function ProductDetailView({
 
   return (
     <article className="storefront-bleed -mt-10 mb-[-2.5rem] bg-[#f2f0f0]">
-      <div className="mx-auto w-full max-w-[1470px] px-4 pt-3 pb-16 sm:px-6 lg:px-[42px]">
-        <CatalogBreadcrumbs
-          backLabel={dictionary.catalog.back}
-          backHref={`/${locale}/products`}
-          backTone="accent"
-          items={[
-            {
-              label: dictionary.nav.products,
-              href: `/${locale}/products`,
-            },
-            ...(primaryCategory
-              ? [
-                  {
-                    label: primaryCategory.title,
-                    href: `/${locale}/products?category=${encodeURIComponent(primaryCategory.slug)}`,
-                  },
-                ]
-              : []),
-            { label: product.translation.title },
-          ]}
-        />
+      <div className="page-container">
+        <div className="mx-auto w-full max-w-7xl px-4 pt-3 pb-16 sm:px-6">
+          <CatalogBreadcrumbs
+            backLabel={dictionary.catalog.back}
+            backHref={`/${locale}/products`}
+            backTone="accent"
+            items={[
+              {
+                label: dictionary.nav.products,
+                href: `/${locale}/products`,
+              },
+              ...(primaryCategory
+                ? [
+                    {
+                      label: primaryCategory.title,
+                      href: `/${locale}/products?category=${encodeURIComponent(primaryCategory.slug)}`,
+                    },
+                  ]
+                : []),
+              { label: product.translation.title },
+            ]}
+          />
 
-        <div className="mt-6 grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-[51px]">
-          <div className="flex min-w-0 flex-col gap-[35px]">
-            <ProductGallery
-              images={product.images}
-              title={product.translation.title}
-              hitLabel={product.isFeatured ? labels.hit : null}
-              inStock={inStock}
-              outOfStockLabel={labels.outOfStock}
-              zoomLabel={labels.zoom}
-              closeZoomLabel={labels.closeZoom}
+          <div className="mt-6 grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-[51px]">
+            <div className="flex min-w-0 flex-col gap-[35px]">
+              <ProductGallery
+                images={product.images}
+                title={product.translation.title}
+                hitLabel={product.isFeatured ? labels.hit : null}
+                inStock={inStock}
+                outOfStockLabel={labels.outOfStock}
+                zoomLabel={labels.zoom}
+                closeZoomLabel={labels.closeZoom}
+                locale={locale}
+                productId={product.id}
+                inWishlist={inWishlist}
+                isSignedIn={isSignedIn}
+                wishlistLabel={dictionary.nav.wishlist}
+              />
+              <ProductCompositionChips
+                title={labels.composition}
+                items={compositionItems}
+              />
+            </div>
+
+            <ProductBuyBox
               locale={locale}
+              currency={currency}
+              fxRate={fxRate}
               productId={product.id}
-              inWishlist={inWishlist}
-              isSignedIn={isSignedIn}
-              wishlistLabel={dictionary.nav.wishlist}
-            />
-            <ProductCompositionChips
-              title={labels.composition}
-              items={compositionItems}
+              title={product.translation.title}
+              slug={product.translation.slug}
+              stockOnHand={product.stockOnHand}
+              baseUnitAmount={product.priceAmount}
+              compareAtAmount={product.compareAtAmount}
+              initialPriceFormatted={priceFormatted}
+              initialCompareAtFormatted={compareAtFormatted}
+              shortDescription={product.translation.shortDescription}
+              description={product.translation.description}
+              imageUrl={product.images[0]?.url ?? product.imageUrl}
+              customization={storefrontCustomization}
+              rawCustomization={product.customization}
+              ratingAverage={ratingAverage}
+              ratingCount={ratingCount}
+              labels={{
+                quantity: labels.quantity,
+                decreaseQuantity: dictionary.cartDrawer.decreaseQuantity,
+                increaseQuantity: dictionary.cartDrawer.increaseQuantity,
+                addToCart: labels.addToCart,
+                selectRequired: labels.selectRequired,
+                adding: labels.adding,
+                outOfStock: labels.outOfStock,
+                added: labels.added,
+                error: labels.addError,
+                options: labels.options,
+                addons: labels.addons,
+                exclusions: labels.exclusions,
+                removeModifier: labels.removeModifier,
+                orderSummary: labels.orderSummary,
+                basePrice: labels.basePrice,
+                total: labels.total,
+              }}
             />
           </div>
 
-          <ProductBuyBox
-            locale={locale}
-            currency={currency}
-            fxRate={fxRate}
-            productId={product.id}
-            title={product.translation.title}
-            slug={product.translation.slug}
-            stockOnHand={product.stockOnHand}
-            baseUnitAmount={product.priceAmount}
-            compareAtAmount={product.compareAtAmount}
-            initialPriceFormatted={priceFormatted}
-            initialCompareAtFormatted={compareAtFormatted}
-            shortDescription={product.translation.shortDescription}
-            description={product.translation.description}
-            imageUrl={product.images[0]?.url ?? product.imageUrl}
-            customization={storefrontCustomization}
-            rawCustomization={product.customization}
-            ratingAverage={ratingAverage}
-            ratingCount={ratingCount}
-            labels={{
-              quantity: labels.quantity,
-              decreaseQuantity: dictionary.cartDrawer.decreaseQuantity,
-              increaseQuantity: dictionary.cartDrawer.increaseQuantity,
-              addToCart: labels.addToCart,
-              selectRequired: labels.selectRequired,
-              adding: labels.adding,
-              outOfStock: labels.outOfStock,
-              added: labels.added,
-              error: labels.addError,
-              options: labels.options,
-              addons: labels.addons,
-              exclusions: labels.exclusions,
-              removeModifier: labels.removeModifier,
-              orderSummary: labels.orderSummary,
-              basePrice: labels.basePrice,
-              total: labels.total,
-            }}
-          />
+          <div className="mt-16 md:mt-20">{relatedSlot}</div>
+          <div className="mt-12">{reviewsSlot}</div>
         </div>
-
-        <div className="mt-16 md:mt-20">{relatedSlot}</div>
-        <div className="mt-12">{reviewsSlot}</div>
       </div>
 
       <script
