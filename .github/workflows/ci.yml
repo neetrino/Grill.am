@@ -9,7 +9,7 @@ jobs:
   unit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 9.14.2
@@ -50,7 +50,7 @@ jobs:
       E2E_EMAIL_MODE: mock
       E2E_PROVIDER_MODE: mock
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 9.14.2
@@ -109,7 +109,7 @@ jobs:
       IDRAM_FAIL_URL: http://127.0.0.1:3100/api/v1/payments/idram/fail
       OPS_ALERT_EMAIL: ops-e2e@example.com
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 9.14.2
