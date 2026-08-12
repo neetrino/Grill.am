@@ -10,7 +10,7 @@ describe("parseCatalogSearchParams", () => {
   it("applies defaults for empty params", () => {
     expect(parseCatalogSearchParams({})).toEqual({
       category: [],
-      sort: "newest",
+      sort: "menu",
       page: 1,
       pageSize: 24,
     });
@@ -48,7 +48,7 @@ describe("parseCatalogSearchParams", () => {
       }),
     ).toEqual({
       category: [],
-      sort: "newest",
+      sort: "menu",
       page: 1,
       pageSize: 24,
     });
@@ -60,11 +60,22 @@ describe("buildCatalogQuery", () => {
     expect(
       buildCatalogQuery({
         category: [],
-        sort: "newest",
+        sort: "menu",
         page: 1,
         pageSize: 24,
       }),
     ).toBe("");
+  });
+
+  it("keeps newest sort in the query when selected", () => {
+    expect(
+      buildCatalogQuery({
+        category: [],
+        sort: "newest",
+        page: 1,
+        pageSize: 24,
+      }),
+    ).toBe("sort=newest");
   });
 
   it("serializes active filters", () => {
@@ -104,7 +115,7 @@ describe("hasActiveCatalogFilters", () => {
     expect(
       hasActiveCatalogFilters({
         category: ["grills"],
-        sort: "newest",
+        sort: "menu",
         page: 1,
         pageSize: 24,
       }),

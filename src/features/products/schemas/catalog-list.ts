@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const CATALOG_SORT_VALUES = [
+  "menu",
   "newest",
   "price_asc",
   "price_desc",
@@ -61,7 +62,7 @@ export const catalogFilterSchema = z
     category: categorySlugsSchema.default([]),
     inStock: optionalInStock,
     onSale: optionalOnSale,
-    sort: z.enum(CATALOG_SORT_VALUES).default("newest"),
+    sort: z.enum(CATALOG_SORT_VALUES).default("menu"),
     page: z.coerce.number().int().min(1).max(500).default(1),
     pageSize: pageSizeSchema.default(24),
   })
@@ -83,7 +84,7 @@ export type CatalogFilter = z.infer<typeof catalogFilterSchema>;
 
 const CATALOG_DEFAULTS: CatalogFilter = {
   category: [],
-  sort: "newest",
+  sort: "menu",
   page: 1,
   pageSize: 24,
 };
@@ -104,7 +105,7 @@ export function parseCatalogSearchParams(
     category: raw.category,
     inStock: first(raw.inStock),
     onSale: first(raw.onSale),
-    sort: first(raw.sort) ?? "newest",
+    sort: first(raw.sort) ?? "menu",
     page: first(raw.page) ?? "1",
     pageSize: first(raw.pageSize) ?? "24",
   });
@@ -134,7 +135,7 @@ export function buildCatalogQuery(
   if (merged.inStock === true) params.set("inStock", "true");
   if (merged.inStock === false) params.set("inStock", "false");
   if (merged.onSale === true) params.set("onSale", "true");
-  if (merged.sort !== "newest") params.set("sort", merged.sort);
+  if (merged.sort !== "menu") params.set("sort", merged.sort);
   if (merged.pageSize !== 24) params.set("pageSize", String(merged.pageSize));
   if (merged.page > 1) params.set("page", String(merged.page));
 

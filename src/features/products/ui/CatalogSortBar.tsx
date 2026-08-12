@@ -29,12 +29,15 @@ export function CatalogSortBar({
 }: CatalogSortBarProps) {
   const router = useRouter();
 
-  const activeTab: SortTabId =
+  /** Default menu order has no sort tab selected. */
+  const activeTab: SortTabId | null =
     filters.onSale === true
       ? "onSale"
       : filters.sort === "popular"
         ? "popular"
-        : "newest";
+        : filters.sort === "newest"
+          ? "newest"
+          : null;
 
   const tabs: Array<{
     id: SortTabId;
