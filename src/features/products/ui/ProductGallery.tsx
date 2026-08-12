@@ -165,7 +165,7 @@ export function ProductGallery({
       <dialog
         ref={dialogRef}
         aria-labelledby={titleId}
-        className="fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-black/90 p-0 text-white backdrop:bg-black/80 open:flex open:flex-col"
+        className="fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-white/55 p-0 text-neutral-900 shadow-none backdrop-blur-2xl backdrop:bg-white/35 backdrop:backdrop-blur-md open:flex open:flex-col"
         onClick={(event) => {
           if (event.target === dialogRef.current) {
             closeLightbox();
@@ -184,7 +184,7 @@ export function ProductGallery({
               onClick={() =>
                 setZoom((value) => Math.min(MAX_ZOOM, value + ZOOM_STEP))
               }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 hover:bg-white/20 disabled:opacity-40"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-black/5 text-neutral-800 hover:bg-black/10 disabled:opacity-40"
             >
               <ZoomIn className="h-5 w-5" aria-hidden />
             </button>
@@ -195,7 +195,7 @@ export function ProductGallery({
               onClick={() =>
                 setZoom((value) => Math.max(MIN_ZOOM, value - ZOOM_STEP))
               }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 hover:bg-white/20 disabled:opacity-40"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-black/5 text-neutral-800 hover:bg-black/10 disabled:opacity-40"
             >
               <ZoomOut className="h-5 w-5" aria-hidden />
             </button>
@@ -203,7 +203,7 @@ export function ProductGallery({
               type="button"
               aria-label={closeZoomLabel}
               onClick={closeLightbox}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 hover:bg-white/20"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-black/5 text-neutral-800 hover:bg-black/10"
             >
               <X className="h-5 w-5" aria-hidden />
             </button>
