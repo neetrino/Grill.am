@@ -72,6 +72,20 @@ describe("renderCustomerCodOrderCreatedEmail", () => {
     expect(rendered.text).toContain("pay on delivery");
     expect(rendered.text).toContain("No onion");
   });
+
+  it("shows the selected pickup branch address", () => {
+    const rendered = renderCustomerCodOrderCreatedEmail({
+      locale: "en",
+      storeName: "Grill.am",
+      detail: sampleDetail({
+        addressLine: "Khorenatsi 95/2, Yerevan, AM",
+      }),
+      amountFormatted: "3,000 ֏",
+    });
+
+    expect(rendered.html).toContain("Khorenatsi 95/2, Yerevan, AM");
+    expect(rendered.text).toContain("Khorenatsi 95/2, Yerevan, AM");
+  });
 });
 
 describe("renderCustomerPaymentCapturedEmail", () => {

@@ -20,7 +20,10 @@
     "address": "Address",
     "city": "City",
     "deliveryLocation": "Delivery location",
-    "selectLocation": "Select location"
+    "selectLocation": "Select location",
+    "pickupBranch": "Branch",
+    "selectPickupBranch": "Select branch",
+    "pickupBranchNoResults": "No branches found"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",

@@ -17,6 +17,7 @@ import {
 import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import { getStoreMinimumOrder } from "@/features/settings/application/queries";
+import { getStorePickupOptions } from "@/features/stores/yandex-map-embed";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -89,6 +90,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         user?.role === "ADMIN" ? null : minimumOrder.amount
       }
       deliveryOptions={deliveryOptions}
+      pickupStores={getStorePickupOptions(rawLocale)}
       paymentAvailability={paymentAvailability}
       labels={{
         title: copy.title,
@@ -120,6 +122,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         storePickupDescription: copy.shipping.storePickupDescription,
         delivery: copy.shipping.delivery,
         deliveryDescription: copy.shipping.deliveryDescription,
+        pickupBranch: copy.form.pickupBranch,
+        selectPickupBranch: copy.form.selectPickupBranch,
+        pickupBranchNoResults: copy.form.pickupBranchNoResults,
         freePickup: copy.shipping.freePickup,
         enterCity: copy.shipping.enterCity,
         selectDeliveryLocation: copy.shipping.selectDeliveryLocation,

@@ -116,6 +116,30 @@ export function getStoreAddresses(locale: Locale): readonly string[] {
   return GRILL_STORE_LOCATIONS.map((store) => store.address[locale]);
 }
 
+/** Checkout pickup-branch option (id + localized address). */
+export type StorePickupOption = {
+  id: string;
+  label: string;
+};
+
+/** Resolve a branch by stable store id. */
+export function getStoreById(
+  storeId: string | null | undefined,
+): StoreLocation | undefined {
+  if (!storeId) {
+    return undefined;
+  }
+  return GRILL_STORE_LOCATIONS.find((store) => store.id === storeId);
+}
+
+/** Localized pickup-branch options for checkout. */
+export function getStorePickupOptions(locale: Locale): StorePickupOption[] {
+  return GRILL_STORE_LOCATIONS.map((store) => ({
+    id: store.id,
+    label: store.address[locale],
+  }));
+}
+
 /** Resolve store list index from `?store=` id. */
 export function getStoreIndexById(storeId: string | null | undefined): number | null {
   if (!storeId) {

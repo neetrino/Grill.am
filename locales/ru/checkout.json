@@ -20,7 +20,10 @@
     "address": "Адрес",
     "city": "Город",
     "deliveryLocation": "Место доставки",
-    "selectLocation": "Выберите место"
+    "selectLocation": "Выберите место",
+    "pickupBranch": "Филиал",
+    "selectPickupBranch": "Выберите филиал",
+    "pickupBranchNoResults": "Филиалы не найдены"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",

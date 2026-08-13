@@ -68,6 +68,23 @@ describe("renderAdminOrderEmail", () => {
     expect(rendered.text).toContain("Cash tendered");
   });
 
+  it("shows the pickup branch address for take-away orders", () => {
+    const rendered = renderAdminOrderEmail({
+      locale: "en",
+      storeName: "Grill.am",
+      detail: sampleDetail({
+        isPickup: true,
+        shippingMethod: "pickup",
+        deliveryAmount: 0,
+        totalAmount: 5000,
+        addressLine: "Khorenatsi 95/2, Yerevan, AM",
+      }),
+    });
+
+    expect(rendered.html).toContain("Khorenatsi 95/2, Yerevan, AM");
+    expect(rendered.text).toContain("Khorenatsi 95/2, Yerevan, AM");
+  });
+
   it("supports Russian locale subject", () => {
     const rendered = renderAdminOrderEmail({
       locale: "ru",

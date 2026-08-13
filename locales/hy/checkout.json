@@ -20,7 +20,10 @@
     "address": "Հասցե",
     "city": "Քաղաք",
     "deliveryLocation": "Առաքման վայր",
-    "selectLocation": "Ընտրեք վայրը"
+    "selectLocation": "Ընտրեք վայրը",
+    "pickupBranch": "Մասնաճյուղ",
+    "selectPickupBranch": "Ընտրեք մասնաճյուղը",
+    "pickupBranchNoResults": "Մասնաճյուղեր չեն գտնվել"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",

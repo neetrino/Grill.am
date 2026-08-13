@@ -265,7 +265,7 @@ function renderCustomerOrderEmail(
     ? labels.pickupLabel
     : (detail.deliveryLabel ?? labels.deliveryLabel);
   const addressDisplay = detail.isPickup
-    ? detail.storeName
+    ? detail.addressLine || detail.storeName
     : detail.addressLine || "—";
 
   const itemLabels = {

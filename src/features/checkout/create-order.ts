@@ -77,6 +77,7 @@ import {
   parseProductCustomization,
   unitAmountWithModifiers,
 } from "@/features/products/domain/customization";
+import { getStoreById } from "@/features/stores/yandex-map-embed";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { createId } from "@/lib/id";
@@ -305,6 +306,14 @@ export async function createOrderAction(
         delivery = matched;
       }
 
+      const pickupStore =
+        input.shippingMethod === "pickup"
+          ? getStoreById(input.pickupStoreId)
+          : undefined;
+      if (input.shippingMethod === "pickup" && !pickupStore) {
+        throw new Error("Pickup branch is required.");
+      }
+
       const address = {
         recipientFirstName: input.firstName,
         recipientLastName: input.lastName,
@@ -317,7 +326,7 @@ export async function createOrderAction(
             : (delivery?.city?.trim() || input.city?.trim() || ""),
         line1:
           input.shippingMethod === "pickup"
-            ? (input.line1?.trim() || "Store pickup")
+            ? (pickupStore?.address[input.locale] ?? "Store pickup")
             : (input.line1 ?? ""),
         line2: input.line2,
         postalCode: input.postalCode,
