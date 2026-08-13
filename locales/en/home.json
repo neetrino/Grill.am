@@ -1,6 +1,9 @@
 {
   "title": "Grill.am",
   "subtitle": "Fresh · Tasty · Fast",
+  "tasteHighlight": "Tasty",
+  "freshHighlight": "Fresh",
+  "chickenGrabLabel": "Pick up the chicken",
   "cta": "View Menu",
   "categoriesTitleLead": "Choose",
   "categoriesTitleAccent": "Categories",

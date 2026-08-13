@@ -1,16 +1,21 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useState, type ComponentProps } from "react";
+import { Flame, Leaf } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import type { StorefrontHeroSlide } from "@/features/hero/application/queries";
+import { HeroArtImage } from "@/features/home/ui/HeroArtImage";
+import { HeroChickenPlate } from "@/features/home/ui/HeroChickenPlate";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type HomeHeroProps = {
   slides: StorefrontHeroSlide[];
   fallbackTitle: string;
   fallbackSubtitle: string;
+  tasteLabel: string;
+  freshLabel: string;
+  chickenGrabLabel: string;
   fallbackCtaLabel: string;
   fallbackCtaHref: string;
 };
@@ -18,221 +23,179 @@ type HomeHeroProps = {
 const HERO_CHICKEN = staticAssetUrl("/assets/home/hero-chicken.webp");
 const HERO_FLAME = staticAssetUrl("/assets/home/hero-flame.webp");
 const HERO_LOGO = staticAssetUrl("/assets/home/hero-logo.webp");
-const HERO_ACCENT = staticAssetUrl("/assets/home/hero-accent.webp");
 
-/**
- * Hero art that rises in when its bitmap is ready instead of popping in,
- * reusing the soft `page-enter--slow` motion of the about page.
- * `next/image` also fires `onLoad` for images already in the browser cache,
- * so a warm load still resolves to the visible state.
- */
-function HeroArtImage({
-  alt,
-  className,
-  onLoad,
-  onError,
-  ...imageProps
-}: ComponentProps<typeof Image>) {
-  const [ready, setReady] = useState(false);
+const MENU_BUTTON_CLASS =
+  "inline-flex h-11 w-[162px] items-center justify-center rounded-full bg-white text-center text-[13px] leading-[19.5px] font-extrabold tracking-[0.32px] text-brand-red uppercase transition hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14 md:w-[193px] md:text-base md:leading-[22.5px] md:tracking-wide md:hover:shadow-lg";
 
-  return (
-    <Image
-      {...imageProps}
-      alt={alt}
-      className={`hero-art-enter ${ready ? "hero-art-enter--ready" : ""} ${
-        className ?? ""
-      }`}
-      onLoad={(event) => {
-        setReady(true);
-        onLoad?.(event);
-      }}
-      onError={(event) => {
-        setReady(true);
-        onError?.(event);
-      }}
-    />
-  );
-}
-
-/**
- * Figma `165:1671` — white pill CTA (desktop).
- */
 function HeroMenuButton({
   href,
   label,
-  className,
 }: {
   href: string;
   label: string;
-  className: string;
 }) {
   if (href.startsWith("/")) {
     return (
-      <AppLink href={href} prefetchPolicy="intent" className={className}>
+      <AppLink href={href} prefetchPolicy="intent" className={MENU_BUTTON_CLASS}>
         {label}
       </AppLink>
     );
   }
 
   return (
-    <a href={href} className={className}>
+    <a href={href} className={MENU_BUTTON_CLASS}>
       {label}
     </a>
   );
 }
 
-/**
- * Figma `165:1670` / Component 4 — layout from Dev Mode CSS.
- */
-function HeroChickenCollage() {
+function HeroHighlight({
+  label,
+  icon,
+}: {
+  label: string;
+  icon: ReactNode;
+}) {
   return (
-    <div
-      className="pointer-events-none absolute top-[29.47%] left-1/2 z-[2] h-[88.88%] w-[96.18%] max-w-[1385px] -translate-x-1/2"
-      aria-hidden
-    >
-      <div className="absolute top-0 right-[26%] left-[20.05%] h-[78.25%] overflow-hidden">
+    <li className="inline-flex items-center gap-2 rounded-full bg-white/12 px-2.5 py-1.5 text-[12px] leading-none font-bold tracking-wide text-white uppercase backdrop-blur-[2px] md:gap-2.5 md:px-3 md:py-2 md:text-[13px]">
+      <span className="flex size-7 items-center justify-center rounded-full bg-brand-yellow text-brand-red md:size-8">
+        {icon}
+      </span>
+      {label}
+    </li>
+  );
+}
+
+function HeroHighlights({
+  tasteLabel,
+  freshLabel,
+}: {
+  tasteLabel: string;
+  freshLabel: string;
+}) {
+  return (
+    <ul className="mt-4 flex flex-wrap gap-2 md:mt-6 md:gap-3">
+      <HeroHighlight
+        label={tasteLabel}
+        icon={<Flame className="size-3.5 md:size-4" strokeWidth={2.4} aria-hidden />}
+      />
+      <HeroHighlight
+        label={freshLabel}
+        icon={<Leaf className="size-3.5 md:size-4" strokeWidth={2.4} aria-hidden />}
+      />
+    </ul>
+  );
+}
+
+function HeroCopy({
+  title,
+  subtitle,
+  tasteLabel,
+  freshLabel,
+  ctaHref,
+  ctaLabel,
+}: {
+  title: string;
+  subtitle: string;
+  tasteLabel: string;
+  freshLabel: string;
+  ctaHref: string;
+  ctaLabel: string;
+}) {
+  return (
+    <div className="relative z-10 flex w-[58%] flex-col items-start px-5 pt-6 pb-5 md:w-[48%] md:px-12 md:py-10 lg:px-16">
+      <div className="relative h-[88px] w-full max-w-[220px] md:h-[140px] md:max-w-[420px] lg:h-[168px] lg:max-w-[520px]">
         <HeroArtImage
-          src={HERO_CHICKEN}
-          alt=""
+          src={HERO_LOGO}
+          alt={title}
           fill
           priority
-          sizes="(max-width: 1024px) 70vw, 747px"
-          className="object-contain"
+          sizes="(max-width: 768px) 220px, 520px"
+          className="object-contain object-left"
         />
       </div>
-
-      <div className="absolute top-[41.82%] right-[63.35%] left-0 hidden h-[56.27%] overflow-hidden lg:block">
-        <HeroArtImage
-          src={HERO_CHICKEN}
-          alt=""
-          fill
-          priority
-          sizes="37vw"
-          className="object-cover"
-        />
-      </div>
-
-      <div className="absolute top-[31.98%] right-0 left-[52.05%] hidden h-[71.09%] overflow-hidden lg:block">
-        <HeroArtImage
-          src={HERO_CHICKEN}
-          alt=""
-          fill
-          priority
-          sizes="48vw"
-          className="object-cover"
-        />
+      <p className="mt-2 text-[13px] leading-[19.5px] text-white/75 md:mt-3 md:text-lg md:leading-7">
+        {subtitle}
+      </p>
+      <HeroHighlights tasteLabel={tasteLabel} freshLabel={freshLabel} />
+      <div className="mt-6 md:mt-8">
+        <HeroMenuButton href={ctaHref} label={ctaLabel} />
       </div>
     </div>
   );
 }
 
-/**
- * Figma mobile home hero `164:398` — red rounded card.
- */
-function MobileHeroCard({
-  subtitle,
-  ctaLabel,
-  ctaHref,
-  slideImage,
+function HeroSlideDots({
+  slides,
+  index,
+  onSelect,
 }: {
-  subtitle: string;
-  ctaLabel: string;
-  ctaHref: string;
-  slideImage: string | null;
+  slides: StorefrontHeroSlide[];
+  index: number;
+  onSelect: (slideIndex: number) => void;
 }) {
+  if (slides.length <= 1) {
+    return null;
+  }
+
   return (
-    <section className="px-4 pt-2 md:hidden">
-      <div className="relative min-h-[280px] overflow-hidden rounded-[24px] bg-brand-red">
-        <div className="pointer-events-none absolute inset-0 opacity-30" aria-hidden>
-          <HeroArtImage
-            src={HERO_FLAME}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-        </div>
-
-        <div className="pointer-events-none absolute top-[calc(32%+2px)] -right-[6%] h-[78%] w-[62%] overflow-hidden">
-          <div className="relative h-full w-full scale-110">
-            <HeroArtImage
-              src={slideImage ?? HERO_CHICKEN}
-              alt=""
-              fill
-              priority
-              sizes="65vw"
-              className="object-contain object-bottom"
-            />
-          </div>
-        </div>
-
-        <div className="relative z-10 flex flex-col items-start px-5 pt-6 pb-5">
-          <div className="relative h-[111px] w-full max-w-[280px]">
-            <HeroArtImage
-              src={HERO_LOGO}
-              alt="Grill.am"
-              fill
-              priority
-              sizes="280px"
-              className="object-contain object-left"
-            />
-          </div>
-
-          <p className="mt-1 text-[13px] leading-[19.5px] text-white/70">
-            {subtitle}
-          </p>
-
-          <HeroMenuButton
-            href={ctaHref}
-            label={ctaLabel}
-            className="mt-8 inline-flex h-[44px] w-[162px] items-center justify-center rounded-full bg-white text-center text-[13px] leading-[19.5px] font-extrabold tracking-[0.32px] text-brand-red uppercase transition hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          />
-        </div>
-      </div>
-    </section>
+    <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-2 md:bottom-5">
+      {slides.map((slide, slideIndex) => (
+        <button
+          key={slide.id}
+          type="button"
+          aria-label={`Go to slide ${slideIndex + 1}`}
+          aria-current={slideIndex === index}
+          className={
+            slideIndex === index
+              ? "h-2.5 w-7 rounded-full bg-white"
+              : "h-2.5 w-2.5 rounded-full bg-white/50"
+          }
+          onClick={() => onSelect(slideIndex)}
+        />
+      ))}
+    </div>
   );
 }
 
-export function HomeHero({
-  slides,
-  fallbackSubtitle,
-  fallbackCtaLabel,
-  fallbackCtaHref,
-}: HomeHeroProps) {
+function useRotatingIndex(length: number): [number, (next: number) => void] {
   const [index, setIndex] = useState(0);
-  const hasSlides = slides.length > 0;
-  const active = hasSlides ? slides[index] : null;
-  const ctaLabel = fallbackCtaLabel;
-  const ctaHref = active?.copy.buttonUrl ?? fallbackCtaHref;
-  const slideImage = active?.desktopImageUrl ?? active?.mobileImageUrl ?? null;
-  const mobileSlideImage =
-    active?.mobileImageUrl ?? active?.desktopImageUrl ?? null;
 
   useEffect(() => {
-    if (slides.length <= 1) {
+    if (length <= 1) {
       return;
     }
 
     const timer = window.setInterval(() => {
-      setIndex((current) => (current + 1) % slides.length);
+      setIndex((current) => (current + 1) % length);
     }, 5000);
 
     return () => window.clearInterval(timer);
-  }, [slides.length]);
+  }, [length]);
+
+  return [index, setIndex];
+}
+
+export function HomeHero({
+  slides,
+  fallbackTitle,
+  fallbackSubtitle,
+  tasteLabel,
+  freshLabel,
+  chickenGrabLabel,
+  fallbackCtaLabel,
+  fallbackCtaHref,
+}: HomeHeroProps) {
+  const [index, setIndex] = useRotatingIndex(slides.length);
+  const active = slides[index] ?? null;
+  const ctaHref = active?.copy.buttonUrl ?? fallbackCtaHref;
+  const photoSrc =
+    active?.desktopImageUrl ?? active?.mobileImageUrl ?? HERO_CHICKEN;
 
   return (
-    <>
-      <MobileHeroCard
-        subtitle={fallbackSubtitle}
-        ctaLabel={ctaLabel}
-        ctaHref={ctaHref}
-        slideImage={mobileSlideImage}
-      />
-
-      <section className="relative hidden w-full overflow-hidden bg-brand-red md:block">
-        {/* Flame backdrop follows the band; the art below stays on the canvas. */}
-        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+    <section className="relative px-4 pt-2 pb-8 md:px-0 md:pb-10">
+      <div className="relative overflow-hidden rounded-[24px] bg-brand-red md:rounded-none">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
           <HeroArtImage
             src={HERO_FLAME}
             alt=""
@@ -243,75 +206,21 @@ export function HomeHero({
           />
         </div>
 
-        {/* Art is positioned in percentages, so the canvas keeps the 1440:860 design ratio. */}
-        <div className="relative mx-auto h-[min(59.72vw,860px)] w-full max-w-[1440px] overflow-hidden">
-          <div className="absolute inset-x-0 top-[-20%] h-[125%]">
-            <div className="pointer-events-none absolute inset-[26.53%_18.58%_50.76%_18.54%] z-[1]">
-              <HeroArtImage
-                src={HERO_LOGO}
-                alt="Grill.am"
-                fill
-                priority
-                sizes="(max-width: 1440px) 63vw, 906px"
-                className="object-contain"
-              />
-            </div>
-
-            <div className="pointer-events-none absolute inset-[19.68%_21.46%_62.07%_65.56%] z-[1]">
-              <HeroArtImage
-                src={HERO_ACCENT}
-                alt=""
-                fill
-                priority
-                sizes="13vw"
-                className="object-contain"
-              />
-            </div>
-
-            {slideImage ? (
-              <div className="pointer-events-none absolute inset-x-[15%] top-[29.47%] bottom-0 z-[2]">
-                <HeroArtImage
-                  src={slideImage}
-                  alt=""
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 90vw, 747px"
-                  className="object-contain object-bottom"
-                />
-              </div>
-            ) : (
-              <HeroChickenCollage />
-            )}
-
-            <div className="absolute top-[61.22%] left-1/2 z-10 -translate-x-1/2">
-              <HeroMenuButton
-                href={ctaHref}
-                label={ctaLabel}
-                className="inline-flex h-14 w-[193px] shrink-0 items-center justify-center rounded-[28px] bg-white px-6 text-center text-base leading-[22.5px] font-extrabold tracking-wide whitespace-nowrap text-brand-red uppercase transition hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              />
-            </div>
-
-            {slides.length > 1 ? (
-              <div className="absolute bottom-[3%] left-1/2 z-10 flex -translate-x-1/2 gap-2">
-                {slides.map((slide, slideIndex) => (
-                  <button
-                    key={slide.id}
-                    type="button"
-                    aria-label={`Go to slide ${slideIndex + 1}`}
-                    aria-current={slideIndex === index}
-                    className={
-                      slideIndex === index
-                        ? "h-2.5 w-7 rounded-full bg-white"
-                        : "h-2.5 w-2.5 rounded-full bg-white/50"
-                    }
-                    onClick={() => setIndex(slideIndex)}
-                  />
-                ))}
-              </div>
-            ) : null}
-          </div>
+        <div className="relative mx-auto flex min-h-[300px] w-full max-w-[1440px] items-center md:h-[min(46vw,680px)] md:min-h-[540px]">
+          <HeroCopy
+            title={fallbackTitle}
+            subtitle={fallbackSubtitle}
+            tasteLabel={tasteLabel}
+            freshLabel={freshLabel}
+            ctaHref={ctaHref}
+            ctaLabel={fallbackCtaLabel}
+          />
+          <HeroSlideDots slides={slides} index={index} onSelect={setIndex} />
         </div>
-      </section>
-    </>
+      </div>
+      <div className="pointer-events-none absolute inset-x-4 top-2 bottom-0 mx-auto max-w-[1440px] overflow-visible md:inset-x-0 md:top-0">
+        <HeroChickenPlate src={photoSrc} grabLabel={chickenGrabLabel} />
+      </div>
+    </section>
   );
 }

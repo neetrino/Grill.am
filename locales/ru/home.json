@@ -1,6 +1,9 @@
 {
   "title": "Grill.am",
   "subtitle": "Свежо · Вкусно · Быстро",
+  "tasteHighlight": "Вкусно",
+  "freshHighlight": "Свежо",
+  "chickenGrabLabel": "Взять курицу с тарелки",
   "cta": "Смотреть меню",
   "categoriesTitleLead": "Выбери",
   "categoriesTitleAccent": "Категории",

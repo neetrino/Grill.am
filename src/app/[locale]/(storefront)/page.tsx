@@ -133,6 +133,9 @@ export default async function HomePage({ params }: HomePageProps) {
         slides={heroSlides}
         fallbackTitle={dictionary.home.title}
         fallbackSubtitle={dictionary.home.subtitle}
+        tasteLabel={dictionary.home.tasteHighlight}
+        freshLabel={dictionary.home.freshHighlight}
+        chickenGrabLabel={dictionary.home.chickenGrabLabel}
         fallbackCtaLabel={dictionary.home.cta}
         fallbackCtaHref={`/${locale}/products`}
       />
