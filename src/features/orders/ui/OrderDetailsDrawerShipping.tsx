@@ -37,9 +37,9 @@ export function OrderDetailsDrawerShipping({
           <span className="text-gray-500">{drawer.method}: </span>
           <span className="font-medium text-gray-900">{methodLabel}</span>
         </p>
-        {detail.isPickup && detail.storeName ? (
+        {detail.isPickup ? (
           <p className="mt-2 text-sm text-gray-600">
-            {drawer.pickupStore}: {detail.storeName}
+            {drawer.pickupStore}: {detail.addressLine || detail.storeName}
           </p>
         ) : null}
       </section>

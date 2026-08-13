@@ -29,6 +29,7 @@ import {
 } from "@/features/checkout/domain/checkout-delivery-cities";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
+import type { StorePickupOption } from "@/features/stores/yandex-map-embed";
 import { createId } from "@/lib/id";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
@@ -63,6 +64,9 @@ type CheckoutLabels = {
   storePickupDescription: string;
   delivery: string;
   deliveryDescription: string;
+  pickupBranch: string;
+  selectPickupBranch: string;
+  pickupBranchNoResults: string;
   freePickup: string;
   enterCity: string;
   selectDeliveryLocation: string;
@@ -115,6 +119,7 @@ type CheckoutFormProps = {
   subtotalAmount: number;
   minimumOrderAmount: number | null;
   deliveryOptions: CheckoutDeliveryOption[];
+  pickupStores: StorePickupOption[];
   hasItems: boolean;
   /** Server-authoritative payment method flags (booleans only). */
   paymentAvailability: {
@@ -177,6 +182,7 @@ export function CheckoutForm({
   subtotalAmount,
   minimumOrderAmount,
   deliveryOptions,
+  pickupStores,
   hasItems,
   paymentAvailability,
 }: CheckoutFormProps) {
@@ -190,6 +196,7 @@ export function CheckoutForm({
     deliveryOptions.length > 0 ? "delivery" : "pickup",
   );
   const [deliveryRuleId, setDeliveryRuleId] = useState(defaultRuleId);
+  const [pickupStoreId, setPickupStoreId] = useState("");
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
   const [cashTenderedAmount, setCashTenderedAmount] =
@@ -212,6 +219,9 @@ export function CheckoutForm({
 
   const selectedDelivery = deliveryOptions.find(
     (option) => option.id === deliveryRuleId,
+  );
+  const selectedPickupStore = pickupStores.find(
+    (store) => store.id === pickupStoreId,
   );
 
   const paymentOptions = useMemo(
@@ -284,7 +294,9 @@ export function CheckoutForm({
 
   const shippingFormatted =
     shippingMethod === "pickup"
-      ? labels.freePickup
+      ? selectedPickupStore
+        ? `${labels.freePickup} (${selectedPickupStore.label})`
+        : labels.freePickup
       : selectedDelivery
         ? `${formatMoney(shippingAmount)} (${selectedDelivery.label})`
         : labels.selectDeliveryLocation;
@@ -352,6 +364,10 @@ export function CheckoutForm({
       setError(minimumOrderMessage);
       return;
     }
+    if (shippingMethod === "pickup" && !pickupStoreId) {
+      setError(labels.selectPickupBranch);
+      return;
+    }
     if (pending || submitLockRef.current || redirecting) {
       return;
     }
@@ -377,6 +393,10 @@ export function CheckoutForm({
           deliveryRuleId:
             shippingMethod === "delivery"
               ? deliveryRuleId || undefined
+              : undefined,
+          pickupStoreId:
+            shippingMethod === "pickup"
+              ? pickupStoreId || undefined
               : undefined,
           city:
             shippingMethod === "delivery" ? selectedDelivery?.city : undefined,
@@ -511,6 +531,9 @@ export function CheckoutForm({
               deliveryOptions={deliveryOptions}
               deliveryRuleId={deliveryRuleId}
               onDeliveryRuleChange={setDeliveryRuleId}
+              pickupStores={pickupStores}
+              pickupStoreId={pickupStoreId}
+              onPickupStoreChange={setPickupStoreId}
               paymentMethod={paymentMethod}
               onPaymentMethodChange={onPaymentMethodChange}
               paymentOptions={paymentOptions}

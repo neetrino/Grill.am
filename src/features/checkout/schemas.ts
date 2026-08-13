@@ -6,6 +6,7 @@ import {
 } from "@/features/checkout/domain/cod-cash-change";
 import { CUSTOMER_NOTE_MAX_LENGTH } from "@/features/checkout/domain/customer-note";
 import { CHECKOUT_PAYMENT_METHODS } from "@/features/checkout/domain/payment-methods";
+import { getStoreById } from "@/features/stores/yandex-map-embed";
 
 export const checkoutSchema = z
   .object({
@@ -24,6 +25,7 @@ export const checkoutSchema = z
       })
       .optional(),
     deliveryRuleId: z.string().uuid().optional(),
+    pickupStoreId: z.string().trim().max(80).optional(),
     city: z.string().trim().max(80).optional(),
     line1: z.string().trim().max(160).optional(),
     line2: z.string().trim().max(160).optional(),
@@ -51,6 +53,14 @@ export const checkoutSchema = z
           message: "Address is required for delivery.",
         });
       }
+    }
+
+    if (value.shippingMethod === "pickup" && !getStoreById(value.pickupStoreId)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["pickupStoreId"],
+        message: "Pickup branch is required.",
+      });
     }
 
     if (

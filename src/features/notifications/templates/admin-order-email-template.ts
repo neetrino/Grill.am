@@ -185,7 +185,7 @@ export function renderAdminOrderEmail(
     ? bundle.pickupLabel
     : (detail.deliveryLabel ?? bundle.deliveryLabel);
   const addressDisplay = detail.isPickup
-    ? detail.storeName
+    ? detail.addressLine || detail.storeName
     : detail.addressLine || "—";
 
   const itemLabels = {

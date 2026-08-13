@@ -110,6 +110,13 @@ export async function fillCheckoutContact(
   await expect(
     page.locator('input[name="shippingMethod"][value="pickup"]'),
   ).toBeChecked();
+
+  const branch = page.getByRole("combobox", { name: /^branch$/i });
+  await expect(branch).toBeVisible();
+  await branch.click();
+  const firstBranch = page.getByRole("option").first();
+  await expect(firstBranch).toBeVisible();
+  await firstBranch.click();
 }
 
 export async function selectCod(page: Page): Promise<void> {
