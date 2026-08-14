@@ -225,29 +225,34 @@ export function CheckoutForm({
   );
 
   const paymentOptions = useMemo(
-    () => [
-      {
-        id: "cash_on_delivery" as const,
-        name: labels.cashOnDelivery,
-        description: labels.cashOnDeliveryDescription,
-        enabled: paymentAvailability.cash_on_delivery,
-        unavailableLabel: labels.paymentUnavailable,
-      },
-      {
-        id: "idram" as const,
-        name: labels.idram,
-        description: labels.idramDescription,
-        enabled: paymentAvailability.idram,
-        unavailableLabel: labels.paymentUnavailable,
-      },
-      {
-        id: "arca" as const,
-        name: labels.arca,
-        description: labels.arcaDescription,
-        enabled: paymentAvailability.arca,
-        unavailableLabel: labels.paymentUnavailable,
-      },
-    ],
+    () => {
+      const options = [
+        {
+          id: "cash_on_delivery" as const,
+          name: labels.cashOnDelivery,
+          description: labels.cashOnDeliveryDescription,
+          enabled: paymentAvailability.cash_on_delivery,
+          unavailableLabel: labels.paymentUnavailable,
+        },
+        {
+          id: "idram" as const,
+          name: labels.idram,
+          description: labels.idramDescription,
+          enabled: paymentAvailability.idram,
+          unavailableLabel: labels.paymentUnavailable,
+        },
+        {
+          id: "arca" as const,
+          name: labels.arca,
+          description: labels.arcaDescription,
+          enabled: paymentAvailability.arca,
+          unavailableLabel: labels.paymentUnavailable,
+        },
+      ];
+      return options.filter(
+        (option) => option.id !== "arca" || option.enabled,
+      );
+    },
     [
       labels.arca,
       labels.arcaDescription,

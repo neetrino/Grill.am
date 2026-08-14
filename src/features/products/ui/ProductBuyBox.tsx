@@ -1,8 +1,7 @@
 "use client";
 
 import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useMemo, useState, useSyncExternalStore, useTransition } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { addToCart } from "@/features/cart/cart";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
@@ -37,7 +36,6 @@ type ProductBuyBoxLabels = {
   increaseQuantity: string;
   addToCart: string;
   selectRequired: string;
-  adding: string;
   outOfStock: string;
   added: string;
   error: string;
@@ -124,7 +122,6 @@ export function ProductBuyBox({
   ratingCount = null,
   labels,
 }: ProductBuyBoxProps) {
-  const router = useRouter();
   const maxQty = Math.max(stockOnHand, 0);
   const [modifiers, setModifiers] = useState<CartModifiers>({
     optionChoices: {},
@@ -134,7 +131,6 @@ export function ProductBuyBox({
   const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
   // Renders the server-formatted price until the client mounts, then
   // switches to live client-computed pricing (currency/modifier reactive).
   const livePricing = useSyncExternalStore(
@@ -245,20 +241,19 @@ export function ProductBuyBox({
       modifierLines: describeModifiers(rawCustomization, modifiers, locale),
     });
     adjustLocalCartItemCount(quantity);
+    setMessage(labels.added);
 
-    startTransition(async () => {
-      try {
-        await addToCart(productId, quantity, modifiers);
+    void addToCart(productId, quantity, modifiers)
+      .then(() => {
         acknowledgeOptimisticAdd();
         notifyCartChanged();
-        router.refresh();
-        setMessage(labels.added);
-      } catch {
+      })
+      .catch(() => {
         rollbackUpsertLocally(upsert);
         adjustLocalCartItemCount(-quantity);
+        setMessage(null);
         setError(labels.error);
-      }
-    });
+      });
   }
 
   const blurb = shortDescription || description;
@@ -351,7 +346,7 @@ export function ProductBuyBox({
             <button
               type="button"
               aria-label={labels.decreaseQuantity}
-              disabled={disabled || quantity <= 1 || pending}
+              disabled={disabled || quantity <= 1}
               onClick={() => changeQuantity(quantity - 1)}
               className="inline-flex size-8 items-center justify-center rounded-full bg-white/45 text-white transition hover:bg-white/60 disabled:opacity-40"
             >
@@ -366,7 +361,7 @@ export function ProductBuyBox({
             <button
               type="button"
               aria-label={labels.increaseQuantity}
-              disabled={disabled || quantity >= maxQty || pending}
+              disabled={disabled || quantity >= maxQty}
               onClick={() => changeQuantity(quantity + 1)}
               className="inline-flex size-8 items-center justify-center rounded-full bg-white text-brand-red transition hover:bg-white/90 disabled:opacity-40"
             >
@@ -378,7 +373,7 @@ export function ProductBuyBox({
         <div className="mt-5 flex flex-col gap-[22px]">
           <button
             type="button"
-            disabled={!canAdd || pending}
+            disabled={!canAdd}
             onClick={handleAdd}
             className="inline-flex h-[53px] w-full items-center justify-center gap-3 rounded-[66px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -392,11 +387,9 @@ export function ProductBuyBox({
                 ? labels.outOfStock
                 : !optionsComplete
                   ? labels.selectRequired
-                  : pending
-                    ? labels.adding
-                    : labels.addToCart}
+                  : labels.addToCart}
             </span>
-            {canAdd && !pending ? (
+            {canAdd ? (
               <span className="text-base font-black">{lineFormatted}</span>
             ) : null}
           </button>

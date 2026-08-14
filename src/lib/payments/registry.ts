@@ -1,4 +1,5 @@
 import { createArcaPaymentAdapter } from "@/lib/payments/arca/adapter";
+import { getArcaConfig } from "@/lib/payments/arca/config";
 import { createCodPaymentAdapter } from "@/lib/payments/cod-adapter";
 import { createIdramPaymentAdapter } from "@/lib/payments/idram/adapter";
 import { createNotConfiguredPaymentAdapter } from "@/lib/payments/not-configured-adapter";
@@ -18,7 +19,12 @@ export function getPaymentAdapter(provider: PaymentProvider): PaymentAdapter {
     case "cod":
       return createCodPaymentAdapter();
     case "arca": {
-      if (!getEnv().PAYMENT_ENABLE_ARCA) {
+      // Credentials may exist for admin testing while customer flag is off.
+      try {
+        if (!getArcaConfig()) {
+          return createNotConfiguredPaymentAdapter("arca");
+        }
+      } catch {
         return createNotConfiguredPaymentAdapter("arca");
       }
       return createArcaPaymentAdapter();

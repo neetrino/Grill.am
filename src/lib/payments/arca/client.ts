@@ -18,7 +18,10 @@ import {
   ArcaTimeoutError,
 } from "@/lib/payments/arca/errors";
 import { logger } from "@/lib/observability/logger";
-import { redactProviderReference } from "@/lib/payments/arca/redaction";
+import {
+  redactProviderReference,
+  sanitizeArcaErrorMessage,
+} from "@/lib/payments/arca/redaction";
 import {
   arcaRegisterResponseSchema,
   arcaStatusResponseSchema,
@@ -125,6 +128,94 @@ async function postArca(
   }
 }
 
+/** Coolify/ops grep key — keep this exact message. */
+const ARCA_REGISTER_RESPONSE_LOG = "ARCA register response";
+
+function formUrlHost(formUrl: string | undefined): string | undefined {
+  if (!formUrl) {
+    return undefined;
+  }
+  try {
+    return new URL(formUrl).host;
+  } catch {
+    return undefined;
+  }
+}
+
+function logArcaRegisterResponse(args: {
+  httpStatus?: number;
+  errorCode: string | null;
+  errorMessage?: string;
+  orderId?: string;
+  formUrl?: string;
+}): void {
+  const fields = {
+    provider: "arca",
+    httpStatus: args.httpStatus,
+    errorCode: args.errorCode,
+    errorMessage: args.errorMessage,
+    orderId: redactProviderReference(args.orderId),
+    formUrlHost: formUrlHost(args.formUrl),
+    hasOrderId: Boolean(args.orderId),
+    hasFormUrl: Boolean(args.formUrl),
+  };
+  if (args.errorCode && args.errorCode !== "0") {
+    logger.warn(ARCA_REGISTER_RESPONSE_LOG, fields);
+    return;
+  }
+  logger.info(ARCA_REGISTER_RESPONSE_LOG, fields);
+}
+
+function interpretRegisterPayload(
+  raw: unknown,
+  allowedFormHosts: readonly string[],
+): ArcaClientRegisterResult {
+  const parsed = arcaRegisterResponseSchema.safeParse(raw);
+  if (!parsed.success) {
+    logger.warn(ARCA_REGISTER_RESPONSE_LOG, {
+      provider: "arca",
+      errorCode: "ARCA_MALFORMED_RESPONSE",
+    });
+    throw new ArcaMalformedResponseError();
+  }
+
+  const data = parsed.data;
+  const errorCode = normalizeErrorCode(data.errorCode);
+  const errorMessage = sanitizeArcaErrorMessage(data.errorMessage);
+  logArcaRegisterResponse({
+    httpStatus: 200,
+    errorCode,
+    errorMessage,
+    orderId: data.orderId,
+    formUrl: data.formUrl,
+  });
+
+  if (!isArcaSystemOk(data.errorCode)) {
+    throw new ArcaBusinessError(
+      errorCode ?? "unknown",
+      "ARCA registration was rejected.",
+      errorMessage,
+    );
+  }
+
+  if (!data.orderId || !data.formUrl) {
+    throw new ArcaMalformedResponseError();
+  }
+
+  if (!isFormUrlHostAllowed(data.formUrl, allowedFormHosts)) {
+    logger.error("arca.form_url_rejected", {
+      provider: "arca",
+      providerReference: redactProviderReference(data.orderId),
+    });
+    throw new ArcaFormUrlRejectedError();
+  }
+
+  return {
+    providerOrderId: data.orderId,
+    formUrl: data.formUrl,
+  };
+}
+
 /**
  * Official ARCA EPG REST client (Merchant Manual §7).
  * Never logs credentials or raw card data.
@@ -140,56 +231,38 @@ export function createArcaPaymentClient(
   return {
     async register(input) {
       const path = resolveRegisterPath(config.paymentMode);
-      const raw = await postArca(config, path, {
-        userName: config.username,
-        password: config.password,
-        orderNumber: input.orderNumber,
-        amount: formatArcaAmountParam(input.amountMinorUnits),
-        currency: input.currencyCode,
-        returnUrl: input.returnUrl,
-        language: input.language ?? config.language,
-        description: input.description,
-        pageView: input.pageView,
-        jsonParams: input.jsonParams
-          ? JSON.stringify(input.jsonParams)
-          : undefined,
-        sessionTimeoutSecs:
-          input.sessionTimeoutSecs != null
-            ? String(input.sessionTimeoutSecs)
+      let raw: unknown;
+      try {
+        raw = await postArca(config, path, {
+          userName: config.username,
+          password: config.password,
+          orderNumber: input.orderNumber,
+          amount: formatArcaAmountParam(input.amountMinorUnits),
+          currency: input.currencyCode,
+          returnUrl: input.returnUrl,
+          language: input.language ?? config.language,
+          description: input.description,
+          pageView: input.pageView,
+          jsonParams: input.jsonParams
+            ? JSON.stringify(input.jsonParams)
             : undefined,
-      });
-
-      const parsed = arcaRegisterResponseSchema.safeParse(raw);
-      if (!parsed.success) {
-        throw new ArcaMalformedResponseError();
-      }
-
-      const data = parsed.data;
-      const errorCode = normalizeErrorCode(data.errorCode);
-
-      if (!isArcaSystemOk(data.errorCode)) {
-        throw new ArcaBusinessError(
-          errorCode ?? "unknown",
-          "ARCA registration was rejected.",
-        );
-      }
-
-      if (!data.orderId || !data.formUrl) {
-        throw new ArcaMalformedResponseError();
-      }
-
-      if (!isFormUrlHostAllowed(data.formUrl, config.allowedFormHosts)) {
-        logger.error("arca.form_url_rejected", {
-          provider: "arca",
-          providerReference: redactProviderReference(data.orderId),
+          sessionTimeoutSecs:
+            input.sessionTimeoutSecs != null
+              ? String(input.sessionTimeoutSecs)
+              : undefined,
         });
-        throw new ArcaFormUrlRejectedError();
+      } catch (error) {
+        if (error instanceof ArcaHttpError) {
+          logArcaRegisterResponse({
+            httpStatus: error.httpStatus,
+            errorCode: error.code,
+            errorMessage: error.httpStatusText,
+          });
+        }
+        throw error;
       }
 
-      return {
-        providerOrderId: data.orderId,
-        formUrl: data.formUrl,
-      };
+      return interpretRegisterPayload(raw, config.allowedFormHosts);
     },
 
     async getOrderStatusExtended(input) {

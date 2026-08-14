@@ -127,7 +127,6 @@ export function ProductDetailView({
                 increaseQuantity: dictionary.cartDrawer.increaseQuantity,
                 addToCart: labels.addToCart,
                 selectRequired: labels.selectRequired,
-                adding: labels.adding,
                 outOfStock: labels.outOfStock,
                 added: labels.added,
                 error: labels.addError,

@@ -13,6 +13,7 @@ import { buildArcaLocalOrderNumber } from "@/features/payments/providers/arca/lo
 import {
   mergeArcaPaymentMetadata,
   readArcaPaymentMetadata,
+  type ArcaPaymentMetadata,
 } from "@/features/payments/providers/arca/metadata";
 import { toArcaAmountMinorUnits } from "@/lib/payments/arca/amount";
 import { createArcaPaymentClient } from "@/lib/payments/arca/client";
@@ -313,9 +314,7 @@ export async function initializeArcaPayment(input: {
           metadata: mergeArcaPaymentMetadata(payment.metadata, {
             localOrderNumber: prepared.localOrderNumber,
             initializationState: "failed",
-            providerErrorCode: isArcaProtocolError(error)
-              ? error.code
-              : "ARCA_REGISTER_FAILED",
+            ...registerFailureMetadata(error),
             ...httpMeta,
           }),
           updatedAt: new Date(),
@@ -396,6 +395,22 @@ async function persistRegistration(args: {
       }),
     });
   });
+}
+
+function registerFailureMetadata(
+  error: unknown,
+): Partial<NonNullable<ArcaPaymentMetadata["arca"]>> {
+  if (error instanceof ArcaBusinessError) {
+    return {
+      providerErrorCode: error.providerErrorCode,
+      arcaErrorCode: error.providerErrorCode,
+      arcaErrorMessage: error.providerErrorMessage,
+    };
+  }
+  if (isArcaProtocolError(error)) {
+    return { providerErrorCode: error.code };
+  }
+  return { providerErrorCode: "ARCA_REGISTER_FAILED" };
 }
 
 async function markUncertain(prepared: PreparedAttempt): Promise<void> {

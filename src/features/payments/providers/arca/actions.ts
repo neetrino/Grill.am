@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 
+import { getPaymentMethodAvailability } from "@/features/payments/application/get-payment-method-availability";
 import {
   PaymentAccessDeniedError,
   assertOrderPaymentAccess,
@@ -139,6 +140,12 @@ export async function retryArcaPaymentAction(
   }
 
   try {
+    const availability = getPaymentMethodAvailability({
+      isAdmin: user?.role === "ADMIN",
+    });
+    if (!availability.arca) {
+      return { ok: false, error: "Card payment is temporarily unavailable." };
+    }
     const result = await retryArcaPayment({
       orderId: parsed.data.orderId,
       locale: parsed.data.locale,

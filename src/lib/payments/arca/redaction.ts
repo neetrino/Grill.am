@@ -39,6 +39,39 @@ export function redactSensitive(
   return value;
 }
 
+const ARCA_ERROR_MESSAGE_MAX_LEN = 512;
+
+/**
+ * Keeps ARCA `errorMessage` safe for logs and payment metadata.
+ * Never stores credentials, card data, or oversized provider text.
+ */
+export function sanitizeArcaErrorMessage(
+  value: string | undefined,
+): string | undefined {
+  if (value == null) {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  if (trimmed.length === 0) {
+    return undefined;
+  }
+  const lower = trimmed.toLowerCase();
+  if (
+    lower.includes("password") ||
+    lower.includes("username") ||
+    lower.includes("authorization") ||
+    /\bpan\b/.test(lower) ||
+    /\bcvv\b/.test(lower) ||
+    /\bcvc\b/.test(lower)
+  ) {
+    return "[redacted provider message]";
+  }
+  if (trimmed.length > ARCA_ERROR_MESSAGE_MAX_LEN) {
+    return `${trimmed.slice(0, ARCA_ERROR_MESSAGE_MAX_LEN)}…`;
+  }
+  return trimmed;
+}
+
 /** Short stable fingerprint for provider references in logs. */
 export function redactProviderReference(
   reference: string | null | undefined,

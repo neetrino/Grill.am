@@ -195,7 +195,9 @@ export async function createOrderAction(
   const user = await getCurrentUser();
 
   try {
-    assertPaymentMethodEnabled(paymentMethod);
+    assertPaymentMethodEnabled(paymentMethod, {
+      isAdmin: user?.role === "ADMIN",
+    });
   } catch (error) {
     if (error instanceof PaymentMethodDisabledError) {
       return { ok: false, error: error.message };

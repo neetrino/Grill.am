@@ -3,7 +3,7 @@
 import type { MouseEvent } from "react";
 import { ShoppingBasket } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 
 import { addToCart } from "@/features/cart/cart";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
@@ -58,14 +58,13 @@ export function AddToCartButton({
   configureHref,
 }: AddToCartButtonProps) {
   const router = useRouter();
-  const [pending, startTransition] = useTransition();
   const [justAdded, setJustAdded] = useState(false);
   const iconClass = size === "sm" ? "h-[29px] w-[29px]" : "h-5 w-5";
 
   function handleClick(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
     event.stopPropagation();
-    if (disabled || pending) return;
+    if (disabled) return;
 
     if (configureHref) {
       router.push(configureHref);
@@ -112,28 +111,26 @@ export function AddToCartButton({
       modifierLines: [],
     });
     adjustLocalCartItemCount(1);
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 1500);
 
-    startTransition(async () => {
-      try {
-        await addToCart(productId, 1);
+    void addToCart(productId, 1)
+      .then(() => {
         acknowledgeOptimisticAdd();
         notifyCartChanged();
-        setJustAdded(true);
-        router.refresh();
-        window.setTimeout(() => setJustAdded(false), 1500);
-      } catch {
+      })
+      .catch(() => {
         rollbackUpsertLocally(upsert);
         adjustLocalCartItemCount(-1);
         setJustAdded(false);
-      }
-    });
+      });
   }
 
   return (
     <button
       type="button"
       onClick={handleClick}
-      disabled={disabled || pending}
+      disabled={disabled}
       aria-label={label}
       className={`inline-flex items-center justify-center rounded-full text-gray-700 transition disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
     >
