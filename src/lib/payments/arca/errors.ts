@@ -63,14 +63,21 @@ export class ArcaMalformedResponseError extends ArcaProtocolError {
 
 export class ArcaBusinessError extends ArcaProtocolError {
   readonly providerErrorCode: string;
+  /** Sanitized ARCA `errorMessage`, if the gateway sent one. */
+  readonly providerErrorMessage: string | undefined;
 
-  constructor(providerErrorCode: string, safeMessage?: string) {
+  constructor(
+    providerErrorCode: string,
+    safeMessage?: string,
+    providerErrorMessage?: string,
+  ) {
     super(
       "ARCA_BUSINESS_ERROR",
       safeMessage ?? `ARCA business error code ${providerErrorCode}.`,
     );
     this.name = "ArcaBusinessError";
     this.providerErrorCode = providerErrorCode;
+    this.providerErrorMessage = providerErrorMessage;
   }
 }
 

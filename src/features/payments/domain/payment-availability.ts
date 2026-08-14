@@ -27,6 +27,21 @@ export function resolvePaymentMethodAvailability(
   };
 }
 
+/**
+ * Customers follow env flags for ARCA.
+ * Admin may always use ARCA (bypass `PAYMENT_ENABLE_ARCA=false`).
+ * COD and iDram keep following env flags for every viewer.
+ */
+export function applyArcaViewerGate(
+  availability: PaymentMethodAvailability,
+  isAdmin: boolean,
+): PaymentMethodAvailability {
+  if (!isAdmin || availability.arca) {
+    return availability;
+  }
+  return { ...availability, arca: true };
+}
+
 export function isPaymentMethodEnabledIn(
   availability: PaymentMethodAvailability,
   method: PaymentMethod,

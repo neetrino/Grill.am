@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { PaymentMethodDisabledError } from "@/features/payments/domain/errors";
 import {
+  applyArcaViewerGate,
   assertPaymentMethodEnabledIn,
   resolvePaymentMethodAvailability,
 } from "@/features/payments/domain/payment-availability";
@@ -62,6 +63,30 @@ describe("payment method availability", () => {
         PAYMENT_ENABLE_IDRAM: true,
       }),
     ).toEqual({
+      cash_on_delivery: true,
+      arca: true,
+      idram: true,
+    });
+  });
+
+  it("lets customers use ARCA when the env flag is on", () => {
+    const fromEnv = resolvePaymentMethodAvailability({
+      PAYMENT_ENABLE_COD: true,
+      PAYMENT_ENABLE_ARCA: true,
+      PAYMENT_ENABLE_IDRAM: true,
+    });
+    expect(applyArcaViewerGate(fromEnv, false)).toEqual(fromEnv);
+    expect(applyArcaViewerGate(fromEnv, true)).toEqual(fromEnv);
+  });
+
+  it("lets admin use ARCA even when the env flag is off", () => {
+    const fromEnv = resolvePaymentMethodAvailability({
+      PAYMENT_ENABLE_COD: true,
+      PAYMENT_ENABLE_ARCA: false,
+      PAYMENT_ENABLE_IDRAM: true,
+    });
+    expect(applyArcaViewerGate(fromEnv, false).arca).toBe(false);
+    expect(applyArcaViewerGate(fromEnv, true)).toEqual({
       cash_on_delivery: true,
       arca: true,
       idram: true,

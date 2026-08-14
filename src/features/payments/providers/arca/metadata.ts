@@ -14,6 +14,10 @@ export type ArcaPaymentMetadata = {
     lastOrderStatus?: number | null;
     lastNormalizedState?: ArcaNormalizedState;
     providerErrorCode?: string;
+    /** Numeric/string `errorCode` from ARCA register/status JSON. */
+    arcaErrorCode?: string;
+    /** Sanitized ARCA `errorMessage` from register/status JSON. */
+    arcaErrorMessage?: string;
     /** Present when providerErrorCode is ARCA_HTTP (safe transport metadata). */
     httpStatus?: number;
     httpStatusText?: string;
@@ -67,6 +71,12 @@ export function readArcaPaymentMetadata(
       providerErrorCode:
         typeof arca.providerErrorCode === "string"
           ? arca.providerErrorCode
+          : undefined,
+      arcaErrorCode:
+        typeof arca.arcaErrorCode === "string" ? arca.arcaErrorCode : undefined,
+      arcaErrorMessage:
+        typeof arca.arcaErrorMessage === "string"
+          ? arca.arcaErrorMessage
           : undefined,
       httpStatus:
         typeof arca.httpStatus === "number" &&

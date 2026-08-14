@@ -90,14 +90,14 @@ function parseHosts(raw: string | undefined, apiBaseUrl: string): string[] {
 }
 
 /**
- * Resolves ARCA config when enabled.
+ * Resolves ARCA runtime config when credentials are present.
+ * Customer checkout still follows `PAYMENT_ENABLE_ARCA`; admin may pay with
+ * credentials even when that customer flag is off.
  * Credentials are server-only; administration login must never be stored here.
  */
 export function getArcaConfig(): ArcaRuntimeConfig | null {
   const env = getEnv();
-  if (!env.PAYMENT_ENABLE_ARCA) {
-    return null;
-  }
+  const customerEnabled = env.PAYMENT_ENABLE_ARCA;
 
   const environment = env.ARCA_ENVIRONMENT;
   const apiBaseUrl = stripTrailingSlash(env.ARCA_API_BASE_URL ?? "");
@@ -113,31 +113,51 @@ export function getArcaConfig(): ArcaRuntimeConfig | null {
     process.env.ARCA_REQUEST_TIMEOUT_MS,
   );
 
-  if (!environment) {
-    throw new ArcaConfigError(
-      "ARCA_ENVIRONMENT is required when PAYMENT_ENABLE_ARCA=true.",
-    );
+  const hasCompleteCredentials = Boolean(
+    environment &&
+      paymentMode &&
+      apiBaseUrl &&
+      username &&
+      password &&
+      z.string().url().safeParse(apiBaseUrl).success &&
+      z.string().url().safeParse(returnBaseUrl).success,
+  );
+
+  if (!hasCompleteCredentials) {
+    if (!customerEnabled) {
+      return null;
+    }
+    if (!environment) {
+      throw new ArcaConfigError(
+        "ARCA_ENVIRONMENT is required when PAYMENT_ENABLE_ARCA=true.",
+      );
+    }
+    if (!paymentMode) {
+      throw new ArcaConfigError(
+        "ARCA_PAYMENT_MODE is required when PAYMENT_ENABLE_ARCA=true (one_stage|two_stage).",
+      );
+    }
+    if (!apiBaseUrl) {
+      throw new ArcaConfigError(
+        "ARCA_API_BASE_URL is required when PAYMENT_ENABLE_ARCA=true.",
+      );
+    }
+    if (!z.string().url().safeParse(apiBaseUrl).success) {
+      throw new ArcaConfigError("ARCA_API_BASE_URL must be a valid URL.");
+    }
+    if (!username || !password) {
+      throw new ArcaConfigError(
+        "ARCA_API_USERNAME and ARCA_API_PASSWORD are required when PAYMENT_ENABLE_ARCA=true.",
+      );
+    }
+    if (!z.string().url().safeParse(returnBaseUrl).success) {
+      throw new ArcaConfigError("ARCA_RETURN_BASE_URL must be a valid URL.");
+    }
+    return null;
   }
-  if (!paymentMode) {
-    throw new ArcaConfigError(
-      "ARCA_PAYMENT_MODE is required when PAYMENT_ENABLE_ARCA=true (one_stage|two_stage).",
-    );
-  }
-  if (!apiBaseUrl) {
-    throw new ArcaConfigError(
-      "ARCA_API_BASE_URL is required when PAYMENT_ENABLE_ARCA=true.",
-    );
-  }
-  if (!z.string().url().safeParse(apiBaseUrl).success) {
-    throw new ArcaConfigError("ARCA_API_BASE_URL must be a valid URL.");
-  }
-  if (!username || !password) {
-    throw new ArcaConfigError(
-      "ARCA_API_USERNAME and ARCA_API_PASSWORD are required when PAYMENT_ENABLE_ARCA=true.",
-    );
-  }
-  if (!z.string().url().safeParse(returnBaseUrl).success) {
-    throw new ArcaConfigError("ARCA_RETURN_BASE_URL must be a valid URL.");
+
+  if (!environment || !paymentMode) {
+    return null;
   }
 
   if (env.NODE_ENV === "production") {
@@ -182,7 +202,7 @@ export function getArcaConfig(): ArcaRuntimeConfig | null {
   }
 
   return {
-    enabled: true,
+    enabled: customerEnabled,
     environment,
     paymentMode,
     apiBaseUrl,

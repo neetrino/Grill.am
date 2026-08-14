@@ -139,14 +139,75 @@ describe("ARCA HTTP client Accept / transport", () => {
     const { requireArcaConfig } = await import("@/lib/payments/arca/config");
     const { ArcaBusinessError } = await import("@/lib/payments/arca/errors");
     const client = createArcaPaymentClient(requireArcaConfig());
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-    await expect(
-      client.register({
+    try {
+      await client.register({
         orderNumber: "a1-testorder",
         amountMinorUnits: 1000n,
         currencyCode: "051",
         returnUrl: "https://grill.am/api/v1/payments/arca/return",
-      }),
-    ).rejects.toBeInstanceOf(ArcaBusinessError);
+      });
+      expect.unreachable("expected ArcaBusinessError");
+    } catch (error) {
+      expect(error).toBeInstanceOf(ArcaBusinessError);
+      const business = error as InstanceType<typeof ArcaBusinessError>;
+      expect(business.providerErrorCode).toBe("5");
+      expect(business.providerErrorMessage).toBe("Access denied");
+      expect(business.message).not.toMatch(/password|api-pass|api-user/i);
+    }
+
+    const logged = warnSpy.mock.calls.map((call) => String(call[0])).join("\n");
+    expect(logged).toContain("ARCA register response");
+    expect(logged).toContain("\"errorCode\":\"5\"");
+    expect(logged).toContain("Access denied");
+    expect(logged).not.toMatch(/api-pass|api-user/i);
+    warnSpy.mockRestore();
+  });
+
+  it("redacts credential-like ARCA errorMessage before log and throw", async () => {
+    stubArcaEnv();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            errorCode: 5,
+            errorMessage: "password=should-not-leak",
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          },
+        ),
+      ),
+    );
+
+    const { createArcaPaymentClient } = await import(
+      "@/lib/payments/arca/client"
+    );
+    const { requireArcaConfig } = await import("@/lib/payments/arca/config");
+    const { ArcaBusinessError } = await import("@/lib/payments/arca/errors");
+    const client = createArcaPaymentClient(requireArcaConfig());
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    try {
+      await client.register({
+        orderNumber: "a1-testorder",
+        amountMinorUnits: 1000n,
+        currencyCode: "051",
+        returnUrl: "https://grill.am/api/v1/payments/arca/return",
+      });
+      expect.unreachable("expected ArcaBusinessError");
+    } catch (error) {
+      expect(error).toBeInstanceOf(ArcaBusinessError);
+      const business = error as InstanceType<typeof ArcaBusinessError>;
+      expect(business.providerErrorMessage).toBe("[redacted provider message]");
+    }
+
+    const logged = warnSpy.mock.calls.map((call) => String(call[0])).join("\n");
+    expect(logged).toContain("ARCA register response");
+    expect(logged).not.toContain("should-not-leak");
+    warnSpy.mockRestore();
   });
 });
