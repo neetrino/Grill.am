@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Check, Copy, Pencil, Trash2 } from "lucide-react";
+import { Check, Copy, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
@@ -104,7 +104,8 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
           <AdminPageTitle>{copy.title}</AdminPageTitle>
           <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{copy.subtitle}</p>
         </div>
-        <Button type="button" size="sm" onClick={openCreate}>
+        <Button type="button" size="sm" onClick={openCreate} className="gap-2">
+          <Plus className="h-4 w-4" aria-hidden />
           {copy.add}
         </Button>
       </div>

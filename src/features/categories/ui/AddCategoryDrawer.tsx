@@ -14,15 +14,15 @@ import {
 } from "@/features/admin/ui/admin-form-classes";
 import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
+import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   createCategoryFromDrawerAction,
   updateCategoryFromDrawerAction,
 } from "@/features/categories/actions";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
-import enAdmin from "@/locales/en/admin.json";
 
-/** Categories are English-only in admin (no locale tabs). */
+/** Category content currently uses the English translation slot. */
 const CATEGORY_LOCALE = "en" as const;
 
 const CATEGORY_DRAWER_FORM_ID = "category-drawer-form";
@@ -64,8 +64,9 @@ export function AddCategoryDrawer({
   categories,
   category = null,
 }: AddCategoryDrawerProps) {
-  const copy = enAdmin.categories.drawer;
-  const common = enAdmin.common;
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.categories.drawer;
+  const common = dictionary.common;
   const router = useRouter();
   const isEdit = category != null;
   const fileInputRef = useRef<HTMLInputElement>(null);

@@ -130,9 +130,10 @@ async function main(): Promise<void> {
       {
         softDeleted: safe.length,
         softDeletedTitles: safe.map((row) => row.title),
-        activeCategories: (remaining.rows ?? remaining).map(
-          (row: { title: string | null }) => row.title,
-        ),
+        activeCategories: (remaining.rows ?? remaining).map((row) => {
+          const title = row.title;
+          return typeof title === "string" ? title : null;
+        }),
       },
       null,
       2,

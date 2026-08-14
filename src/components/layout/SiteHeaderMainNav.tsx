@@ -204,9 +204,6 @@ export function SiteHeaderMainNav({
       if (!el) {
         return;
       }
-      // offsetHeight is layout px (pre-zoom). getBoundingClientRect is visual
-      // and double-counts DesktopFluidFrame zoom on large screens, pushing
-      // sticky catalog rails too far down.
       const height = Math.ceil(el.offsetHeight);
       document.documentElement.style.setProperty(
         STOREFRONT_HEADER_OFFSET_VAR,
@@ -306,7 +303,7 @@ export function SiteHeaderMainNav({
             }`}
           >
             <header className="bg-white">
-              <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-10">
+              <div className="page-container">
                 <div className="flex items-end justify-between gap-4 border-b border-black/7 py-3 md:items-center md:py-3">
                   <AppLink
                     href={homeHref}
@@ -366,7 +363,7 @@ export function SiteHeaderMainNav({
       </div>
 
       <div className="border-b border-black/7 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] md:shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-        <div className="mx-auto flex max-w-[1440px] items-center gap-4 px-4 pt-4 pb-2 sm:px-8 sm:py-4 lg:px-10">
+        <div className="page-container flex items-center gap-4 pt-4 pb-2 sm:py-4">
           <div className="min-w-0 flex-1">
             <HeaderSearch
               locale={locale}

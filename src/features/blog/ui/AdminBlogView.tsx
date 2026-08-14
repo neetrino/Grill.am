@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
@@ -15,7 +15,7 @@ import {
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_CONTENT_CARD_CLASS,
-  ADMIN_CONTENT_CARD_GRID,
+  ADMIN_CONTENT_CARD_GRID_COMPACT,
   ADMIN_CONTENT_CARD_STATUS_CLASS,
 } from "@/features/admin/ui/admin-ui";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
@@ -106,7 +106,8 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <AdminPageTitle>{copy.title}</AdminPageTitle>
-        <Button type="button" size="sm" onClick={openCreate}>
+        <Button type="button" size="sm" onClick={openCreate} className="gap-2">
+          <Plus className="h-4 w-4" aria-hidden />
           {copy.addPost}
         </Button>
       </div>
@@ -128,7 +129,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
           </p>
         </Card>
       ) : (
-        <div className={ADMIN_CONTENT_CARD_GRID}>
+        <div className={ADMIN_CONTENT_CARD_GRID_COMPACT}>
           {filtered.map((post) => (
             <Card key={post.id} className={ADMIN_CONTENT_CARD_CLASS}>
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">

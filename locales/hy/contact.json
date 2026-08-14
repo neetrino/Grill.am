@@ -12,8 +12,7 @@
   "privacyNote": "Ձեր տվյալները պաշտպանված են և չեն փոխանցվում երրորդ կողմին։",
   "success": "Շնորհակալություն — հաղորդագրությունն ուղարկված է։",
   "error": "Չհաջողվեց ուղարկել հաղորդագրությունը։",
-  "storePhones": ["+374 10 600 700", "+374 33 600 700"],
-  "deliveryPhoneLabel": "առաքում",
+  "storePhones": ["+374 33 600 700", "+374 10 600 700", "+374 10 557 668"],
   "storeEmail": "infogrillam@gmail.com",
   "storeAddresses": [
     "Խորենացի 95/2",
@@ -27,7 +26,7 @@
     "Տիգրան Պետրոսյան 13/8"
   ],
   "social": {
-    "instagram": "https://www.instagram.com/grill.am",
+    "instagram": "https://www.instagram.com/grill.am_/",
     "facebook": "https://www.facebook.com/Grill.am",
     "linkedin": "https://linkedin.com",
     "whatsapp": "https://wa.me/37433600700"

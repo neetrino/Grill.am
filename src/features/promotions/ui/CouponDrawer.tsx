@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
+import { DateField } from "@/components/ui/DateField";
 import {
   ADMIN_FIELD,
   ADMIN_FORM_STACK,
@@ -248,16 +249,13 @@ export function CouponDrawer({
               disabled={isPending}
             />
           </label>
-          <label className={ADMIN_FIELD}>
-            <span className={ADMIN_LABEL}>{copy.expires}</span>
-            <input
-              type="datetime-local"
-              value={expiresAt}
-              onChange={(event) => setExpiresAt(event.target.value)}
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
+          <DateField
+            label={copy.expires}
+            value={expiresAt}
+            onChange={setExpiresAt}
+            withTime
+            disabled={isPending}
+          />
         </div>
 
         <div className="rounded-xl border border-gray-300 px-4 py-3">

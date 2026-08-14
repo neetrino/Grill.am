@@ -3,7 +3,9 @@
 import { type ReactNode } from "react";
 
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import { CUSTOMER_NOTE_MAX_LENGTH } from "@/features/checkout/domain/customer-note";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
+import { CheckoutSearchSelect } from "@/features/checkout/ui/CheckoutSearchSelect";
 import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import {
   CHECKOUT_FIELD_CLASS,
@@ -14,12 +16,14 @@ import {
   CHECKOUT_SECTION_TITLE_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
+import type { StorePickupOption } from "@/features/stores/yandex-map-embed";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
   shippingMethod: string;
   shippingAddress: string;
   paymentMethod: string;
+  orderComment: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -31,10 +35,14 @@ type CheckoutDetailsLabels = {
   phonePlaceholder: string;
   cityPlaceholder: string;
   addressPlaceholder: string;
+  orderCommentPlaceholder: string;
   storePickup: string;
   storePickupDescription: string;
   delivery: string;
   deliveryDescription: string;
+  pickupBranch: string;
+  selectPickupBranch: string;
+  pickupBranchNoResults: string;
 };
 
 type PaymentOption = {
@@ -53,6 +61,9 @@ type CheckoutDetailsSectionsProps = {
   deliveryOptions: CheckoutDeliveryOption[];
   deliveryRuleId: string;
   onDeliveryRuleChange: (ruleId: string) => void;
+  pickupStores: StorePickupOption[];
+  pickupStoreId: string;
+  onPickupStoreChange: (storeId: string) => void;
   paymentMethod: CheckoutPaymentMethod;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
   paymentOptions: PaymentOption[];
@@ -78,6 +89,9 @@ export function CheckoutDetailsSections({
   deliveryOptions,
   deliveryRuleId,
   onDeliveryRuleChange,
+  pickupStores,
+  pickupStoreId,
+  onPickupStoreChange,
   paymentMethod,
   onPaymentMethodChange,
   paymentOptions,
@@ -200,6 +214,29 @@ export function CheckoutDetailsSections({
         </div>
       </section>
 
+      {shippingMethod === "pickup" ? (
+        <section className={CHECKOUT_SECTION_CARD_CLASS}>
+          <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
+            {labels.pickupBranch}
+          </h2>
+          <CheckoutSearchSelect
+            label={labels.pickupBranch}
+            name="pickupStoreId"
+            required
+            hideLabel
+            value={pickupStoreId}
+            onChange={onPickupStoreChange}
+            disabled={pending || pickupStores.length === 0}
+            placeholder={labels.selectPickupBranch}
+            noResultsLabel={labels.pickupBranchNoResults}
+            options={pickupStores.map((store) => ({
+              value: store.id,
+              label: store.label,
+            }))}
+          />
+        </section>
+      ) : null}
+
       {shippingMethod === "delivery" ? (
         <section className={CHECKOUT_SECTION_CARD_CLASS}>
           <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
@@ -247,6 +284,25 @@ export function CheckoutDetailsSections({
         disabled={pending}
         cashOnDeliveryExtra={cashOnDeliveryExtra}
       />
+
+      <section className={CHECKOUT_SECTION_CARD_CLASS}>
+        <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
+          {labels.orderComment}
+        </h2>
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+          <span className="sr-only">{labels.orderComment}</span>
+          <textarea
+            name="customerNote"
+            rows={4}
+            maxLength={CUSTOMER_NOTE_MAX_LENGTH}
+            placeholder={labels.orderCommentPlaceholder}
+            disabled={pending}
+            className={`${CHECKOUT_FIELD_CLASS} min-h-[96px] resize-y`}
+            autoComplete="off"
+            suppressHydrationWarning
+          />
+        </label>
+      </section>
     </div>
   );
 }

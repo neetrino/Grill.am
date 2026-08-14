@@ -7,11 +7,6 @@ import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { staticAssetUrl } from "@/lib/media/static-asset-url";
-
-const FEATURED_CARD_IMAGE_FALLBACK = staticAssetUrl(
-  "/assets/products/product-card.webp",
-);
 
 type FeaturedProductCardProps = {
   href: string;
@@ -66,7 +61,7 @@ export function FeaturedProductCard({
   requiresConfiguration = false,
   tone,
 }: FeaturedProductCardProps) {
-  const resolvedImageUrl = imageUrl?.trim() || FEATURED_CARD_IMAGE_FALLBACK;
+  const resolvedImageUrl = imageUrl?.trim() || null;
   const resolvedSlug =
     slug?.trim() ||
     href.split("/").filter(Boolean).at(-1)?.split("?")[0] ||
@@ -89,21 +84,23 @@ export function FeaturedProductCard({
     >
       <div
         data-product-fly-origin
-        className="relative h-[155px] shrink-0 overflow-hidden rounded-[20px] bg-brand-surface"
+        className="relative h-[155px] shrink-0 overflow-hidden rounded-[20px] bg-white"
       >
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
           className="absolute inset-0 z-[1] block"
         >
-          <Image
-            src={resolvedImageUrl}
-            alt={title}
-            fill
-            sizes="210px"
-            className="object-cover"
-            priority={priority}
-          />
+          {resolvedImageUrl ? (
+            <Image
+              src={resolvedImageUrl}
+              alt={title}
+              fill
+              sizes="210px"
+              className="object-cover"
+              priority={priority}
+            />
+          ) : null}
         </AppLink>
 
         {discountPercent != null ? (

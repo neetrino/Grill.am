@@ -2,10 +2,7 @@ import { config as loadEnv } from "dotenv";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { rmSync } from "node:fs";
-import { Pool, neonConfig } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-serverless";
 import { eq } from "drizzle-orm";
-import ws from "ws";
 
 import { products, storeSettings, users } from "@/db/schema";
 import { hashPassword } from "@/lib/auth/password";
@@ -19,20 +16,18 @@ import {
   E2E_PAYMENT_PRODUCT_SKU,
   E2E_PAYMENT_PRODUCT_SLUG,
 } from "@/lib/e2e/payment-product";
+import { openPgDrizzle } from "../helpers/open-pg-drizzle";
 import { resolveE2eDatabaseUrl } from "./helpers/db-guard";
 
 loadEnv({ path: path.resolve(process.cwd(), ".env") });
 loadEnv({ path: path.resolve(process.cwd(), ".env.e2e"), override: true });
-
-neonConfig.webSocketConstructor = ws;
 
 /**
  * Prepares E2E DB before Next starts: migrate + deterministic product + min order.
  * Clears Next data cache so a prior product-detail miss cannot stick.
  */
 async function seedE2eFixtures(connectionString: string): Promise<void> {
-  const pool = new Pool({ connectionString });
-  const db = drizzle({ client: pool });
+  const { db, close } = openPgDrizzle(connectionString);
   try {
     const now = new Date();
     const slug = E2E_PAYMENT_PRODUCT_SLUG;
@@ -172,7 +167,7 @@ async function seedE2eFixtures(connectionString: string): Promise<void> {
       `E2E seed OK: sku=${E2E_PAYMENT_PRODUCT_SKU} slug=${slug} price=${E2E_PAYMENT_PRODUCT_PRICE} minOrder=0 operator=${E2E_OPERATOR_EMAIL}`,
     );
   } finally {
-    await pool.end();
+    await close();
   }
 }
 

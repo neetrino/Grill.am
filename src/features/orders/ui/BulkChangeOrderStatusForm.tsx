@@ -27,15 +27,17 @@ import {
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
+import { formatPaymentMethodDisplay } from "@/features/orders/domain/payment-method-label";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
-import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
+import { AdminOrderPlacedAt } from "@/features/orders/ui/AdminOrderPlacedAt";
 
 type BulkOrderRow = {
   id: string;
   orderNumber: string;
   status: string;
   paymentStatus: string;
+  latestPaymentMethod: string | null;
   contactName: string;
   contactEmail: string;
   totalAmount: number;
@@ -52,6 +54,15 @@ type BulkChangeOrderStatusFormProps = {
 
 function formatMoney(amount: number, currency: string): string {
   return `${amount.toLocaleString("en-US")} ${currency}`;
+}
+
+/** Row cells with their own controls (checkbox, inline status selects). */
+const ROW_CONTROL_SELECTOR = "button, input, select, textarea, a, label";
+
+function isRowControl(target: EventTarget | null): boolean {
+  return (
+    target instanceof Element && target.closest(ROW_CONTROL_SELECTOR) !== null
+  );
 }
 
 export function BulkChangeOrderStatusForm({
@@ -172,15 +183,40 @@ export function BulkChangeOrderStatusForm({
                 </th>
                 <th className={ADMIN_TABLE_TH}>{list.order}</th>
                 <th className={ADMIN_TABLE_TH}>{list.customer}</th>
-                <th className={ADMIN_TABLE_TH_CENTER}>{list.status}</th>
-                <th className={ADMIN_TABLE_TH_CENTER}>{list.payment}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.total}</th>
                 <th className={ADMIN_TABLE_TH}>{list.placed}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.status}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.payment}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.paymentMethod}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
               {orders.map((order) => (
-                <tr key={order.id} className={ADMIN_TABLE_ROW}>
+                <tr
+                  key={order.id}
+                  className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={formatAdminMessage(list.openOrder, {
+                    orderNumber: order.orderNumber,
+                  })}
+                  onClick={(event) => {
+                    if (isRowControl(event.target)) {
+                      return;
+                    }
+                    onOpenOrder(order.orderNumber);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") {
+                      return;
+                    }
+                    if (isRowControl(event.target)) {
+                      return;
+                    }
+                    event.preventDefault();
+                    onOpenOrder(order.orderNumber);
+                  }}
+                >
                   <td className={ADMIN_TABLE_TD_CHECK}>
                     <input
                       type="checkbox"
@@ -194,13 +230,9 @@ export function BulkChangeOrderStatusForm({
                     />
                   </td>
                   <td className={ADMIN_TABLE_TD}>
-                    <button
-                      type="button"
-                      onClick={() => onOpenOrder(order.orderNumber)}
-                      className="font-medium text-gray-900 hover:underline"
-                    >
+                    <span className="font-medium text-gray-900">
                       {order.orderNumber}
-                    </button>
+                    </span>
                     {order.isArchived ? (
                       <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
                         {list.archived}
@@ -210,6 +242,14 @@ export function BulkChangeOrderStatusForm({
                   <td className={ADMIN_TABLE_TD}>
                     <p className="text-sm text-gray-900">{order.contactName}</p>
                     <p className="text-xs text-gray-500">{order.contactEmail}</p>
+                  </td>
+                  <td className={ADMIN_TABLE_TD_CENTER}>
+                    <span className="text-base font-semibold tabular-nums text-gray-900">
+                      {formatMoney(order.totalAmount, order.baseCurrency)}
+                    </span>
+                  </td>
+                  <td className={ADMIN_TABLE_TD}>
+                    <AdminOrderPlacedAt placedAt={order.placedAt} />
                   </td>
                   <td className={ADMIN_TABLE_TD_CENTER}>
                     <div className="flex justify-center">
@@ -234,13 +274,8 @@ export function BulkChangeOrderStatusForm({
                     </div>
                   </td>
                   <td className={ADMIN_TABLE_TD_CENTER}>
-                    <span className="font-medium text-gray-900">
-                      {formatMoney(order.totalAmount, order.baseCurrency)}
-                    </span>
-                  </td>
-                  <td className={ADMIN_TABLE_TD}>
-                    <span className="text-xs text-gray-500">
-                      {formatAppDateTimeMinutes(order.placedAt)}
+                    <span className="text-sm font-medium text-gray-800">
+                      {formatPaymentMethodDisplay(order.latestPaymentMethod)}
                     </span>
                   </td>
                 </tr>

@@ -7,7 +7,6 @@ import { X, ZoomIn, ZoomOut } from "lucide-react";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { ProductGalleryImage } from "@/features/products/types";
 import type { Locale } from "@/lib/i18n/config";
-import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type ProductGalleryProps = {
   images: ProductGalleryImage[];
@@ -82,9 +81,9 @@ export function ProductGallery({
     <div className="flex flex-col gap-[35px]">
       <div
         data-product-fly-origin
-        className="relative aspect-[764/420] w-full overflow-hidden rounded-[30px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.09)]"
+        className="relative aspect-[744/600] w-full overflow-hidden rounded-[30px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.09)] lg:aspect-[764/580]"
       >
-        {selected ? (
+        {selected?.url ? (
           <button
             type="button"
             onClick={openLightbox}
@@ -92,7 +91,7 @@ export function ProductGallery({
             aria-label={zoomLabel}
           >
             <Image
-              src={selected.url || PRODUCT_CARD_IMAGE}
+              src={selected.url}
               alt={selected.alt || title}
               fill
               sizes="(max-width: 1024px) 100vw, 764px"
@@ -101,16 +100,7 @@ export function ProductGallery({
             />
           </button>
         ) : (
-          <div className="relative h-full w-full">
-            <Image
-              src={PRODUCT_CARD_IMAGE}
-              alt={title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 764px"
-              className="object-cover"
-              priority
-            />
-          </div>
+          <div className="relative h-full w-full bg-white" aria-hidden />
         )}
 
         {hitLabel ? (
@@ -150,19 +140,21 @@ export function ProductGallery({
                   onClick={() => setSelectedId(image.id)}
                   aria-label={image.alt || title}
                   aria-pressed={isActive}
-                  className={`relative size-20 overflow-hidden rounded-[14px] transition ${
+                  className={`relative size-20 overflow-hidden rounded-[14px] bg-white transition ${
                     isActive
                       ? "opacity-100 shadow-[0_0_0_2px_#fff,0_0_0_4px_#0a0a0a]"
                       : "opacity-60 hover:opacity-100"
                   }`}
                 >
-                  <Image
-                    src={image.url || PRODUCT_CARD_IMAGE}
-                    alt=""
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                  />
+                  {image.url ? (
+                    <Image
+                      src={image.url}
+                      alt=""
+                      fill
+                      sizes="80px"
+                      className="object-cover"
+                    />
+                  ) : null}
                 </button>
               </li>
             );
@@ -173,67 +165,73 @@ export function ProductGallery({
       <dialog
         ref={dialogRef}
         aria-labelledby={titleId}
-        className="fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-black/90 p-0 text-white backdrop:bg-black/80 open:flex open:flex-col"
+        className="fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-transparent p-3 text-neutral-900 shadow-none backdrop:bg-white/25 backdrop:backdrop-blur-md sm:p-5 open:flex open:items-center open:justify-center"
         onClick={(event) => {
           if (event.target === dialogRef.current) {
             closeLightbox();
           }
         }}
       >
-        <div className="flex items-center justify-between gap-3 px-4 py-3">
-          <p id={titleId} className="truncate text-sm font-medium">
-            {selected?.alt || title}
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              aria-label={zoomLabel}
-              disabled={zoom >= MAX_ZOOM}
-              onClick={() =>
-                setZoom((value) => Math.min(MAX_ZOOM, value + ZOOM_STEP))
-              }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 hover:bg-white/20 disabled:opacity-40"
-            >
-              <ZoomIn className="h-5 w-5" aria-hidden />
-            </button>
-            <button
-              type="button"
-              aria-label={closeZoomLabel}
-              disabled={zoom <= MIN_ZOOM}
-              onClick={() =>
-                setZoom((value) => Math.max(MIN_ZOOM, value - ZOOM_STEP))
-              }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 hover:bg-white/20 disabled:opacity-40"
-            >
-              <ZoomOut className="h-5 w-5" aria-hidden />
-            </button>
-            <button
-              type="button"
-              aria-label={closeZoomLabel}
-              onClick={closeLightbox}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 hover:bg-white/20"
-            >
-              <X className="h-5 w-5" aria-hidden />
-            </button>
-          </div>
-        </div>
-
-        {lightboxOpen && selected ? (
-          <div className="relative flex flex-1 items-center justify-center overflow-auto px-4 pb-8">
-            <div
-              className="relative h-[70vh] w-full max-w-5xl transition-transform duration-200 ease-out"
-              style={{ transform: `scale(${zoom})` }}
-            >
-              <Image
-                src={selected.url || PRODUCT_CARD_IMAGE}
-                alt={selected.alt || title}
-                fill
-                sizes="100vw"
-                className="object-contain"
-              />
+        <div
+          className="relative flex max-h-[calc(100vh-1.5rem)] w-full max-w-[min(96vw,92vh)] flex-col gap-2.5 sm:max-h-[calc(100vh-2.5rem)]"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="flex items-center justify-between gap-3 rounded-[18px] bg-white/70 px-3 py-2 shadow-[0_8px_28px_rgba(0,0,0,0.08)] backdrop-blur-md">
+            <p id={titleId} className="min-w-0 truncate text-sm font-medium">
+              {selected?.alt || title}
+            </p>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <button
+                type="button"
+                aria-label={zoomLabel}
+                disabled={zoom >= MAX_ZOOM}
+                onClick={() =>
+                  setZoom((value) => Math.min(MAX_ZOOM, value + ZOOM_STEP))
+                }
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-neutral-800 hover:bg-black/10 disabled:opacity-40"
+              >
+                <ZoomIn className="h-5 w-5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                aria-label={closeZoomLabel}
+                disabled={zoom <= MIN_ZOOM}
+                onClick={() =>
+                  setZoom((value) => Math.max(MIN_ZOOM, value - ZOOM_STEP))
+                }
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-neutral-800 hover:bg-black/10 disabled:opacity-40"
+              >
+                <ZoomOut className="h-5 w-5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                aria-label={closeZoomLabel}
+                onClick={closeLightbox}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-neutral-800 hover:bg-black/10"
+              >
+                <X className="h-5 w-5" aria-hidden />
+              </button>
             </div>
           </div>
-        ) : null}
+
+          {lightboxOpen && selected?.url ? (
+            <div className="overflow-hidden rounded-[28px] bg-white/50 p-2 shadow-[0_16px_48px_rgba(0,0,0,0.12)] backdrop-blur-md">
+              <div
+                className="flex h-[min(82vh,calc(100vh-7.5rem))] w-full items-center justify-center transition-transform duration-200 ease-out"
+                style={{ transform: `scale(${zoom})` }}
+              >
+                <Image
+                  src={selected.url}
+                  alt={selected.alt || title}
+                  width={1600}
+                  height={1600}
+                  sizes="(max-width: 768px) 96vw, 92vh"
+                  className="h-full w-auto max-w-full rounded-[24px] object-contain"
+                />
+              </div>
+            </div>
+          ) : null}
+        </div>
       </dialog>
     </div>
   );

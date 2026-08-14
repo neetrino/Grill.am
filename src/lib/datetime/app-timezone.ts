@@ -54,12 +54,17 @@ export function formatAppIsoDate(value: Date | string | number): string {
   return `${parts.year}-${pad2(parts.monthIndex + 1)}-${pad2(parts.day)}`;
 }
 
+/** HH:mm in app timezone. */
+export function formatAppTimeMinutes(value: Date | string | number): string {
+  const parts = toAppZonedParts(value);
+  return `${pad2(parts.hour)}:${pad2(parts.minute)}`;
+}
+
 /** YYYY-MM-DD HH:mm in app timezone. */
 export function formatAppDateTimeMinutes(
   value: Date | string | number,
 ): string {
-  const parts = toAppZonedParts(value);
-  return `${parts.year}-${pad2(parts.monthIndex + 1)}-${pad2(parts.day)} ${pad2(parts.hour)}:${pad2(parts.minute)}`;
+  return `${formatAppIsoDate(value)} ${formatAppTimeMinutes(value)}`;
 }
 
 /** YYYY-MM-DD HH:mm:ss in app timezone. */

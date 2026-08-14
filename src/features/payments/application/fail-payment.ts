@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 
 import { orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
-import { enqueuePaymentNotification } from "@/features/payments/application/enqueue-payment-notification";
+import { scheduleOrderEmails } from "@/features/notifications/application/schedule-order-emails";
 import {
   InvalidPaymentTransitionError,
   PaymentAlreadyCapturedError,
@@ -43,7 +43,7 @@ export type FailPaymentResult =
 export async function failPayment(
   input: FailPaymentInput,
 ): Promise<FailPaymentResult> {
-  return withTransaction(async (tx) => {
+  const result = await withTransaction(async (tx) => {
     const [payment] = await tx
       .select()
       .from(payments)
@@ -160,29 +160,34 @@ export async function failPayment(
       }),
     });
 
-    // Skip expiry/local-policy cancels from customer email noise.
-    if (input.errorCode !== "PAYMENT_ATTEMPT_EXPIRED") {
-      await enqueuePaymentNotification(tx, {
-        type:
-          input.outcome === "FAILED"
-            ? "ONLINE_PAYMENT_FAILED"
-            : "ONLINE_PAYMENT_CANCELLED",
-        orderId: order.id,
-        orderNumber: order.orderNumber,
-        locale: order.locale,
-        dedupeKey: `payment-${input.outcome.toLowerCase()}:${payment.id}:customer`,
-        recipientRole: "customer",
-        safePayload: { provider: payment.provider },
-      });
-    }
-
     return {
       type: "updated" as const,
       orderId: order.id,
       paymentId: payment.id,
+      orderNumber: order.orderNumber,
       status: input.outcome,
+      locale: order.locale,
+      shouldNotifyCustomer: input.errorCode !== "PAYMENT_ATTEMPT_EXPIRED",
     };
   });
+
+  if (result.type === "updated" && result.shouldNotifyCustomer) {
+    scheduleOrderEmails({
+      kind:
+        result.status === "FAILED" ? "payment_failed" : "payment_cancelled",
+      orderId: result.orderId,
+      orderNumber: result.orderNumber,
+      locale: result.locale,
+      paymentId: result.paymentId,
+    });
+  }
+
+  return {
+    type: result.type,
+    orderId: result.orderId,
+    paymentId: result.paymentId,
+    status: result.status,
+  };
 }
 
 function mergeSafeMetadata(

@@ -10,6 +10,7 @@
   "shippingMethod": "Shipping Method",
   "shippingAddress": "Shipping Address",
   "paymentMethod": "Payment Method",
+  "orderComment": "Order comment",
   "orderSummary": "Order Summary",
   "form": {
     "firstName": "First Name",
@@ -19,19 +20,23 @@
     "address": "Address",
     "city": "City",
     "deliveryLocation": "Delivery location",
-    "selectLocation": "Select location"
+    "selectLocation": "Select location",
+    "pickupBranch": "Branch",
+    "selectPickupBranch": "Select branch",
+    "pickupBranchNoResults": "No branches found"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
     "address": "Street, apartment, office, etc.",
-    "city": "City"
+    "city": "City",
+    "orderComment": "Add a note for the kitchen or courier (optional)"
   },
   "shipping": {
-    "storePickup": "Store Pickup",
-    "storePickupDescription": "Pick up your order from our store (Free)",
+    "storePickup": "Take Away",
+    "storePickupDescription": "Pick up your order from the branch (Free)",
     "delivery": "Delivery",
     "deliveryDescription": "We will deliver your order to your address",
-    "freePickup": "Free (Store Pickup)",
+    "freePickup": "Free (Take Away)",
     "enterCity": "Enter City",
     "selectDeliveryLocation": "Select delivery location"
   },

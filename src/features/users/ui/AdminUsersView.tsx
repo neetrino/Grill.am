@@ -245,8 +245,11 @@ export function AdminUsersView({
                   const name = displayName(user);
 
                   return (
-                    <tr key={user.id} className={ADMIN_TABLE_ROW}>
-                      <td className={ADMIN_TABLE_TD_CHECK}>
+                    <tr
+                      key={user.id}
+                      className={`${ADMIN_TABLE_ROW} group relative`}
+                    >
+                      <td className={`${ADMIN_TABLE_TD_CHECK} relative z-10`}>
                         <input
                           type="checkbox"
                           className={ADMIN_TABLE_CHECKBOX}
@@ -261,9 +264,9 @@ export function AdminUsersView({
                       <td className={ADMIN_TABLE_TD}>
                         <Link
                           href={`/${locale}/admin/users/${user.id}`}
-                          className="block min-w-[160px]"
+                          className="block min-w-[160px] after:absolute after:inset-0"
                         >
-                          <p className="font-medium text-gray-900 hover:underline">
+                          <p className="font-medium text-gray-900 group-hover:underline">
                             {name}
                           </p>
                           <p className="truncate text-xs text-gray-400">
@@ -315,7 +318,7 @@ export function AdminUsersView({
                               }
                             })
                           }
-                          className={`relative mx-auto h-5 w-9 rounded-full transition-colors disabled:opacity-40 ${
+                          className={`relative z-10 mx-auto h-5 w-9 rounded-full transition-colors disabled:opacity-40 ${
                             isActive ? "bg-green-500" : "bg-gray-300"
                           }`}
                           aria-label={

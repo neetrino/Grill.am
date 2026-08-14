@@ -12,8 +12,7 @@
   "privacyNote": "Ваши данные защищены и не передаются третьим лицам.",
   "success": "Спасибо — сообщение отправлено.",
   "error": "Не удалось отправить сообщение.",
-  "storePhones": ["+374 10 600 700", "+374 33 600 700"],
-  "deliveryPhoneLabel": "доставка",
+  "storePhones": ["+374 33 600 700", "+374 10 600 700", "+374 10 557 668"],
   "storeEmail": "infogrillam@gmail.com",
   "storeAddresses": [
     "Хоренаци 95/2",
@@ -27,7 +26,7 @@
     "Тигран Петросян 13/8"
   ],
   "social": {
-    "instagram": "https://www.instagram.com/grill.am",
+    "instagram": "https://www.instagram.com/grill.am_/",
     "facebook": "https://www.facebook.com/Grill.am",
     "linkedin": "https://linkedin.com",
     "whatsapp": "https://wa.me/37433600700"

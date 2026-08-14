@@ -16,40 +16,25 @@
   --brand-surface: #f4f4f4;
   /* Expanded sticky header; JS updates as primary nav collapses on scroll. */
   --storefront-header-offset: 9.5rem;
-  /* Desktop canvas width; scaled to 100vw via DesktopFluidFrame. */
-  --desktop-layout-design-width: 1440px;
-  /* 1 below lg; overwritten when the fluid frame zoom is active. */
-  --desktop-layout-scale: 1;
-}
-
-/* ─── Desktop fluid frame (proportional 100vw scale) ─── */
-@media (min-width: 1024px) {
-  :root {
-    --desktop-layout-scale: calc(100vw / var(--desktop-layout-design-width));
-  }
-
-  .desktop-fluid-frame {
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
-    overflow-x: clip;
-  }
-
-  .desktop-fluid-frame--allow-overflow,
-  .desktop-fluid-frame--allow-overflow .desktop-fluid-stage {
-    overflow: visible;
-  }
-
-  .desktop-fluid-stage {
-    width: var(--desktop-layout-design-width);
-    flex-shrink: 0;
-    zoom: var(--desktop-layout-scale);
-  }
+  /* Centered content column shared by page sections. */
+  --page-max-width: 1440px;
+  --page-padding-inline: clamp(16px, 3vw, 48px);
 }
 
 /*
- * Escape padded/max-width main to the viewport (mobile) or fluid stage (desktop).
- * Prefer this over raw `w-screen` / `100vw` inside DesktopFluidFrame.
+ * Centered content column. Full-bleed bands paint their own background and
+ * place this container inside so copy stays aligned across sections.
+ */
+.page-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin-inline: auto;
+  padding-inline: var(--page-padding-inline);
+}
+
+/*
+ * Escape the padded content column so a band can reach the viewport edges.
+ * Prefer this over raw `w-screen` / `100vw`.
  */
 .storefront-bleed {
   position: relative;
@@ -58,12 +43,12 @@
   margin-left: calc(50% - 50vw);
 }
 
-@media (min-width: 1024px) {
-  .storefront-bleed {
-    width: var(--desktop-layout-design-width);
-    max-width: var(--desktop-layout-design-width);
-    margin-left: calc(50% - (var(--desktop-layout-design-width) / 2));
-  }
+@theme {
+  /*
+   * Desktop layout starts above iPad Pro portrait (1024px), so 12.9" tablets
+   * keep the tablet composition like iPad Air. Mirrored by DESKTOP_CHROME_MQ.
+   */
+  --breakpoint-lg: 1025px;
 }
 
 @theme inline {
@@ -205,6 +190,106 @@ select:not([data-dropdown-unstyled]):focus,
 select:not([data-dropdown-unstyled]):disabled,
 .dropdown-native:disabled {
   background-color: #f9fafb !important;
+}
+
+/* ─── Calendar popover (DateField) ─── */
+:root {
+  --calendar-width: 280px;
+  --calendar-cell-size: 34px;
+  /* Matches VIEWPORT_PADDING_PX in use-dropdown-portal-position.ts. */
+  --calendar-viewport-padding: 16px;
+}
+
+/* Positioned by `dropdownPortalStyle()` — same CSS vars as dropdown panels. */
+.calendar-panel {
+  position: fixed;
+  top: var(--dropdown-top, auto);
+  bottom: var(--dropdown-bottom, auto);
+  left: var(--dropdown-left, auto);
+  right: var(--dropdown-right, auto);
+  z-index: 400;
+  box-sizing: border-box;
+  width: var(--calendar-width);
+  max-width: calc(100vw - 2 * var(--calendar-viewport-padding));
+  padding: 12px;
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--dropdown-radius);
+  background: #ffffff;
+  box-shadow: var(--dropdown-shadow);
+  transform-origin: top center;
+  transition:
+    opacity var(--dropdown-anim-ms) ease-out,
+    transform var(--dropdown-anim-ms) ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-panel {
+    transition: none;
+  }
+}
+
+.calendar-nav {
+  display: flex;
+  height: 28px;
+  width: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  color: #6b7280;
+  transition: background-color var(--dropdown-anim-ms) ease-out;
+}
+
+.calendar-nav:hover {
+  background: var(--dropdown-option-hover);
+  color: #111827;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.calendar-weekday {
+  display: flex;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.calendar-day {
+  display: flex;
+  height: var(--calendar-cell-size);
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #1f2937;
+  transition:
+    background-color var(--dropdown-anim-ms) ease-out,
+    color var(--dropdown-anim-ms) ease-out;
+}
+
+.calendar-day:hover {
+  background: var(--dropdown-option-hover);
+}
+
+.calendar-day--muted {
+  color: #d1d5db;
+}
+
+.calendar-day--today {
+  box-shadow: inset 0 0 0 1px var(--brand-red);
+}
+
+.calendar-day--selected,
+.calendar-day--selected:hover {
+  background: var(--brand-red);
+  font-weight: 600;
+  color: #ffffff;
 }
 
 /*
@@ -577,4 +662,43 @@ select:disabled {
 .lazy-section {
   content-visibility: auto;
   contain-intrinsic-size: auto 520px;
+}
+
+/* Top-anchored toasts — same easing family as app modals. */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+}
+
+.animate-toast-in {
+  animation: toast-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-toast-out {
+  animation: toast-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-toast-in,
+  .animate-toast-out {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

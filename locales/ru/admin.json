@@ -81,6 +81,31 @@
     "activeProducts": "Активные товары",
     "ordersRange": "Заказы (период)",
     "revenueRange": "Выручка (период)",
+    "ordersToday": "Заказы сегодня",
+    "ordersWeek": "Заказы за неделю",
+    "ordersMonth": "Заказы за месяц",
+    "revenueToday": "Выручка сегодня",
+    "revenueWeek": "Выручка за неделю",
+    "revenueMonth": "Выручка за месяц",
+    "periodsTitle": "Продажи по периодам",
+    "viewAnalytics": "Полная аналитика",
+    "periodLabel": "Период дашборда",
+    "periodToday": "Сегодня",
+    "periodWeek": "Неделя",
+    "periodMonth": "Месяц",
+    "periodQuarter": "Квартал",
+    "aov": "Средний чек",
+    "chartTitle": "Динамика выручки и заказов",
+    "chartSubtitle": "Помесячная динамика за выбранный период",
+    "chartRangeLabel": "Период графика",
+    "chartRange6Months": "6 месяцев",
+    "chartRangeYear": "Год",
+    "chartRevenue": "Выручка",
+    "chartOrders": "Заказы",
+    "chartAria": "График помесячной выручки и заказов",
+    "chartEmpty": "В этом периоде пока нет заказов.",
+    "chartEmptyShort": "—",
+    "chartBestMonth": "Лучший месяц",
     "vsPrev": "{delta} к пред.",
     "recentOrders": "Недавние заказы",
     "topProducts": "Топ товары",
@@ -189,7 +214,7 @@
     },
     "images": {
       "mainTitle": "Главное изображение",
-      "upload": "+ Загрузить изображение",
+      "upload": "Загрузить изображение",
       "hint": "Загрузите одно или несколько изображений, затем отметьте главное галочкой.",
       "main": "Главное",
       "remove": "Удалить изображение"
@@ -198,7 +223,7 @@
       "title": "Категории",
       "select": "Выберите категории",
       "empty": "Категорий пока нет.",
-      "addCategory": "+ Добавить категорию",
+      "addCategory": "Добавить категорию",
       "categoryTitle": "Название категории",
       "categoryTitlePlaceholder": "Введите название категории",
       "adding": "Добавление…",
@@ -236,12 +261,14 @@
       "customer": "Клиент",
       "status": "Статус",
       "payment": "Оплата",
+      "paymentMethod": "Способ оплаты",
       "total": "Итого",
       "placed": "Оформлен",
       "archived": "В архиве",
       "empty": "Нет заказов по этим фильтрам.",
       "selectAll": "Выбрать все заказы на странице",
       "selectOrder": "Выбрать заказ {orderNumber}",
+      "openOrder": "Открыть заказ {orderNumber}",
       "selectedOnPage": "На этой странице выбрано: {count}"
     },
     "bulk": {
@@ -267,6 +294,7 @@
       "name": "Имя",
       "phone": "Телефон",
       "email": "Email",
+      "customerNote": "Комментарий клиента",
       "shippingMethod": "Способ доставки",
       "pickupStore": "Самовывоз",
       "pickupMethod": "Самовывоз",
@@ -325,6 +353,19 @@
       "restoreOrder": "Восстановить заказ",
       "archiveHint": "Архив скрывает заказ из списков по умолчанию, не удаляя данные.",
       "archivedHint": "Этот заказ в архиве. Восстановите его, чтобы снова показывать в списках."
+    },
+    "alert": {
+      "title": "Новый заказ",
+      "titleWithCount": "Новый заказ ({remaining} в очереди)",
+      "orderNumber": "Заказ #{orderNumber}",
+      "customer": "Клиент",
+      "total": "Итого",
+      "payment": "Оплата",
+      "placedAt": "Время",
+      "acknowledge": "Услышал",
+      "acknowledgeAll": "Услышал — закрыть все ({remaining})",
+      "enableSound": "Включить звук",
+      "audioBlocked": "Браузер заблокировал звук. Нажмите кнопку или взаимодействуйте со страницей, чтобы включить сигнал."
     }
   },
   "users": {
@@ -423,41 +464,41 @@
     }
   },
   "categories": {
-    "title": "Categories",
-    "addCategory": "Add Category",
-    "searchPlaceholder": "Enter category title",
-    "searchAria": "Search categories",
-    "reorderHint": "Clear search to reorder categories.",
-    "empty": "No categories yet.",
-    "emptySearch": "No categories match this search.",
-    "rootCategory": "None (Root Category)",
-    "reorder": "Reorder",
-    "reorderNamed": "Reorder {title}",
-    "editNamed": "Edit {title}",
-    "deleteNamed": "Delete {title}",
-    "confirmDelete": "Delete this category? This cannot be undone.",
+    "title": "Категории",
+    "addCategory": "Добавить категорию",
+    "searchPlaceholder": "Введите название категории",
+    "searchAria": "Поиск категорий",
+    "reorderHint": "Очистите поиск, чтобы изменить порядок категорий.",
+    "empty": "Категорий пока нет.",
+    "emptySearch": "Категории по этому запросу не найдены.",
+    "rootCategory": "Нет (корневая категория)",
+    "reorder": "Изменить порядок",
+    "reorderNamed": "Изменить порядок: {title}",
+    "editNamed": "Редактировать {title}",
+    "deleteNamed": "Удалить {title}",
+    "confirmDelete": "Удалить эту категорию? Это действие нельзя отменить.",
     "table": {
-      "categoryTitle": "Category Title",
-      "category": "Category"
+      "categoryTitle": "Название категории",
+      "category": "Родительская категория"
     },
-    "subcategoriesCount": "{count} subcategories",
+    "subcategoriesCount": "Подкатегории: {count}",
     "drawer": {
-      "addTitle": "Add Category",
-      "editTitle": "Edit Category",
-      "categoryTitle": "Category Title",
-      "titlePlaceholder": "Enter category title",
+      "addTitle": "Добавить категорию",
+      "editTitle": "Редактировать категорию",
+      "categoryTitle": "Название категории",
+      "titlePlaceholder": "Введите название категории",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Generated automatically from the title and used on /products.",
-      "parent": "Parent Category",
-      "rootOption": "None (Root Category)",
-      "status": "Status",
-      "published": "Published",
-      "archived": "Archived",
-      "image": "Image",
-      "changeImage": "Change image",
-      "uploadImage": "+ Upload Image",
-      "createCategory": "Create Category"
+      "slugHint": "Создаётся автоматически из названия и используется в /products.",
+      "parent": "Родительская категория",
+      "rootOption": "Нет (корневая категория)",
+      "status": "Статус",
+      "published": "Опубликована",
+      "archived": "В архиве",
+      "image": "Изображение",
+      "changeImage": "Изменить изображение",
+      "uploadImage": "Загрузить изображение",
+      "createCategory": "Создать категорию"
     }
   },
   "delivery": {
@@ -628,7 +669,7 @@
       "subtitle": "Подзаголовок",
       "uploadImage": "Загрузить изображение",
       "changeImage": "Изменить изображение",
-      "uploadButton": "+ Загрузить"
+      "uploadButton": "Загрузить"
     }
   },
   "popups": {
@@ -652,7 +693,7 @@
       "editTitle": "Редактировать попап",
       "uploadImage": "Загрузить изображение",
       "changeImage": "Изменить изображение",
-      "uploadButton": "+ Загрузить",
+      "uploadButton": "Загрузить",
       "imageHint": "На витрине попап показывается как полное изображение."
     }
   },
@@ -684,7 +725,7 @@
       "status": "Статус",
       "coverImage": "Обложка",
       "changeImage": "Изменить изображение",
-      "uploadImage": "+ Загрузить",
+      "uploadImage": "Загрузить",
       "imageHint": "JPEG, PNG, WebP или GIF. Макс. 5MB.",
       "titleRequired": "Заголовок и полный текст обязательны."
     },
@@ -836,9 +877,11 @@
       "custom": "Произвольный диапазон"
     },
     "metrics": {
+      "rangeTitle": "Выбранный период",
       "totalOrders": "Всего заказов",
       "totalRevenue": "Общая выручка",
-      "totalUsers": "Всего пользователей"
+      "totalUsers": "Клиенты за период",
+      "vsPreviousHint": "Изменения сравниваются с предыдущим периодом той же длины."
     },
     "rankings": {
       "topProducts": "Топ продаваемых товаров",
@@ -850,10 +893,11 @@
       "noCategorySales": "В этом периоде нет продаж по категориям."
     },
     "ordersByDay": {
-      "title": "Заказы по дням",
-      "subtitle": "Ежедневные тренды заказов и выручки",
-      "chartAria": "График заказов по дням",
+      "title": "Динамика",
+      "subtitle": "Выручка и заказы за выбранный период",
+      "chartAria": "График выручки и заказов",
       "empty": "В этом периоде нет заказов.",
+      "peakDay": "Лучший день",
       "ordersCount": "{count} заказов",
       "revenue": "выручка"
     }

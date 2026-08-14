@@ -47,7 +47,7 @@ export default async function StorefrontLayout({
         currency={currency}
         dictionary={dictionary}
       />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 pb-28 sm:px-6 lg:px-8 lg:pb-10">
+      <main className="page-container flex-1 py-10 pb-28 lg:pb-10">
         <MaintenanceGate>{children}</MaintenanceGate>
       </main>
       <SiteFooter dictionary={dictionary} locale={locale} />

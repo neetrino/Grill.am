@@ -39,8 +39,7 @@ function InfoCard({
 export function ContactInfo({ copy }: ContactInfoProps) {
   return (
     <div className="flex h-full flex-col gap-4">
-      {/* iPad Mini: call + write side by side; stack again from lg beside the form */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1">
+      <div className="grid grid-cols-1 gap-4">
         <InfoCard
           icon={<Phone className="size-5" aria-hidden />}
           title={copy.callTitle}
@@ -49,15 +48,13 @@ export function ContactInfo({ copy }: ContactInfoProps) {
             {copy.callDescription}
           </p>
           <ul className="space-y-2">
-            {copy.storePhones.map((phone, index) => (
+            {copy.storePhones.map((phone) => (
               <li key={phone}>
                 <a
                   href={telHref(phone)}
                   className="text-base font-semibold text-brand-red transition hover:text-brand-red-hot"
                 >
-                  {index === 0
-                    ? `${phone} (${copy.deliveryPhoneLabel})`
-                    : phone}
+                  {phone}
                 </a>
               </li>
             ))}

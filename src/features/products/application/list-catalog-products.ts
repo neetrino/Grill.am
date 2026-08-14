@@ -82,6 +82,15 @@ async function resolveCategoryIdsBySlugs(
     .map((row) => row.id);
 }
 
+/** Primary category menu rank — food categories with lower sortOrder first. */
+const primaryCategoryMenuOrder = sql<number>`coalesce((
+  select min(${categories.sortOrder})
+  from ${productCategories}
+  inner join ${categories} on ${categories.id} = ${productCategories.categoryId}
+  where ${productCategories.productId} = ${products.id}
+    and ${categories.deletedAt} is null
+), 2147483647)`;
+
 function buildOrderBy(sort: CatalogFilter["sort"]) {
   switch (sort) {
     case "price_asc":
@@ -99,12 +108,20 @@ function buildOrderBy(sort: CatalogFilter["sort"]) {
     case "popular":
       return [
         desc(products.isFeatured),
+        asc(primaryCategoryMenuOrder),
         desc(products.createdAt),
         asc(products.id),
       ];
     case "newest":
-    default:
       return [desc(products.createdAt), asc(products.id)];
+    case "menu":
+    default:
+      return [
+        asc(primaryCategoryMenuOrder),
+        desc(products.isFeatured),
+        desc(products.createdAt),
+        asc(products.id),
+      ];
   }
 }
 

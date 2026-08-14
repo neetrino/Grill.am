@@ -1,8 +1,9 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_RADIUS_CLASS } from "@/features/admin/ui/admin-ui";
 
 type LocaleLabel = { hy?: string; en?: string; ru?: string };
 
@@ -78,10 +79,14 @@ function displayLabel(label: LocaleLabel): string {
   return label.hy ?? label.en ?? label.ru ?? "";
 }
 
-const panelClassName =
-  "flex min-h-[16rem] min-w-0 flex-col rounded-lg border border-gray-200 bg-white";
+/** `overflow-hidden` keeps the footer fill inside the rounded corners. */
+const panelClassName = `flex min-w-0 flex-col overflow-hidden border border-gray-200 bg-white ${ADMIN_CARD_RADIUS_CLASS}`;
 
-const footerClassName = "mt-auto border-t border-gray-100 bg-gray-50 p-3";
+const footerClassName = "border-t border-gray-100 bg-gray-50 p-3";
+
+/** Price column fits the "AMD" placeholder next to the number spinner. */
+const additionRowClassName =
+  "grid grid-cols-[minmax(0,1fr)_7rem_auto] items-center gap-2";
 
 const addButtonClassName =
   "inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-[15px] bg-gray-800 px-4 text-sm font-medium text-white hover:bg-gray-900 disabled:opacity-40";
@@ -154,7 +159,7 @@ export function ProductDrawerModifierPanels({
   onRemoveExclusion,
 }: ProductDrawerModifierPanelsProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+    <div className="flex flex-col gap-4">
       <div className={panelClassName}>
         <div className="border-b border-gray-100 px-3 py-2.5">
           <p className="text-sm font-semibold text-gray-900">
@@ -175,15 +180,12 @@ export function ProductDrawerModifierPanels({
           onAttach={onAttachLibraryAddon}
         />
 
-        <ul className="max-h-56 flex-1 space-y-2 overflow-y-auto px-3 py-3">
+        <ul className="max-h-56 space-y-2 overflow-y-auto px-3 py-3">
           {addons.length === 0 ? (
             <li className="py-2 text-xs text-gray-400">{copy.emptyAdditions}</li>
           ) : (
             addons.map((addon) => (
-              <li
-                key={addon.id}
-                className="grid grid-cols-[minmax(0,1fr)_4.5rem_auto] items-center gap-2"
-              >
+              <li key={addon.id} className={additionRowClassName}>
                 <input
                   value={displayLabel(addon.label)}
                   onChange={(event) =>
@@ -226,7 +228,7 @@ export function ProductDrawerModifierPanels({
         </ul>
 
         <div className={footerClassName}>
-          <div className="grid grid-cols-[minmax(0,1fr)_4.5rem_auto] items-center gap-2">
+          <div className={additionRowClassName}>
             <input
               value={addonDraft}
               onChange={(event) => onAddonDraftChange(event.target.value)}
@@ -263,7 +265,6 @@ export function ProductDrawerModifierPanels({
               onClick={onAddAddon}
               className={addButtonClassName}
             >
-              <Plus className="h-4 w-4" aria-hidden />
               {copy.addButton}
             </button>
           </div>
@@ -289,7 +290,7 @@ export function ProductDrawerModifierPanels({
           onAttach={onAttachLibraryExclusion}
         />
 
-        <ul className="max-h-56 flex-1 space-y-2 overflow-y-auto px-3 py-3">
+        <ul className="max-h-56 space-y-2 overflow-y-auto px-3 py-3">
           {exclusions.length === 0 ? (
             <li className="py-2 text-xs text-gray-400">
               {copy.emptyExclusions}
@@ -344,7 +345,6 @@ export function ProductDrawerModifierPanels({
               onClick={onAddExclusion}
               className={addButtonClassName}
             >
-              <Plus className="h-4 w-4" aria-hidden />
               {copy.addButton}
             </button>
           </div>

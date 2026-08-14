@@ -16,7 +16,6 @@ import {
   rollbackUpsertLocally,
   upsertItemLocally,
 } from "@/features/cart/cart-drawer-local-store";
-import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 
@@ -79,7 +78,7 @@ export function AddToCartButton({
         "[data-product-fly-origin]",
       ) as HTMLElement | null) ?? button;
 
-    const resolvedImage = imageUrl || PRODUCT_CARD_IMAGE;
+    const resolvedImage = imageUrl?.trim() || null;
     playCartFlyAnimation({
       fromElement: origin,
       imageUrl: resolvedImage,

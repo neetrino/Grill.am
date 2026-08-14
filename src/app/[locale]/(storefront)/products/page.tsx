@@ -12,7 +12,8 @@ import { CatalogActiveChips } from "@/features/products/ui/CatalogActiveChips";
 import { CatalogBreadcrumbs } from "@/features/products/ui/CatalogBreadcrumbs";
 import { CatalogFilters } from "@/features/products/ui/CatalogFilters";
 import { CatalogListingView } from "@/features/products/ui/CatalogListingView";
-import { MobileCatalogFiltersToggle } from "@/features/products/ui/MobileCatalogFiltersToggle";
+import { MobileCatalogCategoryChips } from "@/features/products/ui/MobileCatalogCategoryChips";
+import { MobileCatalogPriceFilters } from "@/features/products/ui/MobileCatalogPriceFilters";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -107,9 +108,9 @@ export default async function ProductsPage({
 
   return (
     <section className="storefront-bleed -mt-10 mb-[-2.5rem]">
-      <div className="grid min-h-[calc(100dvh/var(--desktop-layout-scale)-12rem)] lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_288px]">
+      <div className="grid min-h-[calc(100dvh-12rem)] lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_288px]">
         <div className="hidden lg:block">
-          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset))] self-start">
+          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh-var(--storefront-header-offset))] self-start">
             <CatalogFilters
               locale={rawLocale}
               filters={filters}
@@ -124,37 +125,36 @@ export default async function ProductsPage({
         </div>
 
         <div className="flex min-w-0 flex-col bg-[#f2f0f0] px-4 pt-3 pb-10 sm:px-6 lg:px-8">
-          <MobileCatalogFiltersToggle label={catalogCopy.filters}>
-            <CatalogFilters
+          <div className="flex items-center py-6 lg:hidden">
+            <MobileCatalogCategoryChips
               locale={rawLocale}
               filters={filters}
               categories={catalog.categories}
-              totalProductCount={catalog.allProductCount}
-              priceBounds={catalog.priceBoundsDisplay}
-              currencySymbol={currencySymbols[currency]}
-              labels={filterLabels}
-              variant="panel"
+              allCategoriesLabel={catalogCopy.allCategories}
+              categoriesLabel={catalogCopy.categories}
             />
-          </MobileCatalogFiltersToggle>
+          </div>
 
-          <CatalogBreadcrumbs
-            backLabel={catalogCopy.back}
-            backHref={`/${rawLocale}`}
-            items={[
-              {
-                label: dictionary.nav.products,
-                href: catalogHref(rawLocale, {
-                  category: [],
-                  sort: filters.sort,
-                  page: 1,
-                  pageSize: filters.pageSize,
-                }),
-              },
-              ...(selectedCategory
-                ? [{ label: selectedCategory.title }]
-                : []),
-            ]}
-          />
+          <div className="hidden lg:block">
+            <CatalogBreadcrumbs
+              backLabel={catalogCopy.back}
+              backHref={`/${rawLocale}`}
+              items={[
+                {
+                  label: dictionary.nav.products,
+                  href: catalogHref(rawLocale, {
+                    category: [],
+                    sort: filters.sort,
+                    page: 1,
+                    pageSize: filters.pageSize,
+                  }),
+                },
+                ...(selectedCategory
+                  ? [{ label: selectedCategory.title }]
+                  : []),
+              ]}
+            />
+          </div>
 
           <CatalogListingView
             locale={rawLocale}
@@ -169,6 +169,20 @@ export default async function ProductsPage({
               three: catalogCopy.viewThreeColumns,
               four: catalogCopy.viewFourColumns,
             }}
+            mobilePriceFilter={
+              <MobileCatalogPriceFilters label={catalogCopy.price}>
+                <CatalogFilters
+                  locale={rawLocale}
+                  filters={filters}
+                  categories={catalog.categories}
+                  totalProductCount={catalog.allProductCount}
+                  priceBounds={catalog.priceBoundsDisplay}
+                  currencySymbol={currencySymbols[currency]}
+                  labels={filterLabels}
+                  variant="price"
+                />
+              </MobileCatalogPriceFilters>
+            }
             chips={
               <CatalogActiveChips
                 locale={rawLocale}
@@ -281,7 +295,7 @@ export default async function ProductsPage({
         </div>
 
         <div className="hidden xl:block">
-          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset))] self-start">
+          <div className="sticky top-[var(--storefront-header-offset)] z-10 h-[calc(100dvh-var(--storefront-header-offset))] self-start">
             <CatalogCartSidebar
               locale={rawLocale}
               currency={currency}

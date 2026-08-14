@@ -14,7 +14,6 @@ import {
 } from "@/features/cart/cart-client-sync";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
 import { useCartDrawerView } from "@/features/cart/ui/use-cart-drawer-view";
-import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -120,15 +119,17 @@ export function CatalogCartSidebar({
                   <AppLink
                     href={`/${locale}/products/${item.slug}`}
                     prefetchPolicy="intent"
-                    className="relative size-12 shrink-0 overflow-hidden rounded-[14px] bg-brand-surface"
+                    className="relative size-12 shrink-0 overflow-hidden rounded-[14px] bg-white"
                   >
-                    <Image
-                      src={item.imageUrl ?? PRODUCT_CARD_IMAGE}
-                      alt={item.title}
-                      fill
-                      sizes="48px"
-                      className="object-cover"
-                    />
+                    {item.imageUrl ? (
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.title}
+                        fill
+                        sizes="48px"
+                        className="object-cover"
+                      />
+                    ) : null}
                   </AppLink>
 
                   <div className="min-w-0 flex-1">

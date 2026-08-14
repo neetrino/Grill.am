@@ -31,6 +31,12 @@ const FALLBACK_IMAGES = [
   staticAssetUrl("/assets/home/category-4.webp"),
 ] as const;
 
+/** One arrow click ≈ one desktop card plus its gap. */
+const SCROLL_STEP_PX = 300;
+
+/** Absorbs fractional scroll offsets so the edges are detected reliably. */
+const SCROLL_EDGE_TOLERANCE_PX = 1;
+
 export function HomeCategories({
   titleLead,
   titleAccent,
@@ -42,15 +48,36 @@ export function HomeCategories({
 }: HomeCategoriesProps) {
   const scrollerRef = useRef<HTMLUListElement>(null);
 
+  /** Wraps around at both edges so the arrows never dead-end. */
   function scrollByDirection(direction: -1 | 1): void {
     const node = scrollerRef.current;
     if (!node) return;
-    node.scrollBy({ left: direction * 300, behavior: "smooth" });
+
+    const maxScrollLeft = node.scrollWidth - node.clientWidth;
+    if (maxScrollLeft <= 0) return;
+
+    if (
+      direction === 1 &&
+      node.scrollLeft >= maxScrollLeft - SCROLL_EDGE_TOLERANCE_PX
+    ) {
+      node.scrollTo({ left: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (direction === -1 && node.scrollLeft <= SCROLL_EDGE_TOLERANCE_PX) {
+      node.scrollTo({ left: maxScrollLeft, behavior: "smooth" });
+      return;
+    }
+
+    node.scrollBy({
+      left: direction * SCROLL_STEP_PX,
+      behavior: "smooth",
+    });
   }
 
   return (
     <section className="relative z-10 bg-white pt-6 pb-6 md:-mt-12 md:rounded-t-[30px] md:pt-14 md:pb-14 lg:-mt-20 lg:pt-16 lg:pb-16">
-      <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 lg:px-10">
+      <div className="page-container">
         <div className="mb-8 hidden flex-col gap-3 md:mb-10 md:flex md:flex-row md:items-end md:justify-between md:gap-6">
           <div className="min-w-0">
             <h2 className="text-[26px] leading-tight font-black tracking-tight text-[#171717] uppercase sm:text-[30px] sm:leading-[1.2]">
@@ -99,11 +126,11 @@ export function HomeCategories({
                 const imageSrc = category.imageUrl ?? fallback;
 
                 return (
-                  <li key={category.id} className="shrink-0 snap-start">
+                  <li key={category.id} className="w-[88px] shrink-0 snap-start">
                     <AppLink
                       href={category.href}
                       prefetchPolicy="intent"
-                      className="flex flex-col items-center gap-2"
+                      className="flex w-full flex-col items-center gap-2"
                     >
                       <span className="relative size-[88px] overflow-hidden rounded-[20px] bg-[#191919]">
                         <Image
@@ -114,7 +141,7 @@ export function HomeCategories({
                           className="object-cover"
                         />
                       </span>
-                      <span className="text-center text-[11px] leading-[16.5px] font-bold text-[#171717] uppercase">
+                      <span className="line-clamp-2 w-full text-center text-[11px] leading-[16.5px] font-bold break-words text-[#171717] uppercase">
                         {category.title}
                       </span>
                     </AppLink>
@@ -124,10 +151,13 @@ export function HomeCategories({
             </ul>
 
             {/* Desktop — existing large cards */}
+            {/* `w-fit` centers the row while it fits and lets it scroll once
+                it does not; `justify-center` would strand the leading cards. */}
             <ul
               ref={scrollerRef}
-              className="hidden snap-x snap-mandatory justify-start gap-5 overflow-x-auto pb-2 sm:gap-6 md:flex xl:justify-center xl:gap-7 xl:overflow-visible xl:px-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >              {categories.map((category, index) => {
+              className="hidden snap-x snap-mandatory justify-start gap-5 overflow-x-auto pb-2 sm:gap-6 md:flex xl:mx-auto xl:w-fit xl:max-w-full xl:gap-7 xl:px-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {categories.map((category, index) => {
                 const fallback =
                   FALLBACK_IMAGES[index % FALLBACK_IMAGES.length] ??
                   FALLBACK_IMAGES[0];
@@ -160,11 +190,6 @@ export function HomeCategories({
                 );
               })}
             </ul>
-
-            <div className="mt-4 flex items-center justify-center gap-2 md:mt-5 md:gap-1.5">
-              <span className="h-1.5 w-6 rounded-full bg-brand-red-hot md:h-2.5 md:w-7" />
-              <span className="size-1.5 rounded-full bg-[rgba(95,95,95,0.6)] md:h-2.5 md:w-2.5" />
-            </div>
           </div>
         )}
       </div>

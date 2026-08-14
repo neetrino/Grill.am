@@ -19,3 +19,14 @@ export {
   type AnalyticsDateRange,
   type AnalyticsPeriodPreset,
 } from "@/features/analytics/domain/date-range";
+export {
+  DASHBOARD_CHART_RANGES,
+  DASHBOARD_METRIC_PERIODS,
+  buildDashboardMonthlySeries,
+  parseDashboardChartRange,
+  rangeForDashboardChartRange,
+  rangeForDashboardMetricPeriod,
+  type DashboardChartRange,
+  type DashboardMetricPeriod,
+  type DashboardTrendPoint,
+} from "@/features/analytics/domain/dashboard-periods";

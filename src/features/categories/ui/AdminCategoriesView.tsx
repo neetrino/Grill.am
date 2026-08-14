@@ -9,7 +9,10 @@ import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
-import { formatAdminMessage } from "@/features/admin/ui/AdminDictionaryProvider";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   ADMIN_TABLE,
@@ -19,7 +22,9 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import {
@@ -28,7 +33,6 @@ import {
 } from "@/features/categories/actions";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
 import { AddCategoryDrawer } from "@/features/categories/ui/AddCategoryDrawer";
-import enAdmin from "@/locales/en/admin.json";
 
 type AdminCategoriesViewProps = {
   locale: string;
@@ -64,9 +68,9 @@ export function AdminCategoriesView({
   locale,
   categories,
 }: AdminCategoriesViewProps) {
-  // Categories admin is English-only (UI + titles), regardless of admin locale.
-  const copy = enAdmin.categories;
-  const common = enAdmin.common;
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.categories;
+  const common = dictionary.common;
   const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -214,7 +218,7 @@ export function AdminCategoriesView({
                   <th className={ADMIN_TABLE_TH}>{common.image}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.categoryTitle}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.category}</th>
-                  <th className={ADMIN_TABLE_TH}>{common.actions}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{common.actions}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -295,8 +299,8 @@ export function AdminCategoriesView({
                           {category.parentTitle ?? copy.rootCategory}
                         </span>
                       </td>
-                      <td className={ADMIN_TABLE_TD}>
-                        <div className="flex items-center gap-1">
+                      <td className={ADMIN_TABLE_TD_CENTER}>
+                        <div className="flex items-center justify-center gap-1">
                           <button
                             type="button"
                             className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"

@@ -3,15 +3,14 @@ import { expect, test } from "@playwright/test";
 import { assertAdminRequiresReviewUx } from "./helpers/admin";
 import {
   awaitCheckoutSuccessUrl,
-  getInboxMessages,
   getOrderState,
   orderNumberFromSuccessUrl,
   placeProviderCheckout,
   postIdramConfirmation,
   postIdramPrecheck,
-  processOutboxCapture,
   resetPaymentE2eControls,
   uniqueIdramTransId,
+  waitForOrderInboxMessages,
 } from "./helpers/payments";
 import {
   fillCheckoutContact,
@@ -20,7 +19,7 @@ import {
 } from "./helpers/seed-cart";
 
 /**
- * Phase 5 payment E2E matrix (mocked providers, DB + outbox assertions).
+ * Phase 5 payment E2E matrix (mocked providers, DB + capture-inbox email assertions).
  * COD foundation remains in payment-cod.spec.ts — do not regress that seed.
  */
 
@@ -90,9 +89,13 @@ test.describe("payment E2E matrix", () => {
     expect(state.payments[0]?.method).toMatch(/^(cash_on_delivery|COD)$/);
     expect(state.cart?.status).toBe("CONVERTED");
     expect(state.cart?.itemCount).toBe(0);
-    expect(
-      state.outbox.some((row) => row.eventType === "COD_ORDER_CREATED"),
-    ).toBe(true);
+    const inbox = await waitForOrderInboxMessages(
+      request,
+      baseURL!,
+      orderNumber,
+      1,
+    );
+    expect(inbox.length).toBeGreaterThanOrEqual(1);
   });
 
   test("ARCA success via mock form and DB-authoritative return", async ({
@@ -118,9 +121,7 @@ test.describe("payment E2E matrix", () => {
     expect(state.cart?.status).toBe("CONVERTED");
     expect(state.cart?.itemCount).toBe(0);
     expect(state.productStock).toBe(99);
-    expect(
-      state.outbox.filter((row) => row.eventType === "ONLINE_PAYMENT_CAPTURED"),
-    ).toHaveLength(1);
+    await waitForOrderInboxMessages(request, baseURL!, orderNumber, 1);
   });
 
   test("ARCA pending then recheck captures", async ({
@@ -232,9 +233,7 @@ test.describe("payment E2E matrix", () => {
 
     const after = await getOrderState(request, baseURL!, orderNumber);
     expect(after.payments.filter((p) => p.status === "CAPTURED")).toHaveLength(1);
-    expect(
-      after.outbox.filter((row) => row.eventType === "ONLINE_PAYMENT_CAPTURED"),
-    ).toHaveLength(1);
+    await waitForOrderInboxMessages(request, baseURL!, orderNumber, 1);
   });
 
   test("iDram POST form generation without secret", async ({
@@ -337,9 +336,7 @@ test.describe("payment E2E matrix", () => {
     expect(state.order.paymentStatus).toBe("CAPTURED");
     expect(state.payments[0]?.status).toBe("CAPTURED");
     expect(state.cart?.status).toBe("CONVERTED");
-    expect(
-      state.outbox.filter((row) => row.eventType === "ONLINE_PAYMENT_CAPTURED"),
-    ).toHaveLength(1);
+    await waitForOrderInboxMessages(request, baseURL!, orderNumber!, 1);
 
     await page.goto(`/en/checkout/success/${orderNumber}`, {
       waitUntil: "domcontentloaded",
@@ -492,9 +489,7 @@ test.describe("payment E2E matrix", () => {
 
     const state = await getOrderState(request, baseURL!, orderNumber);
     expect(state.payments.filter((p) => p.status === "CAPTURED")).toHaveLength(1);
-    expect(
-      state.outbox.filter((row) => row.eventType === "ONLINE_PAYMENT_CAPTURED"),
-    ).toHaveLength(1);
+    await waitForOrderInboxMessages(request, baseURL!, orderNumber, 1);
   });
 
   test("iDram success redirect before confirmation stays pending then pays", async ({
@@ -585,11 +580,7 @@ test.describe("payment E2E matrix", () => {
     expect(state.order.status).toBe("REQUIRES_REVIEW");
     expect(state.order.paymentStatus).toBe("CAPTURED");
     expect(state.adminReview.visible).toBe(true);
-    expect(
-      state.outbox.filter((row) =>
-        row.eventType.includes("REQUIRES_REVIEW"),
-      ).length,
-    ).toBeGreaterThanOrEqual(2);
+    await waitForOrderInboxMessages(request, baseURL!, orderNumber, 2);
 
     await assertAdminRequiresReviewUx(page, orderNumber);
   });
@@ -698,7 +689,11 @@ test.describe("payment E2E matrix", () => {
     }
   });
 
-  test("outbox COD one notification", async ({ page, request, baseURL }) => {
+  test("email COD customer notification captured", async ({
+    page,
+    request,
+    baseURL,
+  }) => {
     await seedCartViaUi(page, request, baseURL!);
     await selectCod(page);
     await fillCheckoutContact(page, "OutCod");
@@ -706,24 +701,18 @@ test.describe("payment E2E matrix", () => {
     await page.waitForURL(/\/checkout\/success\//, { timeout: 60_000 });
     const orderNumber = orderNumberFromSuccessUrl(page.url());
 
-    await processOutboxCapture(request, baseURL!);
-    await processOutboxCapture(request, baseURL!);
-
-    const state = await getOrderState(request, baseURL!, orderNumber);
-    const codRows = state.outbox.filter(
-      (row) => row.eventType === "COD_ORDER_CREATED",
+    const forOrder = await waitForOrderInboxMessages(
+      request,
+      baseURL!,
+      orderNumber,
+      1,
     );
-    expect(codRows).toHaveLength(1);
-    expect(codRows[0]?.status).toBe("COMPLETED");
-
-    const messages = await getInboxMessages(request, baseURL!);
-    const forOrder = messages.filter((m) =>
-      m.subject.includes(orderNumber) || m.text.includes(orderNumber),
+    expect(forOrder.some((m) => m.to.toLowerCase().includes("e2e-outcod@"))).toBe(
+      true,
     );
-    expect(forOrder.length).toBe(1);
   });
 
-  test("outbox ARCA duplicate return one notification", async ({
+  test("email ARCA duplicate return does not multiply customer mail", async ({
     page,
     request,
     baseURL,
@@ -743,21 +732,19 @@ test.describe("payment E2E matrix", () => {
     await request.get(returnUrl, { maxRedirects: 0 });
     await request.get(returnUrl, { maxRedirects: 0 });
 
-    await processOutboxCapture(request, baseURL!);
-    await processOutboxCapture(request, baseURL!);
-
-    const after = await getOrderState(request, baseURL!, orderNumber);
-    expect(
-      after.outbox.filter((row) => row.eventType === "ONLINE_PAYMENT_CAPTURED"),
-    ).toHaveLength(1);
-    const messages = await getInboxMessages(request, baseURL!);
-    const forOrder = messages.filter(
-      (m) => m.subject.includes(orderNumber) || m.text.includes(orderNumber),
+    const forOrder = await waitForOrderInboxMessages(
+      request,
+      baseURL!,
+      orderNumber,
+      1,
     );
-    expect(forOrder.length).toBe(1);
+    const customer = forOrder.filter((m) =>
+      m.to.toLowerCase().includes("e2e-outarca@"),
+    );
+    expect(customer.length).toBe(1);
   });
 
-  test("outbox iDram duplicate confirmation one notification", async ({
+  test("email iDram duplicate confirmation does not multiply customer mail", async ({
     page,
     request,
     baseURL,
@@ -788,21 +775,19 @@ test.describe("payment E2E matrix", () => {
       "OK",
     );
 
-    await processOutboxCapture(request, baseURL!);
-    await processOutboxCapture(request, baseURL!);
-
-    const after = await getOrderState(request, baseURL!, orderNumber);
-    expect(
-      after.outbox.filter((row) => row.eventType === "ONLINE_PAYMENT_CAPTURED"),
-    ).toHaveLength(1);
-    const messages = await getInboxMessages(request, baseURL!);
-    const forOrder = messages.filter(
-      (m) => m.subject.includes(orderNumber) || m.text.includes(orderNumber),
+    const forOrder = await waitForOrderInboxMessages(
+      request,
+      baseURL!,
+      orderNumber,
+      1,
     );
-    expect(forOrder.length).toBe(1);
+    const customer = forOrder.filter((m) =>
+      m.to.toLowerCase().includes("e2e-outidram@"),
+    );
+    expect(customer.length).toBe(1);
   });
 
-  test("outbox REQUIRES_REVIEW one customer and one operator", async ({
+  test("email REQUIRES_REVIEW customer and operator", async ({
     page,
     request,
     baseURL,
@@ -830,19 +815,11 @@ test.describe("payment E2E matrix", () => {
       timeout: 30_000,
     });
 
-    await processOutboxCapture(request, baseURL!);
-    await processOutboxCapture(request, baseURL!);
-
-    const after = await getOrderState(request, baseURL!, orderNumber);
-    const reviewOutbox = after.outbox.filter((row) =>
-      row.eventType.includes("REQUIRES_REVIEW"),
-    );
-    expect(reviewOutbox).toHaveLength(2);
-    expect(reviewOutbox.every((row) => row.status === "COMPLETED")).toBe(true);
-
-    const messages = await getInboxMessages(request, baseURL!);
-    const forOrder = messages.filter(
-      (m) => m.subject.includes(orderNumber) || m.text.includes(orderNumber),
+    const forOrder = await waitForOrderInboxMessages(
+      request,
+      baseURL!,
+      orderNumber,
+      2,
     );
     expect(forOrder.length).toBe(2);
     expect(forOrder.some((m) => m.to.includes("ops-e2e@example.com"))).toBe(

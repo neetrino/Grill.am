@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -8,7 +8,6 @@ import {
   carts,
   orderEvents,
   orders,
-  outboxEvents,
   payments,
   products,
 } from "@/db/schema";
@@ -41,13 +40,6 @@ export type E2eOrderState = {
     providerEventId: string | null;
     toState: string | null;
     kind: string | null;
-  }>;
-  outbox: Array<{
-    id: string;
-    eventType: string;
-    status: string;
-    dedupeKey: string | null;
-    aggregateId: string;
   }>;
   cart: {
     id: string;
@@ -102,23 +94,6 @@ export async function inspectE2eOrderState(
     .where(eq(orderEvents.orderId, order.id))
     .orderBy(desc(orderEvents.createdAt));
 
-  const outboxRows = await db
-    .select({
-      id: outboxEvents.id,
-      eventType: outboxEvents.eventType,
-      status: outboxEvents.status,
-      dedupeKey: outboxEvents.dedupeKey,
-      aggregateId: outboxEvents.aggregateId,
-    })
-    .from(outboxEvents)
-    .where(
-      and(
-        eq(outboxEvents.aggregateType, "order"),
-        eq(outboxEvents.aggregateId, order.id),
-      ),
-    )
-    .orderBy(desc(outboxEvents.createdAt));
-
   let cart: E2eOrderState["cart"] = null;
   if (order.sourceCartId) {
     const [cartRow] = await db
@@ -168,7 +143,6 @@ export async function inspectE2eOrderState(
       kind:
         typeof row.payload?.kind === "string" ? String(row.payload.kind) : null,
     })),
-    outbox: outboxRows,
     cart,
     productStock: product?.stockOnHand ?? null,
     adminReview: {

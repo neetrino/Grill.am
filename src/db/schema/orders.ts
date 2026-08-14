@@ -51,6 +51,8 @@ export const orders = pgTable(
     contactEmail: text("contact_email").notNull(),
     contactPhone: text("contact_phone").notNull(),
     contactName: text("contact_name").notNull(),
+    /** Optional plain-text note left by the customer at checkout. */
+    customerNote: text("customer_note"),
     status: orderStatusEnum("status").notNull().default("PENDING"),
     paymentStatus: paymentStatusEnum("payment_status")
       .notNull()

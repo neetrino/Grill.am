@@ -41,7 +41,7 @@ export default async function StoresPage({
   const initialSelectedIndex = getStoreIndexById(readStoreId(rawSearch));
 
   return (
-    <div className="storefront-bleed -mt-10 mb-[-2.5rem] min-h-full bg-white [@media(min-width:1024px)_and_(hover:hover)_and_(pointer:fine)]:min-h-[calc(100dvh/var(--desktop-layout-scale)-var(--storefront-header-offset))]">
+    <div className="-my-10 min-h-full bg-white">
       <StoresPageView
         addresses={getStoreAddresses(rawLocale)}
         copy={dictionary.stores}

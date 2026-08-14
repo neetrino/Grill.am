@@ -10,6 +10,7 @@
   "shippingMethod": "Առաքման եղանակ",
   "shippingAddress": "Առաքման հասցե",
   "paymentMethod": "Վճարման եղանակ",
+  "orderComment": "Մեկնաբանություն պատվերի վերաբերյալ",
   "orderSummary": "Պատվերի ամփոփում",
   "form": {
     "firstName": "Անուն",
@@ -19,19 +20,23 @@
     "address": "Հասցե",
     "city": "Քաղաք",
     "deliveryLocation": "Առաքման վայր",
-    "selectLocation": "Ընտրեք վայրը"
+    "selectLocation": "Ընտրեք վայրը",
+    "pickupBranch": "Մասնաճյուղ",
+    "selectPickupBranch": "Ընտրեք մասնաճյուղը",
+    "pickupBranchNoResults": "Մասնաճյուղեր չեն գտնվել"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
     "address": "Փողոց, բնակարան, գրասենյակ և այլն",
-    "city": "Քաղաք"
+    "city": "Քաղաք",
+    "orderComment": "Գրեք նշում խոհանոցի կամ առաքչի համար (ոչ պարտադիր)"
   },
   "shipping": {
-    "storePickup": "Ինքնաառաքում",
-    "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
+    "storePickup": "Take Away",
+    "storePickupDescription": "Վերցրեք պատվերը մասնաճյուղից (Անվճար)",
     "delivery": "Առաքում",
     "deliveryDescription": "Կառաքենք ձեր հասցեով",
-    "freePickup": "Անվճար (Ինքնաառաքում)",
+    "freePickup": "Անվճար (Take Away)",
     "enterCity": "Մուտքագրեք քաղաքը",
     "selectDeliveryLocation": "Ընտրեք առաքման վայրը"
   },

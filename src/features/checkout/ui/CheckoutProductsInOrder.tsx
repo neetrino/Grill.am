@@ -20,7 +20,6 @@ import {
   adjustLocalCartItemCount,
   notifyCartChanged,
 } from "@/features/cart/cart-client-sync";
-import { PRODUCT_CARD_IMAGE } from "@/features/products/ui/ProductCard";
 
 type CheckoutProductsInOrderProps = {
   products: CheckoutOrderProduct[];
@@ -145,14 +144,16 @@ export function CheckoutProductsInOrder({
         {products.map((product) => (
           <li key={product.id} className={CHECKOUT_ORDER_ITEM_CARD_CLASS}>
             <div className="flex items-stretch gap-3">
-              <div className="relative size-[72px] shrink-0 overflow-hidden rounded-[16px] bg-brand-surface">
-                <Image
-                  src={product.imageUrl ?? PRODUCT_CARD_IMAGE}
-                  alt={product.title}
-                  fill
-                  sizes="72px"
-                  className="object-cover"
-                />
+              <div className="relative size-[72px] shrink-0 overflow-hidden rounded-[16px] bg-white">
+                {product.imageUrl ? (
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.title}
+                    fill
+                    sizes="72px"
+                    className="object-cover"
+                  />
+                ) : null}
               </div>
 
               <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">

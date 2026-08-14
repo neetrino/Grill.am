@@ -7,6 +7,7 @@ import {
   type AdminOrderDetail,
 } from "@/features/orders/application/queries";
 import { readCodCashTenderedAmount } from "@/features/checkout/domain/cod-cash-change";
+import { formatPaymentMethodDisplay } from "@/features/orders/domain/payment-method-label";
 
 export type AdminOrderDetailItemView = {
   id: string;
@@ -30,6 +31,8 @@ export type AdminOrderDetailView = {
   contactName: string;
   contactEmail: string;
   contactPhone: string;
+  /** Customer checkout note; null when none. */
+  customerNote: string | null;
   baseCurrency: string;
   subtotalAmount: number;
   deliveryAmount: number;
@@ -77,20 +80,6 @@ function formatAddressLine(
   return parts.join(", ");
 }
 
-function paymentMethodLabel(method: string): string {
-  const normalized = method.toUpperCase();
-  if (normalized === "COD" || normalized === "CASH") {
-    return "Cash";
-  }
-  if (normalized === "IDRAM") {
-    return "Idram";
-  }
-  if (normalized === "ARCA") {
-    return "ArCa";
-  }
-  return method;
-}
-
 /** Maps a loaded order into a serializable admin drawer view. */
 export function toAdminOrderDetailView(
   detail: AdminOrderDetail,
@@ -115,6 +104,7 @@ export function toAdminOrderDetailView(
     contactName: order.contactName,
     contactEmail: order.contactEmail,
     contactPhone: order.contactPhone,
+    customerNote: order.customerNote ?? null,
     baseCurrency: order.baseCurrency,
     subtotalAmount: order.subtotalAmount,
     deliveryAmount: order.deliveryAmount,
@@ -131,9 +121,7 @@ export function toAdminOrderDetailView(
     addressHint: isPickup
       ? "You can pick up your order at this store"
       : null,
-    paymentMethod: latestPayment
-      ? paymentMethodLabel(latestPayment.method)
-      : "—",
+    paymentMethod: formatPaymentMethodDisplay(latestPayment?.method),
     paymentAmount: latestPayment?.amount ?? order.totalAmount,
     cashTenderedAmount,
     cashChangeAmount,

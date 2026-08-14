@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
@@ -15,7 +16,7 @@ import {
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
   ADMIN_CONTENT_CARD_CLASS,
-  ADMIN_CONTENT_CARD_GRID,
+  ADMIN_CONTENT_CARD_GRID_COMPACT,
   ADMIN_CONTENT_CARD_STATUS_CLASS,
 } from "@/features/admin/ui/admin-ui";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
@@ -68,7 +69,8 @@ export function AdminHeroView({
             })}
           </p>
         </div>
-        <Button type="button" onClick={openCreate}>
+        <Button type="button" onClick={openCreate} className="gap-2">
+          <Plus className="h-4 w-4" aria-hidden />
           {copy.create}
         </Button>
       </div>
@@ -86,7 +88,7 @@ export function AdminHeroView({
           <p className="text-center text-sm text-gray-600">{copy.empty}</p>
         </Card>
       ) : (
-        <div className={ADMIN_CONTENT_CARD_GRID}>
+        <div className={ADMIN_CONTENT_CARD_GRID_COMPACT}>
           {slides.map((slide) => (
             <Card key={slide.id} className={ADMIN_CONTENT_CARD_CLASS}>
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">

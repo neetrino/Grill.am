@@ -37,9 +37,9 @@ export function OrderDetailsDrawerShipping({
           <span className="text-gray-500">{drawer.method}: </span>
           <span className="font-medium text-gray-900">{methodLabel}</span>
         </p>
-        {detail.isPickup && detail.storeName ? (
+        {detail.isPickup ? (
           <p className="mt-2 text-sm text-gray-600">
-            {drawer.pickupStore}: {detail.storeName}
+            {drawer.pickupStore}: {detail.addressLine || detail.storeName}
           </p>
         ) : null}
       </section>
@@ -129,6 +129,17 @@ export function OrderDetailsDrawerShipping({
               </div>
             </dl>
           </section>
+
+          {detail.customerNote ? (
+            <section className={ORDER_DETAIL_CARD}>
+              <h3 className={ORDER_DETAIL_SECTION_TITLE}>
+                {drawer.customerNote}
+              </h3>
+              <p className="whitespace-pre-wrap text-sm font-medium text-gray-900">
+                {detail.customerNote}
+              </p>
+            </section>
+          ) : null}
         </>
       )}
     </>

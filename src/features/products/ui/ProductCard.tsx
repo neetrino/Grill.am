@@ -10,12 +10,6 @@ import {
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { staticAssetUrl } from "@/lib/media/static-asset-url";
-
-/** Fallback product-card photo when a product has no media. */
-export const PRODUCT_CARD_IMAGE = staticAssetUrl(
-  "/assets/products/product-card.webp",
-);
 
 /** Stagger step for catalog grid appear (MaMarie products listing). */
 export const PRODUCT_CARD_APPEAR_STAGGER_MS = 70;
@@ -83,7 +77,7 @@ export function ProductCard({
   requiresConfiguration = false,
   variant = "catalog",
 }: ProductCardProps) {
-  const resolvedImageUrl = imageUrl?.trim() || PRODUCT_CARD_IMAGE;
+  const resolvedImageUrl = imageUrl?.trim() || null;
   const resolvedSlug =
     slug?.trim() ||
     href.split("/").filter(Boolean).at(-1)?.split("?")[0] ||
@@ -143,21 +137,23 @@ export function ProductCard({
     >
       <div
         data-product-fly-origin
-        className="relative aspect-[279/214] shrink-0 overflow-hidden bg-brand-surface"
+        className="relative aspect-[279/214] shrink-0 overflow-hidden bg-white"
       >
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
           className="absolute inset-0 z-[1] block"
         >
-          <Image
-            src={resolvedImageUrl}
-            alt={title}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 279px"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            priority={priority}
-          />
+          {resolvedImageUrl ? (
+            <Image
+              src={resolvedImageUrl}
+              alt={title}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 279px"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              priority={priority}
+            />
+          ) : null}
         </AppLink>
 
         {discountPercent != null ? (

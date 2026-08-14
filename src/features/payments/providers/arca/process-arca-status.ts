@@ -6,7 +6,7 @@ import { orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
 import { confirmPayment } from "@/features/payments/application/confirm-payment";
 import { failPayment } from "@/features/payments/application/fail-payment";
-import { enqueuePaymentNotification } from "@/features/payments/application/enqueue-payment-notification";
+import { scheduleOrderEmails } from "@/features/notifications/application/schedule-order-emails";
 import {
   InsufficientStockAtConfirmationError,
   isPaymentDomainError,
@@ -178,7 +178,7 @@ export async function applyVerifiedArcaStatus(
 async function captureWithFulfillmentReview(
   verified: VerifyArcaPaymentResult,
 ): Promise<Omit<ProcessArcaStatusResult, "orderNumber">> {
-  return withTransaction(async (tx) => {
+  const result = await withTransaction(async (tx) => {
     const [payment] = await tx
       .select()
       .from(payments)
@@ -210,6 +210,9 @@ async function captureWithFulfillmentReview(
           order.status === "REQUIRES_REVIEW"
             ? ("captured_requires_review" as const)
             : ("already_processed" as const),
+        notifyReview: false as const,
+        orderNumber: order.orderNumber,
+        locale: order.locale,
       };
     }
 
@@ -267,25 +270,6 @@ async function captureWithFulfillmentReview(
       }),
     });
 
-    await enqueuePaymentNotification(tx, {
-      type: "PAYMENT_REQUIRES_REVIEW_CUSTOMER",
-      orderId: order.id,
-      orderNumber: order.orderNumber,
-      locale: order.locale,
-      dedupeKey: `payment-review:${order.id}:customer`,
-      recipientRole: "customer",
-      safePayload: { provider: "arca" },
-    });
-    await enqueuePaymentNotification(tx, {
-      type: "PAYMENT_REQUIRES_REVIEW_OPERATOR",
-      orderId: order.id,
-      orderNumber: order.orderNumber,
-      locale: order.locale,
-      dedupeKey: `payment-review:${order.id}:operators`,
-      recipientRole: "operator",
-      safePayload: { provider: "arca", severity: "high" },
-    });
-
     paymentMetrics.increment(PAYMENT_METRIC_NAMES.requiresReview, {
       provider: "arca",
       operation: "confirm_review",
@@ -304,8 +288,28 @@ async function captureWithFulfillmentReview(
       orderId: order.id,
       paymentId: payment.id,
       outcome: "captured_requires_review" as const,
+      notifyReview: true as const,
+      orderNumber: order.orderNumber,
+      locale: order.locale,
     };
   });
+
+  if (result.notifyReview) {
+    scheduleOrderEmails({
+      kind: "requires_review",
+      orderId: result.orderId,
+      orderNumber: result.orderNumber,
+      locale: result.locale,
+      paymentId: result.paymentId,
+    });
+  }
+
+  return {
+    normalizedState: result.normalizedState,
+    orderId: result.orderId,
+    paymentId: result.paymentId,
+    outcome: result.outcome,
+  };
 }
 
 async function markAuthorized(

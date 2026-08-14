@@ -22,7 +22,7 @@ import { fingerprintCartItems } from "@/features/payments/domain/cart-fingerprin
 import { buildSafePaymentEventPayload } from "@/features/payments/domain/payment-events";
 import { paymentLifecycleTimestampPatch } from "@/features/payments/domain/payment-lifecycle-timestamps";
 import { canProviderTransitionPaymentStatus } from "@/features/payments/domain/provider-payment-transitions";
-import { enqueuePaymentNotification } from "@/features/payments/application/enqueue-payment-notification";
+import { scheduleOrderEmails } from "@/features/notifications/application/schedule-order-emails";
 import {
   PAYMENT_METRIC_NAMES,
   paymentMetrics,
@@ -67,7 +67,7 @@ export type ConfirmPaymentResult =
 export async function confirmPayment(
   input: ConfirmPaymentInput,
 ): Promise<ConfirmPaymentResult> {
-  return withTransaction(async (tx) => {
+  const result = await withTransaction(async (tx) => {
     const [payment] = await tx
       .select()
       .from(payments)
@@ -202,19 +202,6 @@ export async function confirmPayment(
       }),
     });
 
-    await enqueuePaymentNotification(tx, {
-      type: "ONLINE_PAYMENT_CAPTURED",
-      orderId: order.id,
-      orderNumber: order.orderNumber,
-      locale: order.locale,
-      dedupeKey: `payment-captured:${payment.id}:customer`,
-      recipientRole: "customer",
-      safePayload: {
-        provider: payment.provider,
-        attemptNumber: payment.attemptNumber,
-      },
-    });
-
     paymentMetrics.increment(PAYMENT_METRIC_NAMES.captured, {
       provider: payment.provider,
       operation: "confirm",
@@ -237,8 +224,26 @@ export async function confirmPayment(
       orderId: order.id,
       paymentId: payment.id,
       orderNumber: order.orderNumber,
+      locale: order.locale,
     };
   });
+
+  if (result.type === "captured") {
+    scheduleOrderEmails({
+      kind: "payment_captured",
+      orderId: result.orderId,
+      orderNumber: result.orderNumber,
+      locale: result.locale,
+      paymentId: result.paymentId,
+    });
+  }
+
+  return {
+    type: result.type,
+    orderId: result.orderId,
+    paymentId: result.paymentId,
+    orderNumber: result.orderNumber,
+  };
 }
 
 async function recordConfirmationReplay(

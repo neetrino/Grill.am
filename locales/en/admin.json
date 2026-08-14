@@ -81,6 +81,31 @@
     "activeProducts": "Active products",
     "ordersRange": "Orders (range)",
     "revenueRange": "Revenue (range)",
+    "ordersToday": "Orders today",
+    "ordersWeek": "Orders this week",
+    "ordersMonth": "Orders this month",
+    "revenueToday": "Revenue today",
+    "revenueWeek": "Revenue this week",
+    "revenueMonth": "Revenue this month",
+    "periodsTitle": "Sales by period",
+    "viewAnalytics": "Full analytics",
+    "periodLabel": "Dashboard period",
+    "periodToday": "Today",
+    "periodWeek": "Week",
+    "periodMonth": "Month",
+    "periodQuarter": "Quarter",
+    "aov": "Avg. order",
+    "chartTitle": "Revenue & orders trend",
+    "chartSubtitle": "Monthly performance over the selected range",
+    "chartRangeLabel": "Chart range",
+    "chartRange6Months": "6 months",
+    "chartRangeYear": "Year",
+    "chartRevenue": "Revenue",
+    "chartOrders": "Orders",
+    "chartAria": "Monthly revenue and orders trend chart",
+    "chartEmpty": "No orders in this chart range yet.",
+    "chartEmptyShort": "—",
+    "chartBestMonth": "Best month",
     "vsPrev": "{delta} vs prev",
     "recentOrders": "Recent orders",
     "topProducts": "Top products",
@@ -189,7 +214,7 @@
     },
     "images": {
       "mainTitle": "Main Product Image",
-      "upload": "+ Upload Image",
+      "upload": "Upload Image",
       "hint": "Upload one or more images, then mark the main image with the checkbox.",
       "main": "Main",
       "remove": "Remove image"
@@ -198,7 +223,7 @@
       "title": "Categories",
       "select": "Select categories",
       "empty": "No categories yet.",
-      "addCategory": "+ Add category",
+      "addCategory": "Add category",
       "categoryTitle": "Category title",
       "categoryTitlePlaceholder": "Enter category title",
       "adding": "Adding…",
@@ -236,12 +261,14 @@
       "customer": "Customer",
       "status": "Status",
       "payment": "Payment",
+      "paymentMethod": "Payment method",
       "total": "Total",
       "placed": "Placed",
       "archived": "Archived",
       "empty": "No orders match these filters.",
       "selectAll": "Select all orders on page",
       "selectOrder": "Select order {orderNumber}",
+      "openOrder": "Open order {orderNumber}",
       "selectedOnPage": "{count} selected on this page"
     },
     "bulk": {
@@ -267,6 +294,7 @@
       "name": "Name",
       "phone": "Phone Number",
       "email": "Email",
+      "customerNote": "Customer comment",
       "shippingMethod": "Shipping Method",
       "pickupStore": "Pickup store",
       "pickupMethod": "Store pickup",
@@ -325,6 +353,19 @@
       "restoreOrder": "Restore order",
       "archiveHint": "Archive hides the order from default admin lists without deleting data.",
       "archivedHint": "This order is archived. Restore it to show in default lists."
+    },
+    "alert": {
+      "title": "New order",
+      "titleWithCount": "New order ({remaining} waiting)",
+      "orderNumber": "Order #{orderNumber}",
+      "customer": "Customer",
+      "total": "Total",
+      "payment": "Payment",
+      "placedAt": "Placed",
+      "acknowledge": "I heard it",
+      "acknowledgeAll": "I heard it — dismiss all ({remaining})",
+      "enableSound": "Enable sound",
+      "audioBlocked": "Sound is blocked by the browser. Click the button or interact with the page to enable the alert tone."
     }
   },
   "users": {
@@ -456,7 +497,7 @@
       "archived": "Archived",
       "image": "Image",
       "changeImage": "Change image",
-      "uploadImage": "+ Upload Image",
+      "uploadImage": "Upload Image",
       "createCategory": "Create Category"
     }
   },
@@ -628,7 +669,7 @@
       "subtitle": "Subtitle",
       "uploadImage": "Upload image",
       "changeImage": "Change image",
-      "uploadButton": "+ Upload"
+      "uploadButton": "Upload"
     }
   },
   "popups": {
@@ -652,7 +693,7 @@
       "editTitle": "Edit popup",
       "uploadImage": "Upload image",
       "changeImage": "Change image",
-      "uploadButton": "+ Upload",
+      "uploadButton": "Upload",
       "imageHint": "The popup is shown as a full image on the storefront."
     }
   },
@@ -684,7 +725,7 @@
       "status": "Status",
       "coverImage": "Cover image",
       "changeImage": "Change image",
-      "uploadImage": "+ Upload",
+      "uploadImage": "Upload",
       "imageHint": "JPEG, PNG, WebP, or GIF. Max 5MB.",
       "titleRequired": "Title and full text are required."
     },
@@ -836,9 +877,11 @@
       "custom": "Custom Range"
     },
     "metrics": {
+      "rangeTitle": "Selected range",
       "totalOrders": "Total Orders",
       "totalRevenue": "Total Revenue",
-      "totalUsers": "Total Users"
+      "totalUsers": "Customers in range",
+      "vsPreviousHint": "Deltas compare to the previous period of equal length."
     },
     "rankings": {
       "topProducts": "Top Selling Products",
@@ -850,10 +893,11 @@
       "noCategorySales": "No category sales in this range."
     },
     "ordersByDay": {
-      "title": "Orders by Day",
-      "subtitle": "Daily Order Trends and Revenue",
-      "chartAria": "Orders by day trend chart",
+      "title": "Trend",
+      "subtitle": "Revenue and orders over the selected range",
+      "chartAria": "Revenue and orders trend chart",
       "empty": "No orders in this range.",
+      "peakDay": "Best day",
       "ordersCount": "{count} orders",
       "revenue": "revenue"
     }

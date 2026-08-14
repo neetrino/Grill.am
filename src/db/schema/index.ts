@@ -64,7 +64,6 @@ export {
 } from "@/db/schema/pricing";
 export {
   auditLogs,
-  outboxEvents,
 } from "@/db/schema/system";
 export {
   CANONICAL_TABLE_COUNT,
