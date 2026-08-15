@@ -490,7 +490,7 @@
       "titlePlaceholder": "Enter category title",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Generated automatically from the title and used on /products.",
+      "slugHint": "Generated automatically from this language's title and used on /products.",
       "parent": "Parent Category",
       "rootOption": "None (Root Category)",
       "status": "Status",
@@ -499,7 +499,8 @@
       "image": "Image",
       "changeImage": "Change image",
       "uploadImage": "Upload Image",
-      "createCategory": "Create Category"
+      "createCategory": "Create Category",
+      "titleRequired": "Fill the title in at least one language."
     }
   },
   "delivery": {

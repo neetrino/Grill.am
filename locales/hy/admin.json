@@ -490,7 +490,7 @@
       "titlePlaceholder": "Մուտքագրեք կատեգորիայի անունը",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Ավտոմատ ստեղծվում է անունից և օգտագործվում /products-ում։",
+      "slugHint": "Ավտոմատ է գոյանում այս լեզվի անունից և օգտագործվում է /products-ում։",
       "parent": "Ծնող կատեգորիա",
       "rootOption": "Չկա (արմատային կատեգորիա)",
       "status": "Կարգավիճակ",
@@ -499,7 +499,8 @@
       "image": "Նկար",
       "changeImage": "Փոխել նկարը",
       "uploadImage": "Վերբեռնել նկար",
-      "createCategory": "Ստեղծել կատեգորիա"
+      "createCategory": "Ստեղծել կատեգորիա",
+      "titleRequired": "Լրացրեք անունը առնվազն մեկ լեզվով։"
     }
   },
   "delivery": {
