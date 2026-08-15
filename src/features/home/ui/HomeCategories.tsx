@@ -132,13 +132,13 @@ export function HomeCategories({
                       prefetchPolicy="intent"
                       className="flex w-full flex-col items-center gap-2"
                     >
-                      <span className="relative size-[88px] overflow-hidden rounded-[20px] bg-[#191919]">
+                      <span className="relative size-[88px] overflow-hidden">
                         <Image
                           src={imageSrc}
                           alt=""
                           fill
                           sizes="88px"
-                          className="object-cover"
+                          className="object-contain"
                         />
                       </span>
                       <span className="line-clamp-2 w-full text-center text-[11px] leading-[16.5px] font-bold break-words text-[#171717] uppercase">
