@@ -34,6 +34,14 @@ const HEADER_MENU_MAX_HEIGHT_PX = 220;
 const HEADER_MENU_MAX_WIDTH_PX = 320;
 const SCROLLBAR_HIDDEN_CLASS =
   "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
+const HEADER_MENU_SCROLLBAR_CLASS = [
+  "[scrollbar-width:thin]",
+  "[scrollbar-color:#C4C4C4_transparent]",
+  "[&::-webkit-scrollbar]:w-1.5",
+  "[&::-webkit-scrollbar-track]:bg-transparent",
+  "[&::-webkit-scrollbar-thumb]:rounded-full",
+  "[&::-webkit-scrollbar-thumb]:bg-[#C4C4C4]",
+].join(" ");
 
 const FOOTER_STYLES = {
   root: "relative z-20",
@@ -216,12 +224,8 @@ export function StoreAddressDropdown({
               }}
             >
               <ul
-                className={`relative max-h-[220px] overflow-y-auto rounded-[12px] border border-[#E8E8E8] bg-white py-0.5 shadow-[0_8px_24px_rgba(0,0,0,0.1)] ${SCROLLBAR_HIDDEN_CLASS}`}
-                style={{
-                  maxHeight: HEADER_MENU_MAX_HEIGHT_PX,
-                  scrollbarWidth: "none",
-                  msOverflowStyle: "none",
-                }}
+                className={`relative overflow-y-auto overscroll-contain rounded-[12px] border border-[#E8E8E8] bg-white py-0.5 pr-0.5 shadow-[0_8px_24px_rgba(0,0,0,0.1)] ${HEADER_MENU_SCROLLBAR_CLASS}`}
+                style={{ maxHeight: HEADER_MENU_MAX_HEIGHT_PX }}
               >
                 {menuAddresses.map((address, menuIndex) => {
                   const store = GRILL_STORE_LOCATIONS[menuIndex];

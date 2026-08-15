@@ -4,28 +4,16 @@ import { useEffect } from "react";
 
 import {
   getCartSyncVersion,
-  reconcileLocalCartItemCount,
   useCartSyncVersion,
 } from "@/features/cart/cart-client-sync";
 import {
-  removeItemLocallyShared,
   replaceCartDrawerViewFromServer,
-  restoreItemLocallyShared,
-  setQuantityLocallyShared,
   useCartDrawerLocalView,
-  upsertItemLocally,
-  type OptimisticCartLineInput,
-  type UpsertItemLocallyResult,
 } from "@/features/cart/cart-drawer-local-store";
-import type {
-  CartDrawerItemView,
-  CartDrawerView,
-} from "@/features/cart/get-cart-drawer-view";
+import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
 import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-
-export type { OptimisticCartLineInput, UpsertItemLocallyResult };
 
 type UseCartDrawerViewResult = {
   view: CartDrawerView | null;
@@ -33,19 +21,6 @@ type UseCartDrawerViewResult = {
   viewIsCurrent: boolean;
   loading: boolean;
   cartVersion: number;
-  /** Instantly remove a line from the local list (before DB). */
-  removeItemLocally: (itemId: string) => CartDrawerItemView | null;
-  /** Instantly set line quantity in the local list (before DB). */
-  setQuantityLocally: (
-    itemId: string,
-    quantity: number,
-  ) => { previous: CartDrawerItemView; nextQuantity: number } | null;
-  /** Restore a line after a failed optimistic remove/qty change. */
-  restoreItemLocally: (item: CartDrawerItemView) => void;
-  /** Instantly upsert a line (shared; usable from add-to-cart actions). */
-  upsertItemLocally: (
-    input: OptimisticCartLineInput,
-  ) => UpsertItemLocallyResult;
 };
 
 const inflightLoads = new Map<string, Promise<CartDrawerView>>();
@@ -84,18 +59,16 @@ export function useCartDrawerView(
   useEffect(() => {
     let cancelled = false;
     const requestedVersion = cartVersion;
-    const requestedCount = serverItemCount;
 
     void loadCartDrawerViewShared(
       locale,
       currency,
       requestedVersion,
-      requestedCount,
+      serverItemCount,
     ).then((next) => {
       if (cancelled) return;
       if (getCartSyncVersion() !== requestedVersion) return;
-      reconcileLocalCartItemCount(next.itemCount);
-      replaceCartDrawerViewFromServer(next);
+      replaceCartDrawerViewFromServer(next, requestedVersion);
     });
 
     return () => {
@@ -103,17 +76,10 @@ export function useCartDrawerView(
     };
   }, [cartVersion, serverItemCount, locale, currency]);
 
-  const viewIsCurrent = view != null;
-
   return {
     view,
-    viewIsCurrent,
-    /** Only for first paint — not after optimistic edits / background refresh. */
+    viewIsCurrent: view != null,
     loading: view == null,
     cartVersion,
-    removeItemLocally: removeItemLocallyShared,
-    setQuantityLocally: setQuantityLocallyShared,
-    restoreItemLocally: restoreItemLocallyShared,
-    upsertItemLocally,
   };
 }

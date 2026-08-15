@@ -5,17 +5,9 @@ import { ShoppingBasket } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { addToCart } from "@/features/cart/cart";
+import { addCartLineQuantity } from "@/features/cart/cart-line-coordinator";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
-import {
-  adjustLocalCartItemCount,
-  notifyCartChanged,
-} from "@/features/cart/cart-client-sync";
-import {
-  acknowledgeOptimisticAdd,
-  rollbackUpsertLocally,
-  upsertItemLocally,
-} from "@/features/cart/cart-drawer-local-store";
+import { EMPTY_CART_MODIFIERS } from "@/features/products/domain/customization";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 
@@ -97,33 +89,30 @@ export function AddToCartButton({
     const resolvedLocale = locale ?? "hy";
     const resolvedCurrency = currency ?? "AMD";
 
-    const upsert = upsertItemLocally({
-      productId,
-      selectionKey: "",
-      title: resolvedTitle,
-      slug: resolvedSlug,
-      quantity: 1,
-      imageUrl: imageUrl,
-      unitPriceAmount: resolvedAmount,
-      unitPriceFormatted: resolvedPrice,
-      locale: resolvedLocale,
-      currency: resolvedCurrency,
-      modifierLines: [],
-    });
-    adjustLocalCartItemCount(1);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1500);
 
-    void addToCart(productId, 1)
-      .then(() => {
-        acknowledgeOptimisticAdd();
-        notifyCartChanged();
-      })
-      .catch(() => {
-        rollbackUpsertLocally(upsert);
-        adjustLocalCartItemCount(-1);
-        setJustAdded(false);
-      });
+    void addCartLineQuantity({
+      productId,
+      selectionKey: "",
+      addQuantity: 1,
+      modifiers: EMPTY_CART_MODIFIERS,
+      display: {
+        productId,
+        selectionKey: "",
+        title: resolvedTitle,
+        slug: resolvedSlug,
+        quantity: 1,
+        imageUrl: imageUrl,
+        unitPriceAmount: resolvedAmount,
+        unitPriceFormatted: resolvedPrice,
+        locale: resolvedLocale,
+        currency: resolvedCurrency,
+        modifierLines: [],
+      },
+    }).catch(() => {
+      setJustAdded(false);
+    });
   }
 
   return (

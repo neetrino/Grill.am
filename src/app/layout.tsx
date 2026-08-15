@@ -23,7 +23,10 @@ export const metadata: Metadata = {
   },
   description: "Fresh grilled food delivery in Armenia",
   icons: {
-    icon: [{ url: "/favicon.webp", type: "image/webp" }],
+    icon: [
+      { url: "/favicon.ico", type: "image/x-icon", sizes: "128x128" },
+      { url: "/favicon.png", type: "image/png", sizes: "128x128" },
+    ],
   },
 };
 

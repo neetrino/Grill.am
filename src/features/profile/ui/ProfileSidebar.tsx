@@ -52,7 +52,7 @@ export function ProfileSidebar({
 
   return (
     <aside
-      className={`relative flex h-full max-h-full min-h-0 flex-col overflow-hidden p-4 pt-3 ${PROFILE_CARD_CLASS}`}
+      className={`relative flex flex-col overflow-hidden p-4 pt-3 ${PROFILE_CARD_CLASS}`}
       aria-label={dictionary.title}
     >
       <div className="shrink-0">

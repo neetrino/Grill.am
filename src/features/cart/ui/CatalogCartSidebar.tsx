@@ -2,17 +2,14 @@
 
 import Image from "next/image";
 import { Minus, Plus, ShoppingBasket, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { removeItem, updateQuantity } from "@/features/cart/cart";
-import {
-  adjustLocalCartItemCount,
-  notifyCartChanged,
-  useCartItemCount,
-} from "@/features/cart/cart-client-sync";
+import { useCartItemCount } from "@/features/cart/cart-client-sync";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
+import {
+  changeCartLineQuantity,
+  removeCartLine,
+} from "@/features/cart/ui/cart-line-actions";
 import { useCartDrawerView } from "@/features/cart/ui/use-cart-drawer-view";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -31,61 +28,13 @@ export function CatalogCartSidebar({
   labels,
   initialItemCount,
 }: CatalogCartSidebarProps) {
-  const router = useRouter();
-  const {
-    view,
-    loading,
-    removeItemLocally,
-    setQuantityLocally,
-    restoreItemLocally,
-  } = useCartDrawerView(locale, currency, initialItemCount);
-  const [, startTransition] = useTransition();
+  const { view, loading } = useCartDrawerView(
+    locale,
+    currency,
+    initialItemCount,
+  );
   const badgeCount = useCartItemCount(initialItemCount);
   const showInitialLoading = loading;
-
-  function changeQuantity(itemId: string, quantity: number): void {
-    if (quantity < 1) {
-      removeCartItem(itemId);
-      return;
-    }
-
-    const result = setQuantityLocally(itemId, quantity);
-    if (!result) {
-      return;
-    }
-    const delta = result.nextQuantity - result.previous.quantity;
-    adjustLocalCartItemCount(delta);
-
-    startTransition(async () => {
-      try {
-        await updateQuantity(itemId, quantity);
-        notifyCartChanged();
-        router.refresh();
-      } catch {
-        restoreItemLocally(result.previous);
-        adjustLocalCartItemCount(-delta);
-      }
-    });
-  }
-
-  function removeCartItem(itemId: string): void {
-    const removed = removeItemLocally(itemId);
-    if (!removed) {
-      return;
-    }
-    adjustLocalCartItemCount(-removed.quantity);
-
-    startTransition(async () => {
-      try {
-        await removeItem(itemId);
-        notifyCartChanged();
-        router.refresh();
-      } catch {
-        restoreItemLocally(removed);
-        adjustLocalCartItemCount(removed.quantity);
-      }
-    });
-  }
 
   return (
     <aside className="flex h-full flex-col border-l border-[#f3f4f6] bg-white shadow-[-1px_0_8px_rgba(0,0,0,0.03)]">
@@ -151,7 +100,7 @@ export function CatalogCartSidebar({
                       disabled={item.quantity <= 1}
                       aria-label={labels.decreaseQuantity}
                       onClick={() =>
-                        changeQuantity(item.id, item.quantity - 1)
+                        changeCartLineQuantity(item, item.quantity - 1)
                       }
                       className="inline-flex size-6 items-center justify-center rounded-full bg-[#f3f4f6] text-[#0a0a0a] transition hover:bg-[#e5e7eb] disabled:opacity-40"
                     >
@@ -164,7 +113,7 @@ export function CatalogCartSidebar({
                       type="button"
                       aria-label={labels.increaseQuantity}
                       onClick={() =>
-                        changeQuantity(item.id, item.quantity + 1)
+                        changeCartLineQuantity(item, item.quantity + 1)
                       }
                       className="inline-flex size-6 items-center justify-center rounded-full bg-brand-red text-white transition hover:bg-brand-red-hot disabled:opacity-40"
                     >
@@ -175,7 +124,7 @@ export function CatalogCartSidebar({
                   <button
                     type="button"
                     aria-label={labels.removeItem}
-                    onClick={() => removeCartItem(item.id)}
+                    onClick={() => removeCartLine(item)}
                     className="shrink-0 text-[#99a1af] transition hover:text-brand-red disabled:opacity-40"
                   >
                     <Trash2 className="size-3.5" aria-hidden />

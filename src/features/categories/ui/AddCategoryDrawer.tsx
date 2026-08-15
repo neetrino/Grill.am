@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
-import type { TranslationsJson } from "@/db/schema";
 import {
   ADMIN_FIELD,
   ADMIN_FORM_STACK,
@@ -15,23 +14,24 @@ import {
 import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminLocaleTabs } from "@/features/admin/ui/AdminLocaleTabs";
 import {
   createCategoryFromDrawerAction,
   updateCategoryFromDrawerAction,
 } from "@/features/categories/actions";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
-import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
-
-/** Category content currently uses the English translation slot. */
-const CATEGORY_LOCALE = "en" as const;
+import {
+  buildCategoryLocaleCopies,
+  draftsFromCategoryTranslations,
+  filledCategoryLocales,
+  resolveCategoryEditorLocale,
+  resolvedCategorySlug,
+  type CategoryLocaleDraft,
+} from "@/features/categories/ui/category-drawer-drafts";
+import { hasCategoryLocaleCopy } from "@/features/categories/domain/merge-category-translations";
+import type { Locale } from "@/lib/i18n/config";
 
 const CATEGORY_DRAWER_FORM_ID = "category-drawer-form";
-
-type LocaleDraft = {
-  title: string;
-  slug: string;
-  slugTouched: boolean;
-};
 
 type AddCategoryDrawerProps = {
   locale: string;
@@ -40,22 +40,6 @@ type AddCategoryDrawerProps = {
   categories: AdminCategoryListItem[];
   category?: AdminCategoryListItem | null;
 };
-
-function emptyDraft(): LocaleDraft {
-  return { title: "", slug: "", slugTouched: false };
-}
-
-function draftFromTranslations(
-  translations: TranslationsJson | undefined,
-): LocaleDraft {
-  const copy = translations?.[CATEGORY_LOCALE] ?? translations?.hy ?? null;
-  if (!copy) return emptyDraft();
-  return {
-    title: copy.title,
-    slug: copy.slug,
-    slugTouched: true,
-  };
-}
 
 export function AddCategoryDrawer({
   locale,
@@ -70,8 +54,11 @@ export function AddCategoryDrawer({
   const router = useRouter();
   const isEdit = category != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [draft, setDraft] = useState<LocaleDraft>(() =>
-    draftFromTranslations(category?.translations),
+  const [activeLocale, setActiveLocale] = useState<Locale>(() =>
+    resolveCategoryEditorLocale(locale, category?.translations),
+  );
+  const [drafts, setDrafts] = useState(() =>
+    draftsFromCategoryTranslations(category?.translations),
   );
   const [parentId, setParentId] = useState("");
   const [status, setStatus] = useState<"ACTIVE" | "ARCHIVED">("ACTIVE");
@@ -80,16 +67,18 @@ export function AddCategoryDrawer({
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  // Tracks the `open`/`category` combo last synced into local draft state.
-  const [synced, setSynced] = useState({ open, category });
+  const [synced, setSynced] = useState({ open, category, locale });
 
-  // Reset (on close) or seed (on open / category change) local form state
-  // during render instead of a synchronous setState inside an effect.
-  if (open !== synced.open || category !== synced.category) {
-    setSynced({ open, category });
+  if (
+    open !== synced.open ||
+    category !== synced.category ||
+    locale !== synced.locale
+  ) {
+    setSynced({ open, category, locale });
 
     if (!open) {
-      setDraft(emptyDraft());
+      setActiveLocale(resolveCategoryEditorLocale(locale, undefined));
+      setDrafts(draftsFromCategoryTranslations(undefined));
       setParentId("");
       setStatus("ACTIVE");
       setImageFile(null);
@@ -100,33 +89,37 @@ export function AddCategoryDrawer({
       setRemoveExistingImage(false);
       setError(null);
     } else {
-      setDraft(draftFromTranslations(category?.translations));
-      if (category) {
-        setParentId(category.parentId ?? "");
-        setStatus(category.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE");
-        setImageFile(null);
-        setImagePreview(category.imageUrl);
-        setRemoveExistingImage(false);
-        setError(null);
-      } else {
-        setParentId("");
-        setStatus("ACTIVE");
-        setImageFile(null);
-        setImagePreview(null);
-        setRemoveExistingImage(false);
-        setError(null);
-      }
+      setActiveLocale(
+        resolveCategoryEditorLocale(locale, category?.translations),
+      );
+      setDrafts(draftsFromCategoryTranslations(category?.translations));
+      setParentId(category?.parentId ?? "");
+      setStatus(category?.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE");
+      setImageFile(null);
+      setImagePreview(category?.imageUrl ?? null);
+      setRemoveExistingImage(false);
+      setError(null);
     }
   }
 
-  const displaySlug = draft.slugTouched
-    ? draft.slug
-    : slugifyCategoryTitle(draft.title) || "---";
+  const draft = drafts[activeLocale];
+  const displaySlug = resolvedCategorySlug(draft);
   const parentOptions = categories.filter((item) => item.id !== category?.id);
   const drawerTitle = isEdit ? copy.editTitle : copy.addTitle;
 
-  function updateDraft(patch: Partial<LocaleDraft>): void {
-    setDraft((current) => ({ ...current, ...patch }));
+  function updateDraft(patch: Partial<CategoryLocaleDraft>): void {
+    setDrafts((current) => ({
+      ...current,
+      [activeLocale]: { ...current[activeLocale], ...patch },
+    }));
+  }
+
+  function resetImagePreview(): string | null {
+    setImagePreview((current) => {
+      if (current?.startsWith("blob:")) URL.revokeObjectURL(current);
+      return null;
+    });
+    return null;
   }
 
   return (
@@ -140,7 +133,7 @@ export function AddCategoryDrawer({
           <Button
             type="submit"
             form={CATEGORY_DRAWER_FORM_ID}
-            disabled={isPending || !draft.title.trim()}
+            disabled={isPending}
           >
             {isPending
               ? isEdit
@@ -165,17 +158,21 @@ export function AddCategoryDrawer({
         className={ADMIN_FORM_STACK}
         onSubmit={(event) => {
           event.preventDefault();
-          const nextSlug =
-            draft.slugTouched && draft.slug.trim()
-              ? draft.slug.trim()
-              : slugifyCategoryTitle(draft.title);
+          const localeCopies = buildCategoryLocaleCopies(drafts);
+          if (!hasCategoryLocaleCopy(localeCopies)) {
+            setError(copy.titleRequired);
+            return;
+          }
 
           const formData = new FormData();
-          formData.set("editingLocale", CATEGORY_LOCALE);
-          formData.set("title", draft.title.trim());
-          formData.set("slug", nextSlug);
-          formData.set("parentId", parentId);
-          formData.set("status", status);
+          formData.set(
+            "data",
+            JSON.stringify({
+              localeCopies,
+              parentId: parentId.trim() ? parentId.trim() : null,
+              status,
+            }),
+          );
           if (imageFile) {
             formData.set("image", imageFile);
           }
@@ -204,12 +201,18 @@ export function AddCategoryDrawer({
           });
         }}
       >
+        <AdminLocaleTabs
+          activeLocale={activeLocale}
+          onChange={setActiveLocale}
+          disabled={isPending}
+          filledLocales={filledCategoryLocales(drafts)}
+        />
+
         <label className={ADMIN_FIELD}>
           <span className={ADMIN_LABEL}>
             {copy.categoryTitle} <span className="text-red-600">*</span>
           </span>
           <input
-            required
             value={draft.title}
             onChange={(event) => updateDraft({ title: event.target.value })}
             placeholder={copy.titlePlaceholder}
@@ -221,7 +224,7 @@ export function AddCategoryDrawer({
         <label className={ADMIN_FIELD}>
           <span className={ADMIN_LABEL}>{copy.slug}</span>
           <input
-            value={displaySlug === "---" ? "" : displaySlug}
+            value={displaySlug === "category" && !draft.title.trim() ? "" : displaySlug}
             onChange={(event) => {
               updateDraft({
                 slugTouched: true,
@@ -300,12 +303,7 @@ export function AddCategoryDrawer({
                 disabled={isPending}
                 onClick={() => {
                   setImageFile(null);
-                  setImagePreview((current) => {
-                    if (current?.startsWith("blob:")) {
-                      URL.revokeObjectURL(current);
-                    }
-                    return null;
-                  });
+                  resetImagePreview();
                   if (isEdit && category?.imageUrl) {
                     setRemoveExistingImage(true);
                   }

@@ -22,24 +22,26 @@ export type AdminCategoryListItem = {
   sortOrder: number;
   imageUrl: string | null;
   childCount: number;
-  /** Full locale key → copy map (admin edits English only). */
+  /** Full locale key → copy map for the category editor. */
   translations: TranslationsJson;
 };
 
-/**
- * Admin categories are English-only; fall back to hy for legacy rows
- * that were saved before English-only admin.
- */
 function translationForAdmin(
   translations: (typeof categories.$inferSelect)["translations"],
+  locale: Locale,
 ): LocaleTranslation | null {
-  return translations.en ?? translations.hy ?? translations.ru ?? null;
+  return (
+    translations[locale] ??
+    translations.en ??
+    translations.hy ??
+    translations.ru ??
+    null
+  );
 }
 
 /** Lists non-deleted categories for the admin categories table. */
 export async function listAdminCategories(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for call-site symmetry with locale-aware admin list queries
-  _locale: Locale,
+  locale: Locale,
 ): Promise<AdminCategoryListItem[]> {
   const rows = await getDb()
     .select()
@@ -82,10 +84,10 @@ export async function listAdminCategories(
   }
 
   return rows.map((row) => {
-    const translation = translationForAdmin(row.translations);
+    const translation = translationForAdmin(row.translations, locale);
     const parent = row.parentId ? byId.get(row.parentId) : undefined;
     const parentTitle = parent
-      ? (translationForAdmin(parent.translations)?.title ?? null)
+      ? (translationForAdmin(parent.translations, locale)?.title ?? null)
       : null;
 
     return {

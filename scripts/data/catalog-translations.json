@@ -1,0 +1,809 @@
+{
+  "categories": {
+    "019fd1e2-f590-7199-9ca3-c4a06e2ea500": {
+      "en": { "title": "Khorovats", "slug": "khorovats" },
+      "ru": { "title": "Хоровац", "slug": "khorovats" }
+    },
+    "019fd1e2-f4c1-7721-91f6-eeceb291b4ba": {
+      "en": { "title": "Kebab", "slug": "kebab" },
+      "ru": { "title": "Кебаб", "slug": "kebab" }
+    },
+    "019fd1e2-f3ef-7483-8581-a2a5511da40f": {
+      "en": { "title": "Grilled chicken", "slug": "grilled-chicken" },
+      "ru": { "title": "Куриный гриль", "slug": "grilled-chicken" }
+    },
+    "019fd1e2-f66a-7495-a990-3bee7d8cfd8e": {
+      "en": { "title": "Shawarma", "slug": "shawarma" },
+      "ru": { "title": "Шаурма", "slug": "shawarma" }
+    },
+    "019fd1e2-f319-7678-af43-55ebfcb66490": {
+      "en": { "title": "Combos & offers", "slug": "combos-offers" },
+      "ru": { "title": "Комбо и акции", "slug": "combos-offers" }
+    },
+    "019fd1e2-f9c0-7303-abe8-ab2391cd40a5": {
+      "en": { "title": "Salads", "slug": "salads" },
+      "ru": { "title": "Салаты", "slug": "salads" }
+    },
+    "019fd1e2-f8e5-7594-8bae-9de93bb384bb": {
+      "en": { "title": "Starters & sauces", "slug": "starters-sauces" },
+      "ru": { "title": "Закуски и соусы", "slug": "starters-sauces" }
+    },
+    "019fd1e2-f738-7620-beff-e81f285502a7": {
+      "en": { "title": "Drinks", "slug": "drinks" },
+      "ru": { "title": "Напитки", "slug": "drinks" }
+    },
+    "019fd1e2-f80a-761a-928e-20c0ee5a7274": {
+      "en": { "title": "Alcoholic drinks", "slug": "alcoholic-drinks" },
+      "ru": { "title": "Алкогольные напитки", "slug": "alcoholic-drinks" }
+    }
+  },
+  "skipSkus": ["676768"],
+  "products": {
+    "WC-271": {
+      "en": {
+        "title": "BOOM offer",
+        "shortDescription": "10 chicken kebabs + 4 tan"
+      },
+      "ru": {
+        "title": "Предложение BOOM",
+        "shortDescription": "10 куриных кебабов + 4 тана"
+      }
+    },
+    "WC-459": {
+      "en": {
+        "title": "Rotisserie grill",
+        "shortDescription": "Served with:\n\n2 grilled whole potatoes\n\n1 grilled hot pepper\n\n2 sauces\n\n2 lavash\n\nonion, herbs"
+      },
+      "ru": {
+        "title": "Курица-гриль (аппарат)",
+        "shortDescription": "Подаётся с:\n\n2 шт. запечённый целый картофель\n\n1 шт. запечённый острый перец\n\n2 соуса\n\n2 лаваша\n\nлук, зелень"
+      }
+    },
+    "WC-472": {
+      "en": {
+        "title": "Charcoal grill",
+        "shortDescription": "Served with:\n\n2 grilled whole potatoes\n\n1 grilled hot pepper\n\n2 sauces\n\n2 lavash\n\nonion, herbs"
+      },
+      "ru": {
+        "title": "Курица на углях",
+        "shortDescription": "Подаётся с:\n\n2 шт. запечённый целый картофель\n\n1 шт. запечённый острый перец\n\n2 соуса\n\n2 лаваша\n\nлук, зелень"
+      }
+    },
+    "WC-474": {
+      "en": {
+        "title": "Tonir chicken",
+        "shortDescription": "Served with:\n\n2 grilled whole potatoes\n\n1 grilled hot pepper\n\n2 sauces\n\n2 lavash\n\nonion, herbs"
+      },
+      "ru": {
+        "title": "Курица из тонира",
+        "shortDescription": "Подаётся с:\n\n2 шт. запечённый целый картофель\n\n1 шт. запечённый острый перец\n\n2 соуса\n\n2 лаваша\n\nлук, зелень"
+      }
+    },
+    "WC-477": {
+      "en": {
+        "title": "Beef kebab",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise"
+      },
+      "ru": {
+        "title": "Кебаб из говядины",
+        "shortDescription": "Лук, зелень, кетчуп, майонез"
+      }
+    },
+    "WC-480": {
+      "en": {
+        "title": "Chicken kebab",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise"
+      },
+      "ru": {
+        "title": "Куриный кебаб",
+        "shortDescription": "Лук, зелень, кетчуп, майонез"
+      }
+    },
+    "WC-486": {
+      "en": {
+        "title": "Pork chalaghaj",
+        "shortDescription": "Includes 2–3 pieces: 450–500 g raw weight\n\nOnion, herbs, lavash"
+      },
+      "ru": {
+        "title": "Свиной чалахадж",
+        "shortDescription": "2–3 куска: 450–500 г в сыром виде\n\nЛук, зелень, лаваш"
+      }
+    },
+    "WC-489": {
+      "en": {
+        "title": "Pork fingers",
+        "shortDescription": "Includes 4–5 pieces: 400–410 g raw weight\n\nOnion, herbs, lavash"
+      },
+      "ru": {
+        "title": "Свиные пальчики",
+        "shortDescription": "4–5 кусков: 400–410 г в сыром виде\n\nЛук, зелень, лаваш"
+      }
+    },
+    "WC-492": {
+      "en": {
+        "title": "Pork tender",
+        "shortDescription": "Includes 4–5 pieces: 400–410 g raw weight\n\nOnion, herbs, lavash"
+      },
+      "ru": {
+        "title": "Свиная мякоть",
+        "shortDescription": "4–5 кусков: 400–410 г в сыром виде\n\nЛук, зелень, лаваш"
+      }
+    },
+    "WC-495": {
+      "en": {
+        "title": "Oven potatoes (plech)",
+        "shortDescription": "10 oven potatoes\n\nonion, herbs, lavash"
+      },
+      "ru": {
+        "title": "Картофель плеч",
+        "shortDescription": "10 шт. картофеля из духовки\n\nлук, зелень, лаваш"
+      }
+    },
+    "WC-498": {
+      "en": {
+        "title": "Grilled potatoes",
+        "shortDescription": "Onion, herbs, lavash"
+      },
+      "ru": {
+        "title": "Картофель на гриле",
+        "shortDescription": "Лук, зелень, лаваш"
+      }
+    },
+    "WC-501": {
+      "en": {
+        "title": "Potato sandwich",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise"
+      },
+      "ru": {
+        "title": "Картофельный сэндвич",
+        "shortDescription": "Лук, зелень, кетчуп, майонез"
+      }
+    },
+    "WC-504": {
+      "en": {
+        "title": "Pork shawarma in lavash",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise, garlic sauce, hot chili, tomato, country-style potatoes"
+      },
+      "ru": {
+        "title": "Свиная шаурма в лаваше",
+        "shortDescription": "Лук, зелень, кетчуп, майонез, чесночный соус, острый перец, помидор, деревенский картофель"
+      }
+    },
+    "WC-508": {
+      "en": {
+        "title": "Chicken shawarma in lavash",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise, garlic sauce, hot chili, tomato, country-style potatoes"
+      },
+      "ru": {
+        "title": "Куриная шаурма в лаваше",
+        "shortDescription": "Лук, зелень, кетчуп, майонез, чесночный соус, острый перец, помидор, деревенский картофель"
+      }
+    },
+    "WC-513": {
+      "en": {
+        "title": "Pork shawarma in bread",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise, garlic sauce, hot chili, tomato, country-style potatoes"
+      },
+      "ru": {
+        "title": "Свиная шаурма в хлебе",
+        "shortDescription": "Лук, зелень, кетчуп, майонез, чесночный соус, острый перец, помидор, деревенский картофель"
+      }
+    },
+    "WC-517": {
+      "en": {
+        "title": "Chicken shawarma in bread",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise, garlic sauce, hot chili, tomato, country-style potatoes"
+      },
+      "ru": {
+        "title": "Куриная шаурма в хлебе",
+        "shortDescription": "Лук, зелень, кетчуп, майонез, чесночный соус, острый перец, помидор, деревенский картофель"
+      }
+    },
+    "WC-520": {
+      "en": {
+        "title": "BBQ set",
+        "description": "1 skewer pork tender\n\n1 skewer pork fingers\n\n1 skewer pork chalaghaj\n\n1 skewer mixed lamb khorovats\n\n1 skewer chicken khorovats\n\n2 skewers grilled potatoes\n\n2 grilled hot peppers\n\n1 Fanta 1 L, 1 Cola 1 L, 1 Sprite 1 L",
+        "shortDescription": "1 skewer pork tender\n\n1 skewer pork fingers\n\n1 skewer pork chalaghaj\n\n1 skewer mixed lamb khorovats\n\n1 skewer chicken khorovats\n\n2 skewers grilled potatoes\n\n2 grilled hot peppers\n\n1 Fanta 1 L, 1 Cola 1 L, 1 Sprite 1 L"
+      },
+      "ru": {
+        "title": "BBQ сет",
+        "description": "1 шампур свиной мякоти\n\n1 шампур свиных пальчиков\n\n1 шампур свиного чалахаджа\n\n1 шампур смешанного бараньего хороваца\n\n1 шампур куриного хороваца\n\n2 шампура картофеля на гриле\n\n2 запечённых острых перца\n\n1 Fanta 1 л, 1 Cola 1 л, 1 Sprite 1 л",
+        "shortDescription": "1 шампур свиной мякоти\n\n1 шампур свиных пальчиков\n\n1 шампур свиного чалахаджа\n\n1 шампур смешанного бараньего хороваца\n\n1 шампур куриного хороваца\n\n2 шампура картофеля на гриле\n\n2 запечённых острых перца\n\n1 Fanta 1 л, 1 Cola 1 л, 1 Sprite 1 л"
+      }
+    },
+    "WC-540": {
+      "en": { "title": "Coca-Cola 0.5 L" },
+      "ru": { "title": "Coca-Cola 0,5 л" }
+    },
+    "WC-544": {
+      "en": { "title": "Coca-Cola Zero 0.5 L" },
+      "ru": { "title": "Coca-Cola Zero 0,5 л" }
+    },
+    "WC-547": {
+      "en": { "title": "Sprite 0.5 L" },
+      "ru": { "title": "Sprite 0,5 л" }
+    },
+    "WC-560": {
+      "en": { "title": "Fanta 0.5 L" },
+      "ru": { "title": "Fanta 0,5 л" }
+    },
+    "WC-567": {
+      "en": { "title": "Fanta Exotic 0.5 L" },
+      "ru": { "title": "Fanta Exotic 0,5 л" }
+    },
+    "WC-570": {
+      "en": { "title": "Coca-Cola 1 L" },
+      "ru": { "title": "Coca-Cola 1 л" }
+    },
+    "WC-573": {
+      "en": { "title": "Fanta 1 L" },
+      "ru": { "title": "Fanta 1 л" }
+    },
+    "WC-576": {
+      "en": { "title": "Sprite 1 L" },
+      "ru": { "title": "Sprite 1 л" }
+    },
+    "WC-579": {
+      "en": { "title": "House tan 0.5 L" },
+      "ru": { "title": "Фирменный тан 0,5 л" }
+    },
+    "WC-613": {
+      "en": { "title": "Pork ikibir" },
+      "ru": { "title": "Свиной икибир" }
+    },
+    "WC-616": {
+      "en": { "title": "Chicken ikibir" },
+      "ru": { "title": "Куриный икибир" }
+    },
+    "WC-647": {
+      "en": {
+        "title": "Chicken khorovats",
+        "shortDescription": "Includes 5 pieces:\n\n2 breast pieces, 3 mixed pieces"
+      },
+      "ru": {
+        "title": "Куриный хоровац",
+        "shortDescription": "5 кусков:\n\n2 куска грудки, 3 смешанных куска"
+      }
+    },
+    "WC-680": {
+      "en": { "title": "Tsarskaya vodka 0.5 L" },
+      "ru": { "title": "Водка Царская 0,5 л" }
+    },
+    "WC-683": {
+      "en": { "title": "Vozdukh vodka 0.5 L" },
+      "ru": { "title": "Водка Воздух 0,5 л" }
+    },
+    "WC-695": {
+      "en": { "title": "Khortytsia classic vodka 0.5 L" },
+      "ru": { "title": "Водка Хортица классическая 0,5 л" }
+    },
+    "WC-698": {
+      "en": { "title": "Kilikia beer 0.5 L" },
+      "ru": { "title": "Пиво Киликия 0,5 л" }
+    },
+    "WC-701": {
+      "en": { "title": "Gyumri beer 0.5 L" },
+      "ru": { "title": "Пиво Гюмри 0,5 л" }
+    },
+    "WC-883": {
+      "en": {
+        "title": "Chicken wing khorovats",
+        "shortDescription": "5 pieces"
+      },
+      "ru": {
+        "title": "Куриные крылышки на гриле",
+        "shortDescription": "5 кусков"
+      }
+    },
+    "WC-1081": {
+      "en": {
+        "title": "Ketchup",
+        "shortDescription": "40 g"
+      },
+      "ru": {
+        "title": "Кетчуп",
+        "shortDescription": "40 г"
+      }
+    },
+    "WC-1084": {
+      "en": {
+        "title": "Mayonnaise",
+        "shortDescription": "40 g"
+      },
+      "ru": {
+        "title": "Майонез",
+        "shortDescription": "40 г"
+      }
+    },
+    "WC-1152": {
+      "en": { "title": "Tonir lavash" },
+      "ru": { "title": "Лаваш из тонира" }
+    },
+    "WC-1663": {
+      "en": {
+        "title": "Grill combo",
+        "shortDescription": "2 grilled chickens of your choice, 2 trays of oven potatoes + 1 L Cola on the house."
+      },
+      "ru": {
+        "title": "Гриль комбо",
+        "shortDescription": "2 курицы-гриль на выбор, 2 противня картофеля плеч + 1 л Cola в подарок."
+      }
+    },
+    "WC-1832": {
+      "en": { "title": "Jermuk mineral water 0.5 L" },
+      "ru": { "title": "Минеральная вода Джермук 0,5 л" }
+    },
+    "WC-1835": {
+      "en": { "title": "Jermuk mineral water 1 L" },
+      "ru": { "title": "Минеральная вода Джермук 1 л" }
+    },
+    "WC-1916": {
+      "en": { "title": "House yogurt soup 0.5 L" },
+      "ru": { "title": "Фирменный мацнабрдош 0,5 л" }
+    },
+    "WC-3418": {
+      "en": {
+        "title": "Grilled mushrooms",
+        "shortDescription": "6–7 pieces, 300 g"
+      },
+      "ru": {
+        "title": "Грибы на гриле",
+        "shortDescription": "6–7 кусков, 300 г"
+      }
+    },
+    "WC-4687": {
+      "en": { "title": "House sauce" },
+      "ru": { "title": "Фирменный соус" }
+    },
+    "WC-5798": {
+      "en": { "title": "Ararat beer 0.5 L" },
+      "ru": { "title": "Пиво Арарат 0,5 л" }
+    },
+    "WC-6204": {
+      "en": { "title": "Dobry juice 1 L" },
+      "ru": { "title": "Сок Добрый 1 л" }
+    },
+    "WC-7530": {
+      "en": { "title": "Dobry juice 0.33 L" },
+      "ru": { "title": "Сок Добрый 0,33 л" }
+    },
+    "WC-7532": {
+      "en": { "title": "Dobry juice 0.25 L" },
+      "ru": { "title": "Сок Добрый 0,25 л" }
+    },
+    "WC-7537": {
+      "en": { "title": "BonAqua water 0.5 L" },
+      "ru": { "title": "Вода BonAqua 0,5 л" }
+    },
+    "WC-8304": {
+      "en": { "title": "French fries" },
+      "ru": { "title": "Картофель фри" }
+    },
+    "WC-8678": {
+      "en": { "title": "House tomato juice 0.33 L" },
+      "ru": { "title": "Фирменный томатный сок 0,33 л" }
+    },
+    "WC-8900": {
+      "en": { "title": "Grilled hot pepper, 1 pc" },
+      "ru": { "title": "Острый перец на гриле, 1 шт." }
+    },
+    "WC-9113": {
+      "en": {
+        "title": "Family combo with chicken kebab",
+        "shortDescription": "1 grill chicken\n\n5 chicken kebabs\n\n1 skewer grilled potatoes\n\n1 grilled hot pepper\n\n1 L Cola/Fanta/Sprite on the house"
+      },
+      "ru": {
+        "title": "Семейное комбо с куриным кебабом",
+        "shortDescription": "1 гриль\n\n5 куриных кебабов\n\n1 шампур картофеля на гриле\n\n1 запечённый острый перец\n\n1 л Cola/Fanta/Sprite в подарок"
+      }
+    },
+    "WC-9327": {
+      "en": {
+        "title": "Grill lunch combo",
+        "shortDescription": "Includes:\n\n4 grill lunch portions\n\nPotatoes of your choice: 3 oven potatoes, 1 fries, 2 grilled potatoes\n\nCabbage salad\n\n2 slices of bread\n\nSoft drink of your choice: Cola 0.25 L or tan 0.5 L"
+      },
+      "ru": {
+        "title": "Комбо ланч с грилем",
+        "shortDescription": "Включает:\n\n4 порции ланча с грилем\n\nКартофель на выбор: 3 плеч, 1 фри, 2 картофеля на гриле\n\nСалат из капусты\n\n2 куска хлеба\n\nНапиток на выбор: Cola 0,25 л или тан 0,5 л"
+      }
+    },
+    "WC-11554": {
+      "en": { "title": "Amare juice 0.25 L" },
+      "ru": { "title": "Сок Амаре 0,25 л" }
+    },
+    "WC-11556": {
+      "en": { "title": "Amare juice 0.75 L" },
+      "ru": { "title": "Сок Амаре 0,75 л" }
+    },
+    "WC-11558": {
+      "en": { "title": "Rosehip juice 0.5 L" },
+      "ru": { "title": "Шиповниковый сок 0,5 л" }
+    },
+    "WC-11560": {
+      "en": { "title": "Palpi juice 0.45 L" },
+      "ru": { "title": "Сок Палпи 0,45 л" }
+    },
+    "WC-12705": {
+      "en": {
+        "title": "Tonir chicken combo",
+        "shortDescription": "2 tonir chickens\n\n2 trays of oven potatoes\n\n2 grilled hot peppers\n\n1 L Cola on the house"
+      },
+      "ru": {
+        "title": "Комбо с курицей из тонира",
+        "shortDescription": "2 курицы из тонира\n\n2 противня картофеля плеч\n\n2 запечённых острых перца\n\n1 л Cola в подарок"
+      }
+    },
+    "WC-12710": {
+      "en": {
+        "title": "Family pack with tonir chicken",
+        "shortDescription": "1 tonir chicken\n\n5 chicken kebabs\n\n1 tray of potatoes\n\n1 hot pepper\n\n1 L Cola/Fanta/Sprite on the house"
+      },
+      "ru": {
+        "title": "Семейный набор с курицей из тонира",
+        "shortDescription": "1 курица из тонира\n\n5 куриных кебабов\n\n1 противень картофеля\n\n1 острый перец\n\n1 л Cola/Fanta/Sprite в подарок"
+      }
+    },
+    "WC-13529": {
+      "en": {
+        "title": "Pork shoulder, tonir",
+        "shortDescription": "1 whole pork shoulder\nWeight 2.5–3 kg"
+      },
+      "ru": {
+        "title": "Свиная лопатка из тонира",
+        "shortDescription": "1 целая свиная лопатка\nВес 2,5–3 кг"
+      }
+    },
+    "WC-14789": {
+      "en": {
+        "title": "Tonir BBQ set",
+        "shortDescription": "Includes:\n\nChalaghaj: 2 skewers\nFingers: 2 skewers\nTender: 2 skewers\nOven potatoes: 2 trays\nWhole potatoes: 2 skewers\nGrilled onion: 1 skewer\nGrilled vegetables: 2 portions\nAdjika: 3 portions\nHouse sauce: 3 portions\nOn the house: 5 tan 0.5 L"
+      },
+      "ru": {
+        "title": "Тонир BBQ сет",
+        "shortDescription": "Включает:\n\nЧалахадж: 2 шампура\nПальчики: 2 шампура\nМякоть: 2 шампура\nПлеч: 2 противня\nЦелый картофель: 2 шампура\nЛук на гриле: 1 шампур\nОвощи на гриле: 2 порции\nАджика: 3 порции\nФирменный соус: 3 порции\nВ подарок: 5 танов 0,5 л"
+      }
+    },
+    "WC-16963": {
+      "en": {
+        "title": "Combo offer 2+1",
+        "shortDescription": "Includes 2 portions of pork tender khorovats + 1 L Cola on the house"
+      },
+      "ru": {
+        "title": "Комбо предложение 2+1",
+        "shortDescription": "2 порции свиной мякоти на гриле + 1 л Cola в подарок"
+      }
+    },
+    "WC-18539": {
+      "en": {
+        "title": "Summer salad",
+        "shortDescription": "530 g\n\nTomato, cucumber, bell pepper, mixed herbs, vegetable oil, salt, black pepper, onion optional."
+      },
+      "ru": {
+        "title": "Летний салат",
+        "shortDescription": "530 г\n\nПомидор, огурец, сладкий перец, зелень, растительное масло, соль, чёрный перец, лук по желанию."
+      }
+    },
+    "WC-18541": {
+      "en": {
+        "title": "Strained yogurt salad",
+        "shortDescription": "350 g\n\nStrained yogurt, cucumber, sour cream, dill, garlic, walnut."
+      },
+      "ru": {
+        "title": "Салат с отжатым мацуном",
+        "shortDescription": "350 г\n\nОтжатый мацун, огурец, сметана, укроп, чеснок, грецкий орех."
+      }
+    },
+    "WC-18543": {
+      "en": {
+        "title": "Cabbage salad",
+        "shortDescription": "250 g\n\nCabbage, carrot, herbs, lemon juice, salt, black pepper, garlic."
+      },
+      "ru": {
+        "title": "Салат из капусты",
+        "shortDescription": "250 г\n\nКапуста, морковь, зелень, лимонный сок, соль, чёрный перец, чеснок."
+      }
+    },
+    "WC-18662": {
+      "en": {
+        "title": "Adjika",
+        "shortDescription": "90 g"
+      },
+      "ru": {
+        "title": "Аджика",
+        "shortDescription": "90 г"
+      }
+    },
+    "WC-23236": {
+      "en": {
+        "title": "Wings combo",
+        "seoDescription": "5 skewers chicken wings, 2 trays oven potatoes, 2 adjika, 5 Cola 0.5 L",
+        "shortDescription": "5 skewers chicken wings\n\n1 portion grilled vegetables\n\n2 trays oven potatoes\n\n2 adjika\n\n5 Cola 0.5 L"
+      },
+      "ru": {
+        "title": "Комбо с крылышками",
+        "seoDescription": "5 шампуров куриных крылышек, 2 противня плеч, 2 аджики, 5 Cola 0,5 л",
+        "shortDescription": "5 шампуров куриных крылышек\n\n1 порция овощей на гриле\n\n2 противня картофеля плеч\n\n2 аджики\n\n5 Cola 0,5 л"
+      }
+    },
+    "WC-23407": {
+      "en": {
+        "title": "Large chicken shawarma in lavash",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise, garlic sauce, hot chili, tomato, country-style potatoes, cucumber"
+      },
+      "ru": {
+        "title": "Большая куриная шаурма в лаваше",
+        "shortDescription": "Лук, зелень, кетчуп, майонез, чесночный соус, острый перец, помидор, деревенский картофель, огурец"
+      }
+    },
+    "WC-23409": {
+      "en": {
+        "title": "Large pork shawarma in lavash",
+        "shortDescription": "Onion, herbs, ketchup, mayonnaise, garlic sauce, hot chili, tomato, country-style potatoes"
+      },
+      "ru": {
+        "title": "Большая свиная шаурма в лаваше",
+        "shortDescription": "Лук, зелень, кетчуп, майонез, чесночный соус, острый перец, помидор, деревенский картофель"
+      }
+    },
+    "WC-24590": {
+      "en": {
+        "title": "Combo N2 with beef kebab",
+        "shortDescription": "2 grilled chickens\n\n5 beef kebabs\n\n2 skewers pork tender\n\n2 trays oven potatoes\n\nOn the house:\n\n6 Cola 0.5 L\n\n1 portion grilled vegetables\n\n1 portion strained yogurt salad"
+      },
+      "ru": {
+        "title": "Комбо N2 с говяжьим кебабом",
+        "shortDescription": "2 курицы-гриль\n\n5 говяжьих кебабов\n\n2 шампура свиной мякоти\n\n2 противня картофеля плеч\n\nВ подарок:\n\n6 Cola 0,5 л\n\n1 порция овощей на гриле\n\n1 порция салата с отжатым мацуном"
+      }
+    },
+    "WC-27011": {
+      "en": {
+        "title": "TWIX combo with pork shawarma",
+        "description": "2 medium pork shawarmas\n\n2 Coca-Cola 250 ml\n\n2 portions of fries",
+        "shortDescription": "2 medium pork shawarmas\n\n2 Coca-Cola 250 ml\n\n2 portions of fries"
+      },
+      "ru": {
+        "title": "Комбо TWIX со свиной шаурмой",
+        "description": "2 средние свиные шаурмы\n\n2 Coca-Cola 250 мл\n\n2 порции картофеля фри",
+        "shortDescription": "2 средние свиные шаурмы\n\n2 Coca-Cola 250 мл\n\n2 порции картофеля фри"
+      }
+    },
+    "WC-27014": {
+      "en": {
+        "title": "Twix combo with chicken shawarma",
+        "description": "2 medium chicken shawarmas\n\n2 Coca-Cola 250 ml\n\n2 portions of fries",
+        "shortDescription": "2 medium chicken shawarmas\n\n2 Coca-Cola 250 ml\n\n2 portions of fries"
+      },
+      "ru": {
+        "title": "Комбо Twix с куриной шаурмой",
+        "description": "2 средние куриные шаурмы\n\n2 Coca-Cola 250 мл\n\n2 порции картофеля фри",
+        "shortDescription": "2 средние куриные шаурмы\n\n2 Coca-Cola 250 мл\n\n2 порции картофеля фри"
+      }
+    },
+    "WC-29737": {
+      "en": { "title": "Lamb ikibir" },
+      "ru": { "title": "Бараний икибир" }
+    },
+    "WC-31774": {
+      "en": {
+        "title": "Grilled tomato",
+        "shortDescription": "300 g"
+      },
+      "ru": {
+        "title": "Помидор на гриле",
+        "shortDescription": "300 г"
+      }
+    },
+    "WC-31779": {
+      "en": { "title": "Grill container" },
+      "ru": { "title": "Контейнер для гриля" }
+    },
+    "WC-34755": {
+      "en": {
+        "title": "Chicken drumstick khorovats",
+        "shortDescription": "Includes 5 pieces: 420–450 g"
+      },
+      "ru": {
+        "title": "Куриные голени на гриле",
+        "shortDescription": "5 кусков: 420–450 г"
+      }
+    },
+    "WC-34759": {
+      "en": {
+        "title": "Grilled vegetable salad",
+        "shortDescription": "Tomato, eggplant, pepper, onion, herbs, salt, vegetable oil."
+      },
+      "ru": {
+        "title": "Салат из овощей на гриле",
+        "shortDescription": "Помидор, баклажан, перец, лук, зелень, соль, растительное масло."
+      }
+    },
+    "WC-35194": {
+      "en": {
+        "title": "Ohanyan vodka 0.5 L",
+        "shortDescription": "Ohanyan vodka 0.5 L"
+      },
+      "ru": {
+        "title": "Водка Оганян 0,5 л",
+        "shortDescription": "Водка Оганян 0,5 л"
+      }
+    },
+    "WC-35197": {
+      "en": {
+        "title": "Ohanyan vodka 0.5 L ICE",
+        "description": "Ohanyan vodka 0.5 L ICE"
+      },
+      "ru": {
+        "title": "Водка Оганян 0,5 л АЙС",
+        "description": "Водка Оганян 0,5 л АЙС"
+      }
+    },
+    "WC-35469": {
+      "en": {
+        "title": "Family pack with tonir chicken and beef kebab",
+        "shortDescription": "1 tonir chicken\n\n5 beef kebabs\n\n1 tray of potatoes\n\n1 hot pepper\n\n1 L Cola/Fanta/Sprite on the house"
+      },
+      "ru": {
+        "title": "Семейный набор с тониром и говяжьим кебабом",
+        "shortDescription": "1 курица из тонира\n\n5 говяжьих кебабов\n\n1 противень картофеля\n\n1 острый перец\n\n1 л Cola/Fanta/Sprite в подарок"
+      }
+    },
+    "WC-35471": {
+      "en": {
+        "title": "Family combo with beef kebab",
+        "shortDescription": "1 grill chicken\n\n5 beef kebabs\n\n1 skewer grilled potatoes\n\n1 grilled hot pepper\n\n1 L Cola/Fanta/Sprite on the house"
+      },
+      "ru": {
+        "title": "Семейное комбо с говяжьим кебабом",
+        "shortDescription": "1 гриль\n\n5 говяжьих кебабов\n\n1 шампур картофеля на гриле\n\n1 запечённый острый перец\n\n1 л Cola/Fanta/Sprite в подарок"
+      }
+    },
+    "WC-36637": {
+      "en": {
+        "title": "Organic vodka 0.5 L",
+        "description": "Organic vodka 0.5 L"
+      },
+      "ru": {
+        "title": "Органическая водка 0,5 л",
+        "description": "Органическая водка 0,5 л"
+      }
+    },
+    "WC-37217": {
+      "en": {
+        "title": "Hummus",
+        "description": "200 g\n\nIngredients:\n\nChickpeas, tahini, garlic, water, salt, lemon juice, olive oil, cumin, red pepper.",
+        "shortDescription": "200 g\n\nIngredients:\n\nChickpeas, tahini, garlic, water, salt, lemon juice, olive oil, cumin, red pepper."
+      },
+      "ru": {
+        "title": "Хумус",
+        "description": "200 г\n\nСостав:\n\nНут, тахини, чеснок, вода, соль, лимонный сок, оливковое масло, зира, красный перец.",
+        "shortDescription": "200 г\n\nСостав:\n\nНут, тахини, чеснок, вода, соль, лимонный сок, оливковое масло, зира, красный перец."
+      }
+    },
+    "WC-37221": {
+      "en": {
+        "title": "Mutabal",
+        "description": "200 g\n\nIngredients:\n\nEggplant, garlic, tahini, water, salt, spices, olive oil, red pepper."
+      },
+      "ru": {
+        "title": "Мутабаль",
+        "description": "200 г\n\nСостав:\n\nБаклажан, чеснок, тахини, вода, соль, специи, оливковое масло, красный перец."
+      }
+    },
+    "WC-37240": {
+      "en": {
+        "title": "Kids box",
+        "description": "Kids box\n\n1 small chicken shawarma in bread\n\n1 fries\n\n1 Dobry 0.25 L\n\n1 toy",
+        "seoDescription": "Kids box: 1 small chicken shawarma in bread, 1 fries, 1 Dobry 0.25 L, 1 toy",
+        "shortDescription": "Kids box\n\n1 small chicken shawarma in bread\n\n1 fries\n\n1 Dobry 0.25 L\n\n1 toy"
+      },
+      "ru": {
+        "title": "Детский бокс",
+        "description": "Детский бокс\n\n1 маленькая куриная шаурма в хлебе\n\n1 картофель фри\n\n1 Добрый 0,25 л\n\n1 игрушка",
+        "seoDescription": "Детский бокс: 1 маленькая куриная шаурма в хлебе, 1 фри, 1 Добрый 0,25 л, 1 игрушка",
+        "shortDescription": "Детский бокс\n\n1 маленькая куриная шаурма в хлебе\n\n1 картофель фри\n\n1 Добрый 0,25 л\n\n1 игрушка"
+      }
+    },
+    "WC-38425": {
+      "en": {
+        "title": "Combo N2 with chicken kebab",
+        "shortDescription": "Includes:\n\n2 grilled chickens\n\n5 chicken kebabs\n\n2 skewers pork tender\n\n2 trays oven potatoes\n\nOn the house:\n\n6 Cola 0.5 L\n\n1 portion grilled vegetables\n\n1 portion strained yogurt salad"
+      },
+      "ru": {
+        "title": "Комбо N2 с куриным кебабом",
+        "shortDescription": "Включает:\n\n2 курицы-гриль\n\n5 куриных кебабов\n\n2 шампура свиной мякоти\n\n2 противня картофеля плеч\n\nВ подарок:\n\n6 Cola 0,5 л\n\n1 порция овощей на гриле\n\n1 порция салата с отжатым мацуном"
+      }
+    },
+    "WC-41380": {
+      "en": {
+        "title": "Chistaya Kaplya vodka 0.5 L",
+        "description": "Chistaya Kaplya vodka 0.5 L"
+      },
+      "ru": {
+        "title": "Водка Чистая капля 0,5 л",
+        "description": "Водка Чистая капля 0,5 л"
+      }
+    },
+    "WC-41704": {
+      "en": {
+        "title": "Krombacher 0.33 L",
+        "description": "Krombacher 0.33 L"
+      },
+      "ru": {
+        "title": "Krombacher 0,33 л",
+        "description": "Krombacher 0,33 л"
+      }
+    },
+    "WC-41920": {
+      "en": {
+        "title": "Strumbas vodka 0.5 L",
+        "description": "Strumbas vodka 0.5 L"
+      },
+      "ru": {
+        "title": "Водка Струмбас 0,5 л",
+        "description": "Водка Струмбас 0,5 л"
+      }
+    },
+    "WC-46662": {
+      "en": {
+        "title": "Lamb khorovats fingers",
+        "shortDescription": "Includes 4–5 pieces, 300 g raw weight, onion, herbs, lavash."
+      },
+      "ru": {
+        "title": "Бараньи пальчики на гриле",
+        "shortDescription": "4–5 кусков, 300 г в сыром виде, лук, зелень, лаваш."
+      }
+    },
+    "WC-46665": {
+      "en": {
+        "title": "Lamb khorovats tender",
+        "shortDescription": "Includes 4–5 pieces, 350–400 g raw weight, onion, herbs, lavash."
+      },
+      "ru": {
+        "title": "Баранья мякоть на гриле",
+        "shortDescription": "4–5 кусков, 350–400 г в сыром виде, лук, зелень, лаваш."
+      }
+    },
+    "WC-46668": {
+      "en": {
+        "title": "Mixed lamb khorovats",
+        "shortDescription": "Includes 4–5 pieces, 400 g, onion, herbs, lavash"
+      },
+      "ru": {
+        "title": "Смешанный бараний хоровац",
+        "shortDescription": "4–5 кусков, 400 г, лук, зелень, лаваш"
+      }
+    },
+    "WC-46670": {
+      "en": {
+        "title": "Lamb chalaghaj",
+        "shortDescription": "Includes 4 pieces, 350 g raw weight, onion, herbs, lavash"
+      },
+      "ru": {
+        "title": "Бараний чалахадж",
+        "shortDescription": "4 куска, 350 г в сыром виде, лук, зелень, лаваш"
+      }
+    },
+    "WC-46673": {
+      "en": {
+        "title": "Lamb kebab",
+        "shortDescription": "150 g, onion, herbs, lavash"
+      },
+      "ru": {
+        "title": "Бараний кебаб",
+        "shortDescription": "150 г, лук, зелень, лаваш"
+      }
+    },
+    "WC-46902": {
+      "en": {
+        "title": "Homemade pickles",
+        "description": "Homemade pickles: cucumber, carrot, cabbage, cauliflower, beetroot, garlic.",
+        "seoDescription": "Homemade pickles: cucumber, carrot, cabbage, cauliflower, beetroot, garlic."
+      },
+      "ru": {
+        "title": "Домашние соленья",
+        "description": "Домашние соленья: огурец, морковь, капуста, цветная капуста, свёкла, чеснок.",
+        "seoDescription": "Домашние соленья: огурец, морковь, капуста, цветная капуста, свёкла, чеснок."
+      }
+    }
+  }
+}

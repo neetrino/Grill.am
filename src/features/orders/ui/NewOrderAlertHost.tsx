@@ -30,12 +30,26 @@ export function NewOrderAlertHost({ locale }: NewOrderAlertHostProps) {
     current,
     remainingCount,
     audioBlocked,
+    needsUnlock,
     acknowledgeAll,
     unlockAudio,
   } = useNewOrderAlert({ locale });
 
+  const primingBanner = needsUnlock ? (
+    <button
+      type="button"
+      className="fixed top-0 right-0 left-0 z-[200] flex items-center justify-center gap-3 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950 shadow-sm ring-1 ring-amber-200/80"
+      onPointerDown={unlockAudio}
+    >
+      <span>{copy.enableSoundHint}</span>
+      <span className="rounded-[10px] bg-brand-red px-3 py-1 text-white">
+        {copy.enableSound}
+      </span>
+    </button>
+  ) : null;
+
   if (!current) {
-    return null;
+    return primingBanner;
   }
 
   const title =

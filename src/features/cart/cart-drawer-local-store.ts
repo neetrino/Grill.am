@@ -2,13 +2,26 @@
 
 import { useSyncExternalStore } from "react";
 
+import {
+  emptyCartDrawerView,
+  recalculateLocalCartView,
+  safeMoneyInteger,
+} from "@/features/cart/cart-drawer-money";
+import {
+  cartLineMatchKey,
+  optimisticCartLineId,
+} from "@/features/cart/cart-line-key";
 import type {
   CartDrawerItemView,
   CartDrawerView,
 } from "@/features/cart/get-cart-drawer-view";
+import { setLocalCartItemCount } from "@/features/cart/cart-client-sync";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { formatMoneyAmount } from "@/lib/money/format";
+
+export type { CartLineIdentity } from "@/features/cart/cart-line-key";
+export { cartLineMatchKey, optimisticCartLineId, recalculateLocalCartView };
 
 type Listener = () => void;
 
@@ -19,26 +32,27 @@ export type OptimisticCartLineInput = {
   slug: string;
   quantity: number;
   imageUrl: string | null;
-  /** Display-currency minor units (AMD dram / USD cents / …). */
   unitPriceAmount: number;
   locale: Locale;
   currency: Currency;
-  /** Optional preformatted unit price; recalculated when omitted. */
   unitPriceFormatted?: string;
   modifierLines: string[];
 };
 
-export type UpsertItemLocallyResult = {
-  /** Line state before quantity change; null when the line was created. */
-  previousItem: CartDrawerItemView | null;
-  nextItem: CartDrawerItemView;
-  quantityDelta: number;
-  created: boolean;
+export type PendingCartLineMutation = {
+  productId: string;
+  selectionKey: string;
+  desiredQuantity: number;
+  acknowledgedQuantity: number;
+  revision: number;
+  acknowledgedRevision: number;
+  display?: OptimisticCartLineInput;
 };
 
-let view: CartDrawerView | null = null;
-/** Counts in-flight optimistic adds that have not reconciled yet. */
-let pendingOptimisticAdds = 0;
+let lastServerView: CartDrawerView | null = null;
+let displayView: CartDrawerView | null = null;
+let appliedServerRevision = -1;
+const pendingByKey = new Map<string, PendingCartLineMutation>();
 const listeners = new Set<Listener>();
 
 function emit(): void {
@@ -47,117 +61,139 @@ function emit(): void {
   }
 }
 
-function setView(next: CartDrawerView | null): void {
-  view = next;
-  emit();
+function itemMatchKey(item: CartDrawerItemView): string {
+  return cartLineMatchKey(item.productId, item.selectionKey);
 }
 
-function recomputeItemCount(items: CartDrawerItemView[]): number {
-  return items.reduce((sum, item) => sum + item.quantity, 0);
+function findServerItem(
+  productId: string,
+  selectionKey: string,
+): CartDrawerItemView | undefined {
+  const key = cartLineMatchKey(productId, selectionKey);
+  return lastServerView?.items.find((item) => itemMatchKey(item) === key);
 }
 
-function safeMoneyInteger(value: number): number {
-  if (!Number.isFinite(value)) {
-    return 0;
+function isPendingEchoed(
+  pending: PendingCartLineMutation,
+  serverItem: CartDrawerItemView | undefined,
+): boolean {
+  if (pending.revision !== pending.acknowledgedRevision) {
+    return false;
   }
-  return Math.max(0, Math.trunc(value));
+  if (pending.desiredQuantity !== pending.acknowledgedQuantity) {
+    return false;
+  }
+  if (pending.desiredQuantity <= 0) {
+    return lastServerView != null && serverItem == null;
+  }
+  return serverItem != null && serverItem.quantity === pending.desiredQuantity;
 }
 
-/**
- * Derives item line totals and cart summary from integer minor-unit prices.
- * Server-only adjustments (coupons, etc.) stay on `adjustmentsAmount`.
- */
-export function recalculateLocalCartView(
-  current: CartDrawerView,
-): CartDrawerView {
-  const { locale, currency } = current;
-  const adjustmentsAmount = safeMoneyInteger(current.adjustmentsAmount ?? 0);
-
-  const items = current.items.map((item) => {
-    const unitPriceAmount = safeMoneyInteger(item.unitPriceAmount ?? 0);
-    const lineTotalAmount = unitPriceAmount * item.quantity;
-    return {
-      ...item,
-      unitPriceAmount,
-      lineTotalAmount,
-      unitPriceFormatted: formatMoneyAmount(
-        unitPriceAmount,
-        currency,
-        locale,
-      ),
-      lineTotalFormatted: formatMoneyAmount(
-        lineTotalAmount,
-        currency,
-        locale,
-      ),
-    };
-  });
-
-  const subtotalAmount = items.reduce(
-    (sum, item) => sum + item.lineTotalAmount,
-    0,
-  );
-  // Shipping is displayed separately; total stays merchandise ± server adjustments.
-  const totalAmount = Math.max(0, subtotalAmount + adjustmentsAmount);
-  const shippingAmount = safeMoneyInteger(current.shippingAmount ?? 0);
-
+function itemFromDisplay(
+  pending: PendingCartLineMutation,
+): CartDrawerItemView | null {
+  const display = pending.display;
+  if (!display || pending.desiredQuantity <= 0) {
+    return null;
+  }
+  const unitPriceAmount = safeMoneyInteger(display.unitPriceAmount);
   return {
-    ...current,
-    locale,
-    currency,
-    items,
-    itemCount: recomputeItemCount(items),
-    subtotalAmount,
-    totalAmount,
-    adjustmentsAmount,
-    shippingAmount,
-    subtotalFormatted: formatMoneyAmount(subtotalAmount, currency, locale),
-    shippingFormatted:
-      current.shippingFormatted ||
-      formatMoneyAmount(shippingAmount, currency, locale),
-    totalFormatted: formatMoneyAmount(totalAmount, currency, locale),
+    id: optimisticCartLineId(pending.productId, pending.selectionKey),
+    productId: pending.productId,
+    selectionKey: pending.selectionKey,
+    title: display.title,
+    slug: display.slug,
+    quantity: pending.desiredQuantity,
+    imageUrl: display.imageUrl,
+    unitPriceAmount,
+    lineTotalAmount: unitPriceAmount * pending.desiredQuantity,
+    unitPriceFormatted:
+      display.unitPriceFormatted?.trim() ||
+      formatMoneyAmount(unitPriceAmount, display.currency, display.locale),
+    lineTotalFormatted: formatMoneyAmount(
+      unitPriceAmount * pending.desiredQuantity,
+      display.currency,
+      display.locale,
+    ),
+    modifierLines: display.modifierLines,
   };
 }
 
-function emptyView(
-  items: CartDrawerItemView[],
-  locale: Locale,
-  currency: Currency,
-): CartDrawerView {
-  return recalculateLocalCartView({
-    locale,
-    currency,
-    itemCount: 0,
-    items,
-    subtotalAmount: 0,
-    totalAmount: 0,
-    adjustmentsAmount: 0,
-    shippingAmount: 0,
-    subtotalFormatted: formatMoneyAmount(0, currency, locale),
-    shippingFormatted: formatMoneyAmount(0, currency, locale),
-    totalFormatted: formatMoneyAmount(0, currency, locale),
-  });
-}
+function mergeDisplayItems(base: CartDrawerView): CartDrawerItemView[] {
+  const usedKeys = new Set<string>();
+  const items: CartDrawerItemView[] = [];
 
-export function cartLineMatchKey(
-  productId: string,
-  selectionKey: string,
-): string {
-  return `${productId}::${selectionKey}`;
-}
-
-export function optimisticCartLineId(
-  productId: string,
-  selectionKey: string,
-): string {
-  return `optimistic:${cartLineMatchKey(productId, selectionKey)}`;
-}
-
-function itemMatchKey(item: CartDrawerItemView): string | null {
-  if (item.productId == null) {
-    return null;
+  for (const serverItem of base.items) {
+    const key = itemMatchKey(serverItem);
+    const pending = pendingByKey.get(key);
+    usedKeys.add(key);
+    if (!pending) {
+      items.push(serverItem);
+      continue;
+    }
+    if (isPendingEchoed(pending, serverItem)) {
+      pendingByKey.delete(key);
+      items.push(serverItem);
+      continue;
+    }
+    if (pending.desiredQuantity <= 0) {
+      continue;
+    }
+    items.push({ ...serverItem, quantity: pending.desiredQuantity });
   }
-  return cartLineMatchKey(item.productId, item.selectionKey ?? "");
+
+  for (const [key, pending] of pendingByKey) {
+    if (usedKeys.has(key) || pending.desiredQuantity <= 0) {
+      if (!usedKeys.has(key) && isPendingEchoed(pending, undefined)) {
+        pendingByKey.delete(key);
+      }
+      continue;
+    }
+    const optimistic = itemFromDisplay(pending);
+    if (optimistic) {
+      items.push(optimistic);
+    }
+  }
+
+  return items;
+}
+
+function rebuildDisplayView(): void {
+  const base =
+    lastServerView ??
+    (displayView
+      ? emptyCartDrawerView(displayView.locale, displayView.currency)
+      : null);
+
+  if (!base) {
+    const pendingWithDisplay = [...pendingByKey.values()].find(
+      (line) => line.display && line.desiredQuantity > 0,
+    );
+    if (!pendingWithDisplay?.display) {
+      displayView = null;
+      setLocalCartItemCount(0);
+      emit();
+      return;
+    }
+    const seed = emptyCartDrawerView(
+      pendingWithDisplay.display.locale,
+      pendingWithDisplay.display.currency,
+    );
+    displayView = recalculateLocalCartView({
+      ...seed,
+      items: mergeDisplayItems(seed),
+    });
+    setLocalCartItemCount(displayView.itemCount);
+    emit();
+    return;
+  }
+
+  displayView = recalculateLocalCartView({
+    ...base,
+    items: mergeDisplayItems(base),
+  });
+  setLocalCartItemCount(displayView.itemCount);
+  emit();
 }
 
 export function subscribeCartDrawerLocal(listener: Listener): () => void {
@@ -168,271 +204,95 @@ export function subscribeCartDrawerLocal(listener: Listener): () => void {
 }
 
 export function getCartDrawerLocalView(): CartDrawerView | null {
-  return view;
+  return displayView;
 }
 
-export function getPendingOptimisticAdds(): number {
-  return pendingOptimisticAdds;
+export function getPendingCartLine(
+  productId: string,
+  selectionKey: string,
+): PendingCartLineMutation | undefined {
+  return pendingByKey.get(cartLineMatchKey(productId, selectionKey));
 }
 
-/**
- * Replaces local drawer state with the authoritative server payload.
- * Preserves still-pending optimistic lines that the server has not echoed yet.
- */
+export function getDisplayedCartLineQuantity(
+  productId: string,
+  selectionKey: string,
+): number {
+  const pending = getPendingCartLine(productId, selectionKey);
+  if (pending) {
+    return Math.max(0, pending.desiredQuantity);
+  }
+  return findServerItem(productId, selectionKey)?.quantity ?? 0;
+}
+
+/** Replaces last server snapshot; unacknowledged desired quantities stay visible. */
 export function replaceCartDrawerViewFromServer(
   serverView: CartDrawerView,
+  revision?: number,
 ): void {
-  if (pendingOptimisticAdds <= 0 || view == null) {
-    setView(serverView);
+  if (revision != null && revision < appliedServerRevision) {
     return;
   }
-
-  const serverKeys = new Set(
-    serverView.items
-      .map((item) => itemMatchKey(item))
-      .filter((key): key is string => key != null),
-  );
-
-  const pendingExtras = view.items.filter((item) => {
-    if (!item.id.startsWith("optimistic:")) {
-      return false;
-    }
-    const key = itemMatchKey(item);
-    return key != null && !serverKeys.has(key);
-  });
-
-  if (pendingExtras.length === 0) {
-    setView(serverView);
-    return;
+  if (revision != null) {
+    appliedServerRevision = revision;
   }
-
-  setView(
-    recalculateLocalCartView({
-      ...serverView,
-      items: [...serverView.items, ...pendingExtras],
-    }),
-  );
+  lastServerView = serverView;
+  rebuildDisplayView();
 }
 
-/** Instantly upsert a cart line in the shared drawer view (before DB). */
-export function upsertItemLocally(
-  input: OptimisticCartLineInput,
-): UpsertItemLocallyResult {
-  const quantity = Math.max(1, Math.floor(input.quantity));
-  const unitPriceAmount = safeMoneyInteger(input.unitPriceAmount);
-  const matchKey = cartLineMatchKey(input.productId, input.selectionKey);
-  const current =
-    view ?? emptyView([], input.locale, input.currency);
-  const existingIndex = current.items.findIndex(
-    (item) => itemMatchKey(item) === matchKey,
-  );
-
-  pendingOptimisticAdds += 1;
-
-  const baseView: CartDrawerView = {
-    ...current,
-    locale: input.locale,
-    currency: input.currency,
-  };
-
-  if (existingIndex >= 0) {
-    const previousItem = current.items[existingIndex]!;
-    const nextQuantity = previousItem.quantity + quantity;
-    const nextItem: CartDrawerItemView = {
-      ...previousItem,
-      productId: input.productId,
-      selectionKey: input.selectionKey,
-      quantity: nextQuantity,
-      title: input.title || previousItem.title,
-      slug: input.slug || previousItem.slug,
-      imageUrl: input.imageUrl ?? previousItem.imageUrl,
-      unitPriceAmount,
-      lineTotalAmount: unitPriceAmount * nextQuantity,
-      unitPriceFormatted:
-        input.unitPriceFormatted?.trim() ||
-        formatMoneyAmount(unitPriceAmount, input.currency, input.locale),
-      lineTotalFormatted: formatMoneyAmount(
-        unitPriceAmount * nextQuantity,
-        input.currency,
-        input.locale,
-      ),
-      modifierLines:
-        input.modifierLines.length > 0
-          ? input.modifierLines
-          : previousItem.modifierLines,
-    };
-    const items = current.items.map((item, index) =>
-      index === existingIndex ? nextItem : item,
-    );
-    setView(recalculateLocalCartView({ ...baseView, items }));
-    return {
-      previousItem,
-      nextItem,
-      quantityDelta: quantity,
-      created: false,
-    };
-  }
-
-  const nextItem: CartDrawerItemView = {
-    id: optimisticCartLineId(input.productId, input.selectionKey),
+export function applyDesiredCartLine(input: {
+  productId: string;
+  selectionKey: string;
+  desiredQuantity: number;
+  display?: OptimisticCartLineInput;
+}): PendingCartLineMutation {
+  const key = cartLineMatchKey(input.productId, input.selectionKey);
+  const existing = pendingByKey.get(key);
+  const serverQty = findServerItem(input.productId, input.selectionKey)
+    ?.quantity ?? 0;
+  const next: PendingCartLineMutation = {
     productId: input.productId,
     selectionKey: input.selectionKey,
-    title: input.title,
-    slug: input.slug,
-    quantity,
-    imageUrl: input.imageUrl,
-    unitPriceAmount,
-    lineTotalAmount: unitPriceAmount * quantity,
-    unitPriceFormatted:
-      input.unitPriceFormatted?.trim() ||
-      formatMoneyAmount(unitPriceAmount, input.currency, input.locale),
-    lineTotalFormatted: formatMoneyAmount(
-      unitPriceAmount * quantity,
-      input.currency,
-      input.locale,
-    ),
-    modifierLines: input.modifierLines,
+    desiredQuantity: Math.max(0, Math.floor(input.desiredQuantity)),
+    acknowledgedQuantity: existing?.acknowledgedQuantity ?? serverQty,
+    revision: (existing?.revision ?? 0) + 1,
+    acknowledgedRevision: existing?.acknowledgedRevision ?? 0,
+    display: input.display ?? existing?.display,
   };
-  const items = [...current.items, nextItem];
-  setView(recalculateLocalCartView({ ...baseView, items }));
-  return {
-    previousItem: null,
-    nextItem,
-    quantityDelta: quantity,
-    created: true,
-  };
+  pendingByKey.set(key, next);
+  rebuildDisplayView();
+  return next;
 }
 
-/** Rolls back a single optimistic upsert without wiping newer local edits. */
-export function rollbackUpsertLocally(
-  result: UpsertItemLocallyResult,
-): void {
-  pendingOptimisticAdds = Math.max(0, pendingOptimisticAdds - 1);
-  const current = view;
-  if (!current) {
-    return;
-  }
-
-  const matchKey = itemMatchKey(result.nextItem);
-  const index = current.items.findIndex(
-    (item) =>
-      item.id === result.nextItem.id ||
-      (matchKey != null && itemMatchKey(item) === matchKey),
-  );
-
-  if (index < 0) {
-    emit();
-    return;
-  }
-
-  if (result.created || result.previousItem == null) {
-    const items = current.items.filter((_, i) => i !== index);
-    setView(recalculateLocalCartView({ ...current, items }));
-    return;
-  }
-
-  const restoredQty = Math.max(
-    0,
-    current.items[index]!.quantity - result.quantityDelta,
-  );
-  if (restoredQty < 1) {
-    const items = current.items.filter((_, i) => i !== index);
-    setView(recalculateLocalCartView({ ...current, items }));
-    return;
-  }
-
-  const restored: CartDrawerItemView = {
-    ...result.previousItem,
-    quantity: restoredQty,
-    unitPriceAmount: result.previousItem.unitPriceAmount,
-    lineTotalAmount:
-      safeMoneyInteger(result.previousItem.unitPriceAmount ?? 0) *
-      restoredQty,
-  };
-  const items = current.items.map((item, i) =>
-    i === index ? restored : item,
-  );
-  setView(recalculateLocalCartView({ ...current, items }));
-}
-
-/** Marks one optimistic add as reconciled after a successful server write. */
-export function acknowledgeOptimisticAdd(): void {
-  pendingOptimisticAdds = Math.max(0, pendingOptimisticAdds - 1);
-}
-
-export function removeItemLocallyShared(
-  itemId: string,
-): CartDrawerItemView | null {
-  const current = view;
-  if (!current) {
-    return null;
-  }
-  const item = current.items.find((row) => row.id === itemId);
-  if (!item) {
-    return null;
-  }
-  const items = current.items.filter((row) => row.id !== itemId);
-  setView(recalculateLocalCartView({ ...current, items }));
-  return item;
-}
-
-export function setQuantityLocallyShared(
-  itemId: string,
+export function acknowledgeCartLineQuantity(
+  productId: string,
+  selectionKey: string,
   quantity: number,
-): { previous: CartDrawerItemView; nextQuantity: number } | null {
-  if (quantity < 1) {
-    const removed = removeItemLocallyShared(itemId);
-    if (!removed) {
-      return null;
-    }
-    return { previous: removed, nextQuantity: 0 };
-  }
-
-  const current = view;
-  if (!current) {
-    return null;
-  }
-  const previous = current.items.find((row) => row.id === itemId);
-  if (!previous) {
-    return null;
-  }
-  const unitPriceAmount = safeMoneyInteger(previous.unitPriceAmount ?? 0);
-  const items = current.items.map((row) =>
-    row.id === itemId
-      ? {
-          ...row,
-          quantity,
-          unitPriceAmount,
-          lineTotalAmount: unitPriceAmount * quantity,
-        }
-      : row,
-  );
-  setView(recalculateLocalCartView({ ...current, items }));
-  return { previous, nextQuantity: quantity };
-}
-
-export function restoreItemLocallyShared(item: CartDrawerItemView): void {
-  const current = view;
-  if (!current) {
-    // Without an existing view we cannot know locale/currency; skip until reload.
+  sentRevision?: number,
+): void {
+  const key = cartLineMatchKey(productId, selectionKey);
+  const existing = pendingByKey.get(key);
+  if (!existing) {
     return;
   }
-  if (current.items.some((row) => row.id === item.id)) {
-    const items = current.items.map((row) =>
-      row.id === item.id ? item : row,
-    );
-    setView(recalculateLocalCartView({ ...current, items }));
-    return;
-  }
-  setView(
-    recalculateLocalCartView({
-      ...current,
-      items: [...current.items, item],
-    }),
-  );
+  existing.acknowledgedQuantity = Math.max(0, Math.floor(quantity));
+  existing.acknowledgedRevision = sentRevision ?? existing.revision;
+  rebuildDisplayView();
 }
 
-/** Shared drawer view for every mounted cart UI. */
+export function rollbackCartLineToAcknowledged(
+  productId: string,
+  selectionKey: string,
+): void {
+  const key = cartLineMatchKey(productId, selectionKey);
+  const existing = pendingByKey.get(key);
+  if (!existing) {
+    return;
+  }
+  existing.desiredQuantity = existing.acknowledgedQuantity;
+  rebuildDisplayView();
+}
+
 export function useCartDrawerLocalView(): CartDrawerView | null {
   return useSyncExternalStore(
     subscribeCartDrawerLocal,
@@ -441,9 +301,10 @@ export function useCartDrawerLocalView(): CartDrawerView | null {
   );
 }
 
-/** Test helper — resets module state between unit tests. */
 export function resetCartDrawerLocalStoreForTests(): void {
-  view = null;
-  pendingOptimisticAdds = 0;
+  lastServerView = null;
+  displayView = null;
+  appliedServerRevision = -1;
+  pendingByKey.clear();
   emit();
 }

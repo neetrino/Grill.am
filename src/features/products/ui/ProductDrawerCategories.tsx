@@ -30,6 +30,7 @@ import { ADMIN_BTN_DASHED_CLASS } from "@/features/admin/ui/admin-ui";
 import { createCategoryAction } from "@/features/categories/actions";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
+import { isLocale } from "@/lib/i18n/config";
 
 function subscribeNoop(): () => void {
   return () => undefined;
@@ -152,8 +153,7 @@ export function ProductDrawerCategories({
     startTransition(async () => {
       setError(null);
       const result = await createCategoryAction(locale, {
-        // Categories are English-only in admin.
-        editingLocale: "en",
+        editingLocale: isLocale(locale) ? locale : "en",
         title,
         slug: slugifyCategoryTitle(title),
         parentId: null,

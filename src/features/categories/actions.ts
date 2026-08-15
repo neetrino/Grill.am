@@ -7,11 +7,20 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import { categories, type TranslationsJson } from "@/db/schema";
 import { persistCategoryImage, removeCategoryImage } from "@/features/categories/application/persist-category-media";
+import {
+  hasCategoryLocaleCopy,
+  mergeCategoryTranslations,
+} from "@/features/categories/domain/merge-category-translations";
 import { requireAdmin } from "@/lib/auth/policies";
 import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
+
+const categoryLocaleCopySchema = z.object({
+  title: z.string().trim().min(1).max(120),
+  slug: z.string().trim().min(1).max(120),
+});
 
 const createCategorySchema = z.object({
   editingLocale: z.enum(locales),
@@ -21,7 +30,18 @@ const createCategorySchema = z.object({
   status: z.enum(["ACTIVE", "ARCHIVED"]),
 });
 
+const drawerCategorySchema = z.object({
+  localeCopies: z.object({
+    hy: categoryLocaleCopySchema.optional(),
+    en: categoryLocaleCopySchema.optional(),
+    ru: categoryLocaleCopySchema.optional(),
+  }),
+  parentId: z.string().uuid().nullable(),
+  status: z.enum(["ACTIVE", "ARCHIVED"]),
+});
+
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
+type DrawerCategoryInput = z.infer<typeof drawerCategorySchema>;
 
 function mergeTranslations(
   existing: TranslationsJson | null | undefined,
@@ -35,17 +55,39 @@ function mergeTranslations(
   };
 }
 
-function revalidateCategories(locale: string): void {
-  revalidatePath(`/${locale}/admin/categories`);
-  revalidatePath(`/${locale}/admin/products`);
-  revalidatePath(`/${locale}/products`);
+function revalidateCategories(): void {
+  for (const loc of locales) {
+    revalidatePath(`/${loc}/admin/categories`);
+    revalidatePath(`/${loc}/admin/products`);
+    revalidatePath(`/${loc}/products`);
+    revalidatePath(`/${loc}`);
+  }
   invalidateProductsCache({ allProductDetails: true });
 }
 
-async function insertCategory(
-  locale: Locale,
-  data: CreateCategoryInput,
-): Promise<Result<{ id: string }>> {
+function parseDrawerCategoryForm(
+  formData: FormData,
+): DrawerCategoryInput | null {
+  const raw = formData.get("data");
+  if (typeof raw !== "string") {
+    return null;
+  }
+  try {
+    const parsed = drawerCategorySchema.safeParse(JSON.parse(raw));
+    if (!parsed.success || !hasCategoryLocaleCopy(parsed.data.localeCopies)) {
+      return null;
+    }
+    return parsed.data;
+  } catch {
+    return null;
+  }
+}
+
+async function insertCategoryRow(data: {
+  parentId: string | null;
+  status: "ACTIVE" | "ARCHIVED";
+  translations: TranslationsJson;
+}): Promise<Result<{ id: string }>> {
   if (data.parentId) {
     const [parent] = await getDb()
       .select({ id: categories.id })
@@ -71,18 +113,37 @@ async function insertCategory(
   await getDb().insert(categories).values({
     id,
     parentId: data.parentId,
-    translations: mergeTranslations(
-      null,
-      data.editingLocale,
-      data.title,
-      data.slug,
-    ),
+    translations: data.translations,
     sortOrder: (maxSort?.value ?? 0) + 1,
     status: data.status,
   });
 
-  revalidateCategories(locale);
+  revalidateCategories();
   return ok({ id });
+}
+
+async function persistDrawerImage(
+  categoryId: string,
+  formData: FormData,
+): Promise<Result<{ id: string }>> {
+  const image = formData.get("image");
+  const removeImage = formData.get("removeImage") === "1";
+
+  if (image instanceof File && image.size > 0) {
+    const mediaResult = await persistCategoryImage(categoryId, image);
+    if (mediaResult.error) {
+      return err("VALIDATION_ERROR", mediaResult.error);
+    }
+    revalidateCategories();
+    return ok({ id: categoryId });
+  }
+
+  if (removeImage) {
+    await removeCategoryImage(categoryId);
+    revalidateCategories();
+  }
+
+  return ok({ id: categoryId });
 }
 
 /** Creates a category for the admin catalog. */
@@ -100,10 +161,19 @@ export async function createCategoryAction(
   }
 
   await requireAdmin(locale as Locale);
-  return insertCategory(locale, parsed.data);
+  return insertCategoryRow({
+    parentId: parsed.data.parentId,
+    status: parsed.data.status,
+    translations: mergeTranslations(
+      null,
+      parsed.data.editingLocale,
+      parsed.data.title,
+      parsed.data.slug,
+    ),
+  });
 }
 
-/** Creates a category from the admin drawer (fields + optional image). */
+/** Creates a category from the admin drawer (all locales + optional image). */
 export async function createCategoryFromDrawerAction(
   locale: string,
   formData: FormData,
@@ -112,40 +182,25 @@ export async function createCategoryFromDrawerAction(
     return err("INVALID_LOCALE", "Invalid locale.");
   }
 
-  const rawParent = formData.get("parentId");
-  const parsed = createCategorySchema.safeParse({
-    // Categories are English-only in admin.
-    editingLocale: "en",
-    title: formData.get("title"),
-    slug: formData.get("slug"),
-    parentId:
-      typeof rawParent === "string" && rawParent.trim()
-        ? rawParent.trim()
-        : null,
-    status: formData.get("status"),
-  });
-
-  if (!parsed.success) {
+  const parsed = parseDrawerCategoryForm(formData);
+  if (!parsed) {
     return err("VALIDATION_ERROR", "Invalid category payload.");
   }
 
   await requireAdmin(locale as Locale);
-  const created = await insertCategory(locale, parsed.data);
+  const created = await insertCategoryRow({
+    parentId: parsed.parentId,
+    status: parsed.status,
+    translations: mergeCategoryTranslations(null, parsed.localeCopies),
+  });
   if (!created.ok) return created;
 
-  const image = formData.get("image");
-  if (image instanceof File && image.size > 0) {
-    const mediaResult = await persistCategoryImage(created.value.id, image);
-    if (mediaResult.error) {
-      return err("VALIDATION_ERROR", mediaResult.error);
-    }
-    revalidateCategories(locale);
-  }
-
+  const media = await persistDrawerImage(created.value.id, formData);
+  if (!media.ok) return media;
   return created;
 }
 
-/** Updates a category from the admin drawer (fields + optional image). */
+/** Updates a category from the admin drawer (all locales + optional image). */
 export async function updateCategoryFromDrawerAction(
   locale: string,
   categoryId: string,
@@ -155,24 +210,12 @@ export async function updateCategoryFromDrawerAction(
     return err("INVALID_LOCALE", "Invalid locale.");
   }
 
-  const rawParent = formData.get("parentId");
-  const parsed = createCategorySchema.safeParse({
-    // Categories are English-only in admin.
-    editingLocale: "en",
-    title: formData.get("title"),
-    slug: formData.get("slug"),
-    parentId:
-      typeof rawParent === "string" && rawParent.trim()
-        ? rawParent.trim()
-        : null,
-    status: formData.get("status"),
-  });
-
-  if (!parsed.success) {
+  const parsed = parseDrawerCategoryForm(formData);
+  if (!parsed) {
     return err("VALIDATION_ERROR", "Invalid category payload.");
   }
 
-  if (parsed.data.parentId === categoryId) {
+  if (parsed.parentId === categoryId) {
     return err("VALIDATION_ERROR", "A category cannot be its own parent.");
   }
 
@@ -188,13 +231,13 @@ export async function updateCategoryFromDrawerAction(
     return err("NOT_FOUND", "Category not found.");
   }
 
-  if (parsed.data.parentId) {
+  if (parsed.parentId) {
     const [parent] = await getDb()
       .select({ id: categories.id })
       .from(categories)
       .where(
         and(
-          eq(categories.id, parsed.data.parentId),
+          eq(categories.id, parsed.parentId),
           isNull(categories.deletedAt),
         ),
       )
@@ -207,31 +250,19 @@ export async function updateCategoryFromDrawerAction(
   await getDb()
     .update(categories)
     .set({
-      parentId: parsed.data.parentId,
-      translations: mergeTranslations(
+      parentId: parsed.parentId,
+      translations: mergeCategoryTranslations(
         existing.translations,
-        parsed.data.editingLocale,
-        parsed.data.title,
-        parsed.data.slug,
+        parsed.localeCopies,
       ),
-      status: parsed.data.status,
+      status: parsed.status,
       updatedAt: new Date(),
     })
     .where(eq(categories.id, existing.id));
 
-  const image = formData.get("image");
-  const removeImage = formData.get("removeImage") === "1";
-
-  if (image instanceof File && image.size > 0) {
-    const mediaResult = await persistCategoryImage(existing.id, image);
-    if (mediaResult.error) {
-      return err("VALIDATION_ERROR", mediaResult.error);
-    }
-  } else if (removeImage) {
-    await removeCategoryImage(existing.id);
-  }
-
-  revalidateCategories(locale);
+  const media = await persistDrawerImage(existing.id, formData);
+  if (!media.ok) return media;
+  revalidateCategories();
   return ok({ id: existing.id });
 }
 
@@ -260,7 +291,7 @@ export async function deleteCategoryAction(
     return err("NOT_FOUND", "Category not found.");
   }
 
-  revalidateCategories(locale);
+  revalidateCategories();
   return ok({ id: updated.id });
 }
 
@@ -318,6 +349,6 @@ export async function reorderCategoriesAction(
     ),
   );
 
-  revalidateCategories(locale);
+  revalidateCategories();
   return ok({ updated: uniqueIds.length });
 }

@@ -15,6 +15,11 @@ import {
 } from "@/features/orders/ui/orderAlertStorage";
 
 const POLL_INTERVAL_MS = 7_000;
+const GESTURE_EVENTS = [
+  "pointerdown",
+  "keydown",
+  "touchstart",
+] as const satisfies ReadonlyArray<keyof DocumentEventMap>;
 
 type UseNewOrderAlertOptions = {
   locale: string;
@@ -24,6 +29,8 @@ type UseNewOrderAlertResult = {
   current: NewOrderAlertDto | null;
   remainingCount: number;
   audioBlocked: boolean;
+  /** True until a user gesture has unlocked Web Audio in this document. */
+  needsUnlock: boolean;
   /** Dismisses every queued alert in one action (sound + overlay). */
   acknowledgeAll: () => void;
   unlockAudio: () => void;
@@ -46,33 +53,119 @@ function filterUnackedQueue(
   });
 }
 
+function bindGestureUnlock(
+  audio: OrderAlertAudio,
+  skipAckClickRef: { current: boolean },
+  applyLockState: (running: boolean) => void,
+): () => void {
+  const unlockOnGesture = () => {
+    const wasLocked = !audio.isUnlocked();
+    void audio.unlock().then((ok) => {
+      applyLockState(ok);
+    });
+    if (wasLocked) {
+      skipAckClickRef.current = true;
+    }
+  };
+  const clearSkipAck = () => {
+    skipAckClickRef.current = false;
+  };
+
+  for (const eventName of GESTURE_EVENTS) {
+    document.addEventListener(eventName, unlockOnGesture, {
+      capture: true,
+      passive: true,
+    });
+  }
+  document.addEventListener("click", clearSkipAck);
+
+  return () => {
+    document.removeEventListener("click", clearSkipAck);
+    for (const eventName of GESTURE_EVENTS) {
+      document.removeEventListener(eventName, unlockOnGesture, true);
+    }
+  };
+}
+
+function attachOrderAlertAudio(options: {
+  audio: OrderAlertAudio;
+  skipAckClickRef: { current: boolean };
+  hasUnackedRef: { current: boolean };
+  applyLockState: (running: boolean) => void;
+  refreshQueue: () => void;
+}): () => void {
+  const { audio, skipAckClickRef, hasUnackedRef, applyLockState, refreshQueue } =
+    options;
+  const unbindGestures = bindGestureUnlock(
+    audio,
+    skipAckClickRef,
+    applyLockState,
+  );
+
+  const pollId = window.setInterval(() => {
+    void refreshQueue();
+  }, POLL_INTERVAL_MS);
+
+  const onVisibility = () => {
+    if (document.visibilityState !== "visible") {
+      return;
+    }
+    void refreshQueue();
+    void audio.resumeIfPossible().then((ok) => {
+      applyLockState(ok);
+      if (ok && hasUnackedRef.current) {
+        audio.start();
+      }
+    });
+  };
+  document.addEventListener("visibilitychange", onVisibility);
+
+  return () => {
+    window.clearInterval(pollId);
+    document.removeEventListener("visibilitychange", onVisibility);
+    unbindGestures();
+    audio.dispose();
+  };
+}
+
 /** Polls for new orders and drives the FIFO alert queue + looping sound. */
 export function useNewOrderAlert({
   locale,
 }: UseNewOrderAlertOptions): UseNewOrderAlertResult {
   const [queue, setQueue] = useState<NewOrderAlertDto[]>([]);
   const [audioBlocked, setAudioBlocked] = useState(false);
+  const [needsUnlock, setNeedsUnlock] = useState(true);
   const storageRef = useRef<OrderAlertStorageState | null>(null);
   const audioRef = useRef<OrderAlertAudio | null>(null);
   const hasUnackedRef = useRef(false);
   const pollInFlightRef = useRef(false);
+  const skipAckClickRef = useRef(false);
 
-  const syncAudio = useCallback((hasUnacked: boolean) => {
-    hasUnackedRef.current = hasUnacked;
-    const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
-
-    if (!hasUnacked) {
-      audio.stop();
-      setAudioBlocked(false);
-      return;
-    }
-
-    audio.start();
-    setAudioBlocked(!audio.isUnlocked());
+  const applyLockState = useCallback((running: boolean) => {
+    setNeedsUnlock(!running);
+    setAudioBlocked(!running && hasUnackedRef.current);
   }, []);
+
+  const syncAudio = useCallback(
+    (hasUnacked: boolean) => {
+      hasUnackedRef.current = hasUnacked;
+      const audio = audioRef.current;
+      if (!audio) {
+        return;
+      }
+
+      if (!hasUnacked) {
+        audio.stop();
+        setAudioBlocked(false);
+        setNeedsUnlock(!audio.isUnlocked());
+        return;
+      }
+
+      audio.start();
+      applyLockState(audio.isUnlocked());
+    },
+    [applyLockState],
+  );
 
   const refreshQueue = useCallback(async () => {
     if (pollInFlightRef.current) {
@@ -107,45 +200,19 @@ export function useNewOrderAlert({
     storageRef.current = loadOrderAlertStorage();
     const audio = new OrderAlertAudio();
     audioRef.current = audio;
-
-    const unlockOnGesture = () => {
-      void audio.unlock().then((ok) => {
-        setAudioBlocked(!ok && hasUnackedRef.current);
-      });
-    };
-
-    // Omit pointerdown: it races with the alert primary button (unlock then ack on one click).
-    const gestureEvents: Array<keyof DocumentEventMap> = ["keydown", "touchstart"];
-    for (const eventName of gestureEvents) {
-      document.addEventListener(eventName, unlockOnGesture, {
-        capture: true,
-        passive: true,
-      });
-    }
-
     void refreshQueue();
-
-    const pollId = window.setInterval(() => {
-      void refreshQueue();
-    }, POLL_INTERVAL_MS);
-
-    const onVisibility = () => {
-      if (document.visibilityState === "visible") {
-        void refreshQueue();
-      }
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-
+    const detach = attachOrderAlertAudio({
+      audio,
+      skipAckClickRef,
+      hasUnackedRef,
+      applyLockState,
+      refreshQueue,
+    });
     return () => {
-      window.clearInterval(pollId);
-      document.removeEventListener("visibilitychange", onVisibility);
-      for (const eventName of gestureEvents) {
-        document.removeEventListener(eventName, unlockOnGesture, true);
-      }
-      audio.dispose();
+      detach();
       audioRef.current = null;
     };
-  }, [refreshQueue]);
+  }, [applyLockState, refreshQueue]);
 
   const unlockAudio = useCallback(() => {
     const audio = audioRef.current;
@@ -156,13 +223,14 @@ export function useNewOrderAlert({
       if (hasUnackedRef.current) {
         audio.start();
       }
-      setAudioBlocked(!ok && hasUnackedRef.current);
+      applyLockState(ok);
     });
-  }, []);
+  }, [applyLockState]);
 
   const acknowledgeAll = useCallback(() => {
     const audio = audioRef.current;
-    if (audio && !audio.isUnlocked()) {
+    if (skipAckClickRef.current || (audio && !audio.isUnlocked())) {
+      skipAckClickRef.current = false;
       unlockAudio();
       return;
     }
@@ -185,6 +253,7 @@ export function useNewOrderAlert({
     current: queue[0] ?? null,
     remainingCount: queue.length,
     audioBlocked,
+    needsUnlock,
     acknowledgeAll,
     unlockAudio,
   };

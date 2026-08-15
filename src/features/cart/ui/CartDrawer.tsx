@@ -4,23 +4,21 @@ import {
   useEffect,
   useState,
   useSyncExternalStore,
-  useTransition,
 } from "react";
 import { createPortal } from "react-dom";
 import { ShoppingCart } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 import { DrawerCloseTab } from "@/components/drawer/DrawerCloseTab";
 import { AppLink } from "@/components/ui/AppLink";
-import { removeItem, updateQuantity } from "@/features/cart/cart";
-import {
-  adjustLocalCartItemCount,
-  notifyCartChanged,
-  useCartItemCount,
-} from "@/features/cart/cart-client-sync";
+import { useCartItemCount } from "@/features/cart/cart-client-sync";
 import { CartDrawerItemRow } from "@/features/cart/ui/CartDrawerItemRow";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
+import {
+  changeCartLineQuantity,
+  removeCartLine,
+} from "@/features/cart/ui/cart-line-actions";
 import { useCartDrawerView } from "@/features/cart/ui/use-cart-drawer-view";
+import type { CartDrawerItemView } from "@/features/cart/get-cart-drawer-view";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -66,14 +64,11 @@ export function CartDrawer({
   itemCount,
   renderTrigger,
 }: CartDrawerProps) {
-  const router = useRouter();
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);
-  const { view, loading, removeItemLocally, setQuantityLocally, restoreItemLocally } =
-    useCartDrawerView(locale, currency, itemCount);
-  const [, startTransition] = useTransition();
+  const { view, loading } = useCartDrawerView(locale, currency, itemCount);
   const labels = dictionary.cartDrawer;
   const badgeCount = useCartItemCount(itemCount);
   const totalFormatted =
@@ -124,48 +119,12 @@ export function CartDrawer({
     }, CLOSE_ANIMATION_MS);
   }
 
-  function changeQuantity(itemId: string, quantity: number): void {
-    if (quantity < 1) {
-      removeCartItem(itemId);
-      return;
-    }
-
-    const result = setQuantityLocally(itemId, quantity);
-    if (!result) {
-      return;
-    }
-    const delta = result.nextQuantity - result.previous.quantity;
-    adjustLocalCartItemCount(delta);
-
-    startTransition(async () => {
-      try {
-        await updateQuantity(itemId, quantity);
-        notifyCartChanged();
-        router.refresh();
-      } catch {
-        restoreItemLocally(result.previous);
-        adjustLocalCartItemCount(-delta);
-      }
-    });
+  function changeQuantity(item: CartDrawerItemView, quantity: number): void {
+    changeCartLineQuantity(item, quantity);
   }
 
-  function removeCartItem(itemId: string): void {
-    const removed = removeItemLocally(itemId);
-    if (!removed) {
-      return;
-    }
-    adjustLocalCartItemCount(-removed.quantity);
-
-    startTransition(async () => {
-      try {
-        await removeItem(itemId);
-        notifyCartChanged();
-        router.refresh();
-      } catch {
-        restoreItemLocally(removed);
-        adjustLocalCartItemCount(removed.quantity);
-      }
-    });
+  function removeCartItem(item: CartDrawerItemView): void {
+    removeCartLine(item);
   }
 
   const panel =

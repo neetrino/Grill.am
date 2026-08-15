@@ -4,7 +4,8 @@ import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { loginAction, type AuthActionState } from "@/features/auth/login-action";
+import { loginAction } from "@/features/auth/login-action";
+import type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 import {
   AUTH_BTN_PRIMARY_CLASS,
   AUTH_LINK_CLASS,

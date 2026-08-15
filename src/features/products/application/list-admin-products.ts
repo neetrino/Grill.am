@@ -257,10 +257,9 @@ export async function listAdminProducts(
   };
 }
 
-/** Active categories for the admin products filter dropdown (English titles). */
+/** Active categories for the admin products filter dropdown. */
 export async function listAdminCategoryOptions(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for call-site symmetry with locale-aware admin list queries
-  _locale: Locale,
+  locale: Locale,
 ): Promise<AdminCategoryOption[]> {
   const rows = await getDb()
     .select()
@@ -271,6 +270,7 @@ export async function listAdminCategoryOptions(
   return rows.map((row) => ({
     id: row.id,
     title:
+      row.translations[locale]?.title ??
       row.translations.en?.title ??
       row.translations.hy?.title ??
       row.translations.ru?.title ??

@@ -13,8 +13,8 @@ type CartDrawerItemRowProps = {
   removeLabel: string;
   decreaseLabel: string;
   increaseLabel: string;
-  onRemove: (itemId: string) => void;
-  onChangeQuantity: (itemId: string, quantity: number) => void;
+  onRemove: (item: CartDrawerItemView) => void;
+  onChangeQuantity: (item: CartDrawerItemView, quantity: number) => void;
   onNavigate?: () => void;
 };
 
@@ -83,7 +83,7 @@ export function CartDrawerItemRow({
 
             <button
               type="button"
-              onClick={() => onRemove(item.id)}
+              onClick={() => onRemove(item)}
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
               aria-label={removeLabel}
               disabled={pending}
@@ -96,7 +96,7 @@ export function CartDrawerItemRow({
             <div className="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-gray-50 px-0.5 py-0.5">
               <button
                 type="button"
-                onClick={() => onChangeQuantity(item.id, item.quantity - 1)}
+                onClick={() => onChangeQuantity(item, item.quantity - 1)}
                 className="flex h-7 w-7 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-white"
                 aria-label={decreaseLabel}
                 disabled={pending}
@@ -108,7 +108,7 @@ export function CartDrawerItemRow({
               </span>
               <button
                 type="button"
-                onClick={() => onChangeQuantity(item.id, item.quantity + 1)}
+                onClick={() => onChangeQuantity(item, item.quantity + 1)}
                 className="flex h-7 w-7 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-white"
                 aria-label={increaseLabel}
                 disabled={pending}
