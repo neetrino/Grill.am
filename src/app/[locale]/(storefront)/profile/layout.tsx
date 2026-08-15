@@ -16,15 +16,8 @@ type ProfileLayoutProps = {
 };
 
 /**
- * Sticky band under the header with equal top/bottom gaps (1.75rem),
- * so sidebar + content sit in the middle of the visible viewport.
- */
-const PROFILE_STICKY_BAND_CLASS =
-  "lg:sticky lg:top-[calc(var(--storefront-header-offset)+1.75rem)] lg:z-10 lg:h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] lg:max-h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] lg:self-start";
-
-/**
- * Desktop: gray wash fills under the header; columns stick in a centered band.
- * Footer remains below and can still be reached by page scroll.
+ * Desktop: sidebar keeps its full natural height. The page column is capped
+ * to that height and scrolls internally; the storefront footer stays below.
  */
 export default async function ProfileLayout({
   children,
@@ -51,16 +44,14 @@ export default async function ProfileLayout({
           } as React.CSSProperties
         }
       >
-        <div className={`hidden lg:block ${PROFILE_STICKY_BAND_CLASS}`}>
+        <div className="hidden lg:block">
           <ProfileSidebar
             locale={rawLocale}
             user={user}
             dictionary={dictionary.profile}
           />
         </div>
-        <div
-          className={`min-h-0 min-w-0 overflow-visible lg:overflow-y-auto lg:overscroll-contain lg:[-ms-overflow-style:none] lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden ${PROFILE_STICKY_BAND_CLASS}`}
-        >
+        <div className="min-h-0 min-w-0 lg:h-0 lg:min-h-full lg:self-stretch lg:overflow-y-auto lg:overscroll-contain">
           <ProfileMobileBackLink
             locale={rawLocale}
             label={dictionary.profile.title}

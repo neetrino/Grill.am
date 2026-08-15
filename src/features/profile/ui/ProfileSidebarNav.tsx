@@ -215,7 +215,7 @@ export function ProfileSidebarNav({
   }
 
   return (
-    <div className="mt-6 min-h-0 flex-1 overflow-y-auto overscroll-contain border-t border-gray-100 pt-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="mt-6 border-t border-gray-100 pt-4">
       <nav
         ref={navRef}
         className="relative flex flex-col gap-1"
