@@ -165,12 +165,45 @@ export function HeaderLocaleCurrencyPill({
             ref={panelRef}
             id={menuId}
             role="dialog"
-            aria-label={`${currencyLabel} / ${languageLabel}`}
+            aria-label={`${languageLabel} / ${currencyLabel}`}
             className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-2 ${dropdownPanelStateClass(visible)}`}
             style={dropdownPortalStyle(menuPosition)}
           >
             <div className="flex w-full">
               <div className="min-w-0 flex-1 border-r border-gray-100">
+                <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+                  {languageLabel}
+                </p>
+                <ul
+                  role="listbox"
+                  aria-label={languageLabel}
+                  className="px-1.5"
+                >
+                  {locales.map((item) => {
+                    const href = replaceLocaleInPath(pathname, item);
+                    const selected = item === locale;
+
+                    return (
+                      <li key={item} role="option" aria-selected={selected}>
+                        <AppLink
+                          href={href}
+                          hrefLang={item}
+                          prefetchPolicy="intent"
+                          aria-label={`${localeShortLabels[item]}: ${localeLabels[item]}`}
+                          className={
+                            selected ? selectedItemClassName : idleItemClassName
+                          }
+                          onClick={closeMenu}
+                        >
+                          {localeLabels[item]}
+                        </AppLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
+              <div className="min-w-0 flex-1">
                 <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
                   {currencyLabel}
                 </p>
@@ -204,39 +237,6 @@ export function HeaderLocaleCurrencyPill({
                         >
                           {item}
                         </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-                  {languageLabel}
-                </p>
-                <ul
-                  role="listbox"
-                  aria-label={languageLabel}
-                  className="px-1.5"
-                >
-                  {locales.map((item) => {
-                    const href = replaceLocaleInPath(pathname, item);
-                    const selected = item === locale;
-
-                    return (
-                      <li key={item} role="option" aria-selected={selected}>
-                        <AppLink
-                          href={href}
-                          hrefLang={item}
-                          prefetchPolicy="intent"
-                          aria-label={`${localeShortLabels[item]}: ${localeLabels[item]}`}
-                          className={
-                            selected ? selectedItemClassName : idleItemClassName
-                          }
-                          onClick={closeMenu}
-                        >
-                          {localeLabels[item]}
-                        </AppLink>
                       </li>
                     );
                   })}
