@@ -22,8 +22,7 @@
     "deliveryLocation": "Delivery location",
     "selectLocation": "Select location",
     "pickupBranch": "Branch",
-    "selectPickupBranch": "Select branch",
-    "pickupBranchNoResults": "No branches found"
+    "selectPickupBranch": "Select branch"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",

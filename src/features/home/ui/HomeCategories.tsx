@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
@@ -31,11 +31,23 @@ const FALLBACK_IMAGES = [
   staticAssetUrl("/assets/home/category-4.webp"),
 ] as const;
 
-/** One arrow click ≈ one desktop card plus its gap. */
-const SCROLL_STEP_PX = 300;
+/** Fallback if the scroller has not laid out yet. */
+const SCROLL_STEP_FALLBACK_PX = 300;
 
 /** Absorbs fractional scroll offsets so the edges are detected reliably. */
 const SCROLL_EDGE_TOLERANCE_PX = 1;
+
+function readScrollStepPx(scroller: HTMLElement): number {
+  const firstItem = scroller.querySelector("li");
+  if (!(firstItem instanceof HTMLElement)) return SCROLL_STEP_FALLBACK_PX;
+
+  const gapValue = Number.parseFloat(getComputedStyle(scroller).gap);
+  const gap = Number.isFinite(gapValue) ? gapValue : 0;
+  return firstItem.offsetWidth + gap;
+}
+
+const ARROW_BUTTON_CLASS =
+  "hidden size-14 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow xl:flex";
 
 export function HomeCategories({
   titleLead,
@@ -47,6 +59,8 @@ export function HomeCategories({
   categories,
 }: HomeCategoriesProps) {
   const scrollerRef = useRef<HTMLUListElement>(null);
+  const [pageCount, setPageCount] = useState(1);
+  const [activePage, setActivePage] = useState(0);
 
   /** Wraps around at both edges so the arrows never dead-end. */
   function scrollByDirection(direction: -1 | 1): void {
@@ -55,6 +69,8 @@ export function HomeCategories({
 
     const maxScrollLeft = node.scrollWidth - node.clientWidth;
     if (maxScrollLeft <= 0) return;
+
+    const step = readScrollStepPx(node);
 
     if (
       direction === 1 &&
@@ -70,10 +86,50 @@ export function HomeCategories({
     }
 
     node.scrollBy({
-      left: direction * SCROLL_STEP_PX,
+      left: direction * step,
       behavior: "smooth",
     });
   }
+
+  function syncPager(): void {
+    const node = scrollerRef.current;
+    if (!node) return;
+
+    const maxScrollLeft = node.scrollWidth - node.clientWidth;
+    if (maxScrollLeft <= 0) {
+      setPageCount(1);
+      setActivePage(0);
+      return;
+    }
+
+    const step = readScrollStepPx(node);
+    const count = Math.round(maxScrollLeft / step) + 1;
+    const page = Math.min(
+      count - 1,
+      Math.max(0, Math.round(node.scrollLeft / step)),
+    );
+    setPageCount(count);
+    setActivePage(page);
+  }
+
+  function goToPage(page: number): void {
+    const node = scrollerRef.current;
+    if (!node) return;
+    node.scrollTo({ left: page * readScrollStepPx(node), behavior: "smooth" });
+  }
+
+  useEffect(() => {
+    const node = scrollerRef.current;
+    if (!node) return;
+
+    syncPager();
+    node.addEventListener("scroll", syncPager, { passive: true });
+    window.addEventListener("resize", syncPager);
+    return () => {
+      node.removeEventListener("scroll", syncPager);
+      window.removeEventListener("resize", syncPager);
+    };
+  }, [categories.length]);
 
   return (
     <section className="relative z-10 bg-white pt-6 pb-6 md:-mt-12 md:rounded-t-[30px] md:pt-14 md:pb-14 lg:-mt-20 lg:pt-16 lg:pb-16">
@@ -99,24 +155,7 @@ export function HomeCategories({
         {categories.length === 0 ? (
           <p className="text-gray-600">{emptyLabel}</p>
         ) : (
-          <div className="relative">
-            <button
-              type="button"
-              aria-label="Previous categories"
-              onClick={() => scrollByDirection(-1)}
-              className="absolute top-[38%] left-0 z-10 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-black text-white shadow-lg transition hover:scale-105 xl:flex"
-            >
-              <ChevronLeft className="h-6 w-6" aria-hidden />
-            </button>
-            <button
-              type="button"
-              aria-label="Next categories"
-              onClick={() => scrollByDirection(1)}
-              className="absolute top-[38%] right-0 z-10 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-black text-white shadow-lg transition hover:scale-105 xl:flex"
-            >
-              <ChevronRight className="h-6 w-6" aria-hidden />
-            </button>
-
+          <div>
             {/* Mobile — Figma `164:424` compact 88px cards */}
             <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {categories.map((category, index) => {
@@ -150,13 +189,19 @@ export function HomeCategories({
               })}
             </ul>
 
-            {/* Desktop — existing large cards */}
-            {/* `w-fit` centers the row while it fits and lets it scroll once
-                it does not; `justify-center` would strand the leading cards. */}
-            <ul
-              ref={scrollerRef}
-              className="hidden snap-x snap-mandatory justify-start gap-5 overflow-x-auto pb-2 sm:gap-6 md:flex xl:mx-auto xl:w-fit xl:max-w-full xl:gap-7 xl:px-16 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
+            <div className="hidden items-center gap-4 md:flex xl:gap-5">
+              <button
+                type="button"
+                aria-label="Previous categories"
+                onClick={() => scrollByDirection(-1)}
+                className={ARROW_BUTTON_CLASS}
+              >
+                <ChevronLeft className="size-6" aria-hidden />
+              </button>
+              <ul
+                ref={scrollerRef}
+                className="flex min-w-0 flex-1 snap-x snap-mandatory gap-8 overflow-x-hidden xl:gap-10"
+              >
               {categories.map((category, index) => {
                 const fallback =
                   FALLBACK_IMAGES[index % FALLBACK_IMAGES.length] ??
@@ -166,7 +211,7 @@ export function HomeCategories({
                 return (
                   <li
                     key={category.id}
-                    className="w-[min(64vw,240px)] shrink-0 snap-start sm:w-[260px] lg:w-[279px]"
+                    className="w-[calc((100%-6rem)/4)] max-w-[calc((100%-6rem)/4)] shrink-0 snap-start xl:w-[calc((100%-7.5rem)/4)] xl:max-w-[calc((100%-7.5rem)/4)]"
                   >
                     <AppLink
                       href={category.href}
@@ -189,7 +234,38 @@ export function HomeCategories({
                   </li>
                 );
               })}
-            </ul>
+              </ul>
+              <button
+                type="button"
+                aria-label="Next categories"
+                onClick={() => scrollByDirection(1)}
+                className={ARROW_BUTTON_CLASS}
+              >
+                <ChevronRight className="size-6" aria-hidden />
+              </button>
+            </div>
+
+            {pageCount > 1 ? (
+              <div className="mt-6 hidden items-center justify-center gap-1.5 md:flex">
+                {Array.from({ length: pageCount }, (_, page) => {
+                  const isActive = page === activePage;
+                  return (
+                    <button
+                      key={page}
+                      type="button"
+                      aria-label={`Go to categories page ${page + 1}`}
+                      aria-current={isActive}
+                      onClick={() => goToPage(page)}
+                      className={`h-2.5 rounded-full transition-[width,background-color] duration-300 ease-out ${
+                        isActive
+                          ? "w-7 bg-brand-red-hot"
+                          : "w-2.5 bg-[rgba(95,95,95,0.43)]"
+                      }`}
+                    />
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
         )}
       </div>
