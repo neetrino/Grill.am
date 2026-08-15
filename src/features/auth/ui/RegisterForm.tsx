@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { type AuthActionState } from "@/features/auth/login-action";
+import type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 import { registerAction } from "@/features/auth/register-action";
 import { PASSWORD_REQUIREMENTS_ERROR } from "@/features/auth/schemas";
 import { AuthTermsAgreement } from "@/features/auth/ui/AuthTermsAgreement";

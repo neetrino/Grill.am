@@ -26,8 +26,6 @@ import {
 } from "@/features/products/domain/customization";
 import { getCurrentUser } from "@/lib/auth/session";
 
-export type { SetCartLineQuantityInput };
-
 type CartItemWithProduct = {
   item: typeof cartItems.$inferSelect;
   product: typeof products.$inferSelect;
