@@ -4,7 +4,17 @@ import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { getDb } from "@/db/client";
-import { cartItems, carts, products } from "@/db/schema";
+import { cartItems, products } from "@/db/schema";
+import {
+  applyAddCartLineQuantity,
+  applySetCartLineQuantity,
+} from "@/features/cart/cart-line-mutation";
+import type { SetCartLineQuantityInput } from "@/features/cart/cart-line-types";
+import {
+  findActiveCart,
+  getOrCreateCartForOwner,
+  type CartRow,
+} from "@/features/cart/cart-owner";
 import {
   getGuestCartToken,
   hashGuestToken,
@@ -12,19 +22,19 @@ import {
 } from "@/features/cart/guest-token";
 import {
   parseCartModifiers,
-  parseProductCustomization,
-  selectionKeyFromModifiers,
-  validateModifiers,
   type CartModifiers,
 } from "@/features/products/domain/customization";
 import { getCurrentUser } from "@/lib/auth/session";
-import { createId } from "@/lib/id";
 
-type CartRow = typeof carts.$inferSelect;
+export type { SetCartLineQuantityInput };
+
 type CartItemWithProduct = {
   item: typeof cartItems.$inferSelect;
   product: typeof products.$inferSelect;
 };
+
+const DURABLE_ITEM_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 async function getCartOwnerForWrite(): Promise<{
   userId?: string;
@@ -49,34 +59,15 @@ async function getCartOwnerForRead(): Promise<{
   return { guestTokenHash: hashGuestToken(token) };
 }
 
-async function findActiveCart(
-  owner: { userId?: string; guestTokenHash?: string },
-): Promise<CartRow | null> {
-  const ownerCondition = owner.userId
-    ? eq(carts.userId, owner.userId)
-    : eq(carts.guestTokenHash, owner.guestTokenHash!);
-
-  const [existing] = await getDb()
-    .select()
-    .from(carts)
-    .where(and(eq(carts.status, "ACTIVE"), ownerCondition))
-    .limit(1);
-
-  return existing ?? null;
+function assertDurableItemId(itemId: string): void {
+  if (!DURABLE_ITEM_ID.test(itemId)) {
+    throw new Error("Invalid cart item.");
+  }
 }
 
 /** Returns the caller's active durable cart, creating it when absent. */
 export async function getOrCreateCart(): Promise<CartRow> {
-  const owner = await getCartOwnerForWrite();
-  const existing = await findActiveCart(owner);
-  if (existing) return existing;
-
-  const [created] = await getDb()
-    .insert(carts)
-    .values({ id: createId(), ...owner })
-    .returning();
-  if (!created) throw new Error("Unable to create cart.");
-  return created;
+  return getOrCreateCartForOwner(await getCartOwnerForWrite());
 }
 
 /** Loads cart lines without creating a cart or guest cookie.
@@ -127,6 +118,18 @@ export async function getCartItemCount(): Promise<number> {
   return row?.total ?? 0;
 }
 
+/**
+ * Canonical cart mutation: set absolute quantity for productId + selectionKey.
+ * quantity <= 0 deletes the line. Never accepts optimistic client IDs.
+ */
+export async function setCartLineQuantity(
+  input: SetCartLineQuantityInput,
+): Promise<void> {
+  const cart = await getOrCreateCart();
+  await applySetCartLineQuantity(cart.id, input);
+  await revalidateCartPaths();
+}
+
 export async function addToCart(
   productId: string,
   quantity = 1,
@@ -136,83 +139,12 @@ export async function addToCart(
     exclusionIds: [],
   },
 ): Promise<void> {
-  if (!Number.isInteger(quantity) || quantity < 1) {
-    throw new Error("Invalid quantity.");
-  }
-
   const cart = await getOrCreateCart();
-  const [product] = await getDb()
-    .select({
-      id: products.id,
-      stock: products.stockOnHand,
-      status: products.status,
-      customization: products.customization,
-    })
-    .from(products)
-    .where(eq(products.id, productId))
-    .limit(1);
-  if (!product || product.status !== "ACTIVE" || product.stock < 1) {
-    throw new Error("Product unavailable.");
-  }
-
-  const customization = parseProductCustomization(product.customization);
-  const validated = validateModifiers(
-    customization,
-    parseCartModifiers(modifiersInput),
-  );
-  if (!validated.ok) {
-    throw new Error(validated.error);
-  }
-
-  const modifiers = validated.modifiers;
-  const selectionKey = selectionKeyFromModifiers(modifiers);
-
-  const existingLines = await getDb()
-    .select({
-      quantity: cartItems.quantity,
-      selectionKey: cartItems.selectionKey,
-    })
-    .from(cartItems)
-    .where(
-      and(eq(cartItems.cartId, cart.id), eq(cartItems.productId, productId)),
-    );
-
-  const quantityOnOtherLines = existingLines
-    .filter((line) => line.selectionKey !== selectionKey)
-    .reduce((sum, line) => sum + line.quantity, 0);
-  const matchingLine = existingLines.find(
-    (line) => line.selectionKey === selectionKey,
-  );
-  const matchingQty = matchingLine?.quantity ?? 0;
-
-  const remainingStock = product.stock - quantityOnOtherLines;
-  if (remainingStock < 1) {
-    throw new Error("Product unavailable.");
-  }
-
-  const addQty = Math.min(quantity, remainingStock - matchingQty);
-  if (addQty < 1) {
-    throw new Error("Product unavailable.");
-  }
-
-  await getDb()
-    .insert(cartItems)
-    .values({
-      id: createId(),
-      cartId: cart.id,
-      productId,
-      quantity: addQty,
-      modifiers,
-      selectionKey,
-    })
-    .onConflictDoUpdate({
-      target: [cartItems.cartId, cartItems.productId, cartItems.selectionKey],
-      set: {
-        quantity: sql`least(${cartItems.quantity} + ${addQty}, ${remainingStock})`,
-        modifiers,
-        updatedAt: new Date(),
-      },
-    });
+  await applyAddCartLineQuantity(cart.id, {
+    productId,
+    quantity,
+    modifiers: modifiersInput,
+  });
   await revalidateCartPaths();
 }
 
@@ -220,23 +152,48 @@ export async function updateQuantity(
   itemId: string,
   quantity: number,
 ): Promise<void> {
+  assertDurableItemId(itemId);
   const cart = await getOrCreateCart();
-  if (!Number.isInteger(quantity) || quantity < 1) {
-    await removeItem(itemId);
+  const [row] = await getDb()
+    .select({
+      productId: cartItems.productId,
+      selectionKey: cartItems.selectionKey,
+      modifiers: cartItems.modifiers,
+    })
+    .from(cartItems)
+    .where(and(eq(cartItems.id, itemId), eq(cartItems.cartId, cart.id)))
+    .limit(1);
+  if (!row) {
     return;
   }
-  await getDb()
-    .update(cartItems)
-    .set({ quantity, updatedAt: new Date() })
-    .where(and(eq(cartItems.id, itemId), eq(cartItems.cartId, cart.id)));
+  await applySetCartLineQuantity(cart.id, {
+    productId: row.productId,
+    selectionKey: row.selectionKey,
+    quantity: Number.isInteger(quantity) && quantity > 0 ? quantity : 0,
+    modifiers: parseCartModifiers(row.modifiers),
+  });
   await revalidateCartPaths();
 }
 
 export async function removeItem(itemId: string): Promise<void> {
+  assertDurableItemId(itemId);
   const cart = await getOrCreateCart();
-  await getDb()
-    .delete(cartItems)
-    .where(and(eq(cartItems.id, itemId), eq(cartItems.cartId, cart.id)));
+  const [row] = await getDb()
+    .select({
+      productId: cartItems.productId,
+      selectionKey: cartItems.selectionKey,
+    })
+    .from(cartItems)
+    .where(and(eq(cartItems.id, itemId), eq(cartItems.cartId, cart.id)))
+    .limit(1);
+  if (!row) {
+    return;
+  }
+  await applySetCartLineQuantity(cart.id, {
+    productId: row.productId,
+    selectionKey: row.selectionKey,
+    quantity: 0,
+  });
   await revalidateCartPaths();
 }
 

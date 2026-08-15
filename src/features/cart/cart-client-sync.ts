@@ -114,3 +114,10 @@ export function useCartItemCount(serverItemCount: number): number {
 
   return localItemCount ?? serverItemCount;
 }
+
+/** Test helper — resets module state between unit tests. */
+export function resetCartClientSyncForTests(): void {
+  snapshot = { version: 0, localItemCount: null };
+  lastServerItemCount = 0;
+  emit();
+}

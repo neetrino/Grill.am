@@ -1,22 +1,40 @@
-import { describe, expect, it, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
+import { resetCartClientSyncForTests } from "@/features/cart/cart-client-sync";
 import {
-  acknowledgeOptimisticAdd,
+  applyDesiredCartLine,
   getCartDrawerLocalView,
-  getPendingOptimisticAdds,
+  getDisplayedCartLineQuantity,
   recalculateLocalCartView,
-  removeItemLocallyShared,
   replaceCartDrawerViewFromServer,
   resetCartDrawerLocalStoreForTests,
-  rollbackUpsertLocally,
-  setQuantityLocallyShared,
-  upsertItemLocally,
+  type OptimisticCartLineInput,
 } from "@/features/cart/cart-drawer-local-store";
 import type {
   CartDrawerItemView,
   CartDrawerView,
 } from "@/features/cart/get-cart-drawer-view";
 import { formatMoneyAmount } from "@/lib/money/format";
+
+function displayLine(
+  productId: string,
+  quantity: number,
+  unitPriceAmount: number,
+  selectionKey = "",
+): OptimisticCartLineInput {
+  return {
+    productId,
+    selectionKey,
+    title: productId,
+    slug: productId,
+    quantity,
+    imageUrl: null,
+    unitPriceAmount,
+    locale: "hy",
+    currency: "AMD",
+    modifierLines: [],
+  };
+}
 
 function moneyLine(input: {
   id: string;
@@ -65,188 +83,110 @@ function serverView(items: CartDrawerItemView[]): CartDrawerView {
   });
 }
 
-function addLine(input: {
-  productId: string;
-  selectionKey?: string;
-  title: string;
-  slug: string;
-  quantity: number;
-  unitPriceAmount: number;
-  modifierLines?: string[];
-}) {
-  return upsertItemLocally({
-    productId: input.productId,
-    selectionKey: input.selectionKey ?? "",
-    title: input.title,
-    slug: input.slug,
-    quantity: input.quantity,
-    imageUrl: null,
-    unitPriceAmount: input.unitPriceAmount,
-    locale: "hy",
-    currency: "AMD",
-    modifierLines: input.modifierLines ?? [],
-  });
-}
-
-describe("cart-drawer-local-store optimistic money", () => {
+describe("cart-drawer-local-store desired overlay", () => {
   beforeEach(() => {
     resetCartDrawerLocalStoreForTests();
+    resetCartClientSyncForTests();
   });
 
   it("adds a new item and increases subtotal immediately", () => {
-    addLine({
+    applyDesiredCartLine({
       productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 1,
-      unitPriceAmount: 3500,
+      selectionKey: "",
+      desiredQuantity: 1,
+      display: displayLine("p1", 1, 3500),
     });
 
     const view = getCartDrawerLocalView();
     expect(view?.subtotalAmount).toBe(3500);
     expect(view?.totalAmount).toBe(3500);
-    expect(view?.subtotalFormatted).toBe(formatMoneyAmount(3500, "AMD", "hy"));
     expect(view?.items[0]?.lineTotalAmount).toBe(3500);
   });
 
   it("calculates line total for quantity greater than one", () => {
-    addLine({
+    applyDesiredCartLine({
       productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 2,
-      unitPriceAmount: 3500,
+      selectionKey: "",
+      desiredQuantity: 2,
+      display: displayLine("p1", 2, 3500),
     });
 
-    const view = getCartDrawerLocalView();
-    expect(view?.items[0]?.quantity).toBe(2);
-    expect(view?.items[0]?.lineTotalAmount).toBe(7000);
-    expect(view?.subtotalAmount).toBe(7000);
-    expect(view?.subtotalFormatted).toBe(formatMoneyAmount(7000, "AMD", "hy"));
-  });
-
-  it("increases quantity and subtotal for the same line", () => {
-    addLine({
-      productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 1,
-      unitPriceAmount: 3500,
-    });
-    addLine({
-      productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 2,
-      unitPriceAmount: 3500,
-    });
-
-    const view = getCartDrawerLocalView();
-    expect(view?.items).toHaveLength(1);
-    expect(view?.items[0]?.quantity).toBe(3);
-    expect(view?.subtotalAmount).toBe(10_500);
+    expect(getCartDrawerLocalView()?.items[0]?.lineTotalAmount).toBe(7000);
+    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(7000);
   });
 
   it("keeps variants separate and sums both into subtotal", () => {
-    addLine({
+    applyDesiredCartLine({
       productId: "p1",
       selectionKey: "",
-      title: "Burger",
-      slug: "burger",
-      quantity: 1,
-      unitPriceAmount: 3500,
+      desiredQuantity: 1,
+      display: displayLine("p1", 1, 3500),
     });
-    addLine({
+    applyDesiredCartLine({
       productId: "p1",
       selectionKey: '{"optionChoices":{"size":"l"}}',
-      title: "Burger",
-      slug: "burger",
-      quantity: 1,
-      unitPriceAmount: 4000,
-      modifierLines: ["Size: Large"],
+      desiredQuantity: 1,
+      display: displayLine("p1", 1, 4000, '{"optionChoices":{"size":"l"}}'),
     });
 
-    const view = getCartDrawerLocalView();
-    expect(view?.items).toHaveLength(2);
-    expect(view?.subtotalAmount).toBe(7500);
+    expect(getCartDrawerLocalView()?.items).toHaveLength(2);
+    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(7500);
   });
 
-  it("rolls back and restores the previous subtotal", () => {
-    addLine({
-      productId: "existing",
-      title: "Fries",
-      slug: "fries",
-      quantity: 1,
-      unitPriceAmount: 1000,
-    });
-    acknowledgeOptimisticAdd();
-
-    const failed = addLine({
+  it("overlays newer desired quantity on a stale server snapshot", () => {
+    applyDesiredCartLine({
       productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 2,
-      unitPriceAmount: 3500,
+      selectionKey: "",
+      desiredQuantity: 3,
+      display: displayLine("p1", 3, 3500),
     });
-    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(8000);
 
-    rollbackUpsertLocally(failed);
+    replaceCartDrawerViewFromServer(
+      serverView([
+        moneyLine({
+          id: "server-line",
+          productId: "p1",
+          title: "p1",
+          slug: "p1",
+          quantity: 2,
+          unitPriceAmount: 3500,
+        }),
+      ]),
+    );
 
-    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(1000);
-    expect(getCartDrawerLocalView()?.items).toHaveLength(1);
-    expect(getPendingOptimisticAdds()).toBe(0);
+    expect(getDisplayedCartLineQuantity("p1", "")).toBe(3);
+    expect(getCartDrawerLocalView()?.items[0]?.quantity).toBe(3);
   });
 
-  it("recalculates subtotal when quantity changes", () => {
-    addLine({
+  it("hides a line whose desired quantity is 0 even if the server still has it", () => {
+    replaceCartDrawerViewFromServer(
+      serverView([
+        moneyLine({
+          id: "server-line",
+          productId: "p1",
+          title: "p1",
+          slug: "p1",
+          quantity: 1,
+          unitPriceAmount: 3500,
+        }),
+      ]),
+    );
+    applyDesiredCartLine({
       productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 1,
-      unitPriceAmount: 3500,
+      selectionKey: "",
+      desiredQuantity: 0,
     });
-    const itemId = getCartDrawerLocalView()?.items[0]?.id;
-    expect(itemId).toBeTruthy();
 
-    setQuantityLocallyShared(itemId!, 3);
-
-    expect(getCartDrawerLocalView()?.items[0]?.lineTotalAmount).toBe(10_500);
-    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(10_500);
+    expect(getCartDrawerLocalView()?.items).toHaveLength(0);
+    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(0);
   });
 
-  it("recalculates subtotal when a line is removed", () => {
-    addLine({
-      productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 1,
-      unitPriceAmount: 3500,
-    });
-    addLine({
-      productId: "p2",
-      title: "Fries",
-      slug: "fries",
-      quantity: 1,
-      unitPriceAmount: 1000,
-    });
-    const burgerId = getCartDrawerLocalView()?.items.find(
-      (item) => item.productId === "p1",
-    )?.id;
-    expect(burgerId).toBeTruthy();
-
-    removeItemLocallyShared(burgerId!);
-
-    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(1000);
-    expect(getCartDrawerLocalView()?.items).toHaveLength(1);
-  });
-
-  it("includes pending optimistic lines in subtotal during stale reconcile", () => {
-    addLine({
+  it("keeps pending optimistic lines during stale reconcile", () => {
+    applyDesiredCartLine({
       productId: "p-new",
-      title: "New",
-      slug: "new",
-      quantity: 1,
-      unitPriceAmount: 3500,
+      selectionKey: "",
+      desiredQuantity: 1,
+      display: displayLine("p-new", 1, 3500),
     });
 
     replaceCartDrawerViewFromServer(
@@ -262,100 +202,40 @@ describe("cart-drawer-local-store optimistic money", () => {
       ]),
     );
 
-    const view = getCartDrawerLocalView();
-    expect(view?.items.map((item) => item.productId)).toEqual([
-      "p-old",
-      "p-new",
-    ]);
-    expect(view?.subtotalAmount).toBe(13_500);
+    expect(getCartDrawerLocalView()?.items.map((item) => item.productId)).toEqual(
+      ["p-old", "p-new"],
+    );
+    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(13_500);
   });
 
-  it("replaces optimistic prices after final server reconciliation", () => {
-    addLine({
-      productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 1,
-      unitPriceAmount: 3500,
-    });
-    acknowledgeOptimisticAdd();
-
+  it("ignores an older server revision", () => {
     replaceCartDrawerViewFromServer(
       serverView([
         moneyLine({
-          id: "server-line",
+          id: "v2",
           productId: "p1",
-          title: "Burger",
-          slug: "burger",
-          quantity: 1,
-          unitPriceAmount: 3200,
+          title: "p1",
+          slug: "p1",
+          quantity: 2,
+          unitPriceAmount: 3500,
         }),
       ]),
+      2,
     );
-
-    const view = getCartDrawerLocalView();
-    expect(view?.items).toHaveLength(1);
-    expect(view?.items[0]?.unitPriceAmount).toBe(3200);
-    expect(view?.subtotalAmount).toBe(3200);
-    expect(getPendingOptimisticAdds()).toBe(0);
-  });
-
-  it("does not corrupt totals when first add fails and second succeeds", () => {
-    const first = addLine({
-      productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 1,
-      unitPriceAmount: 3500,
-    });
-    const second = addLine({
-      productId: "p2",
-      title: "Fries",
-      slug: "fries",
-      quantity: 1,
-      unitPriceAmount: 1000,
-    });
-
-    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(4500);
-
-    rollbackUpsertLocally(first);
-    acknowledgeOptimisticAdd(); // second succeeds
-
-    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(1000);
-    expect(getCartDrawerLocalView()?.items.map((i) => i.productId)).toEqual([
-      "p2",
-    ]);
-    expect(second.created).toBe(true);
-  });
-
-  it("supports acceptance example: 10000 + 3500×2 = 17000 immediately", () => {
     replaceCartDrawerViewFromServer(
       serverView([
         moneyLine({
-          id: "server-old",
-          productId: "old",
-          title: "Existing",
-          slug: "existing",
+          id: "v1",
+          productId: "p1",
+          title: "p1",
+          slug: "p1",
           quantity: 1,
-          unitPriceAmount: 10_000,
+          unitPriceAmount: 3500,
         }),
       ]),
+      1,
     );
 
-    addLine({
-      productId: "p1",
-      title: "Burger",
-      slug: "burger",
-      quantity: 2,
-      unitPriceAmount: 3500,
-    });
-
-    expect(getCartDrawerLocalView()?.subtotalAmount).toBe(17_000);
-    expect(getCartDrawerLocalView()?.subtotalFormatted).toBe(
-      formatMoneyAmount(17_000, "AMD", "hy"),
-    );
-    expect(getCartDrawerLocalView()?.totalFormatted).toBe(
-      formatMoneyAmount(17_000, "AMD", "hy"),
-    );
+    expect(getCartDrawerLocalView()?.items[0]?.quantity).toBe(2);
   });
 });

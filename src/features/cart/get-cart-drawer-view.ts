@@ -33,10 +33,9 @@ export type CartDrawerItemView = {
   unitPriceFormatted: string;
   lineTotalFormatted: string;
   modifierLines: string[];
-  /** Used for optimistic upsert matching across client + server rows. */
-  productId?: string;
+  productId: string;
   /** Empty string for unmodified simple products. */
-  selectionKey?: string;
+  selectionKey: string;
 };
 
 export type CartDrawerView = {

@@ -3,17 +3,8 @@
 import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { useMemo, useState, useSyncExternalStore } from "react";
 
-import { addToCart } from "@/features/cart/cart";
+import { addCartLineQuantity } from "@/features/cart/cart-line-coordinator";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
-import {
-  adjustLocalCartItemCount,
-  notifyCartChanged,
-} from "@/features/cart/cart-client-sync";
-import {
-  acknowledgeOptimisticAdd,
-  rollbackUpsertLocally,
-  upsertItemLocally,
-} from "@/features/cart/cart-drawer-local-store";
 import {
   computeModifiersDelta,
   describeModifiers,
@@ -227,33 +218,30 @@ export function ProductBuyBox({
     const displayUnitAmount = Number(
       convertAmount(unitAmount, fxRate, defaultCurrency, currency).amount,
     );
-    const upsert = upsertItemLocally({
-      productId,
-      selectionKey,
-      title,
-      slug,
-      quantity,
-      imageUrl,
-      unitPriceAmount: displayUnitAmount,
-      unitPriceFormatted: priceFormatted,
-      locale,
-      currency,
-      modifierLines: describeModifiers(rawCustomization, modifiers, locale),
-    });
-    adjustLocalCartItemCount(quantity);
     setMessage(labels.added);
 
-    void addToCart(productId, quantity, modifiers)
-      .then(() => {
-        acknowledgeOptimisticAdd();
-        notifyCartChanged();
-      })
-      .catch(() => {
-        rollbackUpsertLocally(upsert);
-        adjustLocalCartItemCount(-quantity);
-        setMessage(null);
-        setError(labels.error);
-      });
+    void addCartLineQuantity({
+      productId,
+      selectionKey,
+      addQuantity: quantity,
+      modifiers,
+      display: {
+        productId,
+        selectionKey,
+        title,
+        slug,
+        quantity,
+        imageUrl,
+        unitPriceAmount: displayUnitAmount,
+        unitPriceFormatted: priceFormatted,
+        locale,
+        currency,
+        modifierLines: describeModifiers(rawCustomization, modifiers, locale),
+      },
+    }).catch(() => {
+      setMessage(null);
+      setError(labels.error);
+    });
   }
 
   const blurb = shortDescription || description;
