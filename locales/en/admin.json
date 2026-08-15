@@ -365,6 +365,7 @@
       "acknowledge": "I heard it",
       "acknowledgeAll": "I heard it — dismiss all ({remaining})",
       "enableSound": "Enable sound",
+      "enableSoundHint": "Click once to enable the new-order sound. The browser will not ask again until you reload the page.",
       "audioBlocked": "Sound is blocked by the browser. Click the button or interact with the page to enable the alert tone."
     }
   },
