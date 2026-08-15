@@ -66,7 +66,6 @@ type CheckoutLabels = {
   deliveryDescription: string;
   pickupBranch: string;
   selectPickupBranch: string;
-  pickupBranchNoResults: string;
   freePickup: string;
   enterCity: string;
   selectDeliveryLocation: string;

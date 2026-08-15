@@ -126,7 +126,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         deliveryDescription: copy.shipping.deliveryDescription,
         pickupBranch: copy.form.pickupBranch,
         selectPickupBranch: copy.form.selectPickupBranch,
-        pickupBranchNoResults: copy.form.pickupBranchNoResults,
         freePickup: copy.shipping.freePickup,
         enterCity: copy.shipping.enterCity,
         selectDeliveryLocation: copy.shipping.selectDeliveryLocation,

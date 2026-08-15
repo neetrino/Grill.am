@@ -22,8 +22,7 @@
     "deliveryLocation": "Место доставки",
     "selectLocation": "Выберите место",
     "pickupBranch": "Филиал",
-    "selectPickupBranch": "Выберите филиал",
-    "pickupBranchNoResults": "Филиалы не найдены"
+    "selectPickupBranch": "Выберите филиал"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",

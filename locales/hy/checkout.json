@@ -22,8 +22,7 @@
     "deliveryLocation": "Առաքման վայր",
     "selectLocation": "Ընտրեք վայրը",
     "pickupBranch": "Մասնաճյուղ",
-    "selectPickupBranch": "Ընտրեք մասնաճյուղը",
-    "pickupBranchNoResults": "Մասնաճյուղեր չեն գտնվել"
+    "selectPickupBranch": "Ընտրեք մասնաճյուղը"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",

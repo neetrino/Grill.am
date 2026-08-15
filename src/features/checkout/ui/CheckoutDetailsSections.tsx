@@ -5,7 +5,6 @@ import { type ReactNode } from "react";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import { CUSTOMER_NOTE_MAX_LENGTH } from "@/features/checkout/domain/customer-note";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
-import { CheckoutSearchSelect } from "@/features/checkout/ui/CheckoutSearchSelect";
 import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import {
   CHECKOUT_FIELD_CLASS,
@@ -42,7 +41,6 @@ type CheckoutDetailsLabels = {
   deliveryDescription: string;
   pickupBranch: string;
   selectPickupBranch: string;
-  pickupBranchNoResults: string;
 };
 
 type PaymentOption = {
@@ -219,7 +217,7 @@ export function CheckoutDetailsSections({
           <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
             {labels.pickupBranch}
           </h2>
-          <CheckoutSearchSelect
+          <CheckoutSelect
             label={labels.pickupBranch}
             name="pickupStoreId"
             required
@@ -228,7 +226,6 @@ export function CheckoutDetailsSections({
             onChange={onPickupStoreChange}
             disabled={pending || pickupStores.length === 0}
             placeholder={labels.selectPickupBranch}
-            noResultsLabel={labels.pickupBranchNoResults}
             options={pickupStores.map((store) => ({
               value: store.id,
               label: store.label,
