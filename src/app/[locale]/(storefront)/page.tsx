@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
+import { listStorefrontNavCategories } from "@/features/categories/application/list-storefront-nav-categories";
+import { findComboCategory } from "@/features/categories/domain/combo-category";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
 import { HomeHero } from "@/features/home/ui/HomeHero";
 import {
@@ -9,10 +11,7 @@ import {
   HomePromotionsLazy,
 } from "@/features/home/ui/lazy-home-sections";
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
-import {
-  getDiscountedProducts,
-  getFeaturedProducts,
-} from "@/features/products/queries";
+import { getFeaturedProducts } from "@/features/products/queries";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -54,25 +53,20 @@ export default async function HomePage({ params }: HomePageProps) {
   const [
     heroSlides,
     categories,
+    navCategories,
     featuredProducts,
-    discountedProducts,
     currency,
     user,
   ] = await Promise.all([
     listActiveHeroSlides(locale),
     listStorefrontCategories(locale),
+    listStorefrontNavCategories(locale),
     getFeaturedProducts(locale),
-    getDiscountedProducts(locale),
     getSelectedCurrency(),
     getCurrentUser(),
   ]);
 
-  const wishlistProductIds = [
-    ...new Set([
-      ...featuredProducts.map((product) => product.id),
-      ...discountedProducts.map((product) => product.id),
-    ]),
-  ];
+  const wishlistProductIds = featuredProducts.map((product) => product.id);
 
   const [wishlistIds, formatPrice] = await Promise.all([
     getWishlistProductIds(wishlistProductIds),
@@ -105,27 +99,10 @@ export default async function HomePage({ params }: HomePageProps) {
   }
 
   const featuredCards = toCards(featuredProducts);
-  const promotionCards = toCards(discountedProducts);
-
-  const hasPromotions = promotionCards.length > 0;
-  const [specialCard] = hasPromotions ? promotionCards : featuredCards;
-  const [specialSource] = hasPromotions ? discountedProducts : featuredProducts;
-  const specialSaveFormatted =
-    specialSource?.compareAtAmount != null &&
-    specialSource.compareAtAmount > specialSource.priceAmount
-      ? formatPrice(specialSource.compareAtAmount - specialSource.priceAmount)
-          .formatted
-      : null;
-  const specialOffer = specialCard
-    ? {
-        title: specialCard.title,
-        href: specialCard.href,
-        priceFormatted: specialCard.priceFormatted,
-        compareAtFormatted: specialCard.compareAtFormatted,
-        imageUrl: specialCard.imageUrl,
-        saveFormatted: specialSaveFormatted,
-      }
-    : null;
+  const comboCategory = findComboCategory(navCategories);
+  const combosHref = comboCategory
+    ? `/${locale}/products?category=${encodeURIComponent(comboCategory.slug)}`
+    : `/${locale}/products`;
 
   return (
     <div className="storefront-bleed -my-10 overflow-x-clip bg-white">
@@ -175,12 +152,7 @@ export default async function HomePage({ params }: HomePageProps) {
         line1={dictionary.home.specialLine1}
         line2={dictionary.home.specialLine2}
         ctaLabel={dictionary.home.specialCta}
-        ctaHref={`/${locale}/products`}
-        onlyLabel={dictionary.home.specialOnly}
-        wasLabel={dictionary.home.specialWas}
-        saveLabel={dictionary.home.specialSave}
-        freshDealLabel={dictionary.home.specialFreshDeal}
-        offer={specialOffer}
+        ctaHref={combosHref}
       />
 
       <HomeFeaturesLazy
