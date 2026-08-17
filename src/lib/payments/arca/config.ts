@@ -21,9 +21,12 @@ export {
   resolveRegisterPath,
 };
 
-/** Official Merchant Manual §9 connection coordinates. */
+/** Official Merchant Manual §9 connection coordinates (IDBank iPay). */
 export const ARCA_OFFICIAL_PRODUCTION_BASE_URL =
   "https://ipay.arca.am/payment/rest";
+/** Alternate ArCa EPG production base (bank-issued EPG host). */
+export const ARCA_OFFICIAL_EPG_PRODUCTION_BASE_URL =
+  "https://epg.arca.am/payment/rest";
 export const ARCA_OFFICIAL_TEST_BASE_URL =
   "https://ipaytest.arca.am:8445/payment/rest";
 
@@ -73,8 +76,9 @@ function parseHosts(raw: string | undefined, apiBaseUrl: string): string[] {
     throw new ArcaConfigError("ARCA_API_BASE_URL is not a valid URL.");
   }
 
-  // Official form hosts observed in Merchant Manual examples (§7.1.1, §9).
+  // Official / bank-issued form hosts (Merchant Manual §7.1.1, §9 + EPG).
   hosts.add("ipay.arca.am");
+  hosts.add("epg.arca.am");
   hosts.add("ipaytest.arca.am:8445");
   hosts.add("ipaytest.arca.am");
 

@@ -24,6 +24,19 @@ export function latestPaymentMethodSelect() {
   `;
 }
 
+/** Latest payment attempt provider for an order row (admin alerts). */
+export function latestPaymentProviderSelect() {
+  return sql<string | null>`
+    (
+      select ${payments.provider}
+      from ${payments}
+      where ${payments.orderId} = ${ORDERS_ID_OUTER}
+      order by ${payments.attemptNumber} desc
+      limit 1
+    )
+  `;
+}
+
 /** Sum of line-item quantities for an order row (customer order list). */
 export function orderItemsCountSelect() {
   return sql<number>`

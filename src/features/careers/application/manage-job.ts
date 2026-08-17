@@ -32,8 +32,28 @@ import { requireAdmin } from "@/lib/auth/policies";
 import { invalidateCareersCache } from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+import { logger } from "@/lib/observability/logger";
 import { err, ok, type Result } from "@/lib/result";
 import { sanitizeBlogHtml } from "@/lib/sanitize/html";
+
+function invalidJobPayloadError(
+  issues: ReadonlyArray<{ path: PropertyKey[]; message: string }>,
+): Result<{ id: string }> {
+  const first = issues[0];
+  const path = first?.path.map(String).filter(Boolean).join(".") ?? "";
+  logger.warn("careers.job_payload_invalid", {
+    path: path || null,
+    message: first?.message ?? null,
+    issueCount: issues.length,
+  });
+  if (first?.message) {
+    return err(
+      "VALIDATION_ERROR",
+      path ? `${path}: ${first.message}` : first.message,
+    );
+  }
+  return err("VALIDATION_ERROR", "Invalid job posting payload.");
+}
 
 async function applyJobCoverMedia(
   postingId: string,
@@ -142,7 +162,7 @@ export async function createJobPostingAction(
 
   const parsed = upsertJobPostingSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid job posting payload.");
+    return invalidJobPayloadError(parsed.error.issues);
   }
 
   const currencyError = validateJobSalaryCurrency(parsed.data.salaryCurrency);
@@ -219,7 +239,7 @@ export async function updateJobPostingAction(
 
   const parsed = upsertJobPostingSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid job posting payload.");
+    return invalidJobPayloadError(parsed.error.issues);
   }
 
   const currencyError = validateJobSalaryCurrency(parsed.data.salaryCurrency);

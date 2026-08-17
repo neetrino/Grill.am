@@ -21,6 +21,7 @@
 | Банк | Base URL (test) | Base URL (live) |
 |------|----------------|-----------------|
 | **IDBank** | `https://ipaytest.arca.am:8445/payment/rest` | `https://ipay.arca.am/payment/rest` |
+| **ArCa EPG** | Уточнить у банка | `https://epg.arca.am/payment/rest` |
 | **Inecobank** | `https://pg.inecoecom.am/payment/rest` (test credentials) | `https://pg.inecoecom.am/payment/rest` |
 | **ACBA, Converse, Evoca, AMIO…** | Уточнить у банка | Уточнить у банка |
 

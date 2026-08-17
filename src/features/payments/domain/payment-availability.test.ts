@@ -92,4 +92,15 @@ describe("payment method availability", () => {
       idram: true,
     });
   });
+
+  it("documents that credential readiness is enforced outside this gate", () => {
+    // applyArcaViewerGate only toggles the feature flag for admins.
+    // getPaymentMethodAvailability additionally requires getArcaConfig().
+    const fromEnv = resolvePaymentMethodAvailability({
+      PAYMENT_ENABLE_COD: true,
+      PAYMENT_ENABLE_ARCA: false,
+      PAYMENT_ENABLE_IDRAM: false,
+    });
+    expect(applyArcaViewerGate(fromEnv, true).arca).toBe(true);
+  });
 });

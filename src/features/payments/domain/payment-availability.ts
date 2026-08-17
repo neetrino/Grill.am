@@ -29,7 +29,8 @@ export function resolvePaymentMethodAvailability(
 
 /**
  * Customers follow env flags for ARCA.
- * Admin may always use ARCA (bypass `PAYMENT_ENABLE_ARCA=false`).
+ * Admin may bypass `PAYMENT_ENABLE_ARCA=false` at the flag layer.
+ * Application layer still requires ARCA runtime credentials before checkout.
  * COD and iDram keep following env flags for every viewer.
  */
 export function applyArcaViewerGate(

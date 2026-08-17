@@ -11,12 +11,17 @@ import {
 import { consumeRateLimit } from "@/features/payments/providers/arca/rate-limit";
 import { processArcaPaymentStatus } from "@/features/payments/providers/arca/process-arca-status";
 import { retryArcaPayment } from "@/features/payments/providers/arca/retry-arca-payment";
-import { isArcaProtocolError } from "@/lib/payments/arca/errors";
+import {
+  ArcaBusinessError,
+  ArcaHttpError,
+  isArcaProtocolError,
+} from "@/lib/payments/arca/errors";
 import {
   isPaymentDomainError,
   PaymentAlreadyCapturedError,
 } from "@/features/payments/domain/errors";
 import { getCurrentUser } from "@/lib/auth/session";
+import { logger } from "@/lib/observability/logger";
 
 const recheckSchema = z.object({
   paymentId: z.string().uuid(),
@@ -180,8 +185,35 @@ export async function retryArcaPaymentAction(
       return { ok: false, error: "Order is already paid." };
     }
     if (isPaymentDomainError(error) || isArcaProtocolError(error)) {
+      const fields: Record<
+        string,
+        string | number | boolean | null | undefined
+      > = {
+        provider: "arca",
+        orderId: parsed.data.orderId,
+        errorName: error instanceof Error ? error.name : "UnknownError",
+        errorMessage: error instanceof Error ? error.message : String(error),
+      };
+      if (isArcaProtocolError(error)) {
+        fields.arcaCode = error.code;
+      }
+      if (error instanceof ArcaBusinessError) {
+        fields.providerErrorCode = error.providerErrorCode;
+        fields.providerErrorMessage = error.providerErrorMessage;
+      }
+      if (error instanceof ArcaHttpError) {
+        fields.httpStatus = error.httpStatus;
+        fields.endpointPath = error.endpointPath;
+      }
+      logger.error("checkout.arca_retry_failed", fields);
       return { ok: false, error: "Unable to retry payment right now." };
     }
+    logger.error("checkout.arca_retry_failed", {
+      provider: "arca",
+      orderId: parsed.data.orderId,
+      errorName: error instanceof Error ? error.name : "UnknownError",
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
     return { ok: false, error: "Unable to retry payment right now." };
   }
 }

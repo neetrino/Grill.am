@@ -32,7 +32,7 @@ Never put secrets in `NEXT_PUBLIC_*` or docs.
 - [ ] Production credentials stored server-only (never in git)
 - [ ] Approved domain / return URL: `{ARCA_RETURN_BASE_URL}/api/v1/payments/arca/return`
 - [ ] Currency `051` (AMD), language agreed
-- [ ] Production API base: `https://ipay.arca.am/payment/rest` (explicit; never derived by rewrite)
+- [ ] Production API base explicit (never derived by rewrite): `https://ipay.arca.am/payment/rest` (IDBank iPay) or `https://epg.arca.am/payment/rest` (ArCa EPG, when bank-issued)
 - [ ] Merchant/bank support contacts recorded offline
 
 ## iDram merchant panel (manual)
