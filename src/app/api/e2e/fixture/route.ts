@@ -76,6 +76,7 @@ export async function GET(): Promise<NextResponse> {
   return NextResponse.json({
     ok: true,
     product: {
+      id: row.id,
       sku: row.sku,
       slug: enSlug,
       status: row.status,
