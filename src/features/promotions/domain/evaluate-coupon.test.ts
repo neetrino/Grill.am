@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
+  isCouponUserAllowed,
   type CouponDiscountInput,
 } from "@/features/promotions/domain/evaluate-coupon";
 
@@ -96,5 +97,21 @@ describe("evaluateCouponDiscount", () => {
 
   it("maps error codes to messages", () => {
     expect(couponDiscountErrorMessage("EXPIRED")).toBe("Coupon has expired.");
+    expect(couponDiscountErrorMessage("USER_NOT_ELIGIBLE")).toBe(
+      "This coupon is not available for your account.",
+    );
+  });
+});
+
+describe("isCouponUserAllowed", () => {
+  it("allows everyone when allowlist is empty", () => {
+    expect(isCouponUserAllowed([], null)).toBe(true);
+    expect(isCouponUserAllowed([], "user-1")).toBe(true);
+  });
+
+  it("requires a matching signed-in user when restricted", () => {
+    expect(isCouponUserAllowed(["user-1"], null)).toBe(false);
+    expect(isCouponUserAllowed(["user-1"], "user-2")).toBe(false);
+    expect(isCouponUserAllowed(["user-1", "user-2"], "user-2")).toBe(true);
   });
 });

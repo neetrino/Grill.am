@@ -28,6 +28,7 @@ export {
 export {
   getAdminPromotionById,
   listAdminPromotions,
+  listCouponUserOptions,
   listPromotionTargetOptions,
 } from "@/features/promotions/application/queries";
 export {

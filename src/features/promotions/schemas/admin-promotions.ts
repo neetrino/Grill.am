@@ -57,6 +57,11 @@ export const upsertPromotionSchema = z.object({
   }, z.boolean()),
   startsAt: z.preprocess(emptyToNull, z.coerce.date().nullable()),
   endsAt: z.preprocess(emptyToNull, z.coerce.date().nullable()),
+  /**
+   * Coupon allowlist. Omit to leave existing rows unchanged on update.
+   * Empty array = unrestricted (zero `promotion_users` rows).
+   */
+  userIds: z.array(z.string().uuid()).max(200).optional(),
 });
 
 export type UpsertPromotionInput = z.infer<typeof upsertPromotionSchema>;

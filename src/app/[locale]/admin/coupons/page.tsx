@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { listAdminPromotions } from "@/features/promotions/application/queries";
+import {
+  listAdminPromotions,
+  listCouponUserOptions,
+} from "@/features/promotions/application/queries";
 import { adminPromotionsFilterSchema } from "@/features/promotions/schemas/admin-promotions";
 import { AdminCouponsView } from "@/features/promotions/ui/AdminCouponsView";
 import { isLocale } from "@/lib/i18n/config";
@@ -57,12 +60,15 @@ export default async function AdminCouponsPage({
         active: undefined,
       };
 
-  const { rows, total, pageSize } = await listAdminPromotions(filters);
+  const [{ rows, total, pageSize }, users] = await Promise.all([
+    listAdminPromotions(filters),
+    listCouponUserOptions(),
+  ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <>
-      <AdminCouponsView locale={locale} coupons={rows} />
+      <AdminCouponsView locale={locale} coupons={rows} users={users} />
       {totalPages > 1 ? (
         <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
           {filters.page > 1 ? (

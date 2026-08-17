@@ -5,10 +5,15 @@ import {
   USER_STATUSES,
 } from "@/features/users/domain/user-lifecycle";
 
+export const ADMIN_USERS_SORT_VALUES = ["created", "orders"] as const;
+export const ADMIN_USERS_SORT_DIRS = ["asc", "desc"] as const;
+
 export const adminUsersFilterSchema = z.object({
   q: z.string().trim().max(100).optional(),
   role: z.enum(USER_ROLES).optional(),
   status: z.enum(USER_STATUSES).optional(),
+  sort: z.enum(ADMIN_USERS_SORT_VALUES).default("created"),
+  dir: z.enum(ADMIN_USERS_SORT_DIRS).default("desc"),
   page: z.coerce.number().int().min(1).max(500).default(1),
 });
 

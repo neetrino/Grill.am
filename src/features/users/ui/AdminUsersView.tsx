@@ -43,16 +43,24 @@ type AdminUsersViewProps = {
   total: number;
   q?: string;
   role?: string;
+  sort: string;
+  dir: string;
+  sortOrdersAscHref: string;
+  sortOrdersDescHref: string;
 };
 
 function roleFilterHref(
   locale: string,
   role: string | undefined,
   q?: string,
+  sort?: string,
+  dir?: string,
 ): string {
   const params = new URLSearchParams();
   if (q) params.set("q", q);
   if (role) params.set("role", role);
+  if (sort && sort !== "created") params.set("sort", sort);
+  if (dir && dir !== "desc") params.set("dir", dir);
   const query = params.toString();
   return query
     ? `/${locale}/admin/users?${query}`
@@ -75,6 +83,10 @@ export function AdminUsersView({
   total,
   q,
   role,
+  sort,
+  dir,
+  sortOrdersAscHref,
+  sortOrdersDescHref,
 }: AdminUsersViewProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.users;
@@ -86,6 +98,10 @@ export function AdminUsersView({
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const ordersSortActive = sort === "orders";
+  const ordersAscActive = ordersSortActive && dir === "asc";
+  const ordersDescActive = ordersSortActive && dir === "desc";
 
   const allIds = users.map((user) => user.id);
   const allSelected =
@@ -138,6 +154,12 @@ export function AdminUsersView({
           aria-label={copy.searchAria}
         />
         {role ? <input type="hidden" name="role" value={role} /> : null}
+        {sort !== "created" ? (
+          <input type="hidden" name="sort" value={sort} />
+        ) : null}
+        {dir !== "desc" ? (
+          <input type="hidden" name="dir" value={dir} />
+        ) : null}
         <Button type="submit" size="sm">
           {common.search}
         </Button>
@@ -153,7 +175,7 @@ export function AdminUsersView({
             return (
               <Link
                 key={pill.label}
-                href={roleFilterHref(locale, pill.value, q)}
+                href={roleFilterHref(locale, pill.value, q, sort, dir)}
                 className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                   active
                     ? "bg-gray-200 text-gray-900"
@@ -231,7 +253,40 @@ export function AdminUsersView({
                   </th>
                   <th className={ADMIN_TABLE_TH}>{table.user}</th>
                   <th className={ADMIN_TABLE_TH}>{table.contact}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{table.orders}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
+                    <span className="inline-flex items-center justify-center gap-1">
+                      <span>{table.orders}</span>
+                      <span
+                        className="inline-flex flex-col leading-none"
+                        aria-label={table.orders}
+                      >
+                        <Link
+                          href={sortOrdersAscHref}
+                          className={`px-0.5 text-[9px] transition-colors hover:text-gray-900 ${
+                            ordersAscActive
+                              ? "text-gray-900"
+                              : "text-gray-300"
+                          }`}
+                          aria-label={table.sortOrdersAsc}
+                          aria-current={ordersAscActive ? "true" : undefined}
+                        >
+                          ▲
+                        </Link>
+                        <Link
+                          href={sortOrdersDescHref}
+                          className={`-mt-0.5 px-0.5 text-[9px] transition-colors hover:text-gray-900 ${
+                            ordersDescActive
+                              ? "text-gray-900"
+                              : "text-gray-300"
+                          }`}
+                          aria-label={table.sortOrdersDesc}
+                          aria-current={ordersDescActive ? "true" : undefined}
+                        >
+                          ▼
+                        </Link>
+                      </span>
+                    </span>
+                  </th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{table.roles}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{table.status}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{table.created}</th>

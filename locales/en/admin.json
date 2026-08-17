@@ -402,7 +402,9 @@
       "selectAll": "Select all users",
       "selectUser": "Select {name}",
       "suspendNamed": "Suspend {name}",
-      "activateNamed": "Activate {name}"
+      "activateNamed": "Activate {name}",
+      "sortOrdersAsc": "Sort by order count, ascending",
+      "sortOrdersDesc": "Sort by order count, descending"
     },
     "bulk": {
       "selectedCount": "Selected {count} user(s)",
@@ -613,6 +615,11 @@
       "expires": "Expires (optional)",
       "selectUsers": "Select users",
       "allUsersHint": "All users can use this coupon",
+      "selectedUsersHint": "{count} user(s) selected — only they can use this coupon",
+      "searchUsers": "Search by name, email, or phone",
+      "noUsers": "No active customers found.",
+      "noUsersMatch": "No users match this search.",
+      "clearUsers": "Clear selection (available to everyone)",
       "codeRequired": "Code is required."
     }
   },

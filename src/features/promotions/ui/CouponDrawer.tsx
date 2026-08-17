@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
 
 import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
@@ -19,8 +18,12 @@ import {
   createPromotionAction,
   updatePromotionAction,
 } from "@/features/promotions/application/upsert-promotion";
-import type { AdminPromotionListItem } from "@/features/promotions/application/queries";
+import type {
+  AdminPromotionListItem,
+  CouponUserOption,
+} from "@/features/promotions/application/queries";
 import type { DiscountType } from "@/features/promotions/domain/promotion-rules";
+import { CouponUserPicker } from "@/features/promotions/ui/CouponUserPicker";
 import {
   formatAppDateTimeLocalInput,
   parseAppDateTimeLocal,
@@ -37,6 +40,7 @@ type CouponDrawerCoupon = Pick<
   | "totalUsageLimit"
   | "endsAt"
   | "isActive"
+  | "userIds"
 >;
 
 type CouponDrawerProps = {
@@ -44,6 +48,7 @@ type CouponDrawerProps = {
   open: boolean;
   onClose: () => void;
   coupon?: CouponDrawerCoupon | null;
+  users: CouponUserOption[];
 };
 
 function toDateTimeLocal(value: Date | string | null | undefined): string {
@@ -60,6 +65,7 @@ export function CouponDrawer({
   open,
   onClose,
   coupon = null,
+  users,
 }: CouponDrawerProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.coupons.drawer;
@@ -74,6 +80,7 @@ export function CouponDrawer({
   const [value, setValue] = useState("10");
   const [quantity, setQuantity] = useState("1");
   const [expiresAt, setExpiresAt] = useState("");
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   // Tracks the `open`/`coupon` combo last synced into local form state.
@@ -91,6 +98,7 @@ export function CouponDrawer({
       setValue("10");
       setQuantity("1");
       setExpiresAt("");
+      setSelectedUserIds([]);
       setError(null);
     } else if (coupon) {
       setName(coupon.code ?? "");
@@ -103,7 +111,10 @@ export function CouponDrawer({
         coupon.totalUsageLimit != null ? String(coupon.totalUsageLimit) : "",
       );
       setExpiresAt(toDateTimeLocal(coupon.endsAt));
+      setSelectedUserIds(coupon.userIds);
       setError(null);
+    } else {
+      setSelectedUserIds([]);
     }
   }
 
@@ -167,6 +178,7 @@ export function CouponDrawer({
             isActive: coupon?.isActive ?? true,
             startsAt: null,
             endsAt: expiresAt ? parseAppDateTimeLocal(expiresAt) : null,
+            userIds: selectedUserIds,
           };
 
           startTransition(async () => {
@@ -258,19 +270,12 @@ export function CouponDrawer({
           />
         </div>
 
-        <div className="rounded-xl border border-gray-300 px-4 py-3">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">
-                {copy.selectUsers}
-              </p>
-              <p className="mt-0.5 text-sm text-gray-500">
-                {copy.allUsersHint}
-              </p>
-            </div>
-            <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-gray-400" />
-          </div>
-        </div>
+        <CouponUserPicker
+          users={users}
+          selectedIds={selectedUserIds}
+          disabled={isPending}
+          onChange={setSelectedUserIds}
+        />
 
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
       </form>

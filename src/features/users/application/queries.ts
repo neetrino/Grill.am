@@ -1,6 +1,16 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray, or, type SQL } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  ilike,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import { orders, users } from "@/db/schema";
@@ -47,10 +57,7 @@ export type AdminUserDetail = {
   }>;
 };
 
-/** Lists users for the admin surface with optional search/role/status filters. */
-export async function listAdminUsers(
-  filters: AdminUsersFilter,
-): Promise<{ rows: AdminUserListItem[]; total: number; pageSize: number }> {
+function buildUsersWhere(filters: AdminUsersFilter): SQL | undefined {
   const conditions: SQL[] = [];
 
   if (filters.role) {
@@ -73,8 +80,31 @@ export async function listAdminUsers(
     );
   }
 
-  const where = conditions.length > 0 ? and(...conditions) : undefined;
+  return conditions.length > 0 ? and(...conditions) : undefined;
+}
+
+/** Lists users for the admin surface with optional search/role/status filters. */
+export async function listAdminUsers(
+  filters: AdminUsersFilter,
+): Promise<{ rows: AdminUserListItem[]; total: number; pageSize: number }> {
+  const where = buildUsersWhere(filters);
   const offset = (filters.page - 1) * PAGE_SIZE;
+
+  const orderCounts = getDb()
+    .select({
+      userId: orders.userId,
+      orderCount: count().as("order_count"),
+    })
+    .from(orders)
+    .groupBy(orders.userId)
+    .as("user_order_counts");
+
+  const orderCountExpr = sql<number>`coalesce(${orderCounts.orderCount}, 0)`;
+  const direction = filters.dir === "asc" ? asc : desc;
+  const orderBy =
+    filters.sort === "orders"
+      ? [direction(orderCountExpr), desc(users.createdAt)]
+      : [direction(users.createdAt)];
 
   const [rows, [totalRow]] = await Promise.all([
     getDb()
@@ -88,43 +118,19 @@ export async function listAdminUsers(
         status: users.status,
         lastLoginAt: users.lastLoginAt,
         createdAt: users.createdAt,
+        orderCount: orderCountExpr.mapWith(Number),
       })
       .from(users)
+      .leftJoin(orderCounts, eq(users.id, orderCounts.userId))
       .where(where)
-      .orderBy(desc(users.createdAt))
+      .orderBy(...orderBy)
       .limit(PAGE_SIZE)
       .offset(offset),
     getDb().select({ value: count() }).from(users).where(where),
   ]);
 
-  const orderCountMap = new Map<string, number>();
-  if (rows.length > 0) {
-    const counts = await getDb()
-      .select({
-        userId: orders.userId,
-        value: count(),
-      })
-      .from(orders)
-      .where(
-        inArray(
-          orders.userId,
-          rows.map((row) => row.id),
-        ),
-      )
-      .groupBy(orders.userId);
-
-    for (const row of counts) {
-      if (row.userId) {
-        orderCountMap.set(row.userId, row.value);
-      }
-    }
-  }
-
   return {
-    rows: rows.map((row) => ({
-      ...row,
-      orderCount: orderCountMap.get(row.id) ?? 0,
-    })),
+    rows,
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
   };
