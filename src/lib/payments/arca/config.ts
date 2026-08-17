@@ -24,7 +24,7 @@ export {
 /** Official Merchant Manual §9 connection coordinates (IDBank iPay). */
 export const ARCA_OFFICIAL_PRODUCTION_BASE_URL =
   "https://ipay.arca.am/payment/rest";
-/** Alternate ArCa EPG production base (bank-issued EPG host). */
+/** Alternate ArCa EPG production base URL (bank-issued EPG host). */
 export const ARCA_OFFICIAL_EPG_PRODUCTION_BASE_URL =
   "https://epg.arca.am/payment/rest";
 export const ARCA_OFFICIAL_TEST_BASE_URL =
