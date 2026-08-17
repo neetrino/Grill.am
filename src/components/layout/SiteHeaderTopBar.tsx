@@ -28,6 +28,7 @@ export function SiteHeaderTopBar({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <StorePhoneDropdown
               phones={dictionary.contact.storePhones}
+              whatsappPhones={dictionary.contact.storeWhatsAppPhones}
               toggleLabel={dictionary.contact.callTitle}
               variant="topbar"
             />

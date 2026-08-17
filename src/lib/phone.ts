@@ -6,3 +6,8 @@ export function phoneDigits(phone: string): string {
 export function telHref(phone: string): string {
   return `tel:${phoneDigits(phone)}`;
 }
+
+/** WhatsApp deep link for a display phone number. */
+export function whatsappHref(phone: string): string {
+  return `https://wa.me/${phoneDigits(phone)}`;
+}

@@ -15,6 +15,52 @@ function excerpt(html: string): string {
 }
 
 /**
+ * Add-to-cart is optimistic (UI updates before the server action finishes).
+ * Wait until the durable `setCartLineQuantity` POST completes so checkout
+ * does not race an aborted write (ECONNRESET in CI).
+ */
+async function waitForCartLinePersist(
+  page: Page,
+  productId: string,
+): Promise<void> {
+  await page.waitForResponse(
+    (response) => {
+      const request = response.request();
+      if (request.method() !== "POST") {
+        return false;
+      }
+      if (!response.ok()) {
+        return false;
+      }
+      if (!request.headers()["next-action"]) {
+        return false;
+      }
+      const body =
+        request.postData() ??
+        request.postDataBuffer()?.toString("utf8") ??
+        "";
+      return body.includes(productId);
+    },
+    { timeout: 30_000 },
+  );
+}
+
+async function assertGuestCartCookie(page: Page): Promise<void> {
+  await expect
+    .poll(
+      async () => {
+        const cookies = await page.context().cookies();
+        return cookies.some((cookie) => cookie.name === "ws_guest_cart");
+      },
+      {
+        timeout: 10_000,
+        message: "Guest cart cookie ws_guest_cart was not set after add-to-cart",
+      },
+    )
+    .toBe(true);
+}
+
+/**
  * Deterministic cart seed for payment E2E. Throws with diagnostics on failure.
  * Never silently returns false.
  */
@@ -31,15 +77,21 @@ export async function seedCartViaUi(
   }
   const fixture = (await fixtureResponse.json()) as {
     ok: boolean;
-    product?: { slug: string; title: string; priceAmount: number };
+    product?: {
+      id: string;
+      slug: string;
+      title: string;
+      priceAmount: number;
+    };
   };
-  if (!fixture.ok || !fixture.product) {
+  if (!fixture.ok || !fixture.product?.id) {
     throw new Error(
       `E2E fixture missing product for sku=${E2E_PAYMENT_PRODUCT_SKU}`,
     );
   }
 
   const slug = fixture.product.slug || E2E_PAYMENT_PRODUCT_SLUG;
+  const productId = fixture.product.id;
   const productUrl = `/en/products/${slug}`;
   await page.goto(productUrl, { waitUntil: "domcontentloaded" });
 
@@ -68,16 +120,12 @@ export async function seedCartViaUi(
     timeout: 15_000,
   });
   await expect(add).toBeEnabled();
-  await add.click();
-  // Toast can flake under Neon load; checkout line-item assert below is authoritative.
-  const toastVisible = await page
-    .getByText(/added to cart|ավելացվ|добавлен/i)
-    .waitFor({ state: "visible", timeout: 15_000 })
-    .then(() => true)
-    .catch(() => false);
-  if (!toastVisible) {
-    // Continue — missing toast is only fatal if checkout has no line item.
-  }
+
+  await Promise.all([
+    waitForCartLinePersist(page, productId),
+    add.click(),
+  ]);
+  await assertGuestCartCookie(page);
 
   await page.goto("/en/checkout", { waitUntil: "domcontentloaded" });
   await expect(

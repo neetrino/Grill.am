@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, type LucideIcon } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -16,6 +16,10 @@ import {
 } from "@/components/ui/dropdown-styles";
 import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
+import {
+  CatalogAllCategoriesIcon,
+  resolveCatalogCategoryIcon,
+} from "@/features/products/ui/catalog-category-icon";
 import type { Locale } from "@/lib/i18n/config";
 
 type NavCategoriesDropdownProps = {
@@ -31,7 +35,37 @@ type NavCategoriesDropdownProps = {
 
 const CLOSE_DELAY_MS = 120;
 const NAV_MENU_GAP_PX = 8;
-const NAV_MENU_MIN_WIDTH_PX = 220;
+const NAV_MENU_MIN_WIDTH_PX = 280;
+const DROPDOWN_OPTION_ROW_CLASS = "dropdown-option--row";
+
+function menuOptionClass(active: boolean): string {
+  return `${DROPDOWN_OPTION_CLASS} ${DROPDOWN_OPTION_ROW_CLASS} group font-medium hover:text-brand-red ${
+    active
+      ? `${DROPDOWN_OPTION_SELECTED_CLASS} text-brand-red`
+      : "text-[#101010]"
+  }`;
+}
+
+function MenuOptionIcon({
+  Icon,
+  active,
+}: {
+  Icon: LucideIcon;
+  active: boolean;
+}) {
+  return (
+    <span
+      className={`flex size-9 shrink-0 items-center justify-center rounded-[12px] transition-colors ${
+        active
+          ? "bg-[#fff1eb] text-brand-red"
+          : "bg-[#f5f5f5] text-[#8a8a8a] group-hover:bg-[#fff1eb] group-hover:text-brand-red"
+      }`}
+      aria-hidden
+    >
+      <Icon className="size-[18px]" strokeWidth={1.9} />
+    </span>
+  );
+}
 
 export function NavCategoriesDropdown({
   locale,
@@ -52,8 +86,10 @@ export function NavCategoriesDropdown({
   const productsPath = `/${locale}/products`;
   const triggerActive = isMenuActive;
   const open = mounted && visible;
+  const allActive = isOnProductsList && !activeCategorySlug;
   const menuPosition = useDropdownPortalPosition(mounted, triggerRef, {
-    matchTriggerWidth: true,
+    matchTriggerWidth: false,
+    panelWidthPx: NAV_MENU_MIN_WIDTH_PX,
     gapPx: NAV_MENU_GAP_PX,
   });
 
@@ -77,6 +113,12 @@ export function NavCategoriesDropdown({
       setMounted(false);
       closeTimerRef.current = null;
     }, CLOSE_DELAY_MS);
+  }
+
+  function closeMenu(): void {
+    clearCloseTimer();
+    setVisible(false);
+    setMounted(false);
   }
 
   useEffect(() => {
@@ -157,7 +199,7 @@ export function NavCategoriesDropdown({
               id={menuId}
               role="menu"
               aria-label={label}
-              className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-1.5 ${dropdownPanelStateClass(visible)}`}
+              className={`${DROPDOWN_PANEL_PORTAL_CLASS} !max-h-[min(70vh,380px)] overflow-y-auto py-2 shadow-[0_12px_32px_rgba(16,16,16,0.12)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${dropdownPanelStateClass(visible)}`}
               style={portalStyle}
               onMouseEnter={openMenu}
               onMouseLeave={scheduleClose}
@@ -166,40 +208,40 @@ export function NavCategoriesDropdown({
                 href={productsPath}
                 prefetchPolicy="intent"
                 role="menuitem"
-                className={`${DROPDOWN_OPTION_CLASS} font-medium hover:text-brand-red ${
-                  isOnProductsList && !activeCategorySlug
-                    ? `${DROPDOWN_OPTION_SELECTED_CLASS} text-brand-red`
-                    : "text-[#101010]"
-                }`}
-                onClick={() => {
-                  clearCloseTimer();
-                  setVisible(false);
-                  setMounted(false);
-                }}
+                className={menuOptionClass(allActive)}
+                onClick={closeMenu}
               >
-                {allLabel}
+                <MenuOptionIcon
+                  Icon={CatalogAllCategoriesIcon}
+                  active={allActive}
+                />
+                <span className="min-w-0 truncate">{allLabel}</span>
               </AppLink>
-              {categories.map((category) => {
+              {categories.length > 0 ? (
+                <div
+                  className="mx-3 my-1.5 h-px bg-[#f0f1f3]"
+                  role="separator"
+                />
+              ) : null}
+              {categories.map((category, index) => {
                 const href = `${productsPath}?category=${encodeURIComponent(category.slug)}`;
                 const active = activeCategorySlug === category.slug;
+                const Icon = resolveCatalogCategoryIcon(
+                  category.slug,
+                  category.title,
+                  index,
+                );
                 return (
                   <AppLink
                     key={category.id}
                     href={href}
                     prefetchPolicy="intent"
                     role="menuitem"
-                    className={`${DROPDOWN_OPTION_CLASS} font-medium hover:text-brand-red ${
-                      active
-                        ? `${DROPDOWN_OPTION_SELECTED_CLASS} text-brand-red`
-                        : "text-[#101010]"
-                    }`}
-                    onClick={() => {
-                      clearCloseTimer();
-                      setVisible(false);
-                      setMounted(false);
-                    }}
+                    className={menuOptionClass(active)}
+                    onClick={closeMenu}
                   >
-                    {category.title}
+                    <MenuOptionIcon Icon={Icon} active={active} />
+                    <span className="min-w-0 truncate">{category.title}</span>
                   </AppLink>
                 );
               })}

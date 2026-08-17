@@ -153,6 +153,13 @@ img {
   transition: background-color var(--dropdown-anim-ms) ease-out;
 }
 
+.dropdown-option.dropdown-option--row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+}
+
 .dropdown-option:hover {
   background: var(--dropdown-option-hover);
 }

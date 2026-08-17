@@ -20,6 +20,10 @@ import {
 } from "@/components/layout/storefront-nav";
 import { AppLink } from "@/components/ui/AppLink";
 import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
+import {
+  CatalogAllCategoriesIcon,
+  resolveCatalogCategoryIcon,
+} from "@/features/products/ui/catalog-category-icon";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -269,16 +273,34 @@ export function MobileNavPanel({
                           prefetchPolicy="intent"
                           className={
                             pathname === productsPath && !categorySlug
-                              ? "block rounded-xl px-3 py-2.5 text-sm font-semibold text-brand-red"
-                              : "block rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                              ? "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-brand-red"
+                              : "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
                           }
                           onClick={onClose}
                         >
+                          <span
+                            className={`flex size-8 shrink-0 items-center justify-center rounded-xl ${
+                              pathname === productsPath && !categorySlug
+                                ? "bg-[#fff4ee] text-brand-red"
+                                : "bg-[#f3f4f6] text-[#6b7280]"
+                            }`}
+                            aria-hidden
+                          >
+                            <CatalogAllCategoriesIcon
+                              className="size-4"
+                              strokeWidth={1.85}
+                            />
+                          </span>
                           {dictionary.nav.allCategories}
                         </AppLink>
-                        {categories.map((category) => {
+                        {categories.map((category, index) => {
                           const href = `${productsPath}?category=${encodeURIComponent(category.slug)}`;
                           const active = categorySlug === category.slug;
+                          const Icon = resolveCatalogCategoryIcon(
+                            category.slug,
+                            category.title,
+                            index,
+                          );
                           return (
                             <AppLink
                               key={category.id}
@@ -286,11 +308,24 @@ export function MobileNavPanel({
                               prefetchPolicy="intent"
                               className={
                                 active
-                                  ? "block rounded-xl px-3 py-2.5 text-sm font-semibold text-brand-red"
-                                  : "block rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                  ? "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-brand-red"
+                                  : "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
                               }
                               onClick={onClose}
                             >
+                              <span
+                                className={`flex size-8 shrink-0 items-center justify-center rounded-xl ${
+                                  active
+                                    ? "bg-[#fff4ee] text-brand-red"
+                                    : "bg-[#f3f4f6] text-[#6b7280]"
+                                }`}
+                                aria-hidden
+                              >
+                                <Icon
+                                  className="size-4"
+                                  strokeWidth={1.85}
+                                />
+                              </span>
                               {category.title}
                             </AppLink>
                           );
