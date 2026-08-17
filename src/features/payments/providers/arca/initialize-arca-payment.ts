@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 
 import { orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { getArcaPendingTimeoutMs } from "@/features/payments/application/payment-job-config";
 import {
   PaymentNotFoundError,
   PaymentProviderNotConfiguredError,
@@ -371,7 +372,7 @@ async function persistRegistration(args: {
           formUrl: args.formUrl,
           initializationState: "registered",
         }),
-        expiresAt: new Date(now.getTime() + 20 * 60 * 1000),
+        expiresAt: new Date(now.getTime() + getArcaPendingTimeoutMs()),
         updatedAt: now,
       })
       .where(eq(payments.id, payment.id));

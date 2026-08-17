@@ -12,7 +12,7 @@
 | ARCA registration failures | ≥3 in 10m | High | Check `ARCA_*` env, bank connectivity, formUrl allowlist; keep flag off if sandbox |
 | ARCA status-query failures | ≥3 in 10m | High | Retry recheck; run dry reconcile; escalate bank if persistent |
 | iDram precheck/confirmation failures | ≥5 `NO` responses in 15m for valid bills | High | Compare RESULT_URL account/amount/bill; merchant portal |
-| PENDING older than threshold | ARCA >20m or iDram >60m (local TTL) | Medium | Dry reconcile; ARCA recheck; iDram portal; expire abandoned via admin |
+| PENDING older than threshold | ARCA >`PAYMENT_PENDING_TIMEOUT_MINUTES` (default 60) or iDram >60m (local TTL) | Medium | Dry reconcile; ARCA recheck; iDram portal; expire via cron/admin |
 | REQUIRES_REVIEW created | Any | High | Admin order detail → fulfill or resolve with audit; payment remains CAPTURED |
 | Reconciliation mismatch | Any dry-report `failed_may_be_paid` / cart mismatch | High | Follow `PAYMENTS-RECONCILIATION.md`; never SQL-override status |
 | Order email send failures | Repeated `order_email.send_*` / `order_email.after_failed` | Medium | Check Resend/`EMAIL_FROM`; emails are best-effort and must not block checkout |

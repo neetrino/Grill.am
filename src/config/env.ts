@@ -68,6 +68,27 @@ const envSchema = z.object({
   PAYMENT_ENABLE_ARCA: optionalBoolean(false),
   /** iDram wallet payments — disabled until verified. */
   PAYMENT_ENABLE_IDRAM: optionalBoolean(false),
+  /**
+   * How often the payment reconcile cron should run (minutes).
+   * Keep in sync with `vercel.json` crons schedule (default 30 → twice/hour).
+   */
+  PAYMENT_RECONCILE_INTERVAL_MINUTES: z.preprocess((value) => {
+    if (value === undefined || value === null || value === "") {
+      return 30;
+    }
+    return value;
+  }, z.coerce.number().int().min(5).max(120)),
+  /**
+   * Local ARCA attempt TTL before abandoned PENDING may be expired (minutes).
+   */
+  PAYMENT_PENDING_TIMEOUT_MINUTES: z.preprocess((value) => {
+    if (value === undefined || value === null || value === "") {
+      return 60;
+    }
+    return value;
+  }, z.coerce.number().int().min(10).max(1440)),
+  /** Bearer secret for `/api/v1/cron/*` (Vercel Cron Authorization header). */
+  CRON_SECRET: optionalNonEmptyString(),
 
   /**
    * ARCA EPG (server-only). Required when PAYMENT_ENABLE_ARCA=true.
@@ -148,6 +169,11 @@ export function getEnv(): AppEnv {
     PAYMENT_ENABLE_COD: process.env.PAYMENT_ENABLE_COD,
     PAYMENT_ENABLE_ARCA: process.env.PAYMENT_ENABLE_ARCA,
     PAYMENT_ENABLE_IDRAM: process.env.PAYMENT_ENABLE_IDRAM,
+    PAYMENT_RECONCILE_INTERVAL_MINUTES:
+      process.env.PAYMENT_RECONCILE_INTERVAL_MINUTES,
+    PAYMENT_PENDING_TIMEOUT_MINUTES:
+      process.env.PAYMENT_PENDING_TIMEOUT_MINUTES,
+    CRON_SECRET: process.env.CRON_SECRET,
     ARCA_ENVIRONMENT:
       process.env.ARCA_ENVIRONMENT ||
       (process.env.ARCA_MODE === "test" ||

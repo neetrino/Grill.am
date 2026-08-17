@@ -33,5 +33,6 @@ export type { PaymentPresentationState } from "@/features/payments/presentation/
 export { initializeArcaPayment } from "@/features/payments/providers/arca/initialize-arca-payment";
 export { processArcaPaymentStatus } from "@/features/payments/providers/arca/process-arca-status";
 export { reconcileArcaPayments } from "@/features/payments/providers/arca/reconcile-arca-payments";
+export { runScheduledPaymentReconcile } from "@/features/payments/application/run-scheduled-payment-reconcile";
 export { retryArcaPayment } from "@/features/payments/providers/arca/retry-arca-payment";
 export { verifyArcaPayment } from "@/features/payments/providers/arca/verify-arca-payment";
