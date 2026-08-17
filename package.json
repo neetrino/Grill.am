@@ -29,6 +29,7 @@
     "products:wc-import:apply": "tsx scripts/import-woocommerce-products/cli.ts --mode apply",
     "products:wc-import:verify": "tsx scripts/import-woocommerce-products/cli.ts --mode verify",
     "payments:arca:reconcile": "tsx --require ./scripts/preload-server-only.cjs scripts/reconcile-arca-payments.ts",
+    "payments:reconcile:full": "tsx --require ./scripts/preload-server-only.cjs scripts/reconcile-arca-payments.ts --full",
     "payments:idram:audit-pending": "tsx --require ./scripts/preload-server-only.cjs scripts/audit-idram-pending.ts",
     "payments:reconcile:dry": "tsx --require ./scripts/preload-server-only.cjs scripts/payments-reconcile-dry.ts",
     "payments:readiness": "tsx scripts/payments-readiness.ts",

@@ -135,10 +135,15 @@ When `PAYMENT_ENABLE_IDRAM=true`, require server-only `IDRAM_REC_ACCOUNT`,
 
 ```text
 pnpm payments:arca:reconcile
+pnpm payments:arca:reconcile -- --full
 pnpm payments:idram:audit-pending
 ```
 
 ARCA: bounded provider status poll. iDram: local pending/review/security audit only (no official status API).
+
+Production schedule: Vercel Cron `GET /api/v1/cron/payments-reconcile` every 30 minutes
+(`PAYMENT_RECONCILE_INTERVAL_MINUTES` + `CRON_SECRET`). Job syncs ARCA status then expires
+local attempts past `PAYMENT_PENDING_TIMEOUT_MINUTES` (default 60).
 
 ## Not implemented yet
 

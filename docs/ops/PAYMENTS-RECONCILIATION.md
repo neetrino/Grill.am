@@ -12,11 +12,29 @@ pnpm payments:reconcile:dry
 # ARCA: queries getOrderStatusExtended for stale PENDING/AUTHORIZED (requires ARCA enabled + credentials)
 pnpm payments:arca:reconcile
 
+# Same as cron job: ARCA status sync + expire local TTL attempts
+pnpm payments:arca:reconcile -- --full
+
 # iDram: local pending/review/security audit only (no official status-query API)
 pnpm payments:idram:audit-pending
 
 pnpm payments:readiness
 ```
+
+## Scheduled cron (twice per hour)
+
+Vercel Cron hits `GET /api/v1/cron/payments-reconcile` every 30 minutes (`vercel.json`).
+
+| Env | Default | Role |
+| --- | --- | --- |
+| `PAYMENT_RECONCILE_INTERVAL_MINUTES` | `30` | Documented interval (keep aligned with `vercel.json`) |
+| `PAYMENT_PENDING_TIMEOUT_MINUTES` | `60` | Local ARCA `expiresAt` TTL |
+| `CRON_SECRET` | — | `Authorization: Bearer …` required by the cron route |
+
+Job steps (idempotent):
+
+1. Query ARCA `getOrderStatusExtended` for stale PENDING/AUTHORIZED and apply status.
+2. Expire local attempts past `expiresAt` via `expirePaymentAttempt` (never downgrades CAPTURED).
 
 ## Dry-report categories
 
@@ -49,16 +67,7 @@ Code currently sets local attempt TTLs:
 
 | Provider | Local `expiresAt` | Source |
 | --- | --- | --- |
-| ARCA | 20 minutes | `initialize-arca-payment.ts` |
+| ARCA | `PAYMENT_PENDING_TIMEOUT_MINUTES` (default 60) | `initialize-arca-payment.ts` |
 | iDram | 60 minutes | `IDRAM_ATTEMPT_TTL_MS` |
 
-**Product must confirm before automation expands:**
-
-1. How long may ARCA PENDING remain active?
-2. How long may iDram PENDING remain active?
-3. Can the customer retry before expiry?
-4. Does retry create a new attempt? (current code: yes for new provider attempts)
-5. When may an abandoned cart be released?
-
-Until approved, operators expire abandoned attempts manually via admin actions.  
-Any future expiry job must be idempotent, skip CAPTURED, preserve audit events, and never double-decrement stock.
+Scheduled expiry runs with the reconcile cron after provider status sync.
