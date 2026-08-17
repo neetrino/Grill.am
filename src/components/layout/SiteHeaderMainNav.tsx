@@ -343,6 +343,7 @@ export function SiteHeaderMainNav({
                   <div className="hidden items-center gap-6 text-base font-medium text-[#333] lg:flex">
                     <StorePhoneDropdown
                       phones={dictionary.contact.storePhones}
+                      whatsappPhones={dictionary.contact.storeWhatsAppPhones}
                       toggleLabel={dictionary.contact.callTitle}
                       variant="header"
                     />

@@ -183,6 +183,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 <li>
                   <StorePhoneDropdown
                     phones={dictionary.contact.storePhones}
+                    whatsappPhones={dictionary.contact.storeWhatsAppPhones}
                     toggleLabel={dictionary.contact.callTitle}
                     variant="footer"
                   />

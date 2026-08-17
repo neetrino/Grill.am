@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { ChevronDown, Phone } from "lucide-react";
 
+import { WhatsAppIcon } from "@/components/layout/SocialIcons";
 import {
   DROPDOWN_ANIMATION_MS,
   DROPDOWN_PANEL_PORTAL_CLASS,
@@ -12,10 +13,12 @@ import {
   dropdownPanelStateClass,
   dropdownPortalStyle,
 } from "@/components/ui/dropdown-styles";
-import { telHref } from "@/lib/phone";
+import { phoneDigits, telHref, whatsappHref } from "@/lib/phone";
 
 type StorePhoneDropdownProps = {
   phones: readonly string[];
+  /** Numbers shown in the dropdown with a WhatsApp icon / wa.me link. */
+  whatsappPhones?: readonly string[];
   toggleLabel: string;
   variant?: "footer" | "header" | "topbar";
 };
@@ -25,6 +28,11 @@ type MenuPosition = {
   left: number;
   minWidth: number;
   maxWidth: number;
+};
+
+type PhoneMenuItem = {
+  phone: string;
+  channel: "phone" | "whatsapp";
 };
 
 const VIEWPORT_PADDING = 16;
@@ -39,7 +47,8 @@ const FOOTER_STYLES = {
   chevron: "mt-0.5 shrink-0 text-[#9C9FA1] transition hover:text-white",
   chevronIcon: "h-[18px] w-[18px]",
   menu: `fixed z-[400] max-h-[140px] origin-top space-y-1 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-2 py-2 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${SCROLLBAR_HIDDEN_CLASS}`,
-  item: "block rounded-lg px-2.5 py-1.5 leading-5 break-words transition hover:bg-white/10 hover:text-white",
+  item: "flex items-center gap-2 rounded-lg px-2.5 py-1.5 leading-5 break-words transition hover:bg-white/10 hover:text-white",
+  menuIcon: "size-4 shrink-0 text-brand-yellow",
 } as const;
 
 const LIGHT_VARIANT_STYLES = {
@@ -52,6 +61,7 @@ const LIGHT_VARIANT_STYLES = {
     chevronIcon: "h-5 w-5",
     menuLink: `${DROPDOWN_OPTION_CLASS} !flex items-center gap-2 hover:text-brand-red`,
     menuIcon: "size-4 shrink-0 text-[#333]",
+    whatsappIcon: "size-4 shrink-0 text-[#25D366]",
   },
   topbar: {
     root: "relative z-20",
@@ -62,11 +72,39 @@ const LIGHT_VARIANT_STYLES = {
     chevronIcon: "h-5 w-5",
     menuLink: `${DROPDOWN_OPTION_CLASS} !flex items-center gap-2 hover:text-brand-red`,
     menuIcon: "size-4 shrink-0",
+    whatsappIcon: "size-4 shrink-0 text-[#25D366]",
   },
 } as const;
 
+/** Builds dropdown rows: WhatsApp numbers first, then remaining call-only phones. */
+function buildPhoneMenuItems(
+  phones: readonly string[],
+  whatsappPhones: readonly string[],
+): PhoneMenuItem[] {
+  const [, ...rest] = phones;
+  const seen = new Set<string>();
+  const items: PhoneMenuItem[] = [];
+
+  for (const phone of whatsappPhones) {
+    const key = phoneDigits(phone);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    items.push({ phone, channel: "whatsapp" });
+  }
+
+  for (const phone of rest) {
+    const key = phoneDigits(phone);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    items.push({ phone, channel: "phone" });
+  }
+
+  return items;
+}
+
 export function StorePhoneDropdown({
   phones,
+  whatsappPhones = [],
   toggleLabel,
   variant = "header",
 }: StorePhoneDropdownProps) {
@@ -79,10 +117,14 @@ export function StorePhoneDropdown({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLUListElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [primary, ...rest] = phones;
+  const [primary] = phones;
+  const menuItems = useMemo(
+    () => buildPhoneMenuItems(phones, whatsappPhones),
+    [phones, whatsappPhones],
+  );
   const isFooter = variant === "footer";
   const lightStyles = isFooter ? null : LIGHT_VARIANT_STYLES[variant];
-  const showChevron = rest.length > 0;
+  const showChevron = menuItems.length > 0;
   const animationMs = isFooter ? 200 : DROPDOWN_ANIMATION_MS;
 
   function clearCloseTimer(): void {
@@ -229,14 +271,29 @@ export function StorePhoneDropdown({
                 msOverflowStyle: "none",
               }}
             >
-              {rest.map((phone) => (
-                <li key={phone}>
+              {menuItems.map((item) => (
+                <li key={`${item.channel}-${item.phone}`}>
                   <a
-                    href={telHref(phone)}
+                    href={
+                      item.channel === "whatsapp"
+                        ? whatsappHref(item.phone)
+                        : telHref(item.phone)
+                    }
                     className={FOOTER_STYLES.item}
+                    target={item.channel === "whatsapp" ? "_blank" : undefined}
+                    rel={
+                      item.channel === "whatsapp"
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
                     onClick={closeMenu}
                   >
-                    {phone}
+                    {item.channel === "whatsapp" ? (
+                      <WhatsAppIcon className={FOOTER_STYLES.menuIcon} />
+                    ) : (
+                      <Phone className={FOOTER_STYLES.menuIcon} aria-hidden />
+                    )}
+                    {item.phone}
                   </a>
                 </li>
               ))}
@@ -248,11 +305,29 @@ export function StorePhoneDropdown({
               className={`${DROPDOWN_PANEL_PORTAL_CLASS} ${dropdownPanelStateClass(visible)}`}
               style={dropdownPortalStyle(menuPosition)}
             >
-              {rest.map((phone) => (
-                <li key={phone}>
-                  <a href={telHref(phone)} className={lightStyles.menuLink}>
-                    <Phone className={lightStyles.menuIcon} aria-hidden />
-                    {phone}
+              {menuItems.map((item) => (
+                <li key={`${item.channel}-${item.phone}`}>
+                  <a
+                    href={
+                      item.channel === "whatsapp"
+                        ? whatsappHref(item.phone)
+                        : telHref(item.phone)
+                    }
+                    className={lightStyles.menuLink}
+                    target={item.channel === "whatsapp" ? "_blank" : undefined}
+                    rel={
+                      item.channel === "whatsapp"
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    onClick={closeMenu}
+                  >
+                    {item.channel === "whatsapp" ? (
+                      <WhatsAppIcon className={lightStyles.whatsappIcon} />
+                    ) : (
+                      <Phone className={lightStyles.menuIcon} aria-hidden />
+                    )}
+                    {item.phone}
                   </a>
                 </li>
               ))}
