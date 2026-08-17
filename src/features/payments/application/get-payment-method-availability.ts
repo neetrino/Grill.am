@@ -11,6 +11,7 @@ import {
 } from "@/features/payments/domain/payment-availability";
 import type { PaymentMethod } from "@/features/payments/domain/payment-method";
 import { applyE2ePaymentAvailabilityOverride } from "@/lib/e2e/payment-availability-override";
+import { getArcaConfig } from "@/lib/payments/arca/config";
 
 export type PaymentAvailabilityViewer = {
   isAdmin?: boolean;
@@ -21,6 +22,20 @@ function isE2eMockMode(): boolean {
     process.env.NODE_ENV !== "production" &&
     process.env.E2E_PROVIDER_MODE?.trim().toLowerCase() === "mock"
   );
+}
+
+function withArcaCredentialsGate(
+  availability: PaymentMethodAvailability,
+): PaymentMethodAvailability {
+  if (!availability.arca) {
+    return availability;
+  }
+  // Hosted 3-D Secure form requires a complete ARCA runtime config.
+  // Admin may bypass PAYMENT_ENABLE_ARCA, but never missing credentials.
+  if (getArcaConfig() === null) {
+    return { ...availability, arca: false };
+  }
+  return availability;
 }
 
 function resolveBaseAvailability(): PaymentMethodAvailability {
@@ -41,14 +56,17 @@ function resolveViewerAvailability(
 ): PaymentMethodAvailability {
   const base = resolveBaseAvailability();
   if (isE2eMockMode()) {
-    return base;
+    return withArcaCredentialsGate(base);
   }
-  return applyArcaViewerGate(base, viewer?.isAdmin === true);
+  return withArcaCredentialsGate(
+    applyArcaViewerGate(base, viewer?.isAdmin === true),
+  );
 }
 
 /**
  * Server-authoritative payment method flags from validated env (+ E2E override).
- * Customers follow `PAYMENT_ENABLE_*`; admin may use ARCA even when its flag is off.
+ * Customers follow `PAYMENT_ENABLE_*`; admin may use ARCA when its flag is off
+ * only if ARCA runtime credentials are present.
  */
 export function getPaymentMethodAvailability(
   viewer?: PaymentAvailabilityViewer,

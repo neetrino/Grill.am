@@ -12,6 +12,7 @@
 - Result page: `checkout/success/[orderNumber]` + bounded local poller
 - Unified retry: `retryPaymentAction`
 - Admin: payment attempts panel, review resolution, expire action
+- Admin new-order alert: COD on place; online only after `CAPTURED` / `REQUIRES_REVIEW`
 - Immediate order emails via Next.js `after()` + Resend/capture/sink (`scheduleOrderEmails`)
 - HY/RU/EN payment email templates (sink/capture delivery)
 - Playwright E2E: port 3100, `/api/health`, mock ARCA, CI workflow

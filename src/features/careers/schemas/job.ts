@@ -7,6 +7,13 @@ import {
 import { locales } from "@/lib/i18n/config";
 import { currencies } from "@/lib/money/currency";
 
+function emptyToNull(value: unknown): unknown {
+  if (value === "" || value === undefined) {
+    return null;
+  }
+  return value;
+}
+
 export const upsertJobPostingSchema = z.object({
   editingLocale: z.enum(locales).default("en"),
   title: z.string().trim().min(1).max(200),
@@ -16,21 +23,14 @@ export const upsertJobPostingSchema = z.object({
   location: z.string().trim().max(200).optional(),
   status: z.enum(JOB_POSTING_STATUSES).default("DRAFT"),
   employmentType: z.enum(JOB_EMPLOYMENT_TYPES).default("FULL_TIME"),
-  salaryAmount: z
-    .union([z.string(), z.number(), z.null(), z.undefined()])
-    .transform((value) => {
-      if (value == null || value === "") {
-        return null;
-      }
-      const parsed = typeof value === "number" ? value : Number(value);
-      if (!Number.isInteger(parsed) || parsed < 0) {
-        return Number.NaN;
-      }
-      return parsed;
-    })
-    .refine((value) => value === null || Number.isInteger(value), {
-      message: "Salary must be a non-negative integer.",
-    }),
+  /**
+   * Optional salary. Zod 4 treats a bare union-with-undefined as required at the
+   * object key level, so missing keys must use preprocess + nullable.
+   */
+  salaryAmount: z.preprocess(
+    emptyToNull,
+    z.coerce.number().int().nonnegative().nullable(),
+  ),
   salaryCurrency: z.enum(currencies).default("AMD"),
   sortOrder: z
     .union([z.string(), z.number()])

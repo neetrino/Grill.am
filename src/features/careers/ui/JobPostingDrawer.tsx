@@ -72,8 +72,10 @@ function resolvedSlug(
   slugTouched: boolean,
   title: string,
 ): string {
-  if (slugTouched && slug.trim()) {
-    return normalizeJobSlug(slug);
+  // Non-Latin titles/slugs normalize to "" — always fall back so Zod min(1) passes.
+  const fromSlug = slugTouched ? normalizeJobSlug(slug) : "";
+  if (fromSlug) {
+    return fromSlug;
   }
   const fromTitle = normalizeJobSlug(title);
   return fromTitle || `job-${Date.now().toString(36)}`;

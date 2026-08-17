@@ -39,6 +39,17 @@ function isProviderInitialized(metadata: Record<string, unknown> | null): boolea
     return true;
   }
   if (metadata.initializationState === "ready") return true;
+  // ARCA stores formUrl / initializationState under metadata.arca.
+  const arca = metadata.arca;
+  if (arca && typeof arca === "object") {
+    const nested = arca as Record<string, unknown>;
+    if (typeof nested.formUrl === "string" && nested.formUrl.length > 0) {
+      return true;
+    }
+    if (nested.initializationState === "registered") {
+      return true;
+    }
+  }
   return false;
 }
 

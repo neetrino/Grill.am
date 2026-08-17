@@ -51,8 +51,13 @@ import {
 } from "@/features/payments/domain/payment-method";
 import { initializeArcaPayment } from "@/features/payments/providers/arca/initialize-arca-payment";
 import { createIdramPaymentForm } from "@/features/payments/providers/idram/create-idram-payment";
-import { isArcaProtocolError } from "@/lib/payments/arca/errors";
+import {
+  ArcaBusinessError,
+  ArcaHttpError,
+  isArcaProtocolError,
+} from "@/lib/payments/arca/errors";
 import { isIdramProtocolError } from "@/lib/payments/idram/errors";
+import { logger } from "@/lib/observability/logger";
 import {
   generateGuestOrderAccessToken,
   ORDER_ACCESS_COOKIE_MAX_AGE,
@@ -794,6 +799,32 @@ export async function createOrderAction(
           isArcaProtocolError(arcaError) ||
           isPaymentDomainError(arcaError)
         ) {
+          const fields: Record<
+            string,
+            string | number | boolean | null | undefined
+          > = {
+            provider: "arca",
+            paymentId: created.paymentId,
+            orderId: created.orderId,
+            orderNumber: created.orderNumber,
+            errorName:
+              arcaError instanceof Error ? arcaError.name : "UnknownError",
+            errorMessage:
+              arcaError instanceof Error ? arcaError.message : String(arcaError),
+          };
+          if (isArcaProtocolError(arcaError)) {
+            fields.arcaCode = arcaError.code;
+          }
+          if (arcaError instanceof ArcaBusinessError) {
+            fields.providerErrorCode = arcaError.providerErrorCode;
+            fields.providerErrorMessage = arcaError.providerErrorMessage;
+          }
+          if (arcaError instanceof ArcaHttpError) {
+            fields.httpStatus = arcaError.httpStatus;
+            fields.endpointPath = arcaError.endpointPath;
+          }
+          // Visible in `pnpm dev` terminal (console.error via logger).
+          logger.error("checkout.arca_init_failed", fields);
           return {
             ok: true,
             type: "payment_provider_unavailable",
