@@ -5,7 +5,7 @@
   "promoCodes": {
     "nav": "My promo codes",
     "mineTitle": "Available",
-    "mineDescription": "Codes assigned to you. Copy a code and apply it at checkout.",
+    "mineDescription": "Copy a code and apply it at checkout.",
     "mineEmpty": "No personal promo codes yet.",
     "mineEmptyHint": "When a code is assigned to your account, it will appear here.",
     "copy": "Copy code",

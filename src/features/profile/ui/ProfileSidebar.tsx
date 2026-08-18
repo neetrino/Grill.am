@@ -35,7 +35,7 @@ function ProfileContactRow({
       >
         {icon}
       </span>
-      <p className="min-w-0 break-all text-sm font-medium text-gray-700">
+      <p className="whitespace-nowrap text-sm font-medium text-gray-700">
         {value}
       </p>
     </div>
@@ -52,7 +52,7 @@ export function ProfileSidebar({
 
   return (
     <aside
-      className={`relative flex flex-col overflow-hidden p-4 pt-3 ${PROFILE_CARD_CLASS}`}
+      className={`relative flex w-max min-w-[var(--profile-sidebar-width)] flex-col overflow-hidden p-4 pt-3 ${PROFILE_CARD_CLASS}`}
       aria-label={dictionary.title}
     >
       <div className="shrink-0">
