@@ -80,6 +80,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     header: namespaces.common.header,
     footer: namespaces.common.footer,
     popup: namespaces.common.popup,
+    chat: namespaces.common.chat,
     admin: namespaces.admin,
     home: namespaces.home,
     contact: namespaces.contact,
