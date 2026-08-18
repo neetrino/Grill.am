@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { CONTENT_SECURITY_POLICY } from "./src/config/content-security-policy";
+
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const securityHeaders = [
@@ -14,19 +16,7 @@ const securityHeaders = [
   },
   {
     key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://code.tidio.co https://*.tidio.co https://*.tidiochat.com https://client.crisp.chat",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https:",
-      "font-src 'self' data: https://*.tidio.co https://*.tidiochat.com https://client.crisp.chat",
-      "connect-src 'self' https: wss:",
-      "frame-src 'self' https://www.google.com https://maps.google.com https://yandex.ru https://yandex.com https://*.yandex.ru https://*.yandex.com https://*.tidio.co https://*.tidiochat.com https://*.crisp.chat https://game.crisp.chat",
-      "worker-src 'self' blob: https://*.tidio.co https://*.tidiochat.com",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self' https://banking.idram.am",
-    ].join("; "),
+    value: CONTENT_SECURITY_POLICY,
   },
 ];
 
