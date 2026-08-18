@@ -3,6 +3,8 @@ import "server-only";
 import { cookies } from "next/headers";
 import { cache } from "react";
 
+import { getEnabledStorefrontCurrencies } from "@/features/settings/application/queries";
+import { resolveEnabledDisplayCurrency } from "@/features/settings/domain/store-settings";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { convertAmount } from "@/lib/money/convert";
 import type { Currency } from "@/lib/money/currency";
@@ -23,10 +25,31 @@ export type DisplayPrice = {
   formatted: string;
 };
 
+export type StorefrontCurrencyPresentation = {
+  currency: Currency;
+  availableCurrencies: Currency[];
+};
+
+/** Cookie preference clamped to admin-enabled storefront currencies. */
+export const getStorefrontCurrencyPresentation = cache(
+  async (): Promise<StorefrontCurrencyPresentation> => {
+    const store = await cookies();
+    const availableCurrencies = await getEnabledStorefrontCurrencies();
+    const preferred = parseCurrencyCookie(
+      store.get(CURRENCY_COOKIE_NAME)?.value,
+    );
+
+    return {
+      currency: resolveEnabledDisplayCurrency(preferred, availableCurrencies),
+      availableCurrencies,
+    };
+  },
+);
+
 /** Resolves selected display currency from the preference cookie. */
 export const getSelectedCurrency = cache(async (): Promise<Currency> => {
-  const store = await cookies();
-  return parseCurrencyCookie(store.get(CURRENCY_COOKIE_NAME)?.value);
+  const presentation = await getStorefrontCurrencyPresentation();
+  return presentation.currency;
 });
 
 const getCachedRateSnapshot = cache(async (displayCurrency: Currency) => {

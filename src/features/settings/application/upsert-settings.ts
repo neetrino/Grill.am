@@ -20,6 +20,7 @@ import {
   normalizeRateDecimalString,
   parseRateToFixed,
 } from "@/lib/money/convert";
+import { currencies } from "@/lib/money/currency";
 import { err, ok, type Result } from "@/lib/result";
 
 const positiveRateSchema = z
@@ -98,6 +99,18 @@ const upsertSchema = z.discriminatedUnion("key", [
     }),
   }),
   z.object({
+    key: z.literal("store.enabledCurrencies"),
+    value: z
+      .object({
+        AMD: z.boolean(),
+        USD: z.boolean(),
+        RUB: z.boolean(),
+      })
+      .refine((value) => currencies.some((currency) => value[currency]), {
+        message: "At least one currency must stay enabled.",
+      }),
+  }),
+  z.object({
     key: z.literal("store.minimumOrder"),
     value: z.object({
       amount: z.number().int().min(1).max(100_000_000).nullable(),
@@ -172,6 +185,9 @@ export async function upsertStoreSettingAction(
 
     revalidatePath(`/${locale}/admin/settings`);
     revalidatePath(`/${locale}/admin`);
+    if (parsed.data.key === "store.enabledCurrencies") {
+      revalidatePath("/", "layout");
+    }
     return ok({ key: parsed.data.key });
   } catch {
     return err("SETTINGS_UPSERT_FAILED", "Unable to save settings.");

@@ -85,6 +85,7 @@ function HeaderDesktopActionsFallback() {
 type HeaderMobileNavProps = {
   locale: Locale;
   currency: Currency;
+  availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
   categories: readonly StorefrontNavCategory[];
@@ -93,6 +94,7 @@ type HeaderMobileNavProps = {
 async function HeaderMobileNavAsync({
   locale,
   currency,
+  availableCurrencies,
   dictionary,
   navItems,
   categories,
@@ -103,6 +105,7 @@ async function HeaderMobileNavAsync({
     <MobileHeaderActions
       locale={locale}
       currency={currency}
+      availableCurrencies={availableCurrencies}
       dictionary={dictionary}
       user={user}
       navItems={navItems}
@@ -129,6 +132,7 @@ export function HeaderMobileNavIsland(props: HeaderMobileNavProps) {
         <MobileHeaderActions
           locale={props.locale}
           currency={props.currency}
+          availableCurrencies={props.availableCurrencies}
           dictionary={props.dictionary}
           user={null}
           navItems={props.navItems}

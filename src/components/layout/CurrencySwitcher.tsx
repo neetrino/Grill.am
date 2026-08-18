@@ -16,6 +16,7 @@ import {
 
 type CurrencySwitcherProps = {
   currency: Currency;
+  availableCurrencies?: readonly Currency[];
   label: string;
   menuPlacement?: "bottom" | "top";
   /** Inline AMD / USD / RUB control (mobile burger). */
@@ -24,6 +25,7 @@ type CurrencySwitcherProps = {
 
 export function CurrencySwitcher({
   currency,
+  availableCurrencies = currencies,
   label,
   menuPlacement = "bottom",
   variant = "dropdown",
@@ -39,13 +41,17 @@ export function CurrencySwitcher({
     return () => cancelAnimationFrame(frame);
   }, [currency]);
 
+  if (availableCurrencies.length <= 1) {
+    return null;
+  }
+
   if (variant === "segmented") {
     return (
       <SegmentedControl
         aria-label={label}
         value={activeCurrency}
         disabled={pending}
-        options={currencies.map((item) => ({
+        options={availableCurrencies.map((item) => ({
           value: item,
           label: item,
         }))}
@@ -73,7 +79,7 @@ export function CurrencySwitcher({
         </span>
       }
     >
-      {currencies.map((item) => {
+      {availableCurrencies.map((item) => {
         const selected = item === currency;
 
         return (

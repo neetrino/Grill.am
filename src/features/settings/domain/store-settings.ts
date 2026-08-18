@@ -4,6 +4,11 @@ import {
   normalizeRateDecimalString,
   parseRateToFixed,
 } from "@/lib/money/convert";
+import {
+  currencies,
+  defaultCurrency,
+  type Currency,
+} from "@/lib/money/currency";
 
 export const STORE_SETTING_KEYS = [
   "store.identity",
@@ -14,6 +19,7 @@ export const STORE_SETTING_KEYS = [
   "store.revenue",
   "store.globalDiscount",
   "store.fxRates",
+  "store.enabledCurrencies",
   "store.minimumOrder",
 ] as const;
 
@@ -61,6 +67,9 @@ export type StoreFxRates = {
   rub: string;
 };
 
+/** Which catalog currencies appear in the storefront header switcher. */
+export type StoreEnabledCurrencies = Record<Currency, boolean>;
+
 /** Store-wide cart subtotal floor; null disables the rule. */
 export type StoreMinimumOrder = {
   amount: number | null;
@@ -69,6 +78,12 @@ export type StoreMinimumOrder = {
 export const DEFAULT_FX_RATES: StoreFxRates = {
   usd: DEFAULT_RATES_FROM_AMD.USD,
   rub: DEFAULT_RATES_FROM_AMD.RUB,
+};
+
+export const DEFAULT_ENABLED_CURRENCIES: StoreEnabledCurrencies = {
+  AMD: true,
+  USD: true,
+  RUB: true,
 };
 
 function isPositiveRateString(value: unknown): value is string {
@@ -197,6 +212,43 @@ export function parseFxRates(value: unknown): StoreFxRates {
       ? normalizeRateDecimalString(record.rub)
       : DEFAULT_FX_RATES.rub,
   };
+}
+
+export function parseEnabledCurrencies(value: unknown): StoreEnabledCurrencies {
+  if (!value || typeof value !== "object") {
+    return { ...DEFAULT_ENABLED_CURRENCIES };
+  }
+
+  const record = value as Record<string, unknown>;
+  const parsed: StoreEnabledCurrencies = {
+    AMD: record.AMD !== false,
+    USD: record.USD !== false,
+    RUB: record.RUB !== false,
+  };
+
+  return listEnabledCurrencies(parsed).length > 0
+    ? parsed
+    : { ...DEFAULT_ENABLED_CURRENCIES };
+}
+
+export function listEnabledCurrencies(
+  settings: StoreEnabledCurrencies,
+): Currency[] {
+  return currencies.filter((currency) => settings[currency]);
+}
+
+/** Cookie or requested currency, clamped to admin-enabled storefront currencies. */
+export function resolveEnabledDisplayCurrency(
+  preferred: Currency,
+  enabled: readonly Currency[],
+): Currency {
+  if (enabled.includes(preferred)) {
+    return preferred;
+  }
+  if (enabled.includes(defaultCurrency)) {
+    return defaultCurrency;
+  }
+  return enabled[0] ?? defaultCurrency;
 }
 
 export function parseMinimumOrder(value: unknown): StoreMinimumOrder {

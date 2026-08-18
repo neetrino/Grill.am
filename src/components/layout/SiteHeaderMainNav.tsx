@@ -20,6 +20,7 @@ import { staticAssetUrl } from "@/lib/media/static-asset-url";
 type SiteHeaderMainNavProps = {
   locale: Locale;
   currency: Currency;
+  availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
   categories: readonly StorefrontNavCategory[];
@@ -61,6 +62,7 @@ function headerSearchLabels(dictionary: Dictionary) {
 export function SiteHeaderMainNav({
   locale,
   currency,
+  availableCurrencies,
   dictionary,
   navItems,
   categories,
@@ -378,6 +380,7 @@ export function SiteHeaderMainNav({
             <HeaderLocaleCurrencyPill
               locale={locale}
               currency={currency}
+              availableCurrencies={availableCurrencies}
               languageLabel={dictionary.header.language}
               currencyLabel={dictionary.header.currency}
             />

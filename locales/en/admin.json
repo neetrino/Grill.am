@@ -849,7 +849,7 @@
   },
   "settings": {
     "title": "Store settings",
-    "subtitle": "Configure store identity and currency exchange rates",
+    "subtitle": "Configure store identity, display currencies, and exchange rates",
     "identity": {
       "title": "Store identity",
       "name": "Name",
@@ -865,6 +865,13 @@
       "usdPlaceholder": "0.0026",
       "rubPlaceholder": "0.24",
       "save": "Save exchange rates"
+    },
+    "currencies": {
+      "title": "Storefront currencies",
+      "help": "Turn currencies on or off for the header switcher. If only one is enabled, the header shows language only.",
+      "activate": "Enable {currency}",
+      "deactivate": "Disable {currency}",
+      "needOne": "Keep at least one currency enabled."
     },
     "savedKey": "Saved {key}."
   },

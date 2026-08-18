@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
@@ -11,10 +10,7 @@ import { getActiveStorefrontPopup } from "@/features/popups/application/queries"
 import { SitePopupOverlayLazy } from "@/features/popups/ui/SitePopupOverlayLazy";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import {
-  CURRENCY_COOKIE_NAME,
-  parseCurrencyCookie,
-} from "@/lib/money/currency-cookie";
+import { getStorefrontCurrencyPresentation } from "@/lib/money/display-price";
 
 type StorefrontLayoutProps = {
   children: React.ReactNode;
@@ -33,11 +29,10 @@ export default async function StorefrontLayout({
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const cookieStore = await cookies();
-  const currency = parseCurrencyCookie(
-    cookieStore.get(CURRENCY_COOKIE_NAME)?.value,
-  );
-  const activePopup = await getActiveStorefrontPopup();
+  const [{ currency, availableCurrencies }, activePopup] = await Promise.all([
+    getStorefrontCurrencyPresentation(),
+    getActiveStorefrontPopup(),
+  ]);
 
   return (
     <StorefrontSurface>
@@ -45,6 +40,7 @@ export default async function StorefrontLayout({
       <SiteHeader
         locale={locale}
         currency={currency}
+        availableCurrencies={availableCurrencies}
         dictionary={dictionary}
       />
       <main className="page-container flex-1 py-10 pb-28 lg:pb-10">

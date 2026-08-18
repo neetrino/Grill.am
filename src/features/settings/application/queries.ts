@@ -6,6 +6,8 @@ import { cache } from "react";
 import { getDb } from "@/db/client";
 import { storeSettings } from "@/db/schema";
 import {
+  listEnabledCurrencies,
+  parseEnabledCurrencies,
   parseFxRates,
   parseGlobalDiscount,
   parseIdentity,
@@ -13,6 +15,7 @@ import {
   parseMinimumOrder,
   parseRevenueStatuses,
   parseStacking,
+  type StoreEnabledCurrencies,
   type StoreFxRates,
   type StoreGlobalDiscount,
   type StoreIdentity,
@@ -22,6 +25,7 @@ import {
   type StoreStacking,
   type StoreSettingKey,
 } from "@/features/settings/domain/store-settings";
+import type { Currency } from "@/lib/money/currency";
 
 const getSettingValue = cache(
   async (key: StoreSettingKey): Promise<Record<string, unknown> | null> => {
@@ -65,6 +69,20 @@ export const getStoreFxRates = cache(async (): Promise<StoreFxRates> => {
   return parseFxRates(await getSettingValue("store.fxRates"));
 });
 
+export const getStoreEnabledCurrencies = cache(
+  async (): Promise<StoreEnabledCurrencies> => {
+    return parseEnabledCurrencies(
+      await getSettingValue("store.enabledCurrencies"),
+    );
+  },
+);
+
+export const getEnabledStorefrontCurrencies = cache(
+  async (): Promise<Currency[]> => {
+    return listEnabledCurrencies(await getStoreEnabledCurrencies());
+  },
+);
+
 export const getStoreMinimumOrder = cache(
   async (): Promise<StoreMinimumOrder> => {
     return parseMinimumOrder(await getSettingValue("store.minimumOrder"));
@@ -77,6 +95,7 @@ export async function getAllStoreSettings(): Promise<{
   stacking: StoreStacking;
   revenue: StoreRevenue;
   fxRates: StoreFxRates;
+  enabledCurrencies: StoreEnabledCurrencies;
   minimumOrder: StoreMinimumOrder;
   branding: Record<string, unknown>;
   social: Record<string, unknown>;
@@ -87,6 +106,7 @@ export async function getAllStoreSettings(): Promise<{
     stacking,
     revenue,
     fxRates,
+    enabledCurrencies,
     minimumOrder,
     branding,
     social,
@@ -96,6 +116,7 @@ export async function getAllStoreSettings(): Promise<{
     getStoreStacking(),
     getStoreRevenue(),
     getStoreFxRates(),
+    getStoreEnabledCurrencies(),
     getStoreMinimumOrder(),
     getSettingValue("store.branding"),
     getSettingValue("store.social"),
@@ -107,6 +128,7 @@ export async function getAllStoreSettings(): Promise<{
     stacking,
     revenue,
     fxRates,
+    enabledCurrencies,
     minimumOrder,
     branding: branding ?? {},
     social: social ?? {},
