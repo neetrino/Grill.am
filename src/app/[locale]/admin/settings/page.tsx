@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
+  getStoreEnabledCurrencies,
   getStoreFxRates,
   getStoreIdentity,
 } from "@/features/settings/application/queries";
@@ -23,9 +24,10 @@ export default async function AdminSettingsPage({
   }
 
   const copy = getDictionary(locale).admin.settings;
-  const [identity, fxRates] = await Promise.all([
+  const [identity, fxRates, enabledCurrencies] = await Promise.all([
     getStoreIdentity(),
     getStoreFxRates(),
+    getStoreEnabledCurrencies(),
   ]);
 
   return (
@@ -39,6 +41,7 @@ export default async function AdminSettingsPage({
         locale={locale}
         identity={identity}
         fxRates={fxRates}
+        enabledCurrencies={enabledCurrencies}
       />
     </section>
   );

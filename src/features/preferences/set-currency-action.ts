@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 
+import { getEnabledStorefrontCurrencies } from "@/features/settings/application/queries";
 import {
   CURRENCY_COOKIE_NAME,
   parseCurrencyCookie,
@@ -12,6 +13,11 @@ const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
 export async function setCurrencyAction(currency: string): Promise<Currency> {
   if (!isCurrency(currency)) {
+    throw new Error("Unsupported currency");
+  }
+
+  const enabled = await getEnabledStorefrontCurrencies();
+  if (!enabled.includes(currency)) {
     throw new Error("Unsupported currency");
   }
 

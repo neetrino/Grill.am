@@ -1,14 +1,18 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  DEFAULT_ENABLED_CURRENCIES,
   DEFAULT_FX_RATES,
   DEFAULT_REVENUE_STATUSES,
+  listEnabledCurrencies,
   meetsMinimumOrder,
+  parseEnabledCurrencies,
   parseFxRates,
   parseMaintenance,
   parseMinimumOrder,
   parseRevenueStatuses,
   parseStacking,
+  resolveEnabledDisplayCurrency,
 } from "@/features/settings/domain/store-settings";
 
 describe("store settings parsers", () => {
@@ -55,5 +59,25 @@ describe("store settings parsers", () => {
     expect(meetsMinimumOrder(1000, 0)).toBe(true);
     expect(meetsMinimumOrder(5000, 5000)).toBe(true);
     expect(meetsMinimumOrder(4999, 5000)).toBe(false);
+  });
+
+  it("defaults enabled currencies and rejects an empty set", () => {
+    expect(parseEnabledCurrencies(null)).toEqual(DEFAULT_ENABLED_CURRENCIES);
+    expect(parseEnabledCurrencies({})).toEqual(DEFAULT_ENABLED_CURRENCIES);
+    expect(
+      parseEnabledCurrencies({ AMD: false, USD: false, RUB: false }),
+    ).toEqual(DEFAULT_ENABLED_CURRENCIES);
+    expect(
+      parseEnabledCurrencies({ AMD: true, USD: false, RUB: false }),
+    ).toEqual({ AMD: true, USD: false, RUB: false });
+  });
+
+  it("lists enabled currencies and clamps the display choice", () => {
+    expect(
+      listEnabledCurrencies({ AMD: true, USD: false, RUB: true }),
+    ).toEqual(["AMD", "RUB"]);
+    expect(resolveEnabledDisplayCurrency("USD", ["AMD", "RUB"])).toBe("AMD");
+    expect(resolveEnabledDisplayCurrency("RUB", ["USD"])).toBe("USD");
+    expect(resolveEnabledDisplayCurrency("USD", ["AMD", "USD"])).toBe("USD");
   });
 });

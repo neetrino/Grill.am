@@ -20,6 +20,7 @@ import type { Currency } from "@/lib/money/currency";
 type MobileHeaderActionsProps = {
   locale: Locale;
   currency: Currency;
+  availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
   user: SessionUser | null;
   navItems: readonly StorefrontNavItem[];
@@ -41,6 +42,7 @@ const MENU_ICON_MS = 280;
 export function MobileHeaderActions({
   locale,
   currency,
+  availableCurrencies,
   dictionary,
   user,
   navItems,
@@ -71,6 +73,7 @@ export function MobileHeaderActions({
   const panelProps: Omit<MobileNavPanelProps, "categorySlug"> = {
     locale,
     currency,
+    availableCurrencies,
     dictionary,
     navItems,
     categories,

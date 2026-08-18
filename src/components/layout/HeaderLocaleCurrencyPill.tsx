@@ -28,11 +28,11 @@ import { setCurrencyAction } from "@/features/preferences/set-currency-action";
 import type { Locale } from "@/lib/i18n/config";
 import { localeLabels, locales } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { currencies } from "@/lib/money/currency";
 
 type HeaderLocaleCurrencyPillProps = {
   locale: Locale;
   currency: Currency;
+  availableCurrencies: readonly Currency[];
   languageLabel: string;
   currencyLabel: string;
 };
@@ -60,9 +60,11 @@ function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
 export function HeaderLocaleCurrencyPill({
   locale,
   currency,
+  availableCurrencies,
   languageLabel,
   currencyLabel,
 }: HeaderLocaleCurrencyPillProps) {
+  const showCurrency = availableCurrencies.length > 1;
   const pathname = usePathname();
   const router = useRouter();
   const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
@@ -165,12 +167,16 @@ export function HeaderLocaleCurrencyPill({
             ref={panelRef}
             id={menuId}
             role="dialog"
-            aria-label={`${languageLabel} / ${currencyLabel}`}
+            aria-label={
+              showCurrency ? `${languageLabel} / ${currencyLabel}` : languageLabel
+            }
             className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-2 ${dropdownPanelStateClass(visible)}`}
             style={dropdownPortalStyle(menuPosition)}
           >
             <div className="flex w-full">
-              <div className="min-w-0 flex-1 border-r border-gray-100">
+              <div
+                className={`min-w-0 flex-1 ${showCurrency ? "border-r border-gray-100" : ""}`}
+              >
                 <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
                   {languageLabel}
                 </p>
@@ -203,45 +209,47 @@ export function HeaderLocaleCurrencyPill({
                 </ul>
               </div>
 
-              <div className="min-w-0 flex-1">
-                <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-                  {currencyLabel}
-                </p>
-                <ul
-                  role="listbox"
-                  aria-label={currencyLabel}
-                  className="px-1.5"
-                >
-                  {currencies.map((item) => {
-                    const selected = item === currency;
+              {showCurrency ? (
+                <div className="min-w-0 flex-1">
+                  <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+                    {currencyLabel}
+                  </p>
+                  <ul
+                    role="listbox"
+                    aria-label={currencyLabel}
+                    className="px-1.5"
+                  >
+                    {availableCurrencies.map((item) => {
+                      const selected = item === currency;
 
-                    return (
-                      <li key={item} role="option" aria-selected={selected}>
-                        <button
-                          type="button"
-                          disabled={pending}
-                          className={
-                            selected ? selectedItemClassName : idleItemClassName
-                          }
-                          onClick={() => {
-                            if (item === currency) {
-                              closeMenu();
-                              return;
+                      return (
+                        <li key={item} role="option" aria-selected={selected}>
+                          <button
+                            type="button"
+                            disabled={pending}
+                            className={
+                              selected ? selectedItemClassName : idleItemClassName
                             }
-                            startTransition(async () => {
-                              await setCurrencyAction(item);
-                              router.refresh();
-                              closeMenu();
-                            });
-                          }}
-                        >
-                          {item}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
+                            onClick={() => {
+                              if (item === currency) {
+                                closeMenu();
+                                return;
+                              }
+                              startTransition(async () => {
+                                await setCurrencyAction(item);
+                                router.refresh();
+                                closeMenu();
+                              });
+                            }}
+                          >
+                            {item}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ) : null}
             </div>
           </div>,
           getDropdownPortalRoot(),
@@ -251,13 +259,15 @@ export function HeaderLocaleCurrencyPill({
   return (
     <div
       ref={rootRef}
-      className="relative inline-flex w-[212px] shrink-0 items-center"
+      className={`relative inline-flex shrink-0 items-center ${showCurrency ? "w-[212px]" : "w-auto"}`}
     >
       <button
         ref={triggerRef}
         type="button"
         className="inline-flex h-[49px] w-full items-center justify-center gap-2 rounded-full bg-brand-surface px-6 text-base font-bold text-[#333] capitalize transition hover:bg-[#ececec]"
-        aria-label={`${languageLabel} / ${currencyLabel}`}
+        aria-label={
+          showCurrency ? `${languageLabel} / ${currencyLabel}` : languageLabel
+        }
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={menuId}
@@ -265,9 +275,13 @@ export function HeaderLocaleCurrencyPill({
       >
         <Globe className="h-[18px] w-[18px] shrink-0" aria-hidden />
         <span>{localeShortLabels[locale]}</span>
-        <span aria-hidden>/</span>
-        <HeaderCurrencyIcon className="h-[12px] w-[20px] shrink-0" />
-        <span>{currency}</span>
+        {showCurrency ? (
+          <>
+            <span aria-hidden>/</span>
+            <HeaderCurrencyIcon className="h-[12px] w-[20px] shrink-0" />
+            <span>{currency}</span>
+          </>
+        ) : null}
         <ChevronDown
           className={`ml-1 h-3.5 w-3.5 shrink-0 transition-transform duration-300 ease-out ${
             open ? "rotate-180" : "rotate-0"

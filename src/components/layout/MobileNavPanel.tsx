@@ -31,6 +31,7 @@ import type { Currency } from "@/lib/money/currency";
 export type MobileNavPanelProps = {
   locale: Locale;
   currency: Currency;
+  availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
   categories: readonly StorefrontNavCategory[];
@@ -65,6 +66,7 @@ function applyPanelOffset(panel: HTMLDivElement): void {
 export function MobileNavPanel({
   locale,
   currency,
+  availableCurrencies,
   dictionary,
   navItems,
   categories,
@@ -386,7 +388,11 @@ export function MobileNavPanel({
             </AppLink>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 border-t border-gray-100 py-4">
+          <div
+            className={`grid gap-3 border-t border-gray-100 py-4 ${
+              availableCurrencies.length > 1 ? "grid-cols-2" : "grid-cols-1"
+            }`}
+          >
             <div className="min-w-0 space-y-2">
               <span className="text-xs font-medium tracking-wide text-gray-500">
                 {dictionary.header.language}
@@ -397,16 +403,19 @@ export function MobileNavPanel({
                 variant="segmented"
               />
             </div>
-            <div className="min-w-0 space-y-2">
-              <span className="text-xs font-medium tracking-wide text-gray-500">
-                {dictionary.header.currency}
-              </span>
-              <CurrencySwitcher
-                currency={currency}
-                label={dictionary.header.currency}
-                variant="segmented"
-              />
-            </div>
+            {availableCurrencies.length > 1 ? (
+              <div className="min-w-0 space-y-2">
+                <span className="text-xs font-medium tracking-wide text-gray-500">
+                  {dictionary.header.currency}
+                </span>
+                <CurrencySwitcher
+                  currency={currency}
+                  availableCurrencies={availableCurrencies}
+                  label={dictionary.header.currency}
+                  variant="segmented"
+                />
+              </div>
+            ) : null}
           </div>
         </nav>
       </div>

@@ -19,7 +19,9 @@ import {
   ADMIN_CARD_CLASS,
 } from "@/features/admin/ui/admin-ui";
 import { upsertStoreSettingAction } from "@/features/settings/application/upsert-settings";
+import { EnabledCurrenciesForm } from "@/features/settings/ui/EnabledCurrenciesForm";
 import type {
+  StoreEnabledCurrencies,
   StoreFxRates,
   StoreIdentity,
 } from "@/features/settings/domain/store-settings";
@@ -28,6 +30,7 @@ type StoreSettingsFormsProps = {
   locale: string;
   identity: StoreIdentity;
   fxRates: StoreFxRates;
+  enabledCurrencies: StoreEnabledCurrencies;
 };
 
 type SettingsToast = {
@@ -41,6 +44,7 @@ export function StoreSettingsForms({
   locale,
   identity,
   fxRates,
+  enabledCurrencies,
 }: StoreSettingsFormsProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.settings;
@@ -204,6 +208,14 @@ export function StoreSettingsForms({
             </div>
           </form>
         </Card>
+
+        <EnabledCurrenciesForm
+          key={`${enabledCurrencies.AMD}-${enabledCurrencies.USD}-${enabledCurrencies.RUB}`}
+          locale={locale}
+          enabledCurrencies={enabledCurrencies}
+          onSaved={(message) => showToast(message, "success")}
+          onError={(message) => showToast(message, "error")}
+        />
       </div>
     </div>
   );

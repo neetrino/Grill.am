@@ -12,6 +12,7 @@ import type { Currency } from "@/lib/money/currency";
 type SiteHeaderProps = {
   locale: Locale;
   currency: Currency;
+  availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
 };
 
@@ -22,6 +23,7 @@ type SiteHeaderProps = {
 export async function SiteHeader({
   locale,
   currency,
+  availableCurrencies,
   dictionary,
 }: SiteHeaderProps) {
   const navItems = getStorefrontNavItems(locale, dictionary);
@@ -31,6 +33,7 @@ export async function SiteHeader({
     <SiteHeaderMainNav
       locale={locale}
       currency={currency}
+      availableCurrencies={availableCurrencies}
       dictionary={dictionary}
       navItems={navItems}
       categories={categories}
@@ -38,6 +41,7 @@ export async function SiteHeader({
         <HeaderMobileNavIsland
           locale={locale}
           currency={currency}
+          availableCurrencies={availableCurrencies}
           dictionary={dictionary}
           navItems={navItems}
           categories={categories}

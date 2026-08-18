@@ -13,12 +13,14 @@ import type { Currency } from "@/lib/money/currency";
 type SiteHeaderTopBarProps = {
   locale: Locale;
   currency: Currency;
+  availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
 };
 
 export function SiteHeaderTopBar({
   locale,
   currency,
+  availableCurrencies,
   dictionary,
 }: SiteHeaderTopBarProps) {
   return (
@@ -65,10 +67,13 @@ export function SiteHeaderTopBar({
 
           <div className="flex flex-wrap items-center gap-3 sm:justify-end">
             <LocaleSwitcher locale={locale} label={dictionary.header.language} />
-            <CurrencySwitcher
-              currency={currency}
-              label={dictionary.header.currency}
-            />
+            {availableCurrencies.length > 1 ? (
+              <CurrencySwitcher
+                currency={currency}
+                availableCurrencies={availableCurrencies}
+                label={dictionary.header.currency}
+              />
+            ) : null}
           </div>
         </div>
       </div>
