@@ -14,6 +14,7 @@ export const PROFILE_CARD_FLAT_CLASS =
 export const PROFILE_SECTION_TITLE_CLASS =
   "text-xl font-bold text-gray-900";
 
+/** Desktop sidebar minimum; the column grows when the email is longer. */
 export const PROFILE_SIDEBAR_WIDTH_PX = 280;
 
 export const PROFILE_NAV_TRANSITION_MS = 380;

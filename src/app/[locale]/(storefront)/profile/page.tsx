@@ -16,8 +16,9 @@ import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView
 import { ProfileDashboardView } from "@/features/profile/ui/ProfileDashboardView";
 import { ProfileMobileMenu } from "@/features/profile/ui/ProfileMobileMenu";
 import { PROFILE_SECTION_TITLE_CLASS } from "@/features/profile/ui/profile-ui";
+import { listCustomerAssignedCoupons } from "@/features/promotions/application/list-customer-assigned-coupons";
 import { listCustomerCouponHistory } from "@/features/promotions/application/list-customer-coupon-history";
-import { CustomerPromoCodesView } from "@/features/promotions/ui/CustomerPromoCodesView";
+import { CustomerPromoCodesPageContent } from "@/features/promotions/ui/CustomerPromoCodesPageContent";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -34,11 +35,18 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const user = await requireUser(locale);
   const dictionary = getDictionary(locale);
-  const [{ stats, recentOrders }, addressRows, promoHistory, customerOrders] =
+  const [
+    { stats, recentOrders },
+    addressRows,
+    promoHistory,
+    assignedCoupons,
+    customerOrders,
+  ] =
     await Promise.all([
       getProfileDashboard(user.id),
       listCustomerAddresses(user.id),
       listCustomerCouponHistory(user.id, 1),
+      listCustomerAssignedCoupons(user.id),
       listCustomerOrders(user.id, {
         page: 1,
         archived: "active",
@@ -106,22 +114,11 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             </div>
           ),
           promoCodes: (
-            <CustomerPromoCodesView
+            <CustomerPromoCodesPageContent
               locale={locale}
+              assigned={assignedCoupons}
               rows={promoHistory.rows}
-              labels={{
-                title: promoCopy.title,
-                description: promoCopy.description,
-                code: promoCopy.code,
-                offer: promoCopy.offer,
-                saved: promoCopy.saved,
-                order: promoCopy.order,
-                status: promoCopy.status,
-                date: promoCopy.date,
-                empty: promoCopy.empty,
-                emptyHint: promoCopy.emptyHint,
-                pageCount: promoCopy.pageCount,
-              }}
+              copy={promoCopy}
             />
           ),
           personal: (

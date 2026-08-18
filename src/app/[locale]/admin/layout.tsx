@@ -10,6 +10,9 @@ type AdminLayoutProps = {
   params: Promise<unknown>;
 };
 
+/** Session-gated; child pages query the DB and must not prerender at build. */
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
   children,
   params,

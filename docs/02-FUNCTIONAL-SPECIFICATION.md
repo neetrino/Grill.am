@@ -163,8 +163,10 @@
 
 ### 8.2a Promo Codes
 
-- Profile surface-ը ցուցադրում է coupon redemption history՝ derived from `orders.promotion_*` snapshots (ոչ public active-code catalog)։
-- Columns՝ code, offer, saved amount, order number, order status, applied date։
+- Profile surface-ը ցուցադրում է երկու բաժին՝
+  - **My / available**՝ միայն `promotion_users` allowlist-ով այս customer-ին նշանակված active coupon-ները (ոչ public/unrestricted catalog)։
+  - **Used**՝ coupon redemption history՝ derived from `orders.promotion_*` snapshots։
+- Used columns՝ code, offer, saved amount, order number, order status, applied date։
 - Public/unrestricted coupon codes-ը browseable list չեն. դառնում՝ security/abuse policy։
 
 ### 8.3 Personal information և password

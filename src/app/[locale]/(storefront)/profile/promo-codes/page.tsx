@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { listCustomerAssignedCoupons } from "@/features/promotions/application/list-customer-assigned-coupons";
 import { listCustomerCouponHistory } from "@/features/promotions/application/list-customer-coupon-history";
-import { CustomerPromoCodesView } from "@/features/promotions/ui/CustomerPromoCodesView";
+import { CustomerPromoCodesPageContent } from "@/features/promotions/ui/CustomerPromoCodesPageContent";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -44,30 +45,19 @@ export default async function PromoCodesPage({
   const raw = await searchParams;
   const page = parsePage(firstParam(raw.page));
 
-  const { rows, total, pageSize } = await listCustomerCouponHistory(
-    user.id,
-    page,
-  );
+  const [{ rows, total, pageSize }, assigned] = await Promise.all([
+    listCustomerCouponHistory(user.id, page),
+    listCustomerAssignedCoupons(user.id),
+  ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="space-y-6">
-      <CustomerPromoCodesView
+      <CustomerPromoCodesPageContent
         locale={locale}
+        assigned={assigned}
         rows={rows}
-        labels={{
-          title: copy.title,
-          description: copy.description,
-          code: copy.code,
-          offer: copy.offer,
-          saved: copy.saved,
-          order: copy.order,
-          status: copy.status,
-          date: copy.date,
-          empty: copy.empty,
-          emptyHint: copy.emptyHint,
-          pageCount: copy.pageCount,
-        }}
+        copy={copy}
       />
 
       {totalPages > 1 ? (

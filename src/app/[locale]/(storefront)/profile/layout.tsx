@@ -37,7 +37,7 @@ export default async function ProfileLayout({
       className={`storefront-bleed -mt-10 mb-[-2.5rem] px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-24 sm:px-6 lg:min-h-[calc(100dvh-var(--storefront-header-offset))] lg:px-8 lg:pt-7 lg:pb-7 ${PROFILE_PAGE_BG_CLASS}`}
     >
       <div
-        className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-6 lg:grid-cols-[var(--profile-sidebar-width)_minmax(0,1fr)] lg:gap-10"
+        className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(var(--profile-sidebar-width),max-content)_minmax(0,1fr)] lg:gap-10"
         style={
           {
             "--profile-sidebar-width": `${PROFILE_SIDEBAR_WIDTH_PX}px`,
