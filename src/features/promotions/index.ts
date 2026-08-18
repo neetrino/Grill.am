@@ -32,6 +32,10 @@ export {
   listPromotionTargetOptions,
 } from "@/features/promotions/application/queries";
 export {
+  listCustomerAssignedCoupons,
+  type CustomerAssignedCoupon,
+} from "@/features/promotions/application/list-customer-assigned-coupons";
+export {
   listCustomerCouponHistory,
   type CustomerCouponRedemption,
 } from "@/features/promotions/application/list-customer-coupon-history";

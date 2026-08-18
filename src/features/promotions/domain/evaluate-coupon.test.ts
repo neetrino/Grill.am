@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
+  isCouponCurrentlyAvailable,
   isCouponUserAllowed,
   type CouponDiscountInput,
 } from "@/features/promotions/domain/evaluate-coupon";
@@ -100,6 +101,57 @@ describe("evaluateCouponDiscount", () => {
     expect(couponDiscountErrorMessage("USER_NOT_ELIGIBLE")).toBe(
       "This coupon is not available for your account.",
     );
+  });
+});
+
+describe("isCouponCurrentlyAvailable", () => {
+  const now = new Date("2026-07-20T12:00:00.000Z");
+
+  it("accepts an active unlimited coupon", () => {
+    expect(
+      isCouponCurrentlyAvailable(
+        {
+          isActive: true,
+          startsAt: null,
+          endsAt: null,
+          totalUsageLimit: null,
+          usedCount: 0,
+        },
+        now,
+      ),
+    ).toBe(true);
+  });
+
+  it("rejects inactive, expired, upcoming, and exhausted coupons", () => {
+    const base = {
+      isActive: true,
+      startsAt: null,
+      endsAt: null,
+      totalUsageLimit: null,
+      usedCount: 0,
+    };
+
+    expect(isCouponCurrentlyAvailable({ ...base, isActive: false }, now)).toBe(
+      false,
+    );
+    expect(
+      isCouponCurrentlyAvailable(
+        { ...base, endsAt: new Date("2026-07-19T00:00:00.000Z") },
+        now,
+      ),
+    ).toBe(false);
+    expect(
+      isCouponCurrentlyAvailable(
+        { ...base, startsAt: new Date("2026-07-21T00:00:00.000Z") },
+        now,
+      ),
+    ).toBe(false);
+    expect(
+      isCouponCurrentlyAvailable(
+        { ...base, totalUsageLimit: 3, usedCount: 3 },
+        now,
+      ),
+    ).toBe(false);
   });
 });
 

@@ -25,8 +25,7 @@ import { PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS } from "@/features/profile/
 import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 export type CustomerPromoCodesLabels = {
-  title: string;
-  description: string;
+  usedTitle: string;
   code: string;
   offer: string;
   saved: string;
@@ -51,14 +50,7 @@ export function CustomerPromoCodesView({
 }: CustomerPromoCodesViewProps) {
   return (
     <section className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-          {labels.title}
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
-          {labels.description}
-        </p>
-      </header>
+      <h2 className="text-xl font-bold text-gray-900">{labels.usedTitle}</h2>
 
       <Card className={`${ADMIN_TABLE_CARD} !rounded-[15px] shadow-none ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
         <div className={ADMIN_TABLE_OUTER_SCROLL}>

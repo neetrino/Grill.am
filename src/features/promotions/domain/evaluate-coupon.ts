@@ -23,6 +23,37 @@ export type CouponDiscountError =
   | "USAGE_LIMIT"
   | "USER_NOT_ELIGIBLE";
 
+export type CouponAvailabilityInput = Pick<
+  CouponDiscountInput,
+  "isActive" | "startsAt" | "endsAt" | "totalUsageLimit" | "usedCount"
+>;
+
+/**
+ * Whether a coupon can still be offered (dates, active flag, global cap).
+ * Does not check allowlist, minimum order, or per-user usage.
+ */
+export function isCouponCurrentlyAvailable(
+  coupon: CouponAvailabilityInput,
+  now: Date = new Date(),
+): boolean {
+  if (!coupon.isActive) {
+    return false;
+  }
+  if (coupon.startsAt && coupon.startsAt > now) {
+    return false;
+  }
+  if (coupon.endsAt && coupon.endsAt < now) {
+    return false;
+  }
+  if (
+    coupon.totalUsageLimit !== null &&
+    coupon.usedCount >= coupon.totalUsageLimit
+  ) {
+    return false;
+  }
+  return true;
+}
+
 /**
  * Empty allowlist = unrestricted (all customers/guests).
  * Non-empty = only listed signed-in users may redeem.
