@@ -25,7 +25,12 @@ function isWhiteSurfacePath(pathname: string): boolean {
   if (page == null) {
     return true;
   }
-  return page === "about" || page === "contact" || page === "stores";
+  return (
+    page === "about" ||
+    page === "contact" ||
+    page === "stores" ||
+    page === "careers"
+  );
 }
 
 /**
