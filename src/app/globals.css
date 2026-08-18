@@ -709,3 +709,17 @@ select:disabled {
     animation-iteration-count: 1 !important;
   }
 }
+
+/*
+ * Tidio injects a fixed bubble. Keep it on the viewport (not a clipped
+ * page surface) and lift it above the mobile tab bar (`lg` = 1025px).
+ */
+#tidio-chat {
+  position: fixed !important;
+}
+
+@media (max-width: 1024px) {
+  #tidio-chat {
+    bottom: 5.75rem !important;
+  }
+}

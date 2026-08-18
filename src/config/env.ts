@@ -2,6 +2,9 @@ import "server-only";
 
 import { z } from "zod";
 
+import { parseCrispWebsiteId } from "@/lib/crisp/website-id";
+import { parseTidioPublicKey, TIDIO_PUBLIC_KEY_PATTERN } from "@/lib/tidio/public-key";
+
 /** Dotenv empty placeholders (`KEY=`) must not fail optional validators. */
 function emptyToUndefined(value: unknown): unknown {
   return value === "" || value === null || value === undefined
@@ -47,6 +50,27 @@ const envSchema = z.object({
     .enum(["development", "test", "production"])
     .default("development"),
   NEXT_PUBLIC_APP_URL: z.string().url(),
+  /**
+   * Tidio live-chat public widget id (`code.tidio.co/{id}.js`).
+   * Public frontend value — not a secret. Omit to disable the widget.
+   */
+  NEXT_PUBLIC_TIDIO_PUBLIC_KEY: z.preprocess((value) => {
+    const emptied = emptyToUndefined(value);
+    if (emptied === undefined) {
+      return undefined;
+    }
+    return parseTidioPublicKey(emptied) ?? emptied;
+  }, z.string().regex(TIDIO_PUBLIC_KEY_PATTERN).optional()),
+  /**
+   * Crisp live-chat website id (public frontend value). Used when Tidio is unset.
+   */
+  NEXT_PUBLIC_CRISP_WEBSITE_ID: z.preprocess((value) => {
+    const emptied = emptyToUndefined(value);
+    if (emptied === undefined) {
+      return undefined;
+    }
+    return parseCrispWebsiteId(emptied) ?? emptied;
+  }, z.string().uuid().optional()),
   AUTH_SECRET: optionalNonEmptyString(),
   DATABASE_URL: optionalNonEmptyString(),
   UPSTASH_REDIS_REST_URL: optionalUrl(),
@@ -153,6 +177,8 @@ export function getEnv(): AppEnv {
   const parsed = envSchema.safeParse({
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_TIDIO_PUBLIC_KEY: process.env.NEXT_PUBLIC_TIDIO_PUBLIC_KEY,
+    NEXT_PUBLIC_CRISP_WEBSITE_ID: process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID,
     AUTH_SECRET: process.env.AUTH_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,

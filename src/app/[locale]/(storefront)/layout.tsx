@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
+import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StorefrontScrollToTop } from "@/components/layout/StorefrontScrollToTop";
 import { StorefrontSurface } from "@/components/layout/StorefrontSurface";
-import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveStorefrontPopup } from "@/features/popups/application/queries";
 import { SitePopupOverlayLazy } from "@/features/popups/ui/SitePopupOverlayLazy";
 import { isLocale, type Locale } from "@/lib/i18n/config";

@@ -65,5 +65,8 @@
   },
   "popup": {
     "close": "Close popup"
+  },
+  "chat": {
+    "open": "Open chat"
   }
 }

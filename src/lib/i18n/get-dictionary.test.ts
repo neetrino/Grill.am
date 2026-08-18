@@ -14,6 +14,7 @@ describe("getDictionary", () => {
     expect(dictionary.checkout.title).toBe("Checkout");
     expect(dictionary.stores.titleLead).toBe("Our");
     expect(dictionary.nav.shop).toBe("Branches");
+    expect(dictionary.chat.open).toBe("Open chat");
   });
 
   it("loads Armenian and Russian namespaces", () => {

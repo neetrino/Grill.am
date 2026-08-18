@@ -42,6 +42,8 @@ export default defineConfig({
           NODE_ENV: "development",
           PORT: String(PORT),
           NEXT_PUBLIC_APP_URL: BASE_URL,
+          NEXT_PUBLIC_TIDIO_PUBLIC_KEY: "",
+          NEXT_PUBLIC_CRISP_WEBSITE_ID: "",
           E2E_PROVIDER_MODE: "mock",
           E2E_EMAIL_MODE: process.env.E2E_EMAIL_MODE ?? "mock",
           PAYMENT_ENABLE_COD: "true",
