@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Script from "next/script";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 
 import { ChatLauncherButton } from "@/components/layout/ChatLauncherButton";
 import type { Locale } from "@/lib/i18n/config";
@@ -16,6 +16,10 @@ import {
 import { isTidioEnabledPath } from "@/lib/tidio/paths";
 import { tidioWidgetScriptUrl } from "@/lib/tidio/public-key";
 import {
+  applyTidioHomeCopy,
+  type TidioHomeCopy,
+} from "@/lib/tidio/home-copy";
+import {
   bindTidioLauncherConceal,
   concealTidioLauncher,
   hideTidioWidget,
@@ -28,6 +32,8 @@ type TidioChatProps = {
   crispWebsiteId?: string;
   locale: Locale;
   openLabel: string;
+  greeting: string;
+  homeCopy: TidioHomeCopy;
 };
 
 function openStorefrontChat(
@@ -49,10 +55,14 @@ function StorefrontChatScripts({
   tidioSrc,
   useCrisp,
   locale,
+  homeCopy,
+  onChatClosed,
 }: {
   tidioSrc?: string;
   useCrisp: boolean;
   locale: Locale;
+  homeCopy: TidioHomeCopy;
+  onChatClosed: () => void;
 }) {
   return (
     <>
@@ -67,8 +77,9 @@ function StorefrontChatScripts({
             strategy="lazyOnload"
             onReady={() => {
               setTidioChatLang(locale);
-              bindTidioLauncherConceal();
+              bindTidioLauncherConceal(onChatClosed);
               concealTidioLauncher();
+              applyTidioHomeCopy(homeCopy);
             }}
           />
         </>
@@ -79,7 +90,7 @@ function StorefrontChatScripts({
           src={CRISP_CHAT_SCRIPT_URL}
           strategy="afterInteractive"
           onReady={() => {
-            bindCrispLauncherConceal();
+            bindCrispLauncherConceal(onChatClosed);
             concealCrispLauncher();
           }}
         />
@@ -97,11 +108,14 @@ export function TidioChat({
   crispWebsiteId,
   locale,
   openLabel,
+  greeting,
+  homeCopy,
 }: TidioChatProps) {
   const pathname = usePathname() ?? "";
   const tidioSrc = publicKey ? tidioWidgetScriptUrl(publicKey) : undefined;
   const useCrisp = Boolean(crispWebsiteId) && !tidioSrc;
   const enabled = isTidioEnabledPath(pathname, locale);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useLayoutEffect(() => {
     if (!enabled) {
@@ -116,8 +130,9 @@ export function TidioChat({
     }
     if (tidioSrc) {
       concealTidioLauncher();
+      applyTidioHomeCopy(homeCopy);
     }
-  }, [crispWebsiteId, enabled, locale, tidioSrc, useCrisp]);
+  }, [crispWebsiteId, enabled, homeCopy, locale, tidioSrc, useCrisp]);
 
   if (!enabled) {
     return null;
@@ -129,10 +144,18 @@ export function TidioChat({
         tidioSrc={tidioSrc}
         useCrisp={useCrisp}
         locale={locale}
+        homeCopy={homeCopy}
+        onChatClosed={() => setIsChatOpen(false)}
       />
       <ChatLauncherButton
         label={openLabel}
-        onClick={() => openStorefrontChat(tidioSrc, crispWebsiteId, locale)}
+        greeting={greeting}
+        showGreeting={!isChatOpen}
+        onClick={() => {
+          setIsChatOpen(true);
+          openStorefrontChat(tidioSrc, crispWebsiteId, locale);
+          applyTidioHomeCopy(homeCopy);
+        }}
       />
     </>
   );

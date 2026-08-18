@@ -45,7 +45,14 @@ export function openCrispChat(): void {
   pushCrisp(["do", "chat:open"]);
 }
 
-export function bindCrispLauncherConceal(): void {
+export function bindCrispLauncherConceal(onClose?: () => void): void {
   pushCrisp(["on", "session:loaded", concealCrispLauncher]);
-  pushCrisp(["on", "chat:closed", concealCrispLauncher]);
+  pushCrisp([
+    "on",
+    "chat:closed",
+    () => {
+      concealCrispLauncher();
+      onClose?.();
+    },
+  ]);
 }
