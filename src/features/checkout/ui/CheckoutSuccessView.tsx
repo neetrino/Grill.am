@@ -127,9 +127,11 @@ export function CheckoutSuccessView({
             ) : null}
           </div>
 
-          <p className="mt-5 text-center text-xs text-gray-500 sm:text-sm">
-            {copy.emailNote}
-          </p>
+          {copy.emailNote ? (
+            <p className="mt-5 text-center text-xs text-gray-500 sm:text-sm">
+              {copy.emailNote}
+            </p>
+          ) : null}
 
           {footer}
         </div>

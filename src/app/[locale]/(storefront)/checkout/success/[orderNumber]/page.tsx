@@ -258,7 +258,7 @@ export default async function CheckoutSuccessPage({
         totalLabel: successCopy.totalLabel,
         continueShopping: successCopy.continueShopping,
         viewOrders: successCopy.viewOrders,
-        emailNote,
+        emailNote: order.contactEmail.trim() ? emailNote : "",
       }}
       variant={mapVariant(state)}
       footer={

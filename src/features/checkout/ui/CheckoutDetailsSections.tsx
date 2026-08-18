@@ -142,7 +142,6 @@ export function CheckoutDetailsSections({
               <input
                 name="contactEmail"
                 type="email"
-                required
                 defaultValue={defaultEmail}
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}

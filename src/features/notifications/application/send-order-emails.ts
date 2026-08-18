@@ -129,6 +129,15 @@ async function buildCustomerMessage(
   locale: Locale,
   paymentId: string | undefined,
 ): Promise<EmailMessage | null> {
+  const recipient = order.contactEmail.trim();
+  if (!recipient) {
+    logger.info("order_email.customer.skipped_no_email", {
+      orderId: order.id,
+      kind,
+    });
+    return null;
+  }
+
   const detail = await getAdminOrderById(order.id);
   if (!detail) {
     logger.warn("order_email.customer.missing_order", {
@@ -170,7 +179,7 @@ async function buildCustomerMessage(
           : `payment-${kind === "payment_failed" ? "failed" : "cancelled"}:${paymentId ?? order.id}:customer`;
 
   return {
-    to: order.contactEmail,
+    to: recipient,
     subject: rendered.subject,
     html: rendered.html,
     text: rendered.text,
