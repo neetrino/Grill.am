@@ -47,6 +47,16 @@ export default async function LocaleLayout({
         crispWebsiteId={NEXT_PUBLIC_CRISP_WEBSITE_ID}
         locale={locale}
         openLabel={dictionary.chat.open}
+        greeting={dictionary.chat.greeting}
+        homeCopy={{
+          hiThere: dictionary.chat.hiThere,
+          welcome: dictionary.chat.welcome,
+          chatWithUs: dictionary.chat.withUs,
+          replyImmediately: dictionary.chat.replyImmediately,
+          openOptions: dictionary.chat.openOptions,
+          send: dictionary.chat.send,
+          messagePlaceholder: dictionary.chat.messagePlaceholder,
+        }}
       />
     </LocaleClientProviders>
   );

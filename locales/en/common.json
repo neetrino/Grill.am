@@ -67,6 +67,14 @@
     "close": "Close popup"
   },
   "chat": {
-    "open": "Open chat"
+    "open": "Open chat",
+    "greeting": "How can we help you?",
+    "hiThere": "Hi there 👋",
+    "welcome": "Welcome to our website. Ask us anything 🎉",
+    "withUs": "Chat with us",
+    "replyImmediately": "We reply immediately",
+    "openOptions": "Open options",
+    "send": "Send",
+    "messagePlaceholder": "Enter your message..."
   }
 }

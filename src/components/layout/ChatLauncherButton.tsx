@@ -4,19 +4,42 @@ import { MessageCircle } from "lucide-react";
 
 type ChatLauncherButtonProps = {
   label: string;
+  greeting: string;
+  showGreeting: boolean;
   onClick: () => void;
 };
 
+const LAUNCHER_ROOT_CLASS =
+  "pointer-events-auto fixed right-4 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-[45] flex items-center gap-2.5 max-lg:bottom-[5.75rem] lg:right-6 lg:bottom-6";
+
+const GREETING_CLASS =
+  "hidden max-w-[15.25rem] truncate rounded-full bg-white px-5 py-3 text-left text-sm font-medium text-brand-ink shadow-[0_8px_24px_rgba(15,23,42,0.1)] lg:inline-block";
+
+const ICON_CLASS =
+  "flex size-14 shrink-0 items-center justify-center rounded-full bg-[#FEC12B] text-brand-ink shadow-[0_8px_24px_rgba(254,193,43,0.4)] transition hover:brightness-95";
+
 /** Viewport-fixed chat icon so it never scrolls away with the page. */
-export function ChatLauncherButton({ label, onClick }: ChatLauncherButtonProps) {
+export function ChatLauncherButton({
+  label,
+  greeting,
+  showGreeting,
+  onClick,
+}: ChatLauncherButtonProps) {
   return (
     <button
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="pointer-events-auto fixed right-4 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-[45] flex size-14 items-center justify-center rounded-full bg-brand-red text-white shadow-[0_8px_24px_rgba(219,11,32,0.35)] transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red max-lg:bottom-[5.75rem] lg:right-6 lg:bottom-6"
+      className={`${LAUNCHER_ROOT_CLASS} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FEC12B]`}
     >
-      <MessageCircle className="size-7" strokeWidth={2} aria-hidden="true" />
+      {showGreeting ? (
+        <span aria-hidden="true" className={GREETING_CLASS}>
+          {greeting}
+        </span>
+      ) : null}
+      <span className={ICON_CLASS}>
+        <MessageCircle className="size-7" strokeWidth={2} aria-hidden="true" />
+      </span>
     </button>
   );
 }
