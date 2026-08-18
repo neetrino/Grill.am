@@ -1,12 +1,19 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, type SQL } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { categories, products, promotions } from "@/db/schema";
+import {
+  categories,
+  products,
+  promotions,
+  promotionUsers,
+  users,
+} from "@/db/schema";
 import type { AdminPromotionsFilter } from "@/features/promotions/schemas/admin-promotions";
 
 const PAGE_SIZE = 20;
+const COUPON_USER_OPTIONS_LIMIT = 200;
 
 export type AdminPromotionListItem = {
   id: string;
@@ -22,6 +29,16 @@ export type AdminPromotionListItem = {
   endsAt: Date | null;
   productId: string | null;
   categoryId: string | null;
+  /** Empty = unrestricted coupon. */
+  userIds: string[];
+};
+
+export type CouponUserOption = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
 };
 
 /** Lists promotions for the admin coupons/discounts surface. */
@@ -76,11 +93,62 @@ export async function listAdminPromotions(
     getDb().select({ value: count() }).from(promotions).where(where),
   ]);
 
+  const userIdsByPromotion = await loadPromotionUserIds(
+    rows.map((row) => row.id),
+  );
+
   return {
-    rows,
+    rows: rows.map((row) => ({
+      ...row,
+      userIds: userIdsByPromotion.get(row.id) ?? [],
+    })),
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
   };
+}
+
+/** Active customers selectable as coupon allowlist targets. */
+export async function listCouponUserOptions(): Promise<CouponUserOption[]> {
+  return getDb()
+    .select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      phone: users.phone,
+    })
+    .from(users)
+    .where(and(eq(users.role, "CUSTOMER"), eq(users.status, "ACTIVE")))
+    .orderBy(asc(users.firstName), asc(users.lastName), asc(users.email))
+    .limit(COUPON_USER_OPTIONS_LIMIT);
+}
+
+async function loadPromotionUserIds(
+  promotionIds: string[],
+): Promise<Map<string, string[]>> {
+  const map = new Map<string, string[]>();
+  if (promotionIds.length === 0) {
+    return map;
+  }
+
+  const rows = await getDb()
+    .select({
+      promotionId: promotionUsers.promotionId,
+      userId: promotionUsers.userId,
+    })
+    .from(promotionUsers)
+    .where(inArray(promotionUsers.promotionId, promotionIds));
+
+  for (const row of rows) {
+    const existing = map.get(row.promotionId);
+    if (existing) {
+      existing.push(row.userId);
+    } else {
+      map.set(row.promotionId, [row.userId]);
+    }
+  }
+
+  return map;
 }
 
 /** Loads one promotion by id for the admin editor. */

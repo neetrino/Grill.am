@@ -30,13 +30,17 @@ import {
   deletePromotionAction,
   duplicatePromotionAction,
 } from "@/features/promotions/application/upsert-promotion";
-import type { AdminPromotionListItem } from "@/features/promotions/application/queries";
+import type {
+  AdminPromotionListItem,
+  CouponUserOption,
+} from "@/features/promotions/application/queries";
 import { CouponDrawer } from "@/features/promotions/ui/CouponDrawer";
 import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 type AdminCouponsViewProps = {
   locale: string;
   coupons: AdminPromotionListItem[];
+  users: CouponUserOption[];
 };
 
 function valueLabel(discountType: string, discountValue: number): string {
@@ -53,7 +57,11 @@ function formatValidUntil(
   return formatAppDateTimeMinutes(endsAt);
 }
 
-export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
+export function AdminCouponsView({
+  locale,
+  coupons,
+  users,
+}: AdminCouponsViewProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.coupons;
   const common = dictionary.common;
@@ -251,6 +259,7 @@ export function AdminCouponsView({ locale, coupons }: AdminCouponsViewProps) {
         open={drawerOpen}
         onClose={closeDrawer}
         coupon={editingCoupon}
+        users={users}
       />
     </section>
   );

@@ -13,6 +13,15 @@ type AdminUsersPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
+type UsersQueryFilters = {
+  q?: string;
+  role?: string;
+  status?: string;
+  sort: string;
+  dir: string;
+  page: number;
+};
+
 function firstParam(
   value: string | string[] | undefined,
 ): string | undefined {
@@ -23,19 +32,17 @@ function firstParam(
 }
 
 function buildUsersQuery(
-  filters: {
-    q?: string;
-    role?: string;
-    status?: string;
-    page: number;
-  },
-  page: number,
+  filters: UsersQueryFilters,
+  overrides: Partial<UsersQueryFilters> = {},
 ): string {
+  const merged = { ...filters, ...overrides };
   const params = new URLSearchParams();
-  if (filters.q) params.set("q", filters.q);
-  if (filters.role) params.set("role", filters.role);
-  if (filters.status) params.set("status", filters.status);
-  params.set("page", String(page));
+  if (merged.q) params.set("q", merged.q);
+  if (merged.role) params.set("role", merged.role);
+  if (merged.status) params.set("status", merged.status);
+  if (merged.sort !== "created") params.set("sort", merged.sort);
+  if (merged.dir !== "desc") params.set("dir", merged.dir);
+  if (merged.page > 1) params.set("page", String(merged.page));
   return params.toString();
 }
 
@@ -65,15 +72,31 @@ export default async function AdminUsersPage({
     q: firstParam(raw.q) || undefined,
     role: firstParam(raw.role) || undefined,
     status: firstParam(raw.status) || undefined,
+    sort: firstParam(raw.sort) ?? "created",
+    dir: firstParam(raw.dir) ?? "desc",
     page: firstParam(raw.page) ?? "1",
   });
 
   const filters = parsed.success
     ? parsed.data
-    : { page: 1 as const, q: undefined, role: undefined, status: undefined };
+    : {
+        page: 1 as const,
+        sort: "created" as const,
+        dir: "desc" as const,
+        q: undefined,
+        role: undefined,
+        status: undefined,
+      };
 
   const { rows, total, pageSize } = await listAdminUsers(filters);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  function usersHref(overrides: Partial<UsersQueryFilters> = {}): string {
+    const query = buildUsersQuery(filters, overrides);
+    return query
+      ? `/${locale}/admin/users?${query}`
+      : `/${locale}/admin/users`;
+  }
 
   return (
     <>
@@ -87,13 +110,25 @@ export default async function AdminUsersPage({
         total={total}
         q={filters.q}
         role={filters.role}
+        sort={filters.sort}
+        dir={filters.dir}
+        sortOrdersAscHref={usersHref({
+          sort: "orders",
+          dir: "asc",
+          page: 1,
+        })}
+        sortOrdersDescHref={usersHref({
+          sort: "orders",
+          dir: "desc",
+          page: 1,
+        })}
       />
 
       {totalPages > 1 ? (
         <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
           {filters.page > 1 ? (
             <Link
-              href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page - 1)}`}
+              href={usersHref({ page: filters.page - 1 })}
               className="font-medium hover:underline"
             >
               {common.previous}
@@ -107,7 +142,7 @@ export default async function AdminUsersPage({
           </span>
           {filters.page < totalPages ? (
             <Link
-              href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page + 1)}`}
+              href={usersHref({ page: filters.page + 1 })}
               className="font-medium hover:underline"
             >
               {common.next}

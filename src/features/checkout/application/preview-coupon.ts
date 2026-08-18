@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
-import { promotions } from "@/db/schema";
+import { promotions, promotionUsers } from "@/db/schema";
 import { getCartWithItems } from "@/features/cart/cart";
 import {
   parseCartModifiers,
@@ -14,9 +14,11 @@ import {
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
+  isCouponUserAllowed,
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { getCurrentUser } from "@/lib/auth/session";
 
 const previewCouponSchema = z.object({
   couponCode: z.string().trim().min(1).max(64),
@@ -71,6 +73,25 @@ export async function previewCouponAction(
   const evaluated = evaluateCouponDiscount(coupon, subtotal);
   if (!evaluated.ok) {
     return { ok: false, error: couponDiscountErrorMessage(evaluated.error) };
+  }
+
+  if (coupon) {
+    const allowlist = await getDb()
+      .select({ userId: promotionUsers.userId })
+      .from(promotionUsers)
+      .where(eq(promotionUsers.promotionId, coupon.id));
+    const user = await getCurrentUser();
+    if (
+      !isCouponUserAllowed(
+        allowlist.map((row) => row.userId),
+        user?.id,
+      )
+    ) {
+      return {
+        ok: false,
+        error: couponDiscountErrorMessage("USER_NOT_ELIGIBLE"),
+      };
+    }
   }
 
   return {

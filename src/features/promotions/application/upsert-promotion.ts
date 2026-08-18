@@ -3,8 +3,12 @@
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import { auditLogs, promotions } from "@/db/schema";
+import { auditLogs, promotions, promotionUsers } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import {
+  assertPromotionUsersExist,
+  replacePromotionUsers,
+} from "@/features/promotions/application/replace-promotion-users";
 import {
   normalizePromotionCode,
   promotionRuleErrorMessage,
@@ -54,6 +58,22 @@ function revalidatePromotionPaths(locale: string, id?: string): void {
   invalidateProductsCache({ allProductDetails: true });
 }
 
+/**
+ * Unique allowlist ids for coupons.
+ * `undefined` = caller did not manage users (do not touch existing rows).
+ */
+function resolveAllowlistUserIds(
+  data: UpsertPromotionInput,
+): string[] | undefined {
+  if (data.userIds === undefined) {
+    return undefined;
+  }
+  if (data.kind !== "COUPON") {
+    return [];
+  }
+  return [...new Set(data.userIds)];
+}
+
 /** Creates a coupon or automatic promotion with domain validation and audit. */
 export async function createPromotionAction(
   locale: string,
@@ -79,8 +99,11 @@ export async function createPromotionAction(
     const id = createId();
     const now = new Date();
     const correlationId = createId();
+    const allowlistUserIds = resolveAllowlistUserIds(parsed.data) ?? [];
 
     await withTransaction(async (tx) => {
+      await assertPromotionUsersExist(tx, allowlistUserIds);
+
       await tx.insert(promotions).values({
         id,
         kind: ruleInput.kind,
@@ -100,6 +123,8 @@ export async function createPromotionAction(
         allowStacking: parsed.data.allowStacking,
       });
 
+      await replacePromotionUsers(tx, id, allowlistUserIds);
+
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
@@ -112,6 +137,7 @@ export async function createPromotionAction(
           discountType: parsed.data.discountType,
           discountValue: parsed.data.discountValue,
           isActive: parsed.data.isActive,
+          userIds: allowlistUserIds,
         },
         correlationId,
         context: { createdAt: now.toISOString() },
@@ -121,6 +147,10 @@ export async function createPromotionAction(
     revalidatePromotionPaths(locale, id);
     return ok({ id });
   } catch (error) {
+    const code = error instanceof Error ? error.message : "UNKNOWN";
+    if (code === "INVALID_USERS") {
+      return err("INVALID_USERS", "One or more selected users were not found.");
+    }
     const message = error instanceof Error ? error.message : "";
     if (message.includes("promotions_code_uidx") || message.includes("unique")) {
       return err("CODE_TAKEN", "That coupon code is already in use.");
@@ -152,6 +182,8 @@ export async function updatePromotionAction(
   }
 
   try {
+    const allowlistUserIds = resolveAllowlistUserIds(parsed.data);
+
     await withTransaction(async (tx) => {
       const [existing] = await tx
         .select()
@@ -166,6 +198,10 @@ export async function updatePromotionAction(
 
       if (existing.kind !== parsed.data.kind) {
         throw new Error("KIND_LOCKED");
+      }
+
+      if (allowlistUserIds !== undefined) {
+        await assertPromotionUsersExist(tx, allowlistUserIds);
       }
 
       const now = new Date();
@@ -192,6 +228,10 @@ export async function updatePromotionAction(
         })
         .where(eq(promotions.id, promotionId));
 
+      if (allowlistUserIds !== undefined) {
+        await replacePromotionUsers(tx, promotionId, allowlistUserIds);
+      }
+
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
@@ -207,6 +247,9 @@ export async function updatePromotionAction(
           code: ruleInput.code,
           discountValue: parsed.data.discountValue,
           isActive: parsed.data.isActive,
+          ...(allowlistUserIds !== undefined
+            ? { userIds: allowlistUserIds }
+            : {}),
         },
         correlationId,
       });
@@ -221,6 +264,9 @@ export async function updatePromotionAction(
     }
     if (code === "KIND_LOCKED") {
       return err("KIND_LOCKED", "Promotion kind cannot be changed.");
+    }
+    if (code === "INVALID_USERS") {
+      return err("INVALID_USERS", "One or more selected users were not found.");
     }
     const message = error instanceof Error ? error.message : "";
     if (message.includes("promotions_code_uidx") || message.includes("unique")) {
@@ -391,6 +437,17 @@ export async function duplicatePromotionAction(
         priority: existing.priority,
         allowStacking: existing.allowStacking,
       });
+
+      const sourceUsers = await tx
+        .select({ userId: promotionUsers.userId })
+        .from(promotionUsers)
+        .where(eq(promotionUsers.promotionId, promotionId));
+
+      await replacePromotionUsers(
+        tx,
+        id,
+        sourceUsers.map((row) => row.userId),
+      );
 
       await tx.insert(auditLogs).values({
         id: createId(),

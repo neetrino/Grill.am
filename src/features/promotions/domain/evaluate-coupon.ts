@@ -20,7 +20,25 @@ export type CouponDiscountError =
   | "NOT_YET_ACTIVE"
   | "EXPIRED"
   | "MINIMUM_NOT_MET"
-  | "USAGE_LIMIT";
+  | "USAGE_LIMIT"
+  | "USER_NOT_ELIGIBLE";
+
+/**
+ * Empty allowlist = unrestricted (all customers/guests).
+ * Non-empty = only listed signed-in users may redeem.
+ */
+export function isCouponUserAllowed(
+  allowlistUserIds: readonly string[],
+  userId: string | null | undefined,
+): boolean {
+  if (allowlistUserIds.length === 0) {
+    return true;
+  }
+  if (!userId) {
+    return false;
+  }
+  return allowlistUserIds.includes(userId);
+}
 
 /**
  * Validates an active coupon row against the order subtotal and returns the discount.
@@ -82,5 +100,7 @@ export function couponDiscountErrorMessage(error: CouponDiscountError): string {
       return "Order does not meet coupon minimum.";
     case "USAGE_LIMIT":
       return "Coupon usage limit reached.";
+    case "USER_NOT_ELIGIBLE":
+      return "This coupon is not available for your account.";
   }
 }

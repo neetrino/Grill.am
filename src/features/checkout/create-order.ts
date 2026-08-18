@@ -15,6 +15,7 @@ import {
   orders,
   products,
   promotions,
+  promotionUsers,
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
@@ -71,6 +72,7 @@ import {
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
+  isCouponUserAllowed,
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
@@ -509,6 +511,19 @@ export async function createOrderAction(
               evaluated.ok ? "INVALID_OR_INACTIVE" : evaluated.error,
             ),
           );
+        }
+
+        const allowlist = await tx
+          .select({ userId: promotionUsers.userId })
+          .from(promotionUsers)
+          .where(eq(promotionUsers.promotionId, coupon.id));
+        if (
+          !isCouponUserAllowed(
+            allowlist.map((row) => row.userId),
+            user?.id,
+          )
+        ) {
+          throw new Error(couponDiscountErrorMessage("USER_NOT_ELIGIBLE"));
         }
 
         discountAmount = evaluated.discountAmount;
