@@ -52,3 +52,25 @@ describe("checkoutSchema pickup branch", () => {
     expect(parsed.success).toBe(true);
   });
 });
+
+describe("checkoutSchema contact email", () => {
+  it("accepts an empty email", () => {
+    const parsed = checkoutSchema.safeParse(baseInput({ contactEmail: "" }));
+    expect(parsed.success).toBe(true);
+  });
+
+  it("accepts a whitespace-only email as empty", () => {
+    const parsed = checkoutSchema.safeParse(baseInput({ contactEmail: "   " }));
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.contactEmail).toBe("");
+    }
+  });
+
+  it("rejects an invalid email", () => {
+    const parsed = checkoutSchema.safeParse(
+      baseInput({ contactEmail: "not-an-email" }),
+    );
+    expect(parsed.success).toBe(false);
+  });
+});
