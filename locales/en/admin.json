@@ -439,6 +439,7 @@
     "count": "{count} message(s)",
     "searchPlaceholder": "Name, email, subject…",
     "empty": "No messages match these filters.",
+    "openNamed": "Open {subject}",
     "table": {
       "subject": "Subject",
       "from": "From",

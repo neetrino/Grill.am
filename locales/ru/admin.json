@@ -439,6 +439,7 @@
     "count": "{count} сообщ.",
     "searchPlaceholder": "Имя, email, тема…",
     "empty": "Нет сообщений по этим фильтрам.",
+    "openNamed": "Открыть {subject}",
     "table": {
       "subject": "Тема",
       "from": "От кого",

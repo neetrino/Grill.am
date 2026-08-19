@@ -73,7 +73,7 @@ export function UpdateUserStatusForm({
           });
         }}
       >
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-nowrap items-center gap-3 overflow-x-auto">
           <SegmentedControl
             aria-label={forms.newStatus}
             value={status}
