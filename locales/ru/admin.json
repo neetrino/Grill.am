@@ -45,6 +45,7 @@
     "na": "Н/Д",
     "loading": "Загрузка…",
     "uploading": "Загрузка файла…",
+    "update": "Обновить",
     "updating": "Обновление…",
     "deleting": "Удаление…",
     "confirmDeleteTitle": "Подтвердите удаление",
@@ -414,6 +415,7 @@
     "detail": {
       "role": "Роль",
       "status": "Статус",
+      "email": "Email",
       "phone": "Телефон",
       "emailVerified": "Email подтверждён",
       "lastLogin": "Последний вход",

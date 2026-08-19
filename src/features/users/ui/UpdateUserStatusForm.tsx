@@ -1,16 +1,18 @@
 "use client";
 
+import { CircleCheckBig, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { SegmentedControl } from "@/components/layout/SegmentedControl";
+import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
-import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
-import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
-import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { updateUserStatusAction } from "@/features/users/application/update-user";
-import type { UserStatus } from "@/features/users/domain/user-lifecycle";
+import {
+  USER_STATUSES,
+  type UserStatus,
+} from "@/features/users/domain/user-lifecycle";
+import { AdminUserActionCard } from "@/features/users/ui/AdminUserActionCard";
 import { adminUserStatusLabel } from "@/features/users/ui/admin-user-labels";
 
 type UpdateUserStatusFormProps = {
@@ -31,7 +33,7 @@ export function UpdateUserStatusForm({
   const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState(eligibleStatuses[0] ?? "");
+  const [status, setStatus] = useState<UserStatus>(currentStatus);
   const [isPending, startTransition] = useTransition();
 
   if (eligibleStatuses.length === 0) {
@@ -40,25 +42,28 @@ export function UpdateUserStatusForm({
     );
   }
 
-  const statusOptions = eligibleStatuses.map((item) => ({
+  const statusOptions = USER_STATUSES.filter(
+    (item) => item === currentStatus || eligibleStatuses.includes(item),
+  ).map((item) => ({
     value: item,
     label: adminUserStatusLabel(item, dictionary.users.statuses),
   }));
 
   return (
-    <Card className={`overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}>
+    <AdminUserActionCard
+      className="min-w-0 flex-1"
+      icon={<CircleCheckBig className="h-5 w-5" aria-hidden />}
+      title={forms.status}
+    >
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          const nextStatus = String(formData.get("status") ?? "") as UserStatus;
-
           startTransition(async () => {
             setError(null);
             const result = await updateUserStatusAction(locale, {
               userId,
-              status: nextStatus,
+              status,
             });
             if (!result.ok) {
               setError(result.error.message);
@@ -68,28 +73,27 @@ export function UpdateUserStatusForm({
           });
         }}
       >
-        <h3 className={ADMIN_SECTION_TITLE}>{forms.status}</h3>
-        <p className="text-sm text-gray-700">
-          {forms.current}:{" "}
-          <strong className="text-gray-900">
-            {adminUserStatusLabel(currentStatus, dictionary.users.statuses)}
-          </strong>
-        </p>
-        <AdminSelect
-          name="status"
-          label={forms.newStatus}
-          placeholder={forms.newStatus}
-          required
-          options={statusOptions}
-          value={status}
-          disabled={isPending}
-          onChange={setStatus}
-        />
+        <div className="flex flex-wrap items-center gap-3">
+          <SegmentedControl
+            aria-label={forms.newStatus}
+            value={status}
+            options={statusOptions}
+            size="md"
+            fitContent
+            disabled={isPending}
+            onSelect={setStatus}
+          />
+          <button
+            type="submit"
+            disabled={isPending || status === currentStatus}
+            className={`${ADMIN_BTN_PRIMARY_CLASS} shrink-0 gap-2`}
+          >
+            <Send className="h-4 w-4" aria-hidden />
+            {isPending ? common.updating : common.update}
+          </button>
+        </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? common.updating : forms.updateStatus}
-        </Button>
       </form>
-    </Card>
+    </AdminUserActionCard>
   );
 }

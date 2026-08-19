@@ -45,6 +45,7 @@
     "na": "Չկա",
     "loading": "Բեռնում…",
     "uploading": "Վերբեռնում…",
+    "update": "Թարմացնել",
     "updating": "Թարմացում…",
     "deleting": "Ջնջում…",
     "confirmDeleteTitle": "Հաստատել ջնջումը",
@@ -414,8 +415,9 @@
     "detail": {
       "role": "Դեր",
       "status": "Կարգավիճակ",
+      "email": "Էլ․ փոստ",
       "phone": "Հեռախոս",
-      "emailVerified": "Էլ․ փոստը հաստատված է",
+      "emailVerified": "Էլ․ փոստը\nհաստատված է",
       "lastLogin": "Վերջին մուտք",
       "created": "Ստեղծված",
       "recentOrders": "Վերջին պատվերներ",

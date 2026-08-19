@@ -1,18 +1,22 @@
+import {
+  CalendarDays,
+  CircleCheckBig,
+  LogIn,
+  Mail,
+  MailCheck,
+  Phone,
+  Shield,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminUserById } from "@/features/users/application/queries";
-import {
-  formatAppDateTimeMinutes,
-  formatAppIsoDate,
-} from "@/lib/datetime/app-timezone";
 import {
   getEligibleUserStatuses,
   isUserRole,
@@ -25,12 +29,18 @@ import {
 } from "@/features/users/ui/admin-user-labels";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
+import {
+  formatAppDateTimeMinutes,
+  formatAppIsoDate,
+} from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminUserDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
+
+const FIELD_ICON_CLASS = "h-4 w-4";
 
 function userStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
@@ -90,49 +100,70 @@ export default async function AdminUserDetailPage({
           </Link>
         </p>
         <AdminPageTitle>{`${user.firstName} ${user.lastName}`}</AdminPageTitle>
-        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{user.email}</p>
       </div>
 
-      <Card className="mb-6 p-6">
-        <div className="grid gap-3 text-sm md:grid-cols-2">
-          <p className="text-gray-700">
-            {detailCopy.role}:{" "}
+      <Card
+        className={`mb-4 !border-0 !shadow-none p-5 sm:p-6 ${ADMIN_CARD_CLASS}`}
+      >
+        <div className="grid gap-4 md:grid-cols-2 md:gap-x-10">
+          <AdminDetailField
+            icon={<Shield className={FIELD_ICON_CLASS} />}
+            label={detailCopy.role}
+          >
             <span
               className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}
             >
               {adminUserRoleLabel(user.role, copy.roles)}
             </span>
-          </p>
-          <p className="text-gray-700">
-            {detailCopy.status}:{" "}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
+            label={detailCopy.status}
+          >
             <span
               className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
             >
               {adminUserStatusLabel(user.status, copy.statuses)}
             </span>
-          </p>
-          <p className="text-gray-700">
-            {detailCopy.phone}: {user.phone ?? common.dash}
-          </p>
-          <p className="text-gray-700">
-            {detailCopy.emailVerified}:{" "}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Mail className={FIELD_ICON_CLASS} />}
+            label={detailCopy.email}
+          >
+            {user.email}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Phone className={FIELD_ICON_CLASS} />}
+            label={detailCopy.phone}
+          >
+            {user.phone ?? common.dash}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<MailCheck className={FIELD_ICON_CLASS} />}
+            label={detailCopy.emailVerified}
+          >
             {user.emailVerifiedAt
               ? formatAppIsoDate(user.emailVerifiedAt)
               : common.no}
-          </p>
-          <p className="text-gray-700">
-            {detailCopy.lastLogin}:{" "}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<LogIn className={FIELD_ICON_CLASS} />}
+            label={detailCopy.lastLogin}
+          >
             {user.lastLoginAt
               ? formatAppDateTimeMinutes(user.lastLoginAt)
               : common.never}
-          </p>
-          <p className="text-gray-700">
-            {detailCopy.created}: {formatAppIsoDate(user.createdAt)}
-          </p>
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
+            label={detailCopy.created}
+          >
+            {formatAppIsoDate(user.createdAt)}
+          </AdminDetailField>
         </div>
       </Card>
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2">
+      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-stretch">
         {role ? (
           <UpdateUserRoleForm
             locale={locale}
@@ -155,12 +186,7 @@ export default async function AdminUserDetailPage({
         )}
       </div>
 
-      <Card className="p-6">
-        <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>
-          {detailCopy.recentOrders}
-        </h2>
-        <AdminUserRecentOrders locale={locale} orders={recentOrders} />
-      </Card>
+      <AdminUserRecentOrders locale={locale} orders={recentOrders} />
     </section>
   );
 }

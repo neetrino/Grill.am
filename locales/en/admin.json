@@ -45,6 +45,7 @@
     "na": "N/A",
     "loading": "Loading…",
     "uploading": "Uploading…",
+    "update": "Update",
     "updating": "Updating…",
     "deleting": "Deleting…",
     "confirmDeleteTitle": "Confirm delete",
@@ -414,6 +415,7 @@
     "detail": {
       "role": "Role",
       "status": "Status",
+      "email": "Email",
       "phone": "Phone",
       "emailVerified": "Email verified",
       "lastLogin": "Last login",

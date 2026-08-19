@@ -1,11 +1,13 @@
 "use client";
 
+import { ClipboardList } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminSectionCard } from "@/features/admin/ui/AdminSectionCard";
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
@@ -51,7 +53,7 @@ function AdminUserRecentOrderButton({
       aria-label={formatAdminMessage(dictionary.orders.list.openOrder, {
         orderNumber: order.orderNumber,
       })}
-      className="block w-full rounded-lg border border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
+      className="rounded-[15px] border border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
     >
       <div className="flex flex-wrap items-center gap-2">
         <strong className="text-sm text-gray-900">{order.orderNumber}</strong>
@@ -75,7 +77,7 @@ function AdminUserRecentOrderButton({
 }
 
 /**
- * Recent-order list on the admin user page. Opens the same order sheet as `/admin/orders`.
+ * Recent-order grid on the admin user page. Opens the same order sheet as `/admin/orders`.
  */
 export function AdminUserRecentOrders({
   locale,
@@ -103,25 +105,37 @@ export function AdminUserRecentOrders({
     });
   }
 
+  function closeDrawer(): void {
+    setDrawerOpen(false);
+    setDetail(null);
+    setError(null);
+  }
+
   return (
     <>
-      <div className="space-y-3">
-        {orders.map((order) => (
-          <AdminUserRecentOrderButton
-            key={order.id}
-            order={order}
-            onOpen={openOrder}
-          />
-        ))}
+      <AdminSectionCard
+        icon={<ClipboardList className="h-5 w-5" />}
+        title={dictionary.users.detail.recentOrders}
+      >
         {orders.length === 0 ? (
           <p className="text-sm text-gray-600">
             {dictionary.users.detail.noOrders}
           </p>
-        ) : null}
-      </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {orders.map((order) => (
+              <AdminUserRecentOrderButton
+                key={order.id}
+                order={order}
+                onOpen={openOrder}
+              />
+            ))}
+          </div>
+        )}
+      </AdminSectionCard>
       <OrderDetailsDrawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={closeDrawer}
         detail={detail}
         error={error}
         isLoading={isPending}

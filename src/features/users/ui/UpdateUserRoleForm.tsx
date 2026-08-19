@@ -1,19 +1,18 @@
 "use client";
 
+import { Send, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { SegmentedControl } from "@/components/layout/SegmentedControl";
+import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
-import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
-import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
-import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { updateUserRoleAction } from "@/features/users/application/update-user";
 import {
   USER_ROLES,
   type UserRole,
 } from "@/features/users/domain/user-lifecycle";
+import { AdminUserActionCard } from "@/features/users/ui/AdminUserActionCard";
 import { adminUserRoleLabel } from "@/features/users/ui/admin-user-labels";
 
 type UpdateUserRoleFormProps = {
@@ -34,29 +33,29 @@ export function UpdateUserRoleForm({
   const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const roleOptions = USER_ROLES.filter((role) => role !== currentRole).map(
-    (role) => ({
-      value: role,
-      label: adminUserRoleLabel(role, dictionary.users.roles),
-    }),
-  );
-  const [role, setRole] = useState(roleOptions[0]?.value ?? "");
+  const [role, setRole] = useState<UserRole>(currentRole);
   const [isPending, startTransition] = useTransition();
 
+  const roleOptions = USER_ROLES.map((item) => ({
+    value: item,
+    label: adminUserRoleLabel(item, dictionary.users.roles),
+  }));
+
   return (
-    <Card className={`overflow-visible !border-0 !shadow-none p-6 ${ADMIN_CARD_CLASS}`}>
+    <AdminUserActionCard
+      className="w-full md:w-fit md:shrink-0"
+      icon={<Shield className="h-5 w-5" aria-hidden />}
+      title={forms.role}
+    >
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          const nextRole = String(formData.get("role") ?? "") as UserRole;
-
           startTransition(async () => {
             setError(null);
             const result = await updateUserRoleAction(locale, {
               userId,
-              role: nextRole,
+              role,
             });
             if (!result.ok) {
               setError(result.error.message);
@@ -66,28 +65,27 @@ export function UpdateUserRoleForm({
           });
         }}
       >
-        <h3 className={ADMIN_SECTION_TITLE}>{forms.role}</h3>
-        <p className="text-sm text-gray-700">
-          {forms.current}:{" "}
-          <strong className="text-gray-900">
-            {adminUserRoleLabel(currentRole, dictionary.users.roles)}
-          </strong>
-        </p>
-        <AdminSelect
-          name="role"
-          label={forms.newRole}
-          placeholder={forms.newRole}
-          required
-          options={roleOptions}
-          value={role}
-          disabled={disabled || isPending}
-          onChange={setRole}
-        />
+        <div className="flex flex-nowrap items-center gap-3">
+          <SegmentedControl
+            aria-label={forms.newRole}
+            value={role}
+            options={roleOptions}
+            size="md"
+            fitContent
+            disabled={disabled || isPending}
+            onSelect={setRole}
+          />
+          <button
+            type="submit"
+            disabled={disabled || isPending || role === currentRole}
+            className={`${ADMIN_BTN_PRIMARY_CLASS} shrink-0 gap-2`}
+          >
+            <Send className="h-4 w-4" aria-hidden />
+            {isPending ? common.updating : common.update}
+          </button>
+        </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <Button type="submit" size="sm" disabled={disabled || isPending}>
-          {isPending ? common.updating : forms.updateRole}
-        </Button>
       </form>
-    </Card>
+    </AdminUserActionCard>
   );
 }
