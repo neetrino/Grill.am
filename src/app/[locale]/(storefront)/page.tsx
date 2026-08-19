@@ -6,12 +6,17 @@ import { findComboCategory } from "@/features/categories/domain/combo-category";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
 import { HomeHero } from "@/features/home/ui/HomeHero";
 import {
+  HomeBranchesLazy,
   HomeFeaturedProductsLazy,
   HomeFeaturesLazy,
   HomePromotionsLazy,
 } from "@/features/home/ui/lazy-home-sections";
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
 import { getFeaturedProducts } from "@/features/products/queries";
+import {
+  buildStoresPageHref,
+  GRILL_STORE_LOCATIONS,
+} from "@/features/stores/yandex-map-embed";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -151,6 +156,30 @@ export default async function HomePage({ params }: HomePageProps) {
         line2={dictionary.home.specialLine2}
         ctaLabel={dictionary.home.specialCta}
         ctaHref={combosHref}
+      />
+
+      <HomeBranchesLazy
+        title={dictionary.stores.branchesTitle}
+        viewAllLabel={dictionary.stores.viewAll}
+        viewAllHref={`/${locale}/stores`}
+        previousLabel={dictionary.stores.previous}
+        nextLabel={dictionary.stores.next}
+        branches={[...GRILL_STORE_LOCATIONS]
+          .sort(
+            (left, right) =>
+              Number(Boolean(right.imageUrl)) - Number(Boolean(left.imageUrl)),
+          )
+          .map((store) => {
+            const address = store.address[locale];
+            return {
+              id: store.id,
+              href: buildStoresPageHref(locale, store.id),
+              title: address.replace(/\s+\d.*$/, "").trim() || address,
+              address,
+              phone: dictionary.contact.storePhones[0] ?? "",
+              imageUrl: store.imageUrl ?? null,
+            };
+          })}
       />
 
       <HomeFeaturesLazy

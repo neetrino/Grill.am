@@ -1,6 +1,10 @@
 {
   "titleLead": "Our",
   "titleAccent": "Stores",
+  "branchesTitle": "Our branches",
+  "viewAll": "View all branches",
+  "previous": "Previous branches",
+  "next": "Next branches",
   "mapTitle": "Store map",
   "empty": "Stores will appear here soon."
 }
