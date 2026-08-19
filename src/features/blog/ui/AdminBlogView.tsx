@@ -7,7 +7,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import {
   formatAdminMessage,
@@ -112,11 +112,11 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
         </Button>
       </div>
 
-      <input
+      <AdminSearchInput
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder={copy.searchPlaceholder}
-        className={`${ADMIN_INPUT} mb-4`}
+        className="mb-4"
         aria-label={copy.searchAria}
       />
 

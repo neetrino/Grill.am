@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Card } from "@/components/ui/Card";
-import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import {
@@ -98,12 +99,11 @@ export function AdminApplicationsFilters({
       >
         <label className="min-w-[180px] flex-1">
           <span className={ADMIN_LABEL}>{common.search}</span>
-          <input
+          <AdminSearchInput
             name="q"
             value={queryValue}
             onChange={(event) => setQueryValue(event.target.value)}
             placeholder={copy.searchPlaceholder}
-            className={ADMIN_INPUT}
           />
         </label>
         <div className="min-w-[180px]">

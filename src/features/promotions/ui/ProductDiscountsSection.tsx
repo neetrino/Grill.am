@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -123,13 +124,12 @@ export function ProductDiscountsSection({
       <label className="sr-only" htmlFor="product-discount-search">
         {copy.searchAria}
       </label>
-      <input
+      <AdminSearchInput
         id="product-discount-search"
-        type="search"
         placeholder={copy.searchPlaceholder}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        className={`${ADMIN_INPUT} mb-4`}
+        className="mb-4"
       />
 
       {filtered.length === 0 ? (

@@ -15,6 +15,12 @@ export const ADMIN_FORM_STACK = "flex flex-col gap-4";
 
 export const ADMIN_INPUT = ADMIN_FIELD_CLASS;
 
+export const ADMIN_SEARCH_WRAP =
+  "flex h-11 w-full items-center gap-2.5 rounded-[15px] border border-gray-200 px-3 transition focus-within:border-brand-red/40 focus-within:ring-2 focus-within:ring-brand-red/15";
+
+export const ADMIN_SEARCH_FIELD =
+  "h-full min-w-0 flex-1 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400";
+
 export const ADMIN_TEXTAREA = ADMIN_TEXTAREA_FIELD_CLASS;
 
 export const ADMIN_PAGE_TITLE =

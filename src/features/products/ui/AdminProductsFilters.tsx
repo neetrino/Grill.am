@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
-import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -95,23 +96,21 @@ export function AdminProductsFilters({
       >
         <label>
           <span className={ADMIN_LABEL}>{filters.searchTitleSlug}</span>
-          <input
+          <AdminSearchInput
             name="q"
             value={queryValue}
             onChange={(event) => setQueryValue(event.target.value)}
             placeholder={filters.searchTitleSlugPlaceholder}
-            className={ADMIN_INPUT}
             aria-label={filters.searchTitleSlug}
           />
         </label>
         <label>
           <span className={ADMIN_LABEL}>{filters.searchSku}</span>
-          <input
+          <AdminSearchInput
             name="sku"
             value={skuValue}
             onChange={(event) => setSkuValue(event.target.value)}
             placeholder={filters.skuPlaceholder}
-            className={ADMIN_INPUT}
             aria-label={filters.searchSku}
           />
         </label>
