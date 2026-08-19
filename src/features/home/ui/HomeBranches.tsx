@@ -32,7 +32,7 @@ type HomeBranchesProps = {
 };
 
 const ARROW_BUTTON_CLASS =
-  "hidden size-10 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow md:flex";
+  "hidden size-10 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow lg:flex";
 
 function splitSecondWordAccent(title: string): {
   lead: string;
@@ -46,6 +46,9 @@ function splitSecondWordAccent(title: string): {
 const BRANCH_LOGO = staticAssetUrl("/assets/brand/logo.webp");
 const SCROLL_STEP_FALLBACK_PX = 260;
 const SCROLL_EDGE_TOLERANCE_PX = 1;
+/** Mini/Air 3-up, iPad Pro 11"/12.9" portrait 4-up, desktop 5-up. Ranges are exclusive so `md` cannot override Pro. */
+const BRANCH_CARD_WIDTH_CLASS =
+  "w-[210px] shrink-0 snap-start md:max-[833px]:w-[calc((100%-2rem)/3)] min-[834px]:max-[1279px]:w-[calc((100%-3rem)/4)] xl:w-[calc((100%-4rem)/5)]";
 
 function readScrollStepPx(scroller: HTMLElement): number {
   const firstItem = scroller.querySelector("li");
@@ -133,12 +136,12 @@ function BranchScroller({
       ) : null}
       <ul
         ref={scrollerRef}
-        className="flex min-w-0 flex-1 snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:overflow-x-hidden"
+        className="flex min-w-0 flex-1 snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:overflow-x-hidden"
       >
         {branches.map((branch, index) => (
           <li
             key={branch.id}
-            className="w-[210px] shrink-0 snap-start md:w-[calc((100%-2rem)/3)] xl:w-[calc((100%-4rem)/5)]"
+            className={BRANCH_CARD_WIDTH_CLASS}
           >
             <BranchCard
               branch={branch}
