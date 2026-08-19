@@ -4,8 +4,9 @@ import Image from "next/image";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { X, ZoomIn, ZoomOut } from "lucide-react";
 
-import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
+import { ProductHitBadge } from "@/features/products/ui/ProductHitBadge";
 import type { ProductGalleryImage } from "@/features/products/types";
+import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 
 type ProductGalleryProps = {
@@ -104,9 +105,10 @@ export function ProductGallery({
         )}
 
         {hitLabel ? (
-          <span className="pointer-events-none absolute top-5 left-5 z-10 rounded-full bg-brand-red px-3 py-1.5 text-sm leading-5 font-bold text-white">
-            {hitLabel}
-          </span>
+          <ProductHitBadge
+            label={hitLabel}
+            className="absolute top-5 left-5 z-10 px-3 py-1.5 text-sm leading-5"
+          />
         ) : null}
 
         {!inStock ? (

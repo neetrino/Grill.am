@@ -115,6 +115,9 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   wishlistLabel={dictionary.nav.wishlist}
                   addToCartLabel={dictionary.product.addToCart}
                   requiresConfiguration={product.requiresConfiguration}
+                  hitLabel={
+                    product.isFeatured ? dictionary.product.hit : null
+                  }
                 />
               ),
             )}

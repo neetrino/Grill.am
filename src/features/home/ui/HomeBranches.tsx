@@ -248,7 +248,7 @@ export function HomeBranches({
           <AppLink
             href={viewAllHref}
             prefetchPolicy="intent"
-            className="hidden shrink-0 items-center gap-1 text-sm font-bold text-brand-red uppercase md:inline-flex"
+            className="hidden shrink-0 items-center gap-1 text-sm font-bold text-brand-red uppercase lg:inline-flex"
           >
             {viewAllLabel}
             <ChevronRight className="size-4" aria-hidden />
