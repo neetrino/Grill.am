@@ -1,7 +1,6 @@
 "use client";
 
 import { ClipboardList } from "lucide-react";
-import { useState, useTransition } from "react";
 
 import {
   formatAdminMessage,
@@ -13,13 +12,12 @@ import {
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
-import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
-import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import {
   adminOrderStatusLabel,
   adminPaymentStatusLabel,
 } from "@/features/orders/ui/admin-order-status-labels";
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import { useAdminOrderDrawer } from "@/features/orders/ui/useAdminOrderDrawer";
 
 export type AdminUserRecentOrderItem = {
   id: string;
@@ -84,32 +82,7 @@ export function AdminUserRecentOrders({
   orders,
 }: AdminUserRecentOrdersProps) {
   const dictionary = useAdminDictionary();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-
-  function openOrder(orderNumber: string): void {
-    setDrawerOpen(true);
-    setDetail(null);
-    setError(null);
-
-    startTransition(async () => {
-      const result = await getAdminOrderDetailAction(locale, orderNumber);
-      if (!result.ok) {
-        setError(result.error.message);
-        setDetail(null);
-        return;
-      }
-      setDetail(result.value);
-    });
-  }
-
-  function closeDrawer(): void {
-    setDrawerOpen(false);
-    setDetail(null);
-    setError(null);
-  }
+  const drawer = useAdminOrderDrawer(locale);
 
   return (
     <>
@@ -127,18 +100,18 @@ export function AdminUserRecentOrders({
               <AdminUserRecentOrderButton
                 key={order.id}
                 order={order}
-                onOpen={openOrder}
+                onOpen={drawer.openOrder}
               />
             ))}
           </div>
         )}
       </AdminSectionCard>
       <OrderDetailsDrawer
-        open={drawerOpen}
-        onClose={closeDrawer}
-        detail={detail}
-        error={error}
-        isLoading={isPending}
+        open={drawer.open}
+        onClose={drawer.closeDrawer}
+        detail={drawer.detail}
+        error={drawer.error}
+        isLoading={drawer.isLoading}
       />
     </>
   );

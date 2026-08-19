@@ -138,7 +138,7 @@ const BUNDLES: Record<"en" | "ru" | "hy", AdminBundle> = {
     emailLabel: "Email",
     phoneLabel: "Հեռախոս",
     fulfillmentLabel: "Ստացում",
-    pickupLabel: "Ինքնաառաքում",
+    pickupLabel: "Մասնաճյուղ",
     deliveryLabel: "Առաքում",
     addressLabel: "Հասցե",
     itemsLabel: "Ապրանքներ",

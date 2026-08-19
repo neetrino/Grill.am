@@ -17,7 +17,7 @@ import { verifyPassword } from "@/lib/auth/password";
 import type { UserRole } from "@/features/users/domain/user-lifecycle";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
-const LOGIN_VALUE_KEYS = ["email", "password"] as const;
+const LOGIN_VALUE_KEYS = ["email", "password", "rememberMe"] as const;
 
 function resolveSafeNextPath(
   locale: Locale,
@@ -86,6 +86,8 @@ export async function loginAction(
     .update(users)
     .set({ lastLoginAt: new Date(), updatedAt: new Date() })
     .where(eq(users.id, user.id));
-  await createSession(user.id);
+  await createSession(user.id, {
+    rememberMe: parsed.data.rememberMe === "on",
+  });
   redirect(resolveSafeNextPath(locale, user.role, formData.get("next")));
 }

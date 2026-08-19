@@ -8,7 +8,8 @@ export type AuthFieldErrors = Partial<
     | "phone"
     | "password"
     | "confirmPassword"
-    | "acceptTerms",
+    | "acceptTerms"
+    | "rememberMe",
     string
   >
 >;
@@ -21,7 +22,8 @@ export type AuthFormValues = Partial<
     | "phone"
     | "password"
     | "confirmPassword"
-    | "acceptTerms",
+    | "acceptTerms"
+    | "rememberMe",
     string
   >
 >;

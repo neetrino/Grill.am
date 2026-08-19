@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
-
-import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
 import { BulkChangeOrderStatusForm } from "@/features/orders/ui/BulkChangeOrderStatusForm";
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import { useAdminOrderDrawer } from "@/features/orders/ui/useAdminOrderDrawer";
 
 type AdminOrdersViewOrder = {
   id: string;
@@ -27,44 +24,21 @@ type AdminOrdersViewProps = {
 };
 
 export function AdminOrdersView({ locale, orders }: AdminOrdersViewProps) {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-
-  function openOrder(orderNumber: string): void {
-    setDrawerOpen(true);
-    setDetail(null);
-    setError(null);
-
-    startTransition(async () => {
-      const result = await getAdminOrderDetailAction(locale, orderNumber);
-      if (!result.ok) {
-        setError(result.error.message);
-        setDetail(null);
-        return;
-      }
-      setDetail(result.value);
-    });
-  }
-
-  function closeDrawer(): void {
-    setDrawerOpen(false);
-  }
+  const drawer = useAdminOrderDrawer(locale);
 
   return (
     <>
       <BulkChangeOrderStatusForm
         locale={locale}
         orders={orders}
-        onOpenOrder={openOrder}
+        onOpenOrder={drawer.openOrder}
       />
       <OrderDetailsDrawer
-        open={drawerOpen}
-        onClose={closeDrawer}
-        detail={detail}
-        error={error}
-        isLoading={isPending}
+        open={drawer.open}
+        onClose={drawer.closeDrawer}
+        detail={drawer.detail}
+        error={drawer.error}
+        isLoading={drawer.isLoading}
       />
     </>
   );

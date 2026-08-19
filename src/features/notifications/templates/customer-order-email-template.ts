@@ -148,7 +148,7 @@ const BUNDLES: Record<"en" | "ru" | "hy", CustomerLocaleBundle> = {
       nameLabel: "Անուն",
       phoneLabel: "Հեռախոս",
       fulfillmentLabel: "Ստացում",
-      pickupLabel: "Ինքնաառաքում",
+      pickupLabel: "Մասնաճյուղ",
       deliveryLabel: "Առաքում",
       addressLabel: "Հասցե",
       itemsLabel: "Ապրանքներ",

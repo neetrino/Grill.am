@@ -12,7 +12,7 @@ type OrderDetailsDrawerItemsProps = {
   detail: AdminOrderDetailView;
 };
 
-/** Product list card — line items with modifiers, SKU, and qty × price. */
+/** Product list card — line items with modifiers and qty × price. */
 export function OrderDetailsDrawerItems({
   detail,
 }: OrderDetailsDrawerItemsProps) {
@@ -47,10 +47,7 @@ export function OrderDetailsDrawerItems({
                 </ul>
               ) : null}
 
-              <p className="mt-2 text-sm text-gray-500">
-                {drawer.sku}: {item.sku}
-              </p>
-              <p className="mt-1 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-gray-600">
                 {drawer.qty}: {item.quantity} × {unit} = {line}
               </p>
             </li>
