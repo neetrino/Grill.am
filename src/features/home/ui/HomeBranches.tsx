@@ -33,6 +33,15 @@ type HomeBranchesProps = {
 const ARROW_BUTTON_CLASS =
   "hidden size-12 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow md:flex";
 
+function splitSecondWordAccent(title: string): {
+  lead: string;
+  accent: string;
+} {
+  const words = title.trim().split(/\s+/).filter(Boolean);
+  const [lead = "", ...rest] = words;
+  return { lead, accent: rest.join(" ") };
+}
+
 const BRANCH_LOGO = staticAssetUrl("/assets/brand/logo.webp");
 const SCROLL_STEP_FALLBACK_PX = 260;
 const SCROLL_EDGE_TOLERANCE_PX = 1;
@@ -209,6 +218,7 @@ export function HomeBranches({
   branches,
 }: HomeBranchesProps) {
   const { sectionRef, revealed } = useViewportReveal();
+  const { lead, accent } = splitSecondWordAccent(title);
 
   if (branches.length === 0) {
     return null;
@@ -224,14 +234,19 @@ export function HomeBranches({
           className={`mb-5 flex items-center justify-between gap-3 md:mb-8 ${branchAppearClass(revealed)}`}
           style={branchAppearStyle(0)}
         >
-          <h2 className="flex min-w-0 items-center gap-2 text-[20px] leading-tight font-black text-[#171717] uppercase md:text-[26px] lg:text-[30px]">
-            <MapPin className="size-5 shrink-0 text-brand-red md:size-6" aria-hidden />
-            <span className="truncate">{title}</span>
+          <h2 className="min-w-0 truncate text-[20px] leading-tight font-black text-[#171717] uppercase md:text-[26px] lg:text-[30px]">
+            {lead}
+            {accent ? (
+              <>
+                {" "}
+                <span className="text-brand-red-hot">{accent}</span>
+              </>
+            ) : null}
           </h2>
           <AppLink
             href={viewAllHref}
             prefetchPolicy="intent"
-            className="hidden shrink-0 items-center gap-1 text-sm font-bold text-brand-red md:inline-flex"
+            className="hidden shrink-0 items-center gap-1 text-sm font-bold text-brand-red uppercase md:inline-flex"
           >
             {viewAllLabel}
             <ChevronRight className="size-4" aria-hidden />

@@ -46,7 +46,7 @@ function readScrollStepPx(scroller: HTMLElement): number {
 }
 
 const ARROW_BUTTON_CLASS =
-  "hidden size-14 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow xl:flex";
+  "hidden size-12 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow xl:flex";
 
 export function HomeCategories({
   titleLead,
@@ -193,7 +193,7 @@ export function HomeCategories({
                 onClick={() => scrollByDirection(-1)}
                 className={ARROW_BUTTON_CLASS}
               >
-                <ChevronLeft className="size-6" aria-hidden />
+                <ChevronLeft className="size-5" aria-hidden />
               </button>
               <ul
                 ref={scrollerRef}
@@ -238,7 +238,7 @@ export function HomeCategories({
                 onClick={() => scrollByDirection(1)}
                 className={ARROW_BUTTON_CLASS}
               >
-                <ChevronRight className="size-6" aria-hidden />
+                <ChevronRight className="size-5" aria-hidden />
               </button>
             </div>
 
