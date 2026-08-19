@@ -7,15 +7,7 @@ import {
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
-import {
-  ADMIN_BADGE,
-  orderStatusBadgeClass,
-  paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
-import {
-  adminOrderStatusLabel,
-  adminPaymentStatusLabel,
-} from "@/features/orders/ui/admin-order-status-labels";
+import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
   formatAppDateTimeMinutes,
@@ -26,6 +18,7 @@ import {
   isUserRole,
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
+import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import {
   adminUserRoleLabel,
   adminUserStatusLabel,
@@ -73,8 +66,6 @@ export default async function AdminUserDetailPage({
   const copy = admin.users;
   const detailCopy = copy.detail;
   const common = admin.common;
-  const orderStatusLabels = admin.orders.status;
-  const paymentStatusLabels = admin.orders.paymentStatus;
 
   const detail = await getAdminUserById(id);
   if (!detail) {
@@ -168,40 +159,7 @@ export default async function AdminUserDetailPage({
         <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>
           {detailCopy.recentOrders}
         </h2>
-        <div className="space-y-3">
-          {recentOrders.map((order) => (
-            <Link
-              key={order.id}
-              href={`/${locale}/admin/orders/${order.orderNumber}`}
-              className="block rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <strong className="text-sm text-gray-900">
-                  {order.orderNumber}
-                </strong>
-                <span
-                  className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-                >
-                  {adminOrderStatusLabel(order.status, orderStatusLabels)}
-                </span>
-                <span
-                  className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                >
-                  {adminPaymentStatusLabel(
-                    order.paymentStatus,
-                    paymentStatusLabels,
-                  )}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-gray-600">
-                {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
-              </p>
-            </Link>
-          ))}
-          {recentOrders.length === 0 ? (
-            <p className="text-sm text-gray-600">{detailCopy.noOrders}</p>
-          ) : null}
-        </div>
+        <AdminUserRecentOrders locale={locale} orders={recentOrders} />
       </Card>
     </section>
   );
