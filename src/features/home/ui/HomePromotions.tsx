@@ -105,7 +105,7 @@ export function HomePromotions({
           />
         </div>
 
-        <div className="mx-auto hidden w-full max-w-[1296px] lg:block">
+        <div className="hidden w-full lg:block">
           <div className="relative h-[553px] overflow-hidden rounded-[30px] bg-[#ffc12c]">
             <div className="relative z-10 flex h-full max-w-[55%] flex-col justify-center gap-8 px-14">
               <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#f52516] px-4 py-1.5 text-xs leading-none font-black tracking-[1.44px] text-[#0d0d0d] uppercase">

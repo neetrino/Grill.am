@@ -28,7 +28,7 @@ const HomePromotions = dynamic(
   {
     loading: () => (
       <div
-        className="mx-auto min-h-[420px] w-full max-w-[1296px] rounded-[30px] bg-[#ffc12c]/70"
+        className="min-h-[420px] w-full rounded-[30px] bg-[#ffc12c]/70"
         aria-hidden
       />
     ),
