@@ -131,7 +131,7 @@ export function HomeFeaturedProducts({
         reveal();
         observer.disconnect();
       },
-      { threshold: 0.22, rootMargin: "0px 0px -10% 0px" },
+      { threshold: 0.01, rootMargin: "160px 0px 0px 0px" },
     );
 
     observer.observe(node);
@@ -141,7 +141,7 @@ export function HomeFeaturedProducts({
   return (
     <section
       ref={sectionRef}
-      className="w-full overflow-hidden bg-white pt-5 pb-6 md:rounded-[30px] md:bg-brand-yellow-soft md:py-12 lg:py-16"
+      className="w-full overflow-clip bg-white pt-5 pb-6 md:rounded-[30px] md:bg-brand-yellow-soft md:py-12 lg:py-16"
     >
       <div className="mx-auto w-full max-w-[1440px] px-4 md:px-[var(--page-padding-inline)]">
         <div className="mb-4 flex items-start justify-between gap-3 md:mb-10 md:items-end">

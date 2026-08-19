@@ -15,6 +15,8 @@ type LazyWhenVisibleProps = {
   /** Start loading before the section enters the viewport. */
   rootMargin?: string;
   className?: string;
+  /** Soft rise on mount. Off when children already animate in. */
+  enterMotion?: boolean;
 };
 
 /**
@@ -26,6 +28,7 @@ export function LazyWhenVisible({
   minHeight,
   rootMargin = "360px 0px",
   className,
+  enterMotion = true,
 }: LazyWhenVisibleProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -66,7 +69,13 @@ export function LazyWhenVisible({
       className={className}
       style={visible || minHeight == null ? undefined : { minHeight }}
     >
-      {visible ? <div className="page-enter">{children}</div> : null}
+      {visible ? (
+        enterMotion ? (
+          <div className="page-enter">{children}</div>
+        ) : (
+          children
+        )
+      ) : null}
     </div>
   );
 }

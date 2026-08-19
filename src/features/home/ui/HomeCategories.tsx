@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { useForwardVerticalWheelToPage } from "@/features/home/ui/use-forward-vertical-wheel";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type CategoryItem = {
@@ -56,7 +57,10 @@ export function HomeCategories({
   emptyLabel,
   categories,
 }: HomeCategoriesProps) {
+  const mobileScrollerRef = useRef<HTMLUListElement>(null);
   const scrollerRef = useRef<HTMLUListElement>(null);
+  useForwardVerticalWheelToPage(mobileScrollerRef);
+  useForwardVerticalWheelToPage(scrollerRef);
 
   /** Wraps around at both edges so the arrows never dead-end. */
   function scrollByDirection(direction: -1 | 1): void {
@@ -112,7 +116,10 @@ export function HomeCategories({
         ) : (
           <div>
             {/* Mobile — Figma `164:424` compact 88px cards */}
-            <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <ul
+              ref={mobileScrollerRef}
+              className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-2 md:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
               {categories.map((category, index) => {
                 const fallback =
                   FALLBACK_IMAGES[index % FALLBACK_IMAGES.length] ??
