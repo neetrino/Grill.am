@@ -292,6 +292,8 @@ export async function getActiveProducts(
   return withProductImages(rows, locale);
 }
 
+const FEATURED_PRODUCTS_LIMIT = 10;
+
 async function loadFeaturedProducts(
   locale: Locale,
 ): Promise<CatalogProduct[]> {
@@ -305,7 +307,7 @@ async function loadFeaturedProducts(
         isNull(products.deletedAt),
       ),
     )
-    .limit(8);
+    .limit(FEATURED_PRODUCTS_LIMIT);
 
   return withProductImages(rows, locale);
 }

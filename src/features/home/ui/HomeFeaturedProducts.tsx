@@ -182,7 +182,7 @@ export function HomeFeaturedProducts({
               ))}
             </div>
 
-            <div className="hidden grid-cols-4 gap-3 sm:gap-5 md:grid lg:gap-6 xl:gap-8">
+            <div className="hidden grid-cols-5 gap-3 sm:gap-5 md:grid lg:gap-6 xl:gap-8">
               {products.map((product, index) => (
                 <FeaturedGridCard
                   key={product.id}
