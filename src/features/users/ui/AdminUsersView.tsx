@@ -59,7 +59,7 @@ function roleFilterHref(
   const params = new URLSearchParams();
   if (q) params.set("q", q);
   if (role) params.set("role", role);
-  if (sort && sort !== "created") params.set("sort", sort);
+  if (sort && sort !== "orders") params.set("sort", sort);
   if (dir && dir !== "desc") params.set("dir", dir);
   const query = params.toString();
   return query
@@ -154,7 +154,7 @@ export function AdminUsersView({
           aria-label={copy.searchAria}
         />
         {role ? <input type="hidden" name="role" value={role} /> : null}
-        {sort !== "created" ? (
+        {sort !== "orders" ? (
           <input type="hidden" name="sort" value={sort} />
         ) : null}
         {dir !== "desc" ? (
@@ -323,9 +323,6 @@ export function AdminUsersView({
                         >
                           <p className="font-medium text-gray-900 group-hover:underline">
                             {name}
-                          </p>
-                          <p className="truncate text-xs text-gray-400">
-                            {user.id}
                           </p>
                         </Link>
                       </td>

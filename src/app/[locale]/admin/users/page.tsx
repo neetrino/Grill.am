@@ -40,7 +40,7 @@ function buildUsersQuery(
   if (merged.q) params.set("q", merged.q);
   if (merged.role) params.set("role", merged.role);
   if (merged.status) params.set("status", merged.status);
-  if (merged.sort !== "created") params.set("sort", merged.sort);
+  if (merged.sort !== "orders") params.set("sort", merged.sort);
   if (merged.dir !== "desc") params.set("dir", merged.dir);
   if (merged.page > 1) params.set("page", String(merged.page));
   return params.toString();
@@ -72,7 +72,7 @@ export default async function AdminUsersPage({
     q: firstParam(raw.q) || undefined,
     role: firstParam(raw.role) || undefined,
     status: firstParam(raw.status) || undefined,
-    sort: firstParam(raw.sort) ?? "created",
+    sort: firstParam(raw.sort) ?? "orders",
     dir: firstParam(raw.dir) ?? "desc",
     page: firstParam(raw.page) ?? "1",
   });
@@ -81,7 +81,7 @@ export default async function AdminUsersPage({
     ? parsed.data
     : {
         page: 1 as const,
-        sort: "created" as const,
+        sort: "orders" as const,
         dir: "desc" as const,
         q: undefined,
         role: undefined,
