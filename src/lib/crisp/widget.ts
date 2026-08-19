@@ -1,5 +1,8 @@
 export const CRISP_CHAT_SCRIPT_URL = "https://client.crisp.chat/l.js";
 
+/** Named Crisp chatbox theme (header, launcher, and input accent). */
+export const CRISP_COLOR_THEME = "red" as const;
+
 type CrispCommand = readonly [string, ...unknown[]];
 
 type CrispQueue = {
@@ -24,7 +27,7 @@ function pushCrisp(command: CrispCommand): void {
   getCrispQueue()?.push(command);
 }
 
-/** Must run before the Crisp script so queued `do` commands survive load. */
+/** Must run before the Crisp script so queued `do`/`config` commands survive load. */
 export function bootCrisp(websiteId: string, locale: string): void {
   if (typeof window === "undefined") {
     return;
@@ -35,6 +38,7 @@ export function bootCrisp(websiteId: string, locale: string): void {
   Reflect.set(window, "CRISP_WEBSITE_ID", websiteId);
   Reflect.set(window, "CRISP_RUNTIME_CONFIG", { locale });
   Reflect.set(window, "CRISP_READY_TRIGGER", concealCrispLauncher);
+  pushCrisp(["config", "color:theme", [CRISP_COLOR_THEME]]);
 }
 
 export function concealCrispLauncher(): void {
