@@ -94,11 +94,11 @@ export function ProductAddonChecklist({
           <h2 className="text-sm leading-5 font-bold text-[#101828]">
             {labels.exclusions}
           </h2>
-          <ul className="mt-4 flex flex-col gap-2">
+          <ul className="mt-4 grid grid-cols-1 gap-2 lg:grid-cols-2">
             {exclusions.map((exclusion) => {
               const selected = selectedExclusionIds.includes(exclusion.id);
               return (
-                <li key={exclusion.id}>
+                <li key={exclusion.id} className="min-w-0">
                   <button
                     type="button"
                     onClick={() => onToggleExclusion(exclusion.id)}

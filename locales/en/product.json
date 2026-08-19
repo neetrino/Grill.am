@@ -9,6 +9,8 @@
   "added": "Added to cart.",
   "addError": "Unable to add this product to the cart.",
   "related": "Related products",
+  "relatedTitleLead": "Related",
+  "relatedTitleAccent": "Products",
   "shortDescription": "Short description",
   "composition": "Ingredients",
   "options": "Size / type",

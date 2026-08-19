@@ -9,6 +9,8 @@
   "added": "Добавлено в корзину.",
   "addError": "Не удалось добавить товар в корзину.",
   "related": "Похожие товары",
+  "relatedTitleLead": "Похожие",
+  "relatedTitleAccent": "товары",
   "shortDescription": "Краткое описание",
   "composition": "Состав",
   "options": "Размер / тип",

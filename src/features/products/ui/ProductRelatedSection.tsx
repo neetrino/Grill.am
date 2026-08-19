@@ -12,6 +12,7 @@ import type { Currency } from "@/lib/money/currency";
 type ProductRelatedSectionProps = {
   locale: Locale;
   productId: string;
+  categorySlug?: string | null;
   currency: Currency;
   isSignedIn: boolean;
   dictionary: Dictionary;
@@ -21,6 +22,7 @@ type ProductRelatedSectionProps = {
 export async function ProductRelatedSection({
   locale,
   productId,
+  categorySlug,
   currency,
   isSignedIn,
   dictionary,
@@ -36,26 +38,23 @@ export async function ProductRelatedSection({
   ]);
 
   const labels = dictionary.product;
-  const home = dictionary.home;
+  const viewAllHref = categorySlug
+    ? `/${locale}/products?category=${encodeURIComponent(categorySlug)}`
+    : `/${locale}/products`;
 
   return (
     <section className="flex flex-col gap-[30px]">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-        <div className="min-w-0">
-          <h2 className="text-[28px] leading-tight font-black text-brand-red uppercase sm:text-[40px] sm:leading-[58.8px]">
-            {home.featuredTitleLead}{" "}
-            <span className="text-[#171717]">{home.featuredTitleAccent}</span>
-          </h2>
-          <p className="mt-2 max-w-3xl text-base leading-6 text-[#171717]">
-            {home.featuredSubtitle}
-          </p>
-        </div>
+        <h2 className="min-w-0 text-[28px] leading-tight font-black text-brand-red uppercase sm:text-[40px] sm:leading-[58.8px]">
+          {labels.relatedTitleLead}{" "}
+          <span className="text-[#171717]">{labels.relatedTitleAccent}</span>
+        </h2>
         <AppLink
-          href={`/${locale}/products`}
+          href={viewAllHref}
           prefetchPolicy="intent"
           className="inline-flex shrink-0 items-center gap-1 text-sm font-bold tracking-[1.4px] text-[#171717] uppercase"
         >
-          {home.featuredViewAll}
+          {dictionary.home.viewAll}
           <ChevronRight className="h-4 w-4" aria-hidden />
         </AppLink>
       </div>

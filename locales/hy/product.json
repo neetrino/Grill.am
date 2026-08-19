@@ -9,6 +9,8 @@
   "added": "Ավելացվեց զամբյուղ։",
   "addError": "Չհաջողվեց ավելացնել զամբյուղ։",
   "related": "Նման ապրանքներ",
+  "relatedTitleLead": "Նման",
+  "relatedTitleAccent": "Ապրանքներ",
   "shortDescription": "Կարճ նկարագրություն",
   "composition": "Բաղադրություն",
   "options": "Չափ / տեսակ",
