@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 import { Card } from "@/components/ui/Card";
-import { ADMIN_FILTER_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -136,12 +136,12 @@ export function AdminOrdersFilters({
             });
           }}
         />
-        <input
+        <AdminSearchInput
           name="q"
           value={queryValue}
           onChange={(event) => setQueryValue(event.target.value)}
           placeholder={filters.searchPlaceholder}
-          className={`${ADMIN_FILTER_INPUT} min-w-0 flex-1`}
+          className="min-w-0 flex-1"
           aria-label={filters.searchAria}
         />
       </form>

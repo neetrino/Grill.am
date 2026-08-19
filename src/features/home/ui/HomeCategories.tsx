@@ -17,7 +17,6 @@ type CategoryItem = {
 type HomeCategoriesProps = {
   titleLead: string;
   titleAccent: string;
-  subtitle: string;
   viewAllLabel: string;
   viewAllHref: string;
   emptyLabel: string;
@@ -52,7 +51,6 @@ const ARROW_BUTTON_CLASS =
 export function HomeCategories({
   titleLead,
   titleAccent,
-  subtitle,
   viewAllLabel,
   viewAllHref,
   emptyLabel,
@@ -140,7 +138,6 @@ export function HomeCategories({
               {titleLead}{" "}
               <span className="text-brand-red-hot">{titleAccent}</span>
             </h2>
-            <p className="mt-2 text-base leading-6 text-[#171717]">{subtitle}</p>
           </div>
           <AppLink
             href={viewAllHref}
@@ -211,7 +208,7 @@ export function HomeCategories({
                 return (
                   <li
                     key={category.id}
-                    className="w-[calc((100%-6rem)/4)] max-w-[calc((100%-6rem)/4)] shrink-0 snap-start xl:w-[calc((100%-7.5rem)/4)] xl:max-w-[calc((100%-7.5rem)/4)]"
+                    className="w-[calc((100%-8rem)/5)] max-w-[calc((100%-8rem)/5)] shrink-0 snap-start xl:w-[calc((100%-10rem)/5)] xl:max-w-[calc((100%-10rem)/5)]"
                   >
                     <AppLink
                       href={category.href}
@@ -223,7 +220,7 @@ export function HomeCategories({
                           src={imageSrc}
                           alt=""
                           fill
-                          sizes="279px"
+                          sizes="220px"
                           className="object-contain transition duration-300 group-hover:scale-105"
                         />
                       </div>

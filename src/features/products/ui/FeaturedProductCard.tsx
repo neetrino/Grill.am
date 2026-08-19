@@ -75,7 +75,7 @@ export function FeaturedProductCard({
   return (
     <article
       data-product-card
-      className={`group relative flex w-[210px] shrink-0 flex-col overflow-hidden rounded-[20px] ${
+      className={`group relative flex h-full w-full min-w-0 flex-col overflow-hidden rounded-[20px] ${
         isRed
           ? "bg-brand-red"
           : "bg-white shadow-[0px_7px_11px_rgba(62,87,61,0.13)]"
@@ -96,7 +96,7 @@ export function FeaturedProductCard({
               src={resolvedImageUrl}
               alt={title}
               fill
-              sizes="210px"
+              sizes="(max-width: 767px) 45vw, 210px"
               className="object-cover"
               priority={priority}
             />

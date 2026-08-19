@@ -3,7 +3,7 @@
 import { useId, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -86,12 +86,10 @@ export function CouponUserPicker({
 
       {open ? (
         <div id={listId} className="border-t border-gray-200 px-4 py-3">
-          <input
-            type="search"
+          <AdminSearchInput
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={copy.searchUsers}
-            className={ADMIN_INPUT}
             disabled={disabled}
           />
 

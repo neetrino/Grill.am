@@ -5,42 +5,30 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { SegmentedControl } from "@/components/layout/SegmentedControl";
-import { Button } from "@/components/ui/Button";
-import { AdminSectionCard } from "@/features/admin/ui/AdminSectionCard";
+import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { updateContactStatusAction } from "@/features/contact/application/update-contact-status";
 import {
   CONTACT_STATUSES,
   type ContactStatus,
 } from "@/features/contact/domain/contact-rules";
+import { contactStatusLabel } from "@/features/contact/ui/contact-status-ui";
+import { AdminUserActionCard } from "@/features/users/ui/AdminUserActionCard";
 
 type UpdateContactStatusFormProps = {
   locale: string;
   messageId: string;
   currentStatus: ContactStatus;
   eligibleStatuses: ContactStatus[];
+  onUpdated?: (status: ContactStatus) => void;
 };
-
-function contactStatusLabel(
-  status: ContactStatus,
-  labels: {
-    unread: string;
-    read: string;
-    replied: string;
-    archived: string;
-  },
-): string {
-  if (status === "UNREAD") return labels.unread;
-  if (status === "READ") return labels.read;
-  if (status === "REPLIED") return labels.replied;
-  return labels.archived;
-}
 
 export function UpdateContactStatusForm({
   locale,
   messageId,
   currentStatus,
   eligibleStatuses,
+  onUpdated,
 }: UpdateContactStatusFormProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.messages;
@@ -64,23 +52,14 @@ export function UpdateContactStatusForm({
   }));
 
   return (
-    <AdminSectionCard
-      icon={<CircleCheckBig className="h-5 w-5" />}
-      title={
-        <>
-          {copy.detail.status}
-          {": "}
-          <span className="text-brand-red">
-            {contactStatusLabel(currentStatus, copy.status)}
-          </span>
-        </>
-      }
+    <AdminUserActionCard
+      icon={<CircleCheckBig className="h-5 w-5" aria-hidden />}
+      title={copy.detail.status}
     >
       <form
         className="flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
-
           startTransition(async () => {
             setError(null);
             const result = await updateContactStatusAction(locale, {
@@ -91,11 +70,12 @@ export function UpdateContactStatusForm({
               setError(result.error.message);
               return;
             }
+            onUpdated?.(status);
             router.refresh();
           });
         }}
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex flex-nowrap items-center gap-3 overflow-x-auto">
           <SegmentedControl
             aria-label={copy.forms.newStatus}
             value={status}
@@ -105,18 +85,17 @@ export function UpdateContactStatusForm({
             disabled={isPending}
             onSelect={setStatus}
           />
-          <Button
+          <button
             type="submit"
-            size="sm"
             disabled={isPending || status === currentStatus}
-            className="w-full gap-2 sm:w-auto"
+            className={`${ADMIN_BTN_PRIMARY_CLASS} shrink-0 gap-2`}
           >
-            <Send className="h-4 w-4" />
-            {isPending ? common.updating : copy.forms.updateStatus}
-          </Button>
+            <Send className="h-4 w-4" aria-hidden />
+            {isPending ? common.updating : common.update}
+          </button>
         </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
       </form>
-    </AdminSectionCard>
+    </AdminUserActionCard>
   );
 }

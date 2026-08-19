@@ -12,7 +12,7 @@ export const adminUsersFilterSchema = z.object({
   q: z.string().trim().max(100).optional(),
   role: z.enum(USER_ROLES).optional(),
   status: z.enum(USER_STATUSES).optional(),
-  sort: z.enum(ADMIN_USERS_SORT_VALUES).default("created"),
+  sort: z.enum(ADMIN_USERS_SORT_VALUES).default("orders"),
   dir: z.enum(ADMIN_USERS_SORT_DIRS).default("desc"),
   page: z.coerce.number().int().min(1).max(500).default(1),
 });

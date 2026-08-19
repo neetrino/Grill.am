@@ -20,12 +20,15 @@ export {
   heroSlides,
   jobPostings,
   popups,
+  storeLocations,
   type BlogTranslation,
   type BlogTranslationsJson,
   type HeroTranslation,
   type HeroTranslationsJson,
   type JobTranslation,
   type JobTranslationsJson,
+  type StoreLocationTranslation,
+  type StoreLocationTranslationsJson,
 } from "@/db/schema/content";
 export {
   cartItems,

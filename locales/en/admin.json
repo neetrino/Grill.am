@@ -10,6 +10,7 @@
     "users": "Users",
     "analytics": "Analytics",
     "hero": "Hero",
+    "stores": "Branches",
     "popups": "Popups",
     "blog": "Blog",
     "careers": "Careers",
@@ -45,6 +46,7 @@
     "na": "N/A",
     "loading": "Loading…",
     "uploading": "Uploading…",
+    "update": "Update",
     "updating": "Updating…",
     "deleting": "Deleting…",
     "confirmDeleteTitle": "Confirm delete",
@@ -414,6 +416,7 @@
     "detail": {
       "role": "Role",
       "status": "Status",
+      "email": "Email",
       "phone": "Phone",
       "emailVerified": "Email verified",
       "lastLogin": "Last login",
@@ -437,6 +440,7 @@
     "count": "{count} message(s)",
     "searchPlaceholder": "Name, email, subject…",
     "empty": "No messages match these filters.",
+    "openNamed": "Open {subject}",
     "table": {
       "subject": "Subject",
       "from": "From",
@@ -601,7 +605,8 @@
       "validUntil": "Valid until"
     },
     "editNamed": "Edit {code}",
-    "duplicateNamed": "Duplicate {code}",
+    "copyNamed": "Copy {code}",
+    "copied": "Copied",
     "deleteNamed": "Delete {code}",
     "confirmDelete": "Delete promo code {code}? This cannot be undone.",
     "drawer": {
@@ -679,6 +684,38 @@
       "uploadImage": "Upload image",
       "changeImage": "Change image",
       "uploadButton": "Upload"
+    }
+  },
+  "stores": {
+    "title": "Branches",
+    "count": "{count} branch(es)",
+    "create": "Add branch",
+    "listHeading": "Branches ({count})",
+    "empty": "No branches yet.",
+    "noImage": "No image",
+    "published": "PUBLISHED",
+    "draft": "DRAFT",
+    "editNamed": "Edit {title}",
+    "deleteNamed": "Delete {title}",
+    "confirmDelete": "Delete branch “{title}”? This cannot be undone.",
+    "publish": "Show on home page",
+    "unpublish": "Hide from home page",
+    "table": {
+      "branch": "Branch",
+      "address": "Address",
+      "phone": "Phone"
+    },
+    "drawer": {
+      "createTitle": "Add branch",
+      "editTitle": "Edit branch",
+      "title": "Title",
+      "address": "Address",
+      "phone": "Phone",
+      "uploadImage": "Upload image",
+      "changeImage": "Change image",
+      "uploadButton": "Upload",
+      "imageHint": "This photo is shown on the home page branch card.",
+      "saveChanges": "Save changes"
     }
   },
   "popups": {

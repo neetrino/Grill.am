@@ -11,8 +11,8 @@ import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import {
   ADMIN_TABLE,
@@ -59,7 +59,7 @@ function roleFilterHref(
   const params = new URLSearchParams();
   if (q) params.set("q", q);
   if (role) params.set("role", role);
-  if (sort && sort !== "created") params.set("sort", sort);
+  if (sort && sort !== "orders") params.set("sort", sort);
   if (dir && dir !== "desc") params.set("dir", dir);
   const query = params.toString();
   return query
@@ -146,15 +146,15 @@ export function AdminUsersView({
   return (
     <section>
       <form method="get" className="mb-4 flex flex-wrap gap-3">
-        <input
+        <AdminSearchInput
           name="q"
           defaultValue={q ?? ""}
           placeholder={copy.searchPlaceholder}
-          className={`${ADMIN_INPUT} min-w-[220px] flex-1`}
+          className="min-w-[220px] flex-1"
           aria-label={copy.searchAria}
         />
         {role ? <input type="hidden" name="role" value={role} /> : null}
-        {sort !== "created" ? (
+        {sort !== "orders" ? (
           <input type="hidden" name="sort" value={sort} />
         ) : null}
         {dir !== "desc" ? (
@@ -323,9 +323,6 @@ export function AdminUsersView({
                         >
                           <p className="font-medium text-gray-900 group-hover:underline">
                             {name}
-                          </p>
-                          <p className="truncate text-xs text-gray-400">
-                            {user.id}
                           </p>
                         </Link>
                       </td>

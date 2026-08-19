@@ -54,9 +54,23 @@ function HeroArtImage({
   );
 }
 
+const HERO_MENU_SLIDE_CLASS =
+  "absolute inset-x-0 top-0 flex h-[200%] flex-col transition-transform duration-300 ease-out group-hover:-translate-y-1/2 group-focus-visible:-translate-y-1/2 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-visible:translate-y-0";
+
 /**
- * Figma `165:1671` — white pill CTA (desktop).
+ * Figma `165:1671` / Button 8 — two stacked labels, clipped, slide up on hover.
  */
+function HeroMenuLabel({ label }: { label: string }) {
+  return (
+    <span className={HERO_MENU_SLIDE_CLASS}>
+      <span className="flex h-1/2 items-center justify-center">{label}</span>
+      <span className="flex h-1/2 items-center justify-center" aria-hidden>
+        {label}
+      </span>
+    </span>
+  );
+}
+
 function HeroMenuButton({
   href,
   label,
@@ -66,17 +80,19 @@ function HeroMenuButton({
   label: string;
   className: string;
 }) {
+  const classes = `group relative overflow-hidden ${className}`;
+
   if (href.startsWith("/")) {
     return (
-      <AppLink href={href} prefetchPolicy="intent" className={className}>
-        {label}
+      <AppLink href={href} prefetchPolicy="intent" className={classes}>
+        <HeroMenuLabel label={label} />
       </AppLink>
     );
   }
 
   return (
-    <a href={href} className={className}>
-      {label}
+    <a href={href} className={classes}>
+      <HeroMenuLabel label={label} />
     </a>
   );
 }
@@ -186,7 +202,7 @@ function MobileHeroCard({
           <HeroMenuButton
             href={ctaHref}
             label={ctaLabel}
-            className="mt-8 inline-flex h-[44px] w-[162px] items-center justify-center rounded-full bg-white text-center text-[13px] leading-[19.5px] font-extrabold tracking-[0.32px] text-brand-red uppercase transition hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="mt-8 inline-flex h-[44px] w-[162px] items-center justify-center rounded-full bg-white text-center text-[13px] leading-[19.5px] font-extrabold tracking-[0.32px] text-brand-red uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           />
         </div>
       </div>
@@ -287,7 +303,7 @@ export function HomeHero({
               <HeroMenuButton
                 href={ctaHref}
                 label={ctaLabel}
-                className="inline-flex h-14 w-[193px] shrink-0 items-center justify-center rounded-[28px] bg-white px-6 text-center text-base leading-[22.5px] font-extrabold tracking-wide whitespace-nowrap text-brand-red uppercase transition hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="inline-flex h-14 w-[193px] shrink-0 items-center justify-center rounded-[28px] bg-white px-6 text-center text-base leading-[22.5px] font-extrabold tracking-wide whitespace-nowrap text-brand-red uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               />
             </div>
 

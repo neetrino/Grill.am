@@ -16,6 +16,8 @@
   --brand-surface: #f4f4f4;
   /* Expanded sticky header; JS updates as primary nav collapses on scroll. */
   --storefront-header-offset: 9.5rem;
+  /* Clears the mobile tab bar (71px + padding) and the home-indicator inset. */
+  --storefront-chat-mobile-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
   /* Centered content column shared by page sections. */
   --page-max-width: 1440px;
   --page-padding-inline: clamp(16px, 3vw, 48px);
@@ -720,6 +722,6 @@ select:disabled {
 
 @media (max-width: 1024px) {
   #tidio-chat {
-    bottom: 5.75rem !important;
+    bottom: var(--storefront-chat-mobile-bottom) !important;
   }
 }

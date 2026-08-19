@@ -10,6 +10,7 @@
     "users": "Օգտատերեր",
     "analytics": "Վերլուծություն",
     "hero": "Hero",
+    "stores": "Մասնաճյուղեր",
     "popups": "Popup-ներ",
     "blog": "Բլոգ",
     "careers": "Աշխատանք",
@@ -45,6 +46,7 @@
     "na": "Չկա",
     "loading": "Բեռնում…",
     "uploading": "Վերբեռնում…",
+    "update": "Թարմացնել",
     "updating": "Թարմացում…",
     "deleting": "Ջնջում…",
     "confirmDeleteTitle": "Հաստատել ջնջումը",
@@ -414,8 +416,9 @@
     "detail": {
       "role": "Դեր",
       "status": "Կարգավիճակ",
+      "email": "Էլ․ փոստ",
       "phone": "Հեռախոս",
-      "emailVerified": "Էլ․ փոստը հաստատված է",
+      "emailVerified": "Էլ․ փոստը\nհաստատված է",
       "lastLogin": "Վերջին մուտք",
       "created": "Ստեղծված",
       "recentOrders": "Վերջին պատվերներ",
@@ -437,6 +440,7 @@
     "count": "{count} հաղորդագրություն",
     "searchPlaceholder": "Անուն, էլ․ փոստ, թեմա…",
     "empty": "Այս զտիչներին համապատասխանող հաղորդագրություններ չկան։",
+    "openNamed": "Բացել {subject}",
     "table": {
       "subject": "Թեմա",
       "from": "Ումից",
@@ -601,7 +605,8 @@
       "validUntil": "Վավեր մինչև"
     },
     "editNamed": "Խմբագրել {code}",
-    "duplicateNamed": "Կրկնօրինակել {code}",
+    "copyNamed": "Պատճենել {code}",
+    "copied": "Պատճենված է",
     "deleteNamed": "Ջնջել {code}",
     "confirmDelete": "Ջնջե՞լ պրոմո կոդը {code}։ Հետարկել հնարավոր չէ։",
     "drawer": {
@@ -679,6 +684,38 @@
       "uploadImage": "Վերբեռնել նկար",
       "changeImage": "Փոխել նկարը",
       "uploadButton": "Վերբեռնել"
+    }
+  },
+  "stores": {
+    "title": "Մասնաճյուղեր",
+    "count": "{count} մասնաճյուղ",
+    "create": "Ավելացնել մասնաճյուղ",
+    "listHeading": "Մասնաճյուղեր ({count})",
+    "empty": "Մասնաճյուղեր դեռ չկան։",
+    "noImage": "Նկար չկա",
+    "published": "ՀՐԱՊԱՐԱԿՎԱԾ",
+    "draft": "ՍԵՎԱԳԻՐ",
+    "editNamed": "Խմբագրել {title}",
+    "deleteNamed": "Ջնջել {title}",
+    "confirmDelete": "Ջնջե՞լ մասնաճյուղը «{title}»։ Հետարկել հնարավոր չէ։",
+    "publish": "Ցուցադրել գլխավոր էջում",
+    "unpublish": "Թաքցնել գլխավոր էջից",
+    "table": {
+      "branch": "Մասնաճյուղ",
+      "address": "Հասցե",
+      "phone": "Հեռախոս"
+    },
+    "drawer": {
+      "createTitle": "Ավելացնել մասնաճյուղ",
+      "editTitle": "Խմբագրել մասնաճյուղը",
+      "title": "Անվանում",
+      "address": "Հասցե",
+      "phone": "Հեռախոս",
+      "uploadImage": "Վերբեռնել նկար",
+      "changeImage": "Փոխել նկարը",
+      "uploadButton": "Վերբեռնել",
+      "imageHint": "Այս նկարը երևում է գլխավոր էջի մասնաճյուղի քարտում։",
+      "saveChanges": "Պահպանել փոփոխությունները"
     }
   },
   "popups": {

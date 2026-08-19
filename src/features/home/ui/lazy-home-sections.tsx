@@ -35,6 +35,18 @@ const HomePromotions = dynamic(
   },
 );
 
+const HomeBranches = dynamic(
+  () =>
+    import("@/features/home/ui/HomeBranches").then((mod) => ({
+      default: mod.HomeBranches,
+    })),
+  {
+    loading: () => (
+      <div className="min-h-[320px] w-full bg-white" aria-hidden />
+    ),
+  },
+);
+
 const HomeFeatures = dynamic(
   () =>
     import("@/features/home/ui/HomeFeatures").then((mod) => ({
@@ -49,6 +61,7 @@ const HomeFeatures = dynamic(
 
 type FeaturedProps = ComponentProps<typeof HomeFeaturedProducts>;
 type PromotionsProps = ComponentProps<typeof HomePromotions>;
+type BranchesProps = ComponentProps<typeof HomeBranches>;
 type FeaturesProps = ComponentProps<typeof HomeFeatures>;
 
 /** Featured grid — near-fold on mobile; preload early via rootMargin. */
@@ -65,6 +78,15 @@ export function HomePromotionsLazy(props: PromotionsProps) {
   return (
     <LazyWhenVisible minHeight={420} rootMargin="400px 0px">
       <HomePromotions {...props} />
+    </LazyWhenVisible>
+  );
+}
+
+/** Branch cards — below the combo banner. */
+export function HomeBranchesLazy(props: BranchesProps) {
+  return (
+    <LazyWhenVisible minHeight={320} rootMargin="360px 0px">
+      <HomeBranches {...props} />
     </LazyWhenVisible>
   );
 }

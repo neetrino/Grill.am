@@ -5,6 +5,7 @@ import { hashPassword } from "@/lib/auth/password";
 import * as schema from "@/db/schema";
 import { getSeedEnv } from "@/db/seed/env";
 import { seedIds } from "@/db/seed/ids";
+import { buildStoreLocationSeeds } from "@/db/seed/store-locations";
 
 async function seed(): Promise<void> {
   const env = getSeedEnv();
@@ -330,6 +331,24 @@ async function seed(): Promise<void> {
         updatedAt: now,
       },
     });
+
+  for (const store of buildStoreLocationSeeds()) {
+    await db
+      .insert(schema.storeLocations)
+      .values(store)
+      .onConflictDoUpdate({
+        target: schema.storeLocations.id,
+        set: {
+          slug: store.slug,
+          translations: store.translations,
+          latitude: store.latitude,
+          longitude: store.longitude,
+          sortOrder: store.sortOrder,
+          isActive: true,
+          updatedAt: now,
+        },
+      });
+  }
 
   await db
     .insert(schema.storeSettings)

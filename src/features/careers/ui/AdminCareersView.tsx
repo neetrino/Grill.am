@@ -7,7 +7,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   formatAdminMessage,
   useAdminDictionary,
@@ -121,11 +121,11 @@ export function AdminCareersView({ locale, postings }: AdminCareersViewProps) {
   return (
     <>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <input
+        <AdminSearchInput
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={copy.searchPlaceholder}
-          className={`${ADMIN_INPUT} min-w-[200px] flex-1`}
+          className="min-w-[200px] flex-1"
           aria-label={copy.searchAria}
         />
         <Button

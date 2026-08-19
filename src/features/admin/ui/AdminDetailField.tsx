@@ -17,7 +17,9 @@ export function AdminDetailField({
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[12px] bg-brand-red/10 text-brand-red">
         {icon}
       </span>
-      <span className="w-[104px] shrink-0 text-gray-500">{label}</span>
+      <span className="w-[120px] shrink-0 whitespace-pre-line leading-snug text-gray-500">
+        {label}
+      </span>
       <span className="min-w-0 flex-1 break-words font-medium text-gray-900">
         {children}
       </span>

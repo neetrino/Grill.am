@@ -1,26 +1,12 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Card } from "@/components/ui/Card";
 import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
-import {
-  ADMIN_TABLE,
-  ADMIN_TABLE_CARD,
-  ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
-  ADMIN_TABLE_STATE_INSET,
-  ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TH,
-  ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { AdminMessagesFilters } from "@/features/contact/ui/AdminMessagesFilters";
+import { AdminMessagesView } from "@/features/contact/ui/AdminMessagesView";
+import { contactStatusLabel } from "@/features/contact/ui/contact-status-ui";
 import { listAdminContactMessages } from "@/features/contact/application/queries";
-import { type ContactStatus } from "@/features/contact/domain/contact-rules";
 import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
-import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -45,32 +31,6 @@ function fillTemplate(
   return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
     return values[key] ?? "";
   });
-}
-
-function contactStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "UNREAD") return "bg-brand-yellow/25 text-brand-ink";
-  if (normalized === "READ") return "bg-brand-cream text-brand-ink";
-  if (normalized === "REPLIED") return "bg-green-100 text-green-800";
-  if (normalized === "ARCHIVED") return "bg-gray-100 text-gray-800";
-  return "bg-gray-100 text-gray-800";
-}
-
-function contactStatusLabel(
-  status: string,
-  labels: {
-    unread: string;
-    read: string;
-    replied: string;
-    archived: string;
-  },
-): string {
-  const normalized = status.toUpperCase() as ContactStatus;
-  if (normalized === "UNREAD") return labels.unread;
-  if (normalized === "READ") return labels.read;
-  if (normalized === "REPLIED") return labels.replied;
-  if (normalized === "ARCHIVED") return labels.archived;
-  return status;
 }
 
 export default async function AdminMessagesPage({
@@ -117,66 +77,7 @@ export default async function AdminMessagesPage({
 
       <AdminMessagesFilters q={filters.q} status={filters.status} />
 
-      <Card className={ADMIN_TABLE_CARD}>
-        {rows.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {copy.empty}
-          </p>
-        ) : (
-          <div className={ADMIN_TABLE_OUTER_SCROLL}>
-            <table className={ADMIN_TABLE}>
-              <thead className={ADMIN_TABLE_THEAD}>
-                <tr>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.subject}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.from}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.status}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.received}</th>
-                </tr>
-              </thead>
-              <tbody className={ADMIN_TABLE_TBODY}>
-                {rows.map((message) => (
-                  <tr
-                    key={message.id}
-                    className={`${ADMIN_TABLE_ROW} group relative`}
-                  >
-                    <td className={ADMIN_TABLE_TD}>
-                      <Link
-                        href={`/${locale}/admin/messages/${message.id}`}
-                        className="font-medium text-gray-900 after:absolute after:inset-0 group-hover:underline"
-                      >
-                        {message.subject}
-                      </Link>
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <p className="text-sm text-gray-900">{message.name}</p>
-                      <p className="text-xs text-gray-500">{message.email}</p>
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <span
-                        className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
-                      >
-                        {contactStatusLabel(message.status, copy.status)}
-                      </span>
-                      {message.spamScore !== null ? (
-                        <p className="mt-1 text-xs text-gray-500">
-                          {fillTemplate(copy.spamScore, {
-                            score: String(message.spamScore),
-                          })}
-                        </p>
-                      ) : null}
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <span className="text-xs text-gray-500">
-                        {formatAppDateTimeMinutes(message.createdAt)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      <AdminMessagesView locale={locale} messages={rows} />
 
       {totalPages > 1 ? (
         <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">

@@ -8,6 +8,7 @@ export const CACHE_TAGS = {
     `product-slug:${locale}:${slug}`,
   hero: "hero",
   popups: "popups",
+  stores: "stores",
   blog: "blog",
   blogPost: (id: string) => `blog:${id}`,
   blogPostSlug: (locale: string, slug: string) =>

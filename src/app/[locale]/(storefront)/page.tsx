@@ -6,12 +6,18 @@ import { findComboCategory } from "@/features/categories/domain/combo-category";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
 import { HomeHero } from "@/features/home/ui/HomeHero";
 import {
+  HomeBranchesLazy,
   HomeFeaturedProductsLazy,
   HomeFeaturesLazy,
   HomePromotionsLazy,
 } from "@/features/home/ui/lazy-home-sections";
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
 import { getFeaturedProducts } from "@/features/products/queries";
+import {
+  fallbackStorefrontBranches,
+  toHomeBranchItems,
+} from "@/features/stores/application/home-branches";
+import { listStorefrontBranches } from "@/features/stores/application/queries";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -57,6 +63,7 @@ export default async function HomePage({ params }: HomePageProps) {
     featuredProducts,
     currency,
     user,
+    cmsBranches,
   ] = await Promise.all([
     listActiveHeroSlides(locale),
     listStorefrontCategories(locale),
@@ -64,6 +71,7 @@ export default async function HomePage({ params }: HomePageProps) {
     getFeaturedProducts(locale),
     getSelectedCurrency(),
     getCurrentUser(),
+    listStorefrontBranches(locale),
   ]);
 
   const wishlistProductIds = featuredProducts.map((product) => product.id);
@@ -117,7 +125,6 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomeCategories
         titleLead={dictionary.home.categoriesTitleLead}
         titleAccent={dictionary.home.categoriesTitleAccent}
-        subtitle={dictionary.home.categoriesSubtitle}
         viewAllLabel={dictionary.home.categoriesViewAll}
         viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyCategories}
@@ -134,7 +141,6 @@ export default async function HomePage({ params }: HomePageProps) {
         currency={currency}
         titleLead={dictionary.home.featuredTitleLead}
         titleAccent={dictionary.home.featuredTitleAccent}
-        subtitle={dictionary.home.featuredSubtitle}
         viewAllLabel={dictionary.home.featuredViewAll}
         viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyFeatured}
@@ -153,6 +159,21 @@ export default async function HomePage({ params }: HomePageProps) {
         line2={dictionary.home.specialLine2}
         ctaLabel={dictionary.home.specialCta}
         ctaHref={combosHref}
+      />
+
+      <HomeBranchesLazy
+        title={dictionary.stores.branchesTitle}
+        viewAllLabel={dictionary.stores.viewAll}
+        viewAllHref={`/${locale}/stores`}
+        previousLabel={dictionary.stores.previous}
+        nextLabel={dictionary.stores.next}
+        branches={toHomeBranchItems(
+          locale,
+          cmsBranches.length > 0
+            ? cmsBranches
+            : fallbackStorefrontBranches(locale),
+          dictionary.contact.storePhones[0] ?? "",
+        )}
       />
 
       <HomeFeaturesLazy

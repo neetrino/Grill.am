@@ -113,6 +113,13 @@
       "when": 1786080000000,
       "tag": "0016_storefront_category_menu_order",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1786090000000,
+      "tag": "0017_store_locations",
+      "breakpoints": true
     }
   ]
 }

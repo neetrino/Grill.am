@@ -49,7 +49,7 @@ type ProductCardProps = {
   addToCartLabel?: string;
   /** When true, cart CTA opens the product page for option selection. */
   requiresConfiguration?: boolean;
-  /** Figma mobile featured carousel variants (`164:457` / `164:505`). */
+  /** Figma mobile featured card variants (`164:457` / `164:505`). */
   variant?: ProductCardVariant;
 };
 

@@ -11,7 +11,13 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { blogPosts, heroSlides, jobPostings, popups } from "@/db/schema/content";
+import {
+  blogPosts,
+  heroSlides,
+  jobPostings,
+  popups,
+  storeLocations,
+} from "@/db/schema/content";
 import { categories, products } from "@/db/schema/catalog";
 import {
   createdAtColumn,
@@ -58,6 +64,12 @@ export const mediaAssets = pgTable(
     popupId: uuid("popup_id").references(() => popups.id, {
       onDelete: "restrict",
     }),
+    storeLocationId: uuid("store_location_id").references(
+      () => storeLocations.id,
+      {
+        onDelete: "restrict",
+      },
+    ),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -69,6 +81,7 @@ export const mediaAssets = pgTable(
     index("media_assets_blog_idx").on(table.blogPostId),
     index("media_assets_job_idx").on(table.jobPostingId),
     index("media_assets_popup_idx").on(table.popupId),
+    index("media_assets_store_idx").on(table.storeLocationId),
     uniqueIndex("media_assets_product_primary_uidx")
       .on(table.productId)
       .where(sql`${table.productId} IS NOT NULL AND ${table.isPrimary} = true`),
@@ -97,6 +110,11 @@ export const mediaAssets = pgTable(
       .where(
         sql`${table.popupId} IS NOT NULL AND ${table.role} = 'COVER'`,
       ),
+    uniqueIndex("media_assets_store_cover_uidx")
+      .on(table.storeLocationId)
+      .where(
+        sql`${table.storeLocationId} IS NOT NULL AND ${table.role} = 'COVER'`,
+      ),
     check(
       "media_assets_owner_chk",
       sql`(
@@ -106,7 +124,8 @@ export const mediaAssets = pgTable(
           AND ${table.heroSlideId} IS NULL
           AND ${table.blogPostId} IS NULL
           AND ${table.jobPostingId} IS NULL
-          AND ${table.popupId} IS NULL)
+          AND ${table.popupId} IS NULL
+          AND ${table.storeLocationId} IS NULL)
         OR (${table.role} = 'BRANDING' AND ${table.purpose} IS NOT NULL)
         OR (
           (${table.productId} IS NOT NULL)::int
@@ -115,6 +134,7 @@ export const mediaAssets = pgTable(
           + (${table.blogPostId} IS NOT NULL)::int
           + (${table.jobPostingId} IS NOT NULL)::int
           + (${table.popupId} IS NOT NULL)::int
+          + (${table.storeLocationId} IS NOT NULL)::int
         ) = 1
       )`,
     ),

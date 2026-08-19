@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  doublePrecision,
   index,
   integer,
   jsonb,
@@ -58,6 +59,15 @@ export type JobTranslation = {
 
 export type JobTranslationsJson = Partial<
   Record<"hy" | "en" | "ru", JobTranslation>
+>;
+
+export type StoreLocationTranslation = {
+  title: string;
+  address: string;
+};
+
+export type StoreLocationTranslationsJson = Partial<
+  Record<"hy" | "en" | "ru", StoreLocationTranslation>
 >;
 
 export const heroSlides = pgTable(
@@ -161,5 +171,31 @@ export const popups = pgTable(
     uniqueIndex("popups_one_active_uidx")
       .on(table.isActive)
       .where(sql`${table.isActive} = true`),
+  ],
+);
+
+/**
+ * Grill branches shown on the home page and managed from admin.
+ * Checkout/map still use the static catalog until those surfaces migrate.
+ */
+export const storeLocations = pgTable(
+  "store_locations",
+  {
+    id: idColumn(),
+    slug: text("slug").notNull(),
+    translations: jsonb("translations")
+      .$type<StoreLocationTranslationsJson>()
+      .notNull(),
+    phone: text("phone"),
+    latitude: doublePrecision("latitude"),
+    longitude: doublePrecision("longitude"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+  },
+  (table) => [
+    uniqueIndex("store_locations_slug_uidx").on(table.slug),
+    index("store_locations_active_sort_idx").on(table.isActive, table.sortOrder),
   ],
 );
