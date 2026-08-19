@@ -34,9 +34,6 @@ type ProductBuyBoxLabels = {
   addons: string;
   exclusions: string;
   removeModifier: string;
-  orderSummary: string;
-  basePrice: string;
-  total: string;
 };
 
 type ProductBuyBoxProps = {
@@ -148,9 +145,6 @@ export function ProductBuyBox({
     : initialPriceFormatted;
   const lineFormatted = livePricing
     ? formatDisplay(lineAmount, fxRate, currency, locale)
-    : initialPriceFormatted;
-  const baseFormatted = livePricing
-    ? formatDisplay(baseUnitAmount, fxRate, currency, locale)
     : initialPriceFormatted;
   const compareAtFormatted =
     compareAtAmount != null && compareAtAmount > unitAmount
@@ -358,48 +352,28 @@ export function ProductBuyBox({
           </div>
         </div>
 
-        <div className="mt-5 flex flex-col gap-[22px]">
-          <button
-            type="button"
-            disabled={!canAdd}
-            onClick={handleAdd}
-            className="inline-flex h-[53px] w-full items-center justify-center gap-3 rounded-[66px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <ShoppingCart
-              className="h-[21px] w-[22px] shrink-0 fill-white"
-              strokeWidth={1.2}
-              aria-hidden
-            />
-            <span>
-              {disabled
-                ? labels.outOfStock
-                : !optionsComplete
-                  ? labels.selectRequired
-                  : labels.addToCart}
-            </span>
-            {canAdd ? (
-              <span className="text-base font-black">{lineFormatted}</span>
-            ) : null}
-          </button>
-
-          <div>
-            <p className="text-xs font-semibold tracking-[0.6px] text-[#6b7280] uppercase">
-              {labels.orderSummary}
-            </p>
-            <dl className="mt-3 space-y-1.5 text-sm">
-              <div className="flex items-center justify-between gap-3">
-                <dt className="text-[#6b7280]">{labels.basePrice}</dt>
-                <dd className="font-medium text-[#101828]">{baseFormatted}</dd>
-              </div>
-              <div className="border-t border-[rgba(107,114,128,0.47)] pt-2.5">
-                <div className="flex items-center justify-between gap-3 text-base">
-                  <dt className="font-bold text-[#101828]">{labels.total}</dt>
-                  <dd className="font-bold text-[#101828]">{lineFormatted}</dd>
-                </div>
-              </div>
-            </dl>
-          </div>
-        </div>
+        <button
+          type="button"
+          disabled={!canAdd}
+          onClick={handleAdd}
+          className="mt-5 inline-flex h-[53px] w-full items-center justify-center gap-3 rounded-[66px] bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <ShoppingCart
+            className="h-[21px] w-[22px] shrink-0 fill-white"
+            strokeWidth={1.2}
+            aria-hidden
+          />
+          <span>
+            {disabled
+              ? labels.outOfStock
+              : !optionsComplete
+                ? labels.selectRequired
+                : labels.addToCart}
+          </span>
+          {canAdd ? (
+            <span className="text-base font-black">{lineFormatted}</span>
+          ) : null}
+        </button>
 
         {message ? (
           <p className="mt-3 text-sm text-green-700" role="status">
