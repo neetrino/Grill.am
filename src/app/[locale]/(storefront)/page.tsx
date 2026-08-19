@@ -117,7 +117,6 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomeCategories
         titleLead={dictionary.home.categoriesTitleLead}
         titleAccent={dictionary.home.categoriesTitleAccent}
-        subtitle={dictionary.home.categoriesSubtitle}
         viewAllLabel={dictionary.home.categoriesViewAll}
         viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyCategories}
@@ -134,7 +133,6 @@ export default async function HomePage({ params }: HomePageProps) {
         currency={currency}
         titleLead={dictionary.home.featuredTitleLead}
         titleAccent={dictionary.home.featuredTitleAccent}
-        subtitle={dictionary.home.featuredSubtitle}
         viewAllLabel={dictionary.home.featuredViewAll}
         viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyFeatured}

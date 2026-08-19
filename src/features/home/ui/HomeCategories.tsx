@@ -17,7 +17,6 @@ type CategoryItem = {
 type HomeCategoriesProps = {
   titleLead: string;
   titleAccent: string;
-  subtitle: string;
   viewAllLabel: string;
   viewAllHref: string;
   emptyLabel: string;
@@ -52,7 +51,6 @@ const ARROW_BUTTON_CLASS =
 export function HomeCategories({
   titleLead,
   titleAccent,
-  subtitle,
   viewAllLabel,
   viewAllHref,
   emptyLabel,
@@ -140,7 +138,6 @@ export function HomeCategories({
               {titleLead}{" "}
               <span className="text-brand-red-hot">{titleAccent}</span>
             </h2>
-            <p className="mt-2 text-base leading-6 text-[#171717]">{subtitle}</p>
           </div>
           <AppLink
             href={viewAllHref}

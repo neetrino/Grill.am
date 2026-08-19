@@ -31,7 +31,6 @@ type HomeFeaturedProductsProps = {
   currency: Currency;
   titleLead: string;
   titleAccent: string;
-  subtitle: string;
   viewAllLabel: string;
   viewAllHref: string;
   emptyLabel: string;
@@ -93,7 +92,6 @@ export function HomeFeaturedProducts({
   currency,
   titleLead,
   titleAccent,
-  subtitle,
   viewAllLabel,
   viewAllHref,
   emptyLabel,
@@ -152,9 +150,6 @@ export function HomeFeaturedProducts({
               {titleLead}{" "}
               <span className="text-[#171717]">{titleAccent}</span>
             </h2>
-            <p className="mt-2 hidden max-w-3xl text-base leading-6 text-[#171717] md:block">
-              {subtitle}
-            </p>
           </div>
           <AppLink
             href={viewAllHref}
