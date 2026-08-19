@@ -603,7 +603,8 @@
       "validUntil": "Действует до"
     },
     "editNamed": "Редактировать {code}",
-    "duplicateNamed": "Дублировать {code}",
+    "copyNamed": "Скопировать {code}",
+    "copied": "Скопировано",
     "deleteNamed": "Удалить {code}",
     "confirmDelete": "Удалить промокод {code}? Отменить нельзя.",
     "drawer": {

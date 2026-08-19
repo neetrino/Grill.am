@@ -603,7 +603,8 @@
       "validUntil": "Valid until"
     },
     "editNamed": "Edit {code}",
-    "duplicateNamed": "Duplicate {code}",
+    "copyNamed": "Copy {code}",
+    "copied": "Copied",
     "deleteNamed": "Delete {code}",
     "confirmDelete": "Delete promo code {code}? This cannot be undone.",
     "drawer": {

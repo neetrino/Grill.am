@@ -2,11 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Check, Copy, Pencil, Plus, Trash2 } from "lucide-react";
+import { Check, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Toast } from "@/components/ui/Toast";
 import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import {
   formatAdminMessage,
@@ -26,14 +27,15 @@ import {
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
-import {
-  deletePromotionAction,
-  duplicatePromotionAction,
-} from "@/features/promotions/application/upsert-promotion";
+import { deletePromotionAction } from "@/features/promotions/application/upsert-promotion";
 import type {
   AdminPromotionListItem,
   CouponUserOption,
 } from "@/features/promotions/application/queries";
+import {
+  CopyPromoCodeButton,
+  CopyPromoCodeText,
+} from "@/features/promotions/ui/CopyPromoCodeButton";
 import { CouponDrawer } from "@/features/promotions/ui/CouponDrawer";
 import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
@@ -71,7 +73,14 @@ export function AdminCouponsView({
   const [editingCoupon, setEditingCoupon] =
     useState<AdminPromotionListItem | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ id: number; message: string } | null>(
+    null,
+  );
   const [isPending, startTransition] = useTransition();
+
+  function showCopiedToast(): void {
+    setToast({ id: Date.now(), message: copy.copied });
+  }
 
   function openCreate(): void {
     setEditingCoupon(null);
@@ -107,6 +116,15 @@ export function AdminCouponsView({
 
   return (
     <section>
+      {toast ? (
+        <Toast
+          key={toast.id}
+          message={toast.message}
+          tone="success"
+          closeLabel={common.close}
+          onDismiss={() => setToast(null)}
+        />
+      ) : null}
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <AdminPageTitle>{copy.title}</AdminPageTitle>
@@ -148,9 +166,18 @@ export function AdminCouponsView({
                 {coupons.map((promo) => (
                   <tr key={promo.id} className={ADMIN_TABLE_ROW}>
                     <td className={ADMIN_TABLE_TD}>
-                      <span className="font-medium text-gray-900">
-                        {promo.code}
-                      </span>
+                      {promo.code ? (
+                        <CopyPromoCodeText
+                          code={promo.code}
+                          copyLabel={formatAdminMessage(copy.copyNamed, {
+                            code: promo.code,
+                          })}
+                          copiedLabel={copy.copied}
+                          onCopied={showCopiedToast}
+                        />
+                      ) : (
+                        <span className="text-gray-400">{common.dash}</span>
+                      )}
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       {typeLabel(promo.discountType)}
@@ -189,27 +216,17 @@ export function AdminCouponsView({
                         >
                           <Pencil className="h-4 w-4" />
                         </button>
-                        <button
-                          type="button"
-                          disabled={isPending}
-                          className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                          aria-label={formatAdminMessage(copy.duplicateNamed, {
-                            code: promo.code ?? "",
-                          })}
-                          onClick={() =>
-                            runAction(async () => {
-                              const result = await duplicatePromotionAction(
-                                locale,
-                                promo.id,
-                              );
-                              if (!result.ok) {
-                                throw new Error(result.error.message);
-                              }
-                            })
-                          }
-                        >
-                          <Copy className="h-4 w-4" />
-                        </button>
+                        {promo.code ? (
+                          <CopyPromoCodeButton
+                            code={promo.code}
+                            copyLabel={formatAdminMessage(copy.copyNamed, {
+                              code: promo.code,
+                            })}
+                            copiedLabel={copy.copied}
+                            className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                            onCopied={showCopiedToast}
+                          />
+                        ) : null}
                         <button
                           type="button"
                           disabled={isPending}

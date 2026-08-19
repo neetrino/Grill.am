@@ -603,7 +603,8 @@
       "validUntil": "Վավեր մինչև"
     },
     "editNamed": "Խմբագրել {code}",
-    "duplicateNamed": "Կրկնօրինակել {code}",
+    "copyNamed": "Պատճենել {code}",
+    "copied": "Պատճենված է",
     "deleteNamed": "Ջնջել {code}",
     "confirmDelete": "Ջնջե՞լ պրոմո կոդը {code}։ Հետարկել հնարավոր չէ։",
     "drawer": {
