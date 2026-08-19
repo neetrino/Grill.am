@@ -57,7 +57,7 @@ export function useViewportReveal(): {
         reveal();
         observer.disconnect();
       },
-      { threshold: 0.2, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.01, rootMargin: "160px 0px 0px 0px" },
     );
 
     observer.observe(node);

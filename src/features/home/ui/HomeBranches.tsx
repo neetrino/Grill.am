@@ -10,6 +10,7 @@ import {
   branchAppearStyle,
   useViewportReveal,
 } from "@/features/home/ui/home-branches-appear";
+import { useForwardVerticalWheelToPage } from "@/features/home/ui/use-forward-vertical-wheel";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 export type HomeBranchItem = {
@@ -92,6 +93,7 @@ function BranchScroller({
   revealed: boolean;
 }) {
   const scrollerRef = useRef<HTMLUListElement>(null);
+  useForwardVerticalWheelToPage(scrollerRef);
   const showArrows = branches.length > 3;
 
   function scrollByDirection(direction: -1 | 1): void {
@@ -131,7 +133,7 @@ function BranchScroller({
       ) : null}
       <ul
         ref={scrollerRef}
-        className="flex min-w-0 flex-1 snap-x snap-mandatory gap-4 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:overflow-x-hidden"
+        className="flex min-w-0 flex-1 snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:overflow-x-hidden"
       >
         {branches.map((branch, index) => (
           <li
@@ -227,7 +229,7 @@ export function HomeBranches({
   return (
     <section
       ref={sectionRef}
-      className="w-full overflow-hidden bg-white py-6 md:py-10 lg:py-12"
+      className="w-full overflow-clip bg-white py-6 md:py-10 lg:py-12"
     >
       <div className="page-container">
         <div

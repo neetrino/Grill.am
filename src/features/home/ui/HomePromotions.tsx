@@ -2,7 +2,6 @@ import Image from "next/image";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { LimitedOfferFireIcon } from "@/features/home/ui/LimitedOfferFireIcon";
-import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type HomePromotionsProps = {
   limitedOfferLabel: string;
@@ -15,11 +14,10 @@ type HomePromotionsProps = {
   ctaHref: string;
 };
 
-/** Figma `164:559` grilled chicken for promo banners. */
-const PROMO_CHICKEN = staticAssetUrl("/assets/home/promo-banner-chicken.webp");
+const PROMO_MEAL = "/assets/home/promo-banner-meal.webp";
 
 /**
- * Figma mobile promo section `164:557` — dark card, chicken only.
+ * Figma mobile promo section `164:557` — dark card, meal photo on the right.
  */
 function MobilePromoCard({
   limitedOfferLabel,
@@ -38,28 +36,18 @@ function MobilePromoCard({
 }) {
   return (
     <div className="relative h-[334px] min-h-[200px] overflow-hidden rounded-[24px] bg-[#171717]">
-      {/*
-        Figma `164:558` chicken — absolute box 146/-12 / 401×368 on 358 frame,
-        then CSS `-scale-y-100 rotate-[-146.47deg]` around 337×218 clip.
-      */}
       <div
-        className="pointer-events-none absolute top-[-12px] left-[40.8%] flex h-[368px] w-[112%] items-center justify-center"
+        className="pointer-events-none absolute inset-y-0 right-0 w-[52%] overflow-hidden rounded-l-[24px]"
         aria-hidden
       >
-        <div className="-scale-y-100 rotate-[-146.47deg]">
-          <div className="relative h-[218px] w-[337px] overflow-hidden">
-            <div className="relative h-[202px] w-[347px]">
-              <Image
-                src={PROMO_CHICKEN}
-                alt=""
-                fill
-                sizes="90vw"
-                className="object-cover"
-                priority={false}
-              />
-            </div>
-          </div>
-        </div>
+        <Image
+          src={PROMO_MEAL}
+          alt=""
+          fill
+          sizes="55vw"
+          className="object-cover object-center"
+          priority={false}
+        />
       </div>
 
       <div className="relative z-10 flex h-full flex-col justify-center px-5 py-5">
@@ -117,19 +105,19 @@ export function HomePromotions({
           />
         </div>
 
-        <div className="mx-auto hidden w-full max-w-[1296px] lg:block">
+        <div className="hidden w-full lg:block">
           <div className="relative h-[553px] overflow-hidden rounded-[30px] bg-[#ffc12c]">
-            <div className="relative z-10 flex h-full max-w-[55%] flex-col justify-center gap-6 px-14">
-              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#f52516] px-4 py-1.5 text-xs font-black tracking-[1.44px] text-[#0d0d0d] uppercase">
+            <div className="relative z-10 flex h-full max-w-[55%] flex-col justify-center gap-8 px-14">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#f52516] px-4 py-1.5 text-xs leading-none font-black tracking-[1.44px] text-[#0d0d0d] uppercase">
                 <LimitedOfferFireIcon className="h-3.5 w-3.5 shrink-0" />
                 {limitedOfferLabel}
               </span>
 
-              <p className="text-[36px] leading-9 font-black tracking-[2.88px] text-[#0d0d0d] uppercase">
+              <p className="text-[30px] leading-none font-black tracking-[2.4px] text-[#0d0d0d] uppercase">
                 {eyebrow}
               </p>
 
-              <h2 className="text-[90px] leading-[100px] font-black tracking-[-3.31px] text-white uppercase">
+              <h2 className="text-[76px] leading-none font-black tracking-[-2.8px] text-white uppercase">
                 {titleLead}{" "}
                 <span className="text-[#db0b20]">{titleAccent}</span>
               </h2>
@@ -142,25 +130,19 @@ export function HomePromotions({
               <AppLink
                 href={ctaHref}
                 prefetchPolicy="intent"
-                className="mt-0 inline-flex h-14 w-fit items-center rounded-[96px] bg-[#171717] px-8 text-[15px] font-black tracking-[0.9px] text-white uppercase transition hover:bg-black"
+                className="inline-flex h-14 w-fit items-center rounded-[96px] bg-[#171717] px-8 text-[15px] font-black tracking-[0.9px] text-white uppercase transition hover:bg-black"
               >
                 {ctaLabel}
               </AppLink>
             </div>
 
-            {/*
-              Figma `165:1524` — chicken art is 542×436 inside the 1296×553
-              card. The source webp is square with ~15% transparent padding,
-              so the box is oversized and overflows the card (clipped padding
-              only) to reach the design's visual size.
-            */}
-            <div className="pointer-events-none absolute top-1/2 right-[-7%] aspect-square w-[57%] -translate-y-1/2">
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-[46%] overflow-hidden rounded-l-[30px]">
               <Image
-                src={PROMO_CHICKEN}
+                src={PROMO_MEAL}
                 alt=""
                 fill
-                sizes="740px"
-                className="object-contain"
+                sizes="620px"
+                className="object-cover object-center"
               />
             </div>
           </div>

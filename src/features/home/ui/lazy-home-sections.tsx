@@ -28,7 +28,7 @@ const HomePromotions = dynamic(
   {
     loading: () => (
       <div
-        className="mx-auto min-h-[420px] w-full max-w-[1296px] rounded-[30px] bg-[#ffc12c]/70"
+        className="min-h-[420px] w-full rounded-[30px] bg-[#ffc12c]/70"
         aria-hidden
       />
     ),
@@ -67,7 +67,7 @@ type FeaturesProps = ComponentProps<typeof HomeFeatures>;
 /** Featured grid — near-fold on mobile; preload early via rootMargin. */
 export function HomeFeaturedProductsLazy(props: FeaturedProps) {
   return (
-    <LazyWhenVisible minHeight={480} rootMargin="520px 0px">
+    <LazyWhenVisible minHeight={480} rootMargin="520px 0px" enterMotion={false}>
       <HomeFeaturedProducts {...props} />
     </LazyWhenVisible>
   );
@@ -85,7 +85,7 @@ export function HomePromotionsLazy(props: PromotionsProps) {
 /** Branch cards — below the combo banner. */
 export function HomeBranchesLazy(props: BranchesProps) {
   return (
-    <LazyWhenVisible minHeight={320} rootMargin="360px 0px">
+    <LazyWhenVisible minHeight={320} rootMargin="360px 0px" enterMotion={false}>
       <HomeBranches {...props} />
     </LazyWhenVisible>
   );
