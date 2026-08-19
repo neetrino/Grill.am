@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
@@ -46,7 +46,7 @@ function readScrollStepPx(scroller: HTMLElement): number {
 }
 
 const ARROW_BUTTON_CLASS =
-  "hidden size-12 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow xl:flex";
+  "hidden size-10 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow xl:flex";
 
 export function HomeCategories({
   titleLead,
@@ -57,8 +57,6 @@ export function HomeCategories({
   categories,
 }: HomeCategoriesProps) {
   const scrollerRef = useRef<HTMLUListElement>(null);
-  const [pageCount, setPageCount] = useState(1);
-  const [activePage, setActivePage] = useState(0);
 
   /** Wraps around at both edges so the arrows never dead-end. */
   function scrollByDirection(direction: -1 | 1): void {
@@ -88,46 +86,6 @@ export function HomeCategories({
       behavior: "smooth",
     });
   }
-
-  function syncPager(): void {
-    const node = scrollerRef.current;
-    if (!node) return;
-
-    const maxScrollLeft = node.scrollWidth - node.clientWidth;
-    if (maxScrollLeft <= 0) {
-      setPageCount(1);
-      setActivePage(0);
-      return;
-    }
-
-    const step = readScrollStepPx(node);
-    const count = Math.round(maxScrollLeft / step) + 1;
-    const page = Math.min(
-      count - 1,
-      Math.max(0, Math.round(node.scrollLeft / step)),
-    );
-    setPageCount(count);
-    setActivePage(page);
-  }
-
-  function goToPage(page: number): void {
-    const node = scrollerRef.current;
-    if (!node) return;
-    node.scrollTo({ left: page * readScrollStepPx(node), behavior: "smooth" });
-  }
-
-  useEffect(() => {
-    const node = scrollerRef.current;
-    if (!node) return;
-
-    syncPager();
-    node.addEventListener("scroll", syncPager, { passive: true });
-    window.addEventListener("resize", syncPager);
-    return () => {
-      node.removeEventListener("scroll", syncPager);
-      window.removeEventListener("resize", syncPager);
-    };
-  }, [categories.length]);
 
   return (
     <section className="relative z-10 bg-white pt-6 pb-6 md:-mt-12 md:rounded-t-[30px] md:pt-14 md:pb-14 lg:-mt-20 lg:pt-16 lg:pb-16">
@@ -177,7 +135,7 @@ export function HomeCategories({
                           className="object-contain"
                         />
                       </span>
-                      <span className="line-clamp-2 w-full text-center text-[11px] leading-[16.5px] font-bold break-words text-[#171717] uppercase">
+                      <span className="line-clamp-2 h-[33px] w-full text-center text-[11px] leading-[16.5px] font-bold break-words text-[#171717] uppercase">
                         {category.title}
                       </span>
                     </AppLink>
@@ -193,7 +151,7 @@ export function HomeCategories({
                 onClick={() => scrollByDirection(-1)}
                 className={ARROW_BUTTON_CLASS}
               >
-                <ChevronLeft className="size-5" aria-hidden />
+                <ChevronLeft className="size-6" aria-hidden />
               </button>
               <ul
                 ref={scrollerRef}
@@ -224,7 +182,7 @@ export function HomeCategories({
                           className="object-contain transition duration-300 group-hover:scale-105"
                         />
                       </div>
-                      <span className="text-center text-sm font-bold tracking-wide text-[#171717] uppercase sm:text-base">
+                      <span className="line-clamp-2 h-10 w-full text-center text-sm leading-5 font-bold tracking-wide text-[#171717] uppercase sm:h-12 sm:text-base sm:leading-6">
                         {category.title}
                       </span>
                     </AppLink>
@@ -238,31 +196,9 @@ export function HomeCategories({
                 onClick={() => scrollByDirection(1)}
                 className={ARROW_BUTTON_CLASS}
               >
-                <ChevronRight className="size-5" aria-hidden />
+                <ChevronRight className="size-6" aria-hidden />
               </button>
             </div>
-
-            {pageCount > 1 ? (
-              <div className="mt-6 hidden items-center justify-center gap-1.5 md:flex">
-                {Array.from({ length: pageCount }, (_, page) => {
-                  const isActive = page === activePage;
-                  return (
-                    <button
-                      key={page}
-                      type="button"
-                      aria-label={`Go to categories page ${page + 1}`}
-                      aria-current={isActive}
-                      onClick={() => goToPage(page)}
-                      className={`h-2.5 rounded-full transition-[width,background-color] duration-300 ease-out ${
-                        isActive
-                          ? "w-7 bg-brand-red-hot"
-                          : "w-2.5 bg-[rgba(95,95,95,0.43)]"
-                      }`}
-                    />
-                  );
-                })}
-              </div>
-            ) : null}
           </div>
         )}
       </div>
