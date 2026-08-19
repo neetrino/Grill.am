@@ -1,10 +1,24 @@
 import type { NextConfig } from "next";
+import { networkInterfaces } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { CONTENT_SECURITY_POLICY } from "./src/config/content-security-policy";
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
+
+/** LAN IPv4s so a phone can load `/_next/*` when the Mac DHCP address changes. */
+function lanDevOrigins(): string[] {
+  const origins = new Set(["127.0.0.1", "localhost"]);
+  for (const addresses of Object.values(networkInterfaces())) {
+    for (const address of addresses ?? []) {
+      if (address.family === "IPv4" && !address.internal) {
+        origins.add(address.address);
+      }
+    }
+  }
+  return [...origins];
+}
 
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -61,7 +75,7 @@ const nextConfig: NextConfig = {
   // Allow LAN access in `next dev` (phone / other Mac via local IP).
   // Without this, Next blocks `/_next/*` (JS/CSS/HMR) and the UI looks blank.
   // Playwright E2E uses http://127.0.0.1:3100 — must be allowlisted too.
-  allowedDevOrigins: ["127.0.0.1", "localhost", "192.168.15.30"],
+  allowedDevOrigins: lanDevOrigins(),
   turbopack: {
     root: projectRoot,
   },

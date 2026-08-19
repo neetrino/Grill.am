@@ -5,6 +5,11 @@ import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { useRef } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import {
+  branchAppearClass,
+  branchAppearStyle,
+  useViewportReveal,
+} from "@/features/home/ui/home-branches-appear";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 export type HomeBranchItem = {
@@ -41,14 +46,41 @@ function readScrollStepPx(scroller: HTMLElement): number {
   return firstItem.offsetWidth + gap;
 }
 
+function BranchArrow({
+  direction,
+  label,
+  revealed,
+  onClick,
+}: {
+  direction: -1 | 1;
+  label: string;
+  revealed: boolean;
+  onClick: () => void;
+}) {
+  const Icon = direction === -1 ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={`${ARROW_BUTTON_CLASS} ${branchAppearClass(revealed)}`}
+      style={branchAppearStyle(1)}
+    >
+      <Icon className="size-5" aria-hidden />
+    </button>
+  );
+}
+
 function BranchScroller({
   branches,
   previousLabel,
   nextLabel,
+  revealed,
 }: {
   branches: readonly HomeBranchItem[];
   previousLabel: string;
   nextLabel: string;
+  revealed: boolean;
 }) {
   const scrollerRef = useRef<HTMLUListElement>(null);
   const showArrows = branches.length > 3;
@@ -81,48 +113,57 @@ function BranchScroller({
   return (
     <div className="flex items-center gap-4">
       {showArrows ? (
-        <button
-          type="button"
-          aria-label={previousLabel}
+        <BranchArrow
+          direction={-1}
+          label={previousLabel}
+          revealed={revealed}
           onClick={() => scrollByDirection(-1)}
-          className={ARROW_BUTTON_CLASS}
-        >
-          <ChevronLeft className="size-5" aria-hidden />
-        </button>
+        />
       ) : null}
       <ul
         ref={scrollerRef}
         className="flex min-w-0 flex-1 snap-x snap-mandatory gap-4 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:overflow-x-hidden"
       >
-        {branches.map((branch) => (
+        {branches.map((branch, index) => (
           <li
             key={branch.id}
             className="w-[210px] shrink-0 snap-start md:w-[calc((100%-2rem)/3)] xl:w-[calc((100%-4rem)/5)]"
           >
-            <BranchCard branch={branch} />
+            <BranchCard
+              branch={branch}
+              appearIndex={index + 1}
+              appearActive={revealed}
+            />
           </li>
         ))}
       </ul>
       {showArrows ? (
-        <button
-          type="button"
-          aria-label={nextLabel}
+        <BranchArrow
+          direction={1}
+          label={nextLabel}
+          revealed={revealed}
           onClick={() => scrollByDirection(1)}
-          className={ARROW_BUTTON_CLASS}
-        >
-          <ChevronRight className="size-5" aria-hidden />
-        </button>
+        />
       ) : null}
     </div>
   );
 }
 
-function BranchCard({ branch }: { branch: HomeBranchItem }) {
+function BranchCard({
+  branch,
+  appearIndex,
+  appearActive,
+}: {
+  branch: HomeBranchItem;
+  appearIndex: number;
+  appearActive: boolean;
+}) {
   return (
     <AppLink
       href={branch.href}
       prefetchPolicy="intent"
-      className="flex h-full flex-col overflow-hidden rounded-[20px] bg-brand-red text-white"
+      className={`flex h-full flex-col overflow-hidden rounded-[20px] bg-brand-red text-white ${branchAppearClass(appearActive)}`}
+      style={branchAppearStyle(appearIndex)}
     >
       <div className="relative h-[155px] w-full shrink-0 overflow-hidden rounded-[20px] bg-white">
         {branch.imageUrl ? (
@@ -167,14 +208,22 @@ export function HomeBranches({
   nextLabel,
   branches,
 }: HomeBranchesProps) {
+  const { sectionRef, revealed } = useViewportReveal();
+
   if (branches.length === 0) {
     return null;
   }
 
   return (
-    <section className="w-full bg-white py-6 md:py-10 lg:py-12">
+    <section
+      ref={sectionRef}
+      className="w-full overflow-hidden bg-white py-6 md:py-10 lg:py-12"
+    >
       <div className="page-container">
-        <div className="mb-5 flex items-center justify-between gap-3 md:mb-8">
+        <div
+          className={`mb-5 flex items-center justify-between gap-3 md:mb-8 ${branchAppearClass(revealed)}`}
+          style={branchAppearStyle(0)}
+        >
           <h2 className="flex min-w-0 items-center gap-2 text-[20px] leading-tight font-black text-[#171717] uppercase md:text-[26px] lg:text-[30px]">
             <MapPin className="size-5 shrink-0 text-brand-red md:size-6" aria-hidden />
             <span className="truncate">{title}</span>
@@ -182,7 +231,7 @@ export function HomeBranches({
           <AppLink
             href={viewAllHref}
             prefetchPolicy="intent"
-            className="inline-flex shrink-0 items-center gap-1 text-[12px] font-bold text-brand-red md:text-sm"
+            className="hidden shrink-0 items-center gap-1 text-sm font-bold text-brand-red md:inline-flex"
           >
             {viewAllLabel}
             <ChevronRight className="size-4" aria-hidden />
@@ -193,6 +242,7 @@ export function HomeBranches({
           branches={branches}
           previousLabel={previousLabel}
           nextLabel={nextLabel}
+          revealed={revealed}
         />
       </div>
     </section>
