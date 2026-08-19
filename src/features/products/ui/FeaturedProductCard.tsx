@@ -131,8 +131,7 @@ export function FeaturedProductCard({
             isSignedIn={isSignedIn}
             label={wishlistLabel}
             size="md"
-            tone="onImage"
-            className="absolute top-1.5 right-1.5 z-10 size-9 bg-transparent shadow-none hover:bg-transparent"
+            className="absolute top-1.5 right-1.5 z-10 size-9"
           />
         ) : null}
       </div>

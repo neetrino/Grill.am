@@ -125,8 +125,7 @@ export function ProductGallery({
             isSignedIn={isSignedIn}
             label={wishlistLabel}
             size="md"
-            tone="onImageBrand"
-            className="absolute top-3 right-3 z-10 size-10 bg-white shadow-none hover:bg-white md:top-[30px] md:right-6 md:size-[52px] [&>svg]:h-[16px] [&>svg]:w-[18px] md:[&>svg]:h-[23px] md:[&>svg]:w-[26px]"
+            className="absolute top-3 right-3 z-10 size-10 md:top-[30px] md:right-6 md:size-[52px] md:[&>svg]:size-[25px]"
           />
         ) : null}
       </div>
