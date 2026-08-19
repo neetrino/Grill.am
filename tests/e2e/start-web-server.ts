@@ -19,7 +19,6 @@ process.env.PORT = port;
 process.env.NODE_ENV = "development";
 process.env.NEXT_PUBLIC_APP_URL =
   process.env.E2E_BASE_URL ?? `http://127.0.0.1:${port}`;
-delete process.env.NEXT_PUBLIC_TIDIO_PUBLIC_KEY;
 delete process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID;
 process.env.E2E_PROVIDER_MODE = "mock";
 process.env.E2E_EMAIL_MODE = process.env.E2E_EMAIL_MODE ?? "mock";

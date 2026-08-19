@@ -713,15 +713,11 @@ select:disabled {
 }
 
 /*
- * Tidio injects a fixed bubble. Keep it on the viewport (not a clipped
- * page surface) and lift it above the mobile tab bar (`lg` = 1025px).
+ * Crisp's native bubble shares the page with Grill's launcher. Hide only
+ * that trigger so the conversation panel can still open on click.
  */
-#tidio-chat {
-  position: fixed !important;
-}
-
-@media (max-width: 1024px) {
-  #tidio-chat {
-    bottom: var(--storefront-chat-mobile-bottom) !important;
-  }
+#crisp-chatbox [role="button"][data-maximized] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
