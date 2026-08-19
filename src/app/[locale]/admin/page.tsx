@@ -8,12 +8,9 @@ import {
   type DashboardPeriodSnapshot,
 } from "@/features/admin/ui/DashboardPeriodOverview";
 import { DashboardQuickActions } from "@/features/admin/ui/DashboardQuickActions";
+import { DashboardRecentOrders } from "@/features/admin/ui/DashboardRecentOrders";
 import { DashboardStatsGrid } from "@/features/admin/ui/DashboardStatsGrid";
 import { DashboardTrendChart } from "@/features/admin/ui/DashboardTrendChart";
-import {
-  ADMIN_BADGE,
-  paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
 import {
   ADMIN_CARD_CLASS,
   ADMIN_CARD_HOVER_CLASS,
@@ -29,7 +26,6 @@ import { formatPeriodDelta } from "@/features/analytics/domain/date-range";
 import { getAdminDashboardMetrics } from "@/features/orders/application/queries";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { formatMoneyAmount } from "@/lib/money/format";
 
 type AdminPageProps = {
   params: Promise<{ locale: string }>;
@@ -163,54 +159,16 @@ export default async function AdminPage({
       </Suspense>
 
       <div className="mb-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <div className={`${ADMIN_CARD_CLASS} p-4`}>
-          <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-gray-900">
-              {copy.recentOrders}
-            </h2>
-            <Link
-              href={`/${locale}/admin/orders`}
-              className="rounded-[12px] px-2 py-1 text-xs font-medium text-brand-red hover:bg-brand-red/5"
-            >
-              {copy.viewAll}
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {metrics.recentOrders.slice(0, 5).map((order) => (
-              <Link
-                key={order.id}
-                href={`/${locale}/admin/orders/${order.orderNumber}`}
-                className={`block rounded-[12px] px-3 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-medium text-gray-900">
-                        #{order.orderNumber}
-                      </p>
-                      <span
-                        className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.status)}`}
-                      >
-                        {order.status}
-                      </span>
-                    </div>
-                    <p className="truncate text-[11px] text-gray-500">
-                      {order.contactEmail}
-                    </p>
-                  </div>
-                  <p className="shrink-0 text-sm font-semibold text-gray-900">
-                    {formatMoneyAmount(order.totalAmount, "AMD", locale)}
-                  </p>
-                </div>
-              </Link>
-            ))}
-            {metrics.recentOrders.length === 0 ? (
-              <p className="py-6 text-center text-sm text-gray-600">
-                {copy.noRecentOrders}
-              </p>
-            ) : null}
-          </div>
-        </div>
+        <DashboardRecentOrders
+          locale={locale}
+          orders={metrics.recentOrders.slice(0, 5).map((order) => ({
+            id: order.id,
+            orderNumber: order.orderNumber,
+            status: order.status,
+            contactEmail: order.contactEmail,
+            totalAmount: order.totalAmount,
+          }))}
+        />
 
         <div className={`${ADMIN_CARD_CLASS} p-4`}>
           <div className="mb-2 flex items-center justify-between">
