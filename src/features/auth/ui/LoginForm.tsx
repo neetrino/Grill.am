@@ -70,7 +70,17 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         defaultValue={values?.password}
         invalid={Boolean(fieldErrors?.password)}
       />
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-3">
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <input
+            type="checkbox"
+            name="rememberMe"
+            value="on"
+            defaultChecked={values ? values.rememberMe === "on" : true}
+            className="size-4 shrink-0 rounded border-gray-300 text-brand-red accent-brand-red focus:ring-brand-red/30"
+          />
+          {dictionary.rememberMe}
+        </label>
         <AppLink
           href={`/${locale}/forgot-password`}
           prefetchPolicy="intent"

@@ -27,18 +27,29 @@ function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
-function sessionCookieOptions(expires: Date) {
+type CreateSessionOptions = {
+  rememberMe?: boolean;
+};
+
+function sessionCookieOptions(expires?: Date) {
   return {
     httpOnly: true,
     sameSite: "lax" as const,
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    expires,
+    ...(expires ? { expires } : {}),
   };
 }
 
-/** Creates an opaque, database-backed session and sets its cookie. */
-export async function createSession(userId: string): Promise<void> {
+/**
+ * Creates an opaque, database-backed session and sets its cookie.
+ * `rememberMe` (default true) writes a 30-day cookie; otherwise a session cookie.
+ */
+export async function createSession(
+  userId: string,
+  options: CreateSessionOptions = {},
+): Promise<void> {
+  const rememberMe = options.rememberMe ?? true;
   const token = randomBytes(32).toString("base64url");
   const now = new Date();
   const expiresAt = new Date(now.getTime() + SESSION_DURATION_MS);
@@ -52,7 +63,11 @@ export async function createSession(userId: string): Promise<void> {
   });
 
   const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE_NAME, token, sessionCookieOptions(expiresAt));
+  cookieStore.set(
+    SESSION_COOKIE_NAME,
+    token,
+    sessionCookieOptions(rememberMe ? expiresAt : undefined),
+  );
 }
 
 /** Revokes the current session and clears its browser cookie. */

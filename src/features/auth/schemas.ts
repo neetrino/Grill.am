@@ -25,6 +25,7 @@ export const passwordSchema = z.string().superRefine((value, ctx) => {
 export const loginSchema = z.object({
   email: z.string().trim().email().transform((value) => value.toLowerCase()),
   password: z.string().min(1),
+  rememberMe: z.literal("on").optional(),
 });
 
 export const registerSchema = z
