@@ -31,7 +31,7 @@ type HomeBranchesProps = {
 };
 
 const ARROW_BUTTON_CLASS =
-  "hidden size-12 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow md:flex";
+  "hidden size-10 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow md:flex";
 
 function splitSecondWordAccent(title: string): {
   lead: string;
@@ -75,7 +75,7 @@ function BranchArrow({
       className={`${ARROW_BUTTON_CLASS} ${branchAppearClass(revealed)}`}
       style={branchAppearStyle(1)}
     >
-      <Icon className="size-5" aria-hidden />
+      <Icon className="size-6" aria-hidden />
     </button>
   );
 }
