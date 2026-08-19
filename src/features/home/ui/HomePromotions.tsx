@@ -16,67 +16,64 @@ type HomePromotionsProps = {
 
 const PROMO_MEAL = "/assets/home/promo-banner-meal.webp";
 
+function lastWordAccent(text: string): { lead: string; accent: string } {
+  const trimmed = text.trim();
+  const lastSpace = trimmed.lastIndexOf(" ");
+  if (lastSpace === -1) {
+    return { lead: "", accent: trimmed };
+  }
+  return {
+    lead: trimmed.slice(0, lastSpace),
+    accent: trimmed.slice(lastSpace + 1),
+  };
+}
+
 /**
- * Figma mobile promo section `164:557` — dark card, meal photo on the right.
+ * Mobile promo card — full meal photo instead of the dark fill.
  */
 function MobilePromoCard({
   limitedOfferLabel,
   eyebrow,
-  titleLead,
-  titleAccent,
   ctaLabel,
   linkHref,
 }: {
   limitedOfferLabel: string;
   eyebrow: string;
-  titleLead: string;
-  titleAccent: string;
   ctaLabel: string;
   linkHref: string;
 }) {
+  const { lead: eyebrowLead, accent: eyebrowAccent } = lastWordAccent(eyebrow);
+
   return (
-    <div className="relative h-[334px] min-h-[200px] overflow-hidden rounded-[24px] bg-[#171717]">
-      <div
-        className="pointer-events-none absolute inset-y-0 right-0 w-[52%] overflow-hidden rounded-l-[24px]"
-        aria-hidden
-      >
+    <div className="relative h-[334px] min-h-[200px] overflow-hidden rounded-[24px] bg-[#e8e0d4]">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
         <Image
           src={PROMO_MEAL}
           alt=""
           fill
-          sizes="55vw"
+          sizes="100vw"
           className="object-cover object-center"
           priority={false}
         />
       </div>
 
-      <div className="relative z-10 flex h-full flex-col justify-center px-5 py-5">
-        <div className="flex max-w-[62%] flex-col">
-          <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-brand-red-hot px-3 py-1 text-[10px] leading-[15px] font-black tracking-[1.4px] text-[#0d0d0d] uppercase">
-            <LimitedOfferFireIcon className="h-3 w-[11px] shrink-0" />
-            {limitedOfferLabel}
-          </span>
+      <span className="absolute top-4 left-4 z-20 inline-flex w-fit items-center gap-2 rounded-full bg-brand-red-hot px-3.5 py-1.5 text-[12px] leading-[16px] font-black tracking-[1.4px] text-[#0d0d0d] uppercase">
+        <LimitedOfferFireIcon className="h-3.5 w-[13px] shrink-0" />
+        {limitedOfferLabel}
+      </span>
 
-          <p className="mt-4 text-[22px] leading-[33px] font-black tracking-[2.2px] text-white/90 uppercase">
-            {eyebrow}
-          </p>
+      <p className="absolute bottom-4 left-4 z-20 max-w-[55%] text-[22px] leading-[28px] font-black tracking-[2.2px] text-[#0d0d0d] uppercase">
+        {eyebrowLead ? `${eyebrowLead} ` : null}
+        <span className="text-brand-red">{eyebrowAccent}</span>
+      </p>
 
-          <h2 className="mt-3 text-[38px] leading-[38px] font-black uppercase">
-            <span className="block text-white">{titleLead}</span>
-            <span className="block text-brand-red">{titleAccent}</span>
-          </h2>
-        </div>
-
-        <div className="z-20 mt-5">
-          <AppLink
-            href={linkHref}
-            prefetchPolicy="intent"
-            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-[#171717] px-[21px] py-[13px] text-[12px] leading-[18px] font-black tracking-[0.9px] text-white uppercase"
-          >
-            {ctaLabel}
-          </AppLink>
-        </div>
-      </div>
+      <AppLink
+        href={linkHref}
+        prefetchPolicy="intent"
+        className="absolute right-4 bottom-4 z-20 inline-flex items-center justify-center rounded-full bg-[#171717] px-[21px] py-[13px] text-[12px] leading-[18px] font-black tracking-[0.9px] text-white uppercase"
+      >
+        {ctaLabel}
+      </AppLink>
     </div>
   );
 }
@@ -98,8 +95,6 @@ export function HomePromotions({
           <MobilePromoCard
             limitedOfferLabel={limitedOfferLabel}
             eyebrow={eyebrow}
-            titleLead={titleLead}
-            titleAccent={titleAccent}
             ctaLabel={ctaLabel}
             linkHref={ctaHref}
           />
@@ -136,13 +131,13 @@ export function HomePromotions({
               </AppLink>
             </div>
 
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-[46%] overflow-hidden rounded-l-[30px]">
+            <div className="pointer-events-none absolute inset-y-6 right-0 w-[46%]">
               <Image
                 src={PROMO_MEAL}
                 alt=""
                 fill
                 sizes="620px"
-                className="object-cover object-center"
+                className="object-contain object-center"
               />
             </div>
           </div>
