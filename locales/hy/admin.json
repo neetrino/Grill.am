@@ -10,6 +10,7 @@
     "users": "Օգտատերեր",
     "analytics": "Վերլուծություն",
     "hero": "Hero",
+    "stores": "Մասնաճյուղեր",
     "popups": "Popup-ներ",
     "blog": "Բլոգ",
     "careers": "Աշխատանք",
@@ -683,6 +684,38 @@
       "uploadImage": "Վերբեռնել նկար",
       "changeImage": "Փոխել նկարը",
       "uploadButton": "Վերբեռնել"
+    }
+  },
+  "stores": {
+    "title": "Մասնաճյուղեր",
+    "count": "{count} մասնաճյուղ",
+    "create": "Ավելացնել մասնաճյուղ",
+    "listHeading": "Մասնաճյուղեր ({count})",
+    "empty": "Մասնաճյուղեր դեռ չկան։",
+    "noImage": "Նկար չկա",
+    "published": "ՀՐԱՊԱՐԱԿՎԱԾ",
+    "draft": "ՍԵՎԱԳԻՐ",
+    "editNamed": "Խմբագրել {title}",
+    "deleteNamed": "Ջնջել {title}",
+    "confirmDelete": "Ջնջե՞լ մասնաճյուղը «{title}»։ Հետարկել հնարավոր չէ։",
+    "publish": "Ցուցադրել գլխավոր էջում",
+    "unpublish": "Թաքցնել գլխավոր էջից",
+    "table": {
+      "branch": "Մասնաճյուղ",
+      "address": "Հասցե",
+      "phone": "Հեռախոս"
+    },
+    "drawer": {
+      "createTitle": "Ավելացնել մասնաճյուղ",
+      "editTitle": "Խմբագրել մասնաճյուղը",
+      "title": "Անվանում",
+      "address": "Հասցե",
+      "phone": "Հեռախոս",
+      "uploadImage": "Վերբեռնել նկար",
+      "changeImage": "Փոխել նկարը",
+      "uploadButton": "Վերբեռնել",
+      "imageHint": "Այս նկարը երևում է գլխավոր էջի մասնաճյուղի քարտում։",
+      "saveChanges": "Պահպանել փոփոխությունները"
     }
   },
   "popups": {

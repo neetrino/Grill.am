@@ -4,7 +4,7 @@
 **ORM/migrations.** Drizzle ORM / Drizzle Kit
 **Կարգավիճակ.** Canonical 29-table schema migrated; idempotent seed available (`pnpm db:seed`)
 **Canonical table count.** 29
-**Վերջին թարմացում.** 2026-07-23
+**Վերջին թարմացում.** 2026-08-19
 
 ## 1. Սխեմայի նպատակը
 
@@ -47,20 +47,21 @@
 | 12 | `blog_posts` | Content | Blog content, translations և tags |
 | 13 | `job_postings` | Content | Open positions, translations, salary, employment type |
 | 14 | `popups` | Content | Full-image storefront popups (max 4, one active) |
-| 15 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
-| 16 | `cart_items` | Commerce | Cart product quantities |
-| 17 | `wishlist_items` | Commerce | Customer wishlist entries |
-| 18 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
-| 19 | `promotion_users` | Pricing | User-restricted promotion allowlist |
-| 20 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
-| 21 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
-| 22 | `order_items` | Orders | Immutable purchased-item snapshots |
-| 23 | `order_events` | Orders | Status, notes և payment provider events |
-| 24 | `payments` | Payments | Payment attempts/current provider state |
-| 25 | `reviews` | Engagement | Verified-purchase reviews/moderation |
-| 26 | `contact_messages` | Support | Contact inbox |
-| 27 | `job_applications` | Careers | Job applications + CV object metadata |
-| 28 | `audit_logs` | Security | Immutable admin/security audit |
+| 15 | `store_locations` | Content | Home-page branches, translations, optional photo |
+| 16 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
+| 17 | `cart_items` | Commerce | Cart product quantities |
+| 18 | `wishlist_items` | Commerce | Customer wishlist entries |
+| 19 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
+| 20 | `promotion_users` | Pricing | User-restricted promotion allowlist |
+| 21 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
+| 22 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
+| 23 | `order_items` | Orders | Immutable purchased-item snapshots |
+| 24 | `order_events` | Orders | Status, notes և payment provider events |
+| 25 | `payments` | Payments | Payment attempts/current provider state |
+| 26 | `reviews` | Engagement | Verified-purchase reviews/moderation |
+| 27 | `contact_messages` | Support | Contact inbox |
+| 28 | `job_applications` | Careers | Job applications + CV object metadata |
+| 29 | `audit_logs` | Security | Immutable admin/security audit |
 
 ### Count assumptions
 
@@ -120,6 +121,7 @@ Entity ownership-ը պահվում է typed nullable FKs-ով՝
 - `blog_post_id`
 - `job_posting_id`
 - `popup_id`
+- `store_location_id`
 
 `CHECK` constraint-ը պահանջում է՝ ready entity media-ի համար ճիշտ մեկ owner, pending upload-ի համար owner-ի ժամանակավոր բացակայություն, branding asset-ի համար explicit `purpose`։ Generic `owner_type + owner_id` polymorphic կապ չի օգտագործվում, որպեսզի foreign key protection-ը չկորչի։
 
@@ -127,7 +129,7 @@ Partial unique constraints՝
 
 - մեկ primary media per product,
 - մեկ desktop և մեկ mobile media role per hero slide,
-- մեկ cover media per blog post/job posting/popup՝ ըստ role policy-ի։
+- մեկ cover media per blog post/job posting/popup/store location՝ ըստ role policy-ի։
 
 Full CDN URL չի պահվում. URL-ը կառուցվում է config-ից։
 
@@ -197,6 +199,10 @@ Status (`DRAFT`/`ACTIVE`/`ARCHIVED`), employment type, optional salary amount + 
 ### 7.4 `popups`
 
 Full-image storefront overlay։ Fields՝ `is_active`, timestamps։ Application cap՝ առավելագույնը 4 row։ Partial unique index՝ միաժամանակ մեկ active popup։ Image-ը `media_assets.popup_id + COVER` relation է։ Active popup-ը ցուցադրվում է ամեն storefront այցի ժամանակ (առանց cookie dismiss persistence)։
+
+### 7.5 `store_locations`
+
+Home-page branch cards managed from admin. Fields՝ unique `slug`, `translations JSONB` (locale title/address), optional phone/lat/lng, sort order, active flag և timestamps։ Photo-ն `media_assets.store_location_id + COVER` relation է։ Checkout pickup և map-ը դեռ օգտագործում են static catalog-ը։
 
 ## 8. Cart և wishlist
 

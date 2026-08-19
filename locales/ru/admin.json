@@ -10,6 +10,7 @@
     "users": "Пользователи",
     "analytics": "Аналитика",
     "hero": "Hero",
+    "stores": "Филиалы",
     "popups": "Попапы",
     "blog": "Блог",
     "careers": "Вакансии",
@@ -683,6 +684,38 @@
       "uploadImage": "Загрузить изображение",
       "changeImage": "Изменить изображение",
       "uploadButton": "Загрузить"
+    }
+  },
+  "stores": {
+    "title": "Филиалы",
+    "count": "{count} филиал(ов)",
+    "create": "Добавить филиал",
+    "listHeading": "Филиалы ({count})",
+    "empty": "Филиалов пока нет.",
+    "noImage": "Нет изображения",
+    "published": "ОПУБЛИКОВАН",
+    "draft": "ЧЕРНОВИК",
+    "editNamed": "Редактировать {title}",
+    "deleteNamed": "Удалить {title}",
+    "confirmDelete": "Удалить филиал «{title}»? Отменить нельзя.",
+    "publish": "Показать на главной",
+    "unpublish": "Скрыть с главной",
+    "table": {
+      "branch": "Филиал",
+      "address": "Адрес",
+      "phone": "Телефон"
+    },
+    "drawer": {
+      "createTitle": "Добавить филиал",
+      "editTitle": "Редактировать филиал",
+      "title": "Название",
+      "address": "Адрес",
+      "phone": "Телефон",
+      "uploadImage": "Загрузить изображение",
+      "changeImage": "Изменить изображение",
+      "uploadButton": "Загрузить",
+      "imageHint": "Это фото показывается на карточке филиала на главной.",
+      "saveChanges": "Сохранить изменения"
     }
   },
   "popups": {

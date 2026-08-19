@@ -10,6 +10,7 @@
     "users": "Users",
     "analytics": "Analytics",
     "hero": "Hero",
+    "stores": "Branches",
     "popups": "Popups",
     "blog": "Blog",
     "careers": "Careers",
@@ -683,6 +684,38 @@
       "uploadImage": "Upload image",
       "changeImage": "Change image",
       "uploadButton": "Upload"
+    }
+  },
+  "stores": {
+    "title": "Branches",
+    "count": "{count} branch(es)",
+    "create": "Add branch",
+    "listHeading": "Branches ({count})",
+    "empty": "No branches yet.",
+    "noImage": "No image",
+    "published": "PUBLISHED",
+    "draft": "DRAFT",
+    "editNamed": "Edit {title}",
+    "deleteNamed": "Delete {title}",
+    "confirmDelete": "Delete branch “{title}”? This cannot be undone.",
+    "publish": "Show on home page",
+    "unpublish": "Hide from home page",
+    "table": {
+      "branch": "Branch",
+      "address": "Address",
+      "phone": "Phone"
+    },
+    "drawer": {
+      "createTitle": "Add branch",
+      "editTitle": "Edit branch",
+      "title": "Title",
+      "address": "Address",
+      "phone": "Phone",
+      "uploadImage": "Upload image",
+      "changeImage": "Change image",
+      "uploadButton": "Upload",
+      "imageHint": "This photo is shown on the home page branch card.",
+      "saveChanges": "Save changes"
     }
   },
   "popups": {

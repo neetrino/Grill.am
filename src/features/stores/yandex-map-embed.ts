@@ -10,8 +10,6 @@ export type StoreLocation = {
   longitude: number;
   /** Localized short address. */
   address: Record<Locale, string>;
-  /** Optional storefront photo for home branch cards. */
-  imageUrl?: string;
 };
 
 /**
@@ -38,7 +36,6 @@ export const GRILL_STORE_LOCATIONS: readonly StoreLocation[] = [
       en: "Khorenatsi 88",
       ru: "Хоренаци 88",
     },
-    imageUrl: "/assets/stores/khorenatsi-88.webp",
   },
   {
     id: "pushkin-43-3",
@@ -49,7 +46,6 @@ export const GRILL_STORE_LOCATIONS: readonly StoreLocation[] = [
       en: "Pushkin 43/3",
       ru: "Пушкин 43/3",
     },
-    imageUrl: "/assets/stores/pushkin.webp",
   },
   {
     id: "totovents-2-7",
@@ -60,7 +56,6 @@ export const GRILL_STORE_LOCATIONS: readonly StoreLocation[] = [
       en: "Totovents 2/7",
       ru: "Тотовенц 2/7",
     },
-    imageUrl: "/assets/stores/totovents.webp",
   },
   {
     id: "baghramyan-50-5",
@@ -71,7 +66,6 @@ export const GRILL_STORE_LOCATIONS: readonly StoreLocation[] = [
       en: "Baghramyan 50/5",
       ru: "Баграмян 50/5",
     },
-    imageUrl: "/assets/stores/baghramyan.webp",
   },
   {
     id: "isakov-27",
@@ -82,7 +76,6 @@ export const GRILL_STORE_LOCATIONS: readonly StoreLocation[] = [
       en: "Admiral Isakov 27",
       ru: "Адмирала Исакова 27",
     },
-    imageUrl: "/assets/stores/isakov.webp",
   },
   {
     id: "andranik-94-4",
@@ -93,7 +86,6 @@ export const GRILL_STORE_LOCATIONS: readonly StoreLocation[] = [
       en: "Andranik 94/4",
       ru: "Андраника 94/4",
     },
-    imageUrl: "/assets/stores/andranik.webp",
   },
   {
     id: "sebastia-16-1",
@@ -104,7 +96,6 @@ export const GRILL_STORE_LOCATIONS: readonly StoreLocation[] = [
       en: "Sebastia 16/1",
       ru: "Себастия 16/1",
     },
-    imageUrl: "/assets/stores/sebastia.webp",
   },
   {
     id: "tigran-petrosyan-13-8",
@@ -115,7 +106,6 @@ export const GRILL_STORE_LOCATIONS: readonly StoreLocation[] = [
       en: "Tigran Petrosyan 13/8",
       ru: "Тигран Петросян 13/8",
     },
-    imageUrl: "/assets/stores/davitashen.webp",
   },
 ] as const;
 

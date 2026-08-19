@@ -6,14 +6,6 @@ import { useRef } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
-import andranikPhoto from "../../../../public/assets/stores/andranik.webp";
-import baghramyanPhoto from "../../../../public/assets/stores/baghramyan.webp";
-import davitashenPhoto from "../../../../public/assets/stores/davitashen.webp";
-import isakovPhoto from "../../../../public/assets/stores/isakov.webp";
-import khorenatsi88Photo from "../../../../public/assets/stores/khorenatsi-88.webp";
-import pushkinPhoto from "../../../../public/assets/stores/pushkin.webp";
-import sebastiaPhoto from "../../../../public/assets/stores/sebastia.webp";
-import totoventsPhoto from "../../../../public/assets/stores/totovents.webp";
 
 export type HomeBranchItem = {
   id: string;
@@ -37,17 +29,6 @@ const ARROW_BUTTON_CLASS =
   "hidden size-12 shrink-0 items-center justify-center rounded-full bg-black text-brand-yellow transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow md:flex";
 
 const BRANCH_LOGO = staticAssetUrl("/assets/brand/logo.webp");
-
-const BRANCH_PHOTOS: Partial<Record<string, typeof andranikPhoto>> = {
-  "andranik-94-4": andranikPhoto,
-  "baghramyan-50-5": baghramyanPhoto,
-  "isakov-27": isakovPhoto,
-  "khorenatsi-88": khorenatsi88Photo,
-  "pushkin-43-3": pushkinPhoto,
-  "sebastia-16-1": sebastiaPhoto,
-  "tigran-petrosyan-13-8": davitashenPhoto,
-  "totovents-2-7": totoventsPhoto,
-};
 const SCROLL_STEP_FALLBACK_PX = 260;
 const SCROLL_EDGE_TOLERANCE_PX = 1;
 
@@ -137,8 +118,6 @@ function BranchScroller({
 }
 
 function BranchCard({ branch }: { branch: HomeBranchItem }) {
-  const photo = BRANCH_PHOTOS[branch.id] ?? branch.imageUrl;
-
   return (
     <AppLink
       href={branch.href}
@@ -146,9 +125,9 @@ function BranchCard({ branch }: { branch: HomeBranchItem }) {
       className="flex h-full flex-col overflow-hidden rounded-[20px] bg-brand-red text-white"
     >
       <div className="relative h-[155px] w-full shrink-0 overflow-hidden rounded-[20px] bg-white">
-        {photo ? (
+        {branch.imageUrl ? (
           <Image
-            src={photo}
+            src={branch.imageUrl}
             alt=""
             fill
             sizes="210px"
