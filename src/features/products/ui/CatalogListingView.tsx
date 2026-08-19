@@ -176,7 +176,7 @@ export function CatalogListingView({
         </div>
       </div>
 
-      <div className="mt-4">{chips}</div>
+      <div className="mt-4 hidden lg:block">{chips}</div>
 
       {empty ?? <div className={gridClass}>{children}</div>}
     </>
