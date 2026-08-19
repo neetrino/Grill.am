@@ -7,6 +7,7 @@ import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
 import {
   FeaturedProductCard,
 } from "@/features/products/ui/FeaturedProductCard";
+import { ProductHitBadge } from "@/features/products/ui/ProductHitBadge";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -49,6 +50,8 @@ type ProductCardProps = {
   addToCartLabel?: string;
   /** When true, cart CTA opens the product page for option selection. */
   requiresConfiguration?: boolean;
+  /** Localized HIT label; omit when the product is not featured. */
+  hitLabel?: string | null;
   /** Figma mobile featured card variants (`164:457` / `164:505`). */
   variant?: ProductCardVariant;
 };
@@ -75,6 +78,7 @@ export function ProductCard({
   wishlistLabel,
   addToCartLabel,
   requiresConfiguration = false,
+  hitLabel = null,
   variant = "catalog",
 }: ProductCardProps) {
   const resolvedImageUrl = imageUrl?.trim() || null;
@@ -124,6 +128,7 @@ export function ProductCard({
         wishlistLabel={wishlistLabel}
         addToCartLabel={addToCartLabel}
         requiresConfiguration={requiresConfiguration}
+        hitLabel={hitLabel}
         tone={variant === "featured-red" ? "red" : "light"}
       />
     );
@@ -156,11 +161,21 @@ export function ProductCard({
           ) : null}
         </AppLink>
 
-        {discountPercent != null ? (
-          <span className="absolute top-3.5 left-4 z-10 inline-flex h-[26px] items-center gap-1.5 rounded-full bg-brand-yellow pr-3 pl-[13px] text-[11px] leading-[18px] font-semibold text-[#222]">
-            <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
-            -{discountPercent}%
-          </span>
+        {hitLabel || discountPercent != null ? (
+          <div className="absolute top-3.5 left-4 z-10 flex flex-col items-start gap-1">
+            {hitLabel ? (
+              <ProductHitBadge
+                label={hitLabel}
+                className="px-2.5 py-1 text-[11px] leading-4"
+              />
+            ) : null}
+            {discountPercent != null ? (
+              <span className="inline-flex h-[26px] items-center gap-1.5 rounded-full bg-brand-yellow pr-3 pl-[13px] text-[11px] leading-[18px] font-semibold text-[#222]">
+                <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
+                -{discountPercent}%
+              </span>
+            ) : null}
+          </div>
         ) : null}
 
         {showWishlist ? (

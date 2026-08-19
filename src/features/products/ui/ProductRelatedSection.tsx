@@ -89,6 +89,7 @@ export async function ProductRelatedSection({
               wishlistLabel={dictionary.nav.wishlist}
               addToCartLabel={labels.addToCart}
               requiresConfiguration={item.requiresConfiguration}
+              hitLabel={item.isFeatured ? labels.hit : null}
             />
           );
         })}

@@ -24,7 +24,12 @@ type FeaturedItem = {
   inStock: boolean;
   inWishlist?: boolean;
   requiresConfiguration?: boolean;
+  hitLabel?: string | null;
 };
+
+const MOBILE_FEATURED_COUNT = 4;
+const TABLET_FEATURED_COUNT = 8;
+const DESKTOP_FEATURED_COUNT = 10;
 
 type HomeFeaturedProductsProps = {
   locale: Locale;
@@ -82,8 +87,60 @@ function FeaturedGridCard({
       wishlistLabel={wishlistLabel}
       addToCartLabel={addToCartLabel}
       requiresConfiguration={product.requiresConfiguration ?? false}
+      hitLabel={product.hitLabel}
       variant={variant}
     />
+  );
+}
+
+function FeaturedProductGrid({
+  className,
+  products,
+  cardsRevealed,
+  locale,
+  currency,
+  isSignedIn,
+  wishlistLabel,
+  addToCartLabel,
+  variant,
+  hideLastBelowLg = false,
+}: {
+  className: string;
+  products: readonly FeaturedItem[];
+  cardsRevealed: boolean;
+  locale: Locale;
+  currency: Currency;
+  isSignedIn: boolean;
+  wishlistLabel: string;
+  addToCartLabel: string;
+  variant?: ProductCardVariant;
+  hideLastBelowLg?: boolean;
+}) {
+  return (
+    <div className={className}>
+      {products.map((product, index) => (
+        <div
+          key={product.id}
+          className={
+            hideLastBelowLg && index >= TABLET_FEATURED_COUNT
+              ? "min-w-0 max-lg:hidden"
+              : "min-w-0"
+          }
+        >
+          <FeaturedGridCard
+            product={product}
+            index={index}
+            cardsRevealed={cardsRevealed}
+            locale={locale}
+            currency={currency}
+            isSignedIn={isSignedIn}
+            wishlistLabel={wishlistLabel}
+            addToCartLabel={addToCartLabel}
+            variant={variant}
+          />
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -165,38 +222,28 @@ export function HomeFeaturedProducts({
           <p className="text-[#171717]">{emptyLabel}</p>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-3 md:hidden">
-              {products.map((product, index) => (
-                <FeaturedGridCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  cardsRevealed={cardsRevealed}
-                  locale={locale}
-                  currency={currency}
-                  isSignedIn={isSignedIn}
-                  wishlistLabel={wishlistLabel}
-                  addToCartLabel={addToCartLabel}
-                  variant="featured-red"
-                />
-              ))}
-            </div>
-
-            <div className="hidden grid-cols-5 gap-3 sm:gap-5 md:grid lg:gap-6 xl:gap-8">
-              {products.map((product, index) => (
-                <FeaturedGridCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  cardsRevealed={cardsRevealed}
-                  locale={locale}
-                  currency={currency}
-                  isSignedIn={isSignedIn}
-                  wishlistLabel={wishlistLabel}
-                  addToCartLabel={addToCartLabel}
-                />
-              ))}
-            </div>
+            <FeaturedProductGrid
+              className="grid grid-cols-2 gap-3 md:hidden"
+              products={products.slice(0, MOBILE_FEATURED_COUNT)}
+              cardsRevealed={cardsRevealed}
+              locale={locale}
+              currency={currency}
+              isSignedIn={isSignedIn}
+              wishlistLabel={wishlistLabel}
+              addToCartLabel={addToCartLabel}
+              variant="featured-red"
+            />
+            <FeaturedProductGrid
+              className="hidden grid-cols-4 gap-3 sm:gap-5 md:grid lg:grid-cols-5 lg:gap-5 xl:gap-6"
+              products={products.slice(0, DESKTOP_FEATURED_COUNT)}
+              cardsRevealed={cardsRevealed}
+              locale={locale}
+              currency={currency}
+              isSignedIn={isSignedIn}
+              wishlistLabel={wishlistLabel}
+              addToCartLabel={addToCartLabel}
+              hideLastBelowLg
+            />
           </>
         )}
       </div>

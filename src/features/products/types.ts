@@ -26,6 +26,8 @@ export type CatalogProduct = {
   categoryTitle: string | null;
   /** When true, card CTA should open PDP instead of quick-adding. */
   requiresConfiguration: boolean;
+  /** Featured products show the HIT badge on cards and PDP. */
+  isFeatured: boolean;
 };
 
 export type ProductGalleryImage = {
@@ -46,5 +48,4 @@ export type ProductDetail = CatalogProduct & {
   categories: ProductCategoryRef[];
   /** Raw customization catalog from the product row (null when unset). */
   customization: ProductCustomization | null;
-  isFeatured: boolean;
 };

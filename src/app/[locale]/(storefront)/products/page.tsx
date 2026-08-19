@@ -246,6 +246,7 @@ export default async function ProductsPage({
                 wishlistLabel={dictionary.nav.wishlist}
                 addToCartLabel={dictionary.product.addToCart}
                 requiresConfiguration={product.requiresConfiguration}
+                hitLabel={product.isFeatured ? dictionary.product.hit : null}
               />
             ))}
           </CatalogListingView>

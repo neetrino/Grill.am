@@ -4,6 +4,7 @@ import { Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
+import { ProductHitBadge } from "@/features/products/ui/ProductHitBadge";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -31,6 +32,7 @@ type FeaturedProductCardProps = {
   wishlistLabel?: string;
   addToCartLabel?: string;
   requiresConfiguration?: boolean;
+  hitLabel?: string | null;
   tone: "red" | "light";
 };
 
@@ -59,6 +61,7 @@ export function FeaturedProductCard({
   wishlistLabel,
   addToCartLabel,
   requiresConfiguration = false,
+  hitLabel = null,
   tone,
 }: FeaturedProductCardProps) {
   const resolvedImageUrl = imageUrl?.trim() || null;
@@ -103,11 +106,21 @@ export function FeaturedProductCard({
           ) : null}
         </AppLink>
 
-        {discountPercent != null ? (
-          <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-brand-yellow px-2 py-[3px] text-[10px] leading-[15px] font-semibold text-[#222]">
-            <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
-            -{discountPercent}%
-          </span>
+        {hitLabel || discountPercent != null ? (
+          <div className="absolute top-2 left-2 z-10 flex flex-col items-start gap-1">
+            {hitLabel ? (
+              <ProductHitBadge
+                label={hitLabel}
+                className="px-2 py-[3px] text-[10px] leading-[15px]"
+              />
+            ) : null}
+            {discountPercent != null ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-brand-yellow px-2 py-[3px] text-[10px] leading-[15px] font-semibold text-[#222]">
+                <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
+                -{discountPercent}%
+              </span>
+            ) : null}
+          </div>
         ) : null}
 
         {showWishlist ? (

@@ -70,6 +70,7 @@ function toCatalogProduct(
     requiresConfiguration: productRequiresConfiguration(
       parseProductCustomization(product.customization),
     ),
+    isFeatured: product.isFeatured,
   };
 }
 

@@ -45,6 +45,7 @@ type PricedCard = {
   inStock: boolean;
   inWishlist: boolean;
   requiresConfiguration: boolean;
+  hitLabel: string | null;
 };
 
 export default async function HomePage({ params }: HomePageProps) {
@@ -102,6 +103,7 @@ export default async function HomePage({ params }: HomePageProps) {
         inStock: product.stockOnHand > 0,
         inWishlist: wishlistIds.has(product.id),
         requiresConfiguration: product.requiresConfiguration,
+        hitLabel: product.isFeatured ? dictionary.product.hit : null,
       };
     });
   }
