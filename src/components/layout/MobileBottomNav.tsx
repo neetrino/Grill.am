@@ -78,7 +78,7 @@ function NavBadge({ count }: { count: number }) {
   }
 
   return (
-    <span className="absolute -top-1.5 -right-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand-yellow px-1 text-[10px] font-bold leading-none text-[#171717]">
+    <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-yellow px-1 text-[9px] font-bold leading-none text-[#171717]">
       {count > 99 ? "99+" : count}
     </span>
   );
@@ -86,8 +86,8 @@ function NavBadge({ count }: { count: number }) {
 
 function tabClassName(active: boolean): string {
   return active
-    ? `relative z-10 flex h-12 w-[100px] shrink-0 items-center gap-1 overflow-hidden rounded-[70px] bg-transparent px-1.5 text-[12px] font-medium text-white min-[390px]:h-14 min-[390px]:w-[118px] min-[390px]:px-2 min-[390px]:text-[13px] ${styles.tab}`
-    : `relative z-10 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-[#171717] min-[390px]:size-14 ${styles.tab}`;
+    ? `relative z-10 flex h-11 min-w-11 shrink-0 items-center gap-1 overflow-hidden rounded-[70px] bg-transparent px-2 text-[11px] font-medium whitespace-nowrap text-white min-[390px]:h-12 min-[390px]:min-w-12 min-[390px]:px-2.5 min-[390px]:text-[12px] ${styles.tab}`
+    : `relative z-10 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-[#171717] min-[390px]:size-12 ${styles.tab}`;
 }
 
 /**
@@ -143,8 +143,8 @@ export function MobileBottomNav({
     label: dictionary.nav.products,
     icon: ShopNavIcon,
     iconClassName: {
-      idle: "size-6 min-[390px]:size-8",
-      active: "size-7 min-[390px]:size-9",
+      idle: "size-5 min-[390px]:size-6",
+      active: "size-6 min-[390px]:size-7",
     },
   };
 
@@ -162,8 +162,8 @@ export function MobileBottomNav({
     label: user ? dictionary.header.profile : dictionary.header.login,
     icon: ProfileNavIcon,
     iconClassName: {
-      idle: "size-5 min-[390px]:size-6",
-      active: "size-6 min-[390px]:size-7",
+      idle: "size-4 min-[390px]:size-5",
+      active: "size-5 min-[390px]:size-6",
     },
     /** Tablet / iPad Mini: header profile circle is hidden from md. */
     className: "max-md:hidden",
@@ -257,7 +257,7 @@ export function MobileBottomNav({
     >
       <div
         ref={trackRef}
-        className="pointer-events-auto relative flex h-[60px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[71px] min-[390px]:px-3 min-[390px]:py-2 md:max-w-[420px]"
+        className="pointer-events-auto relative flex h-[54px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-1.5 py-1 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[62px] min-[390px]:px-2.5 min-[390px]:py-1.5 md:max-w-[420px]"
       >
         {indicator && activeId ? (
           <span
@@ -361,14 +361,14 @@ function CartPillButton({
     >
       <span className="relative inline-flex shrink-0" data-cart-fly-target>
         <ShoppingCart
-          className={`${styles.tabIcon} ${active ? "size-6 min-[390px]:size-[31px]" : "size-5 min-[390px]:size-6"}`}
+          className={`${styles.tabIcon} ${active ? "size-5 min-[390px]:size-6" : "size-[18px] min-[390px]:size-5"}`}
           strokeWidth={1.75}
           aria-hidden
         />
         <NavBadge count={badgeCount} />
       </span>
       <span
-        className={`truncate pr-1 ${styles.tabLabel} ${
+        className={`pr-0.5 ${styles.tabLabel} ${
           active ? "" : styles.tabLabelHidden
         }`}
         aria-hidden={!active}
@@ -390,8 +390,8 @@ function PillTab({
 }) {
   const Icon = tab.icon;
   const iconClassName = active
-    ? (tab.iconClassName?.active ?? "size-6 min-[390px]:size-[31px]")
-    : (tab.iconClassName?.idle ?? "size-5 min-[390px]:size-6");
+    ? (tab.iconClassName?.active ?? "size-5 min-[390px]:size-6")
+    : (tab.iconClassName?.idle ?? "size-[18px] min-[390px]:size-5");
 
   return (
     <AppLink
@@ -411,7 +411,7 @@ function PillTab({
         {tab.badge != null ? <NavBadge count={tab.badge} /> : null}
       </span>
       <span
-        className={`truncate pr-1 ${styles.tabLabel} ${
+        className={`pr-0.5 ${styles.tabLabel} ${
           active ? "" : styles.tabLabelHidden
         }`}
         aria-hidden={!active}

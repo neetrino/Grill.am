@@ -15,18 +15,12 @@
 }
 
 .tabLabel {
-  max-width: 4.5rem;
+  max-width: 8rem;
   overflow: hidden;
   opacity: 1;
   transition-property: opacity, max-width, padding;
   transition-duration: var(--bottom-nav-ms, 380ms);
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@media (min-width: 390px) {
-  .tabLabel {
-    max-width: 5.5rem;
-  }
 }
 
 .tabLabelHidden {
