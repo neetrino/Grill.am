@@ -49,21 +49,21 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         </p>
       ) : null}
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-        {dictionary.email}
-        <input
-          required
-          name="email"
-          type="email"
-          autoComplete="email"
-          defaultValue={values?.email ?? ""}
-          aria-invalid={Boolean(fieldErrors?.email)}
-          className={authFieldClassName(Boolean(fieldErrors?.email))}
-        />
-      </label>
+      <input
+        required
+        name="email"
+        type="email"
+        autoComplete="email"
+        placeholder={dictionary.email}
+        aria-label={dictionary.email}
+        defaultValue={values?.email ?? ""}
+        aria-invalid={Boolean(fieldErrors?.email)}
+        className={authFieldClassName(Boolean(fieldErrors?.email))}
+      />
       <PasswordField
         name="password"
         label={dictionary.password}
+        placeholder={dictionary.password}
         showPasswordLabel={dictionary.showPassword}
         hidePasswordLabel={dictionary.hidePassword}
         autoComplete="current-password"

@@ -8,11 +8,18 @@ import { CatalogSortBar } from "@/features/products/ui/CatalogSortBar";
 export type CatalogGridColumns = 3 | 4;
 
 const STORAGE_KEY = "grill.catalog.gridCols";
-/** Above iPad Pro 12.9" landscape (1366px); Air/Pro stay on 3 columns. */
-const CATALOG_FOUR_COL_CLASS = "min-[1367px]:grid-cols-4";
-const CATALOG_FOUR_COL_TOGGLE_CLASS = "min-[1367px]:inline-flex";
-const CATALOG_GRID_BASE_CLASS =
-  "mt-5 grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3";
+const CATALOG_GRID_BASE_CLASS = "mt-5 grid grid-cols-2 gap-4 sm:gap-5";
+
+/**
+ * 3-col and 4-col classes must not share `md:grid-cols-3`.
+ * `--breakpoint-lg` is custom (1025px) and Tailwind emits that media query
+ * before default `md`, so `md:grid-cols-3` would override `lg:grid-cols-4`.
+ */
+function catalogGridClass(columns: CatalogGridColumns): string {
+  return columns === 4
+    ? `${CATALOG_GRID_BASE_CLASS} lg:grid-cols-4`
+    : `${CATALOG_GRID_BASE_CLASS} md:grid-cols-3`;
+}
 
 type CatalogListingViewProps = {
   locale: string;
@@ -115,10 +122,7 @@ export function CatalogListingView({
     }
   }
 
-  const gridClass =
-    columns === 3
-      ? CATALOG_GRID_BASE_CLASS
-      : `${CATALOG_GRID_BASE_CLASS} ${CATALOG_FOUR_COL_CLASS}`;
+  const gridClass = catalogGridClass(columns);
 
   return (
     <>
@@ -135,7 +139,7 @@ export function CatalogListingView({
         <div
           role="group"
           aria-label={viewLabels.group}
-          className={`relative ml-auto hidden items-center gap-1 rounded-full bg-white p-1 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${CATALOG_FOUR_COL_TOGGLE_CLASS}`}
+          className="relative ml-auto hidden items-center gap-1 rounded-full bg-white p-1 shadow-[0_1px_2px_rgba(0,0,0,0.04)] lg:inline-flex"
         >
           <span
             aria-hidden
@@ -172,7 +176,7 @@ export function CatalogListingView({
         </div>
       </div>
 
-      <div className="mt-4">{chips}</div>
+      <div className="mt-4 hidden lg:block">{chips}</div>
 
       {empty ?? <div className={gridClass}>{children}</div>}
     </>

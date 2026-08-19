@@ -7,7 +7,7 @@ export const AUTH_TITLE_CLASS =
   "text-xl font-bold tracking-tight text-gray-900";
 
 export const AUTH_FIELD_CLASS =
-  "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
+  "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
 export const AUTH_FIELD_INVALID_CLASS =
   "border-red-500 focus:border-red-500 focus:ring-red-500/20";

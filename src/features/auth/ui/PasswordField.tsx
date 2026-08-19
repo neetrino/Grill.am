@@ -13,6 +13,8 @@ type PasswordFieldProps = {
   autoComplete: string;
   defaultValue?: string;
   invalid?: boolean;
+  /** When set, the visible label is hidden and this text is shown in the field. */
+  placeholder?: string;
 };
 
 export function PasswordField({
@@ -23,12 +25,20 @@ export function PasswordField({
   autoComplete,
   defaultValue,
   invalid = false,
+  placeholder,
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
+  const hideLabel = Boolean(placeholder);
 
   return (
-    <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-      {label}
+    <label
+      className={
+        hideLabel
+          ? "block"
+          : "flex flex-col gap-1.5 text-sm font-medium text-gray-700"
+      }
+    >
+      {hideLabel ? null : label}
       <span className="relative block">
         <input
           required
@@ -36,6 +46,8 @@ export function PasswordField({
           type={visible ? "text" : "password"}
           autoComplete={autoComplete}
           defaultValue={defaultValue}
+          placeholder={placeholder}
+          aria-label={hideLabel ? label : undefined}
           aria-invalid={invalid}
           className={authFieldClassName(invalid, true)}
         />

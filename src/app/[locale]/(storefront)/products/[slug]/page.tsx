@@ -158,6 +158,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <ProductRelatedSection
             locale={locale}
             productId={product.id}
+            categorySlug={product.categories[0]?.slug ?? null}
             currency={currency}
             isSignedIn={isSignedIn}
             dictionary={dictionary}

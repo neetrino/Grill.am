@@ -186,8 +186,7 @@ export function ProductCard({
             isSignedIn={isSignedIn}
             label={wishlistLabel}
             size="md"
-            tone="onImage"
-            className="absolute top-1.5 right-2 z-10 h-10 w-10 bg-transparent shadow-none hover:bg-transparent md:top-2 md:right-3"
+            className="absolute top-1.5 right-2 z-10 size-10 md:top-2 md:right-3"
           />
         ) : null}
 

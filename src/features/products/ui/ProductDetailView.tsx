@@ -134,9 +134,6 @@ export function ProductDetailView({
                 addons: labels.addons,
                 exclusions: labels.exclusions,
                 removeModifier: labels.removeModifier,
-                orderSummary: labels.orderSummary,
-                basePrice: labels.basePrice,
-                total: labels.total,
               }}
             />
           </div>
