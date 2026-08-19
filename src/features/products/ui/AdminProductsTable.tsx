@@ -117,21 +117,23 @@ export function AdminProductsTable({
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">
-          {formatAdminMessage(dictionary.products.bulk.selectedCount, {
-            count: String(selected.size),
-          })}
-        </p>
-        <button
-          type="button"
-          disabled={isPending || selected.size === 0}
-          onClick={deleteSelected}
-          className={ADMIN_BTN_PRIMARY_CLASS}
-        >
-          {dictionary.products.bulk.deleteSelected}
-        </button>
-      </Card>
+      {selected.size > 0 ? (
+        <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-gray-700">
+            {formatAdminMessage(dictionary.products.bulk.selectedCount, {
+              count: String(selected.size),
+            })}
+          </p>
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={deleteSelected}
+            className={ADMIN_BTN_PRIMARY_CLASS}
+          >
+            {dictionary.products.bulk.deleteSelected}
+          </button>
+        </Card>
+      ) : null}
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
 
