@@ -34,6 +34,7 @@ export function bootCrisp(websiteId: string, locale: string): void {
   }
   Reflect.set(window, "CRISP_WEBSITE_ID", websiteId);
   Reflect.set(window, "CRISP_RUNTIME_CONFIG", { locale });
+  Reflect.set(window, "CRISP_READY_TRIGGER", concealCrispLauncher);
 }
 
 export function concealCrispLauncher(): void {
@@ -45,8 +46,12 @@ export function openCrispChat(): void {
   pushCrisp(["do", "chat:open"]);
 }
 
+export function closeCrispChat(): void {
+  pushCrisp(["do", "chat:close"]);
+  concealCrispLauncher();
+}
+
 export function bindCrispLauncherConceal(onClose?: () => void): void {
-  pushCrisp(["on", "session:loaded", concealCrispLauncher]);
   pushCrisp([
     "on",
     "chat:closed",

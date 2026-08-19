@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { TidioChat } from "@/components/layout/TidioChat";
+import { CrispChat } from "@/components/layout/CrispChat";
 import { LocaleClientProviders } from "@/components/providers/LocaleClientProviders";
 import { getEnv } from "@/config/env";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
@@ -27,8 +27,7 @@ export default async function LocaleLayout({
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const { NEXT_PUBLIC_TIDIO_PUBLIC_KEY, NEXT_PUBLIC_CRISP_WEBSITE_ID } =
-    getEnv();
+  const { NEXT_PUBLIC_CRISP_WEBSITE_ID } = getEnv();
 
   return (
     <LocaleClientProviders
@@ -42,21 +41,11 @@ export default async function LocaleLayout({
       <div lang={locale} className="flex min-h-dvh flex-1 flex-col bg-gray-50">
         {children}
       </div>
-      <TidioChat
-        publicKey={NEXT_PUBLIC_TIDIO_PUBLIC_KEY}
-        crispWebsiteId={NEXT_PUBLIC_CRISP_WEBSITE_ID}
+      <CrispChat
+        websiteId={NEXT_PUBLIC_CRISP_WEBSITE_ID}
         locale={locale}
         openLabel={dictionary.chat.open}
         greeting={dictionary.chat.greeting}
-        homeCopy={{
-          hiThere: dictionary.chat.hiThere,
-          welcome: dictionary.chat.welcome,
-          chatWithUs: dictionary.chat.withUs,
-          replyImmediately: dictionary.chat.replyImmediately,
-          openOptions: dictionary.chat.openOptions,
-          send: dictionary.chat.send,
-          messagePlaceholder: dictionary.chat.messagePlaceholder,
-        }}
       />
     </LocaleClientProviders>
   );

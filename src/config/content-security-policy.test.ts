@@ -25,11 +25,11 @@ describe("CONTENT_SECURITY_POLICY", () => {
     expect(directiveSources("frame-src")).toContain("https://vercel.live");
   });
 
-  it("keeps chat widget script hosts", () => {
+  it("keeps Crisp widget hosts", () => {
     const scriptSrc = directiveSources("script-src");
-    expect(scriptSrc).toContain("https://code.tidio.co");
-    expect(scriptSrc).toContain("https://*.tidio.co");
-    expect(scriptSrc).toContain("https://*.tidiochat.com");
     expect(scriptSrc).toContain("https://client.crisp.chat");
+    expect(directiveSources("style-src")).toContain("https://client.crisp.chat");
+    expect(directiveSources("worker-src")).toContain("https://client.crisp.chat");
+    expect(scriptSrc).not.toContain("tidio");
   });
 });
