@@ -211,7 +211,7 @@ export function HomeCategories({
                 return (
                   <li
                     key={category.id}
-                    className="w-[calc((100%-6rem)/4)] max-w-[calc((100%-6rem)/4)] shrink-0 snap-start xl:w-[calc((100%-7.5rem)/4)] xl:max-w-[calc((100%-7.5rem)/4)]"
+                    className="w-[calc((100%-8rem)/5)] max-w-[calc((100%-8rem)/5)] shrink-0 snap-start xl:w-[calc((100%-10rem)/5)] xl:max-w-[calc((100%-10rem)/5)]"
                   >
                     <AppLink
                       href={category.href}
@@ -223,7 +223,7 @@ export function HomeCategories({
                           src={imageSrc}
                           alt=""
                           fill
-                          sizes="279px"
+                          sizes="220px"
                           className="object-contain transition duration-300 group-hover:scale-105"
                         />
                       </div>
