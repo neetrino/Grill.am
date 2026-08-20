@@ -23,6 +23,14 @@ Playwright webServer starts Next on port **3100**, waits for `/api/health`.
 
 Reuse a running server only with `E2E_REUSE_SERVER=true` (never in CI).
 
+## CI
+
+Pull requests run typecheck, lint, unit, integration, and production build.
+
+The Playwright job installs Chromium and is reserved for `main`/`master` pushes
+and manual `workflow_dispatch`. Run `pnpm test:e2e` locally when a journey
+changes.
+
 ## Mock ARCA / iDram
 
 - `E2E_PROVIDER_MODE=mock` swaps ARCA client to in-memory mock (forbidden in production).

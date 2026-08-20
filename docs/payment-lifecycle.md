@@ -15,7 +15,7 @@
 - Admin new-order alert: COD on place; online only after `CAPTURED` / `REQUIRES_REVIEW`
 - Immediate order emails via Next.js `after()` + Resend/capture/sink (`scheduleOrderEmails`)
 - HY/RU/EN payment email templates (sink/capture delivery)
-- Playwright E2E: port 3100, `/api/health`, mock ARCA, CI workflow
+- Playwright E2E: port 3100, `/api/health`, mock ARCA (CI on main / manual)
 - Readiness: `pnpm payments:readiness`
 - Ops docs: `docs/ops/PAYMENT-OPERATIONS.md`, `docs/ops/OUTBOX-RUNBOOK.md`,
   `docs/testing/PAYMENT-E2E.md`
