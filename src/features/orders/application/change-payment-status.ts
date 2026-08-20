@@ -231,7 +231,7 @@ async function applyBankRefundIfNeeded(
     locale,
   });
   if (!refunded.ok) {
-    return err("PAYMENT_REFUND_FAILED", refunded.error);
+    return err(refunded.code, refunded.error);
   }
 
   revalidateAdminOrderPaths(locale);

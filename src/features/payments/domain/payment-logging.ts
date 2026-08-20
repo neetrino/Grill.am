@@ -14,6 +14,8 @@ export type PaymentLogFields = {
   durationMs?: number | null;
   errorCode?: string | null;
   errorClass?: string | null;
+  /** ARCA `errorCode` only — never credentials. */
+  providerErrorCode?: string | null;
   idempotentReplay?: boolean;
   requiresReview?: boolean;
   result?: string | null;
@@ -64,6 +66,7 @@ export function sanitizePaymentLogFields(
     durationMs: fields.durationMs ?? undefined,
     errorCode: fields.errorCode ?? undefined,
     errorClass: fields.errorClass ?? undefined,
+    providerErrorCode: fields.providerErrorCode ?? undefined,
     idempotentReplay: fields.idempotentReplay,
     requiresReview: fields.requiresReview,
     result: fields.result ?? undefined,

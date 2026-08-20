@@ -5,7 +5,7 @@ import { orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
 import {
   decideArcaFullRefund,
-  isArcaReverseUnavailable,
+  shouldFallbackToArcaRefund,
 } from "@/features/payments/domain/arca-full-refund-decision";
 import { isArcaRefundClaimActive } from "@/features/payments/domain/arca-refund-claim";
 import {
@@ -57,8 +57,33 @@ export async function refundArcaPayment(
   if (claimed.type === "already_processed") {
     return claimed;
   }
-  const payment = claimed.payment;
 
+  try {
+    return await executeClaimedArcaRefund(input, claimed, deps);
+  } catch (error) {
+    if (
+      claimed.type === "claimed" &&
+      !(error instanceof PaymentRefundUnconfirmedError)
+    ) {
+      await releaseArcaRefundClaim(claimed.payment.id);
+    }
+    throw error;
+  }
+}
+
+async function executeClaimedArcaRefund(
+  input: RefundArcaPaymentInput,
+  claimed: {
+    type: "claimed" | "existing_claim";
+    payment: {
+      id: string;
+      amount: number;
+      currency: string;
+    };
+  },
+  deps: RefundArcaPaymentDeps,
+): Promise<RefundArcaPaymentResult> {
+  const payment = claimed.payment;
   const client = deps.client ?? createArcaPaymentClient();
   const first = await verifyArcaPayment(
     { paymentId: payment.id },
@@ -180,6 +205,37 @@ async function claimArcaRefund(
   });
 }
 
+async function releaseArcaRefundClaim(paymentId: string): Promise<void> {
+  await withTransaction(async (tx) => {
+    const [locked] = await tx
+      .select()
+      .from(payments)
+      .where(eq(payments.id, paymentId))
+      .for("update")
+      .limit(1);
+    if (!locked) {
+      return;
+    }
+
+    const current = readArcaPaymentMetadata(locked.metadata);
+    const arca = { ...(current.arca ?? {}) };
+    delete arca.refundClaimedAt;
+    delete arca.refundClaimId;
+
+    await tx
+      .update(payments)
+      .set({
+        metadata: {
+          ...(locked.metadata ?? {}),
+          sourceCartFingerprint: current.sourceCartFingerprint,
+          arca,
+        },
+        updatedAt: new Date(),
+      })
+      .where(eq(payments.id, locked.id));
+  });
+}
+
 async function reverseThenRefund(input: {
   client: ArcaPaymentClient;
   paymentId: string;
@@ -194,7 +250,7 @@ async function reverseThenRefund(input: {
   } catch (error) {
     if (
       error instanceof ArcaBusinessError &&
-      isArcaReverseUnavailable(error.providerErrorCode)
+      shouldFallbackToArcaRefund(error.providerErrorCode)
     ) {
       await input.client.refund({
         orderId: input.providerOrderId,

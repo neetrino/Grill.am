@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   decideArcaFullRefund,
   isArcaReverseUnavailable,
+  shouldFallbackToArcaRefund,
 } from "@/features/payments/domain/arca-full-refund-decision";
 
 describe("decideArcaFullRefund", () => {
@@ -26,5 +27,11 @@ describe("decideArcaFullRefund", () => {
   it("treats official error 7 as reverse-unavailable", () => {
     expect(isArcaReverseUnavailable("7")).toBe(true);
     expect(isArcaReverseUnavailable("5")).toBe(false);
+  });
+
+  it("falls back to refund.do after reverse error 5 or 7", () => {
+    expect(shouldFallbackToArcaRefund("7")).toBe(true);
+    expect(shouldFallbackToArcaRefund("5")).toBe(true);
+    expect(shouldFallbackToArcaRefund("6")).toBe(false);
   });
 });

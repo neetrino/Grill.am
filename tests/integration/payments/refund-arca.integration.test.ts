@@ -40,7 +40,8 @@ function createFakeArcaClient(args: {
   amountMinorUnits: number;
   orderNumber: string;
   providerOrderId: string;
-  reverseFailsWith7?: boolean;
+  reverseFailsWith?: "5" | "7";
+  refundFailsWith?: "5" | "7";
 }): ArcaPaymentClient {
   let orderStatus = 2;
   return {
@@ -58,12 +59,21 @@ function createFakeArcaClient(args: {
       };
     },
     async reverse() {
-      if (args.reverseFailsWith7) {
-        throw new ArcaBusinessError("7", "ARCA reverse was rejected.");
+      if (args.reverseFailsWith) {
+        throw new ArcaBusinessError(
+          args.reverseFailsWith,
+          "ARCA reverse was rejected.",
+        );
       }
       orderStatus = 3;
     },
     async refund() {
+      if (args.refundFailsWith) {
+        throw new ArcaBusinessError(
+          args.refundFailsWith,
+          "ARCA refund was rejected.",
+        );
+      }
       orderStatus = 4;
     },
   };
@@ -220,13 +230,90 @@ describe("ARCA full refund", () => {
             amountMinorUnits: fixture.totalAmount * 100,
             orderNumber: fixture.orderNumber,
             providerOrderId,
-            reverseFailsWith7: true,
+            reverseFailsWith: "7",
           }),
         },
       );
 
       expect(result.type).toBe("refunded");
       expect(result.method).toBe("refund");
+    } finally {
+      await db.withTx((tx) => cleanupPaymentFixture(tx, fixture));
+    }
+  });
+
+  it("falls back to refund.do when reverse is denied with error 5", async () => {
+    const fixture = await db.withTx((tx) =>
+      createPaymentFixture(tx, { stockOnHand: 5 }),
+    );
+    const providerOrderId = `arca-e5-${fixture.paymentId}`;
+
+    try {
+      await confirmPayment({
+        paymentId: fixture.paymentId,
+        providerReference: providerOrderId,
+        providerEventId: `evt-e5-${fixture.paymentId}`,
+        verifiedAmount: fixture.totalAmount,
+        verifiedCurrency: "AMD",
+      });
+
+      const result = await refundArcaPayment(
+        {
+          paymentId: fixture.paymentId,
+          correlationId: createId(),
+        },
+        {
+          client: createFakeArcaClient({
+            amountMinorUnits: fixture.totalAmount * 100,
+            orderNumber: fixture.orderNumber,
+            providerOrderId,
+            reverseFailsWith: "5",
+          }),
+        },
+      );
+
+      expect(result.type).toBe("refunded");
+      expect(result.method).toBe("refund");
+    } finally {
+      await db.withTx((tx) => cleanupPaymentFixture(tx, fixture));
+    }
+  });
+
+  it("releases the refund claim after reverse and refund are both denied", async () => {
+    const fixture = await db.withTx((tx) =>
+      createPaymentFixture(tx, { stockOnHand: 5 }),
+    );
+    const providerOrderId = `arca-rel-${fixture.paymentId}`;
+    const client = createFakeArcaClient({
+      amountMinorUnits: fixture.totalAmount * 100,
+      orderNumber: fixture.orderNumber,
+      providerOrderId,
+      reverseFailsWith: "5",
+      refundFailsWith: "5",
+    });
+
+    try {
+      await confirmPayment({
+        paymentId: fixture.paymentId,
+        providerReference: providerOrderId,
+        providerEventId: `evt-rel-${fixture.paymentId}`,
+        verifiedAmount: fixture.totalAmount,
+        verifiedCurrency: "AMD",
+      });
+
+      await expect(
+        refundArcaPayment(
+          { paymentId: fixture.paymentId, correlationId: createId() },
+          { client },
+        ),
+      ).rejects.toBeInstanceOf(ArcaBusinessError);
+
+      await expect(
+        refundArcaPayment(
+          { paymentId: fixture.paymentId, correlationId: createId() },
+          { client },
+        ),
+      ).rejects.toBeInstanceOf(ArcaBusinessError);
     } finally {
       await db.withTx((tx) => cleanupPaymentFixture(tx, fixture));
     }

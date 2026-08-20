@@ -25,3 +25,12 @@ export function decideArcaFullRefund(
 export function isArcaReverseUnavailable(providerErrorCode: string): boolean {
   return providerErrorCode === "7";
 }
+
+/**
+ * After reverse.do fails, still try refund.do.
+ * Error 7 = reverse invalid for state. Error 5 = reverse denied (rights or
+ * params); refund rights can still be present on the same API login.
+ */
+export function shouldFallbackToArcaRefund(providerErrorCode: string): boolean {
+  return providerErrorCode === "7" || providerErrorCode === "5";
+}
