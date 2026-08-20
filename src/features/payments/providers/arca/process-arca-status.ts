@@ -2,10 +2,12 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 
+import { getDb } from "@/db/client";
 import { orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
 import { confirmPayment } from "@/features/payments/application/confirm-payment";
 import { failPayment } from "@/features/payments/application/fail-payment";
+import { markPaymentRefunded } from "@/features/payments/application/mark-payment-refunded";
 import { scheduleOrderEmails } from "@/features/notifications/application/schedule-order-emails";
 import {
   InsufficientStockAtConfirmationError,
@@ -146,7 +148,26 @@ export async function applyVerifiedArcaStatus(
         outcome: "pending",
       };
     case "refunded":
-    case "reversed":
+    case "reversed": {
+      const refunded = await applyBankRefundIfCaptured(verified);
+      if (refunded) {
+        return {
+          normalizedState: verified.normalizedState,
+          orderId: verified.orderId,
+          paymentId: verified.paymentId,
+          orderNumber: refunded.orderNumber,
+          outcome: "refunded",
+        };
+      }
+      await recordReviewEvent(verified);
+      return {
+        normalizedState: verified.normalizedState,
+        orderId: verified.orderId,
+        paymentId: verified.paymentId,
+        orderNumber,
+        outcome: verified.normalizedState,
+      };
+    }
     case "reconciliation_required":
     case "unknown":
       await recordReviewEvent(verified);
@@ -346,6 +367,29 @@ async function markAuthorized(
   });
 }
 
+async function applyBankRefundIfCaptured(
+  verified: VerifyArcaPaymentResult,
+): Promise<{ orderNumber: string } | null> {
+  const [payment] = await getDb()
+    .select({ status: payments.status })
+    .from(payments)
+    .where(eq(payments.id, verified.paymentId))
+    .limit(1);
+
+  if (payment?.status !== "CAPTURED" && payment?.status !== "REFUNDED") {
+    return null;
+  }
+
+  const marked = await markPaymentRefunded({
+    paymentId: verified.paymentId,
+    correlationId: verified.providerEventId,
+    providerEventId: `${verified.providerEventId}:refunded`,
+    bankState:
+      verified.normalizedState === "reversed" ? "reversed" : "refunded",
+  });
+  return { orderNumber: marked.orderNumber };
+}
+
 async function recordReviewEvent(
   verified: VerifyArcaPaymentResult,
 ): Promise<void> {
@@ -379,7 +423,6 @@ async function recordReviewEvent(
 }
 
 async function loadOrderNumber(orderId: string): Promise<string> {
-  const { getDb } = await import("@/db/client");
   const [order] = await getDb()
     .select({ orderNumber: orders.orderNumber })
     .from(orders)

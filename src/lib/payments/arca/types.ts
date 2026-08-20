@@ -59,3 +59,14 @@ export type ArcaClientStatusInput = {
   orderNumber?: string;
   language?: string;
 };
+
+export type ArcaClientReverseInput = {
+  orderId: string;
+  language?: string;
+};
+
+export type ArcaClientRefundInput = {
+  orderId: string;
+  amountMinorUnits: bigint;
+  language?: string;
+};

@@ -1,21 +1,20 @@
 import "server-only";
 
-import {
-  formatArcaAmountParam,
-} from "@/lib/payments/arca/amount";
+import { formatArcaAmountParam } from "@/lib/payments/arca/amount";
 import {
   isFormUrlHostAllowed,
   requireArcaConfig,
   resolveRegisterPath,
   type ArcaRuntimeConfig,
   ARCA_STATUS_PATH,
+  ARCA_REVERSE_PATH,
+  ARCA_REFUND_PATH,
 } from "@/lib/payments/arca/config";
 import {
   ArcaBusinessError,
   ArcaFormUrlRejectedError,
   ArcaHttpError,
   ArcaMalformedResponseError,
-  ArcaTimeoutError,
 } from "@/lib/payments/arca/errors";
 import { logger } from "@/lib/observability/logger";
 import {
@@ -23,18 +22,25 @@ import {
   sanitizeArcaErrorMessage,
 } from "@/lib/payments/arca/redaction";
 import {
+  arcaMutationResponseSchema,
   arcaRegisterResponseSchema,
   arcaStatusResponseSchema,
   isArcaSystemOk,
   normalizeErrorCode,
   type ArcaStatusResponse,
 } from "@/lib/payments/arca/schemas";
+import { ARCA_REQUEST_ACCEPT, postArca } from "@/lib/payments/arca/transport";
 import type {
+  ArcaClientRefundInput,
   ArcaClientRegisterInput,
   ArcaClientRegisterResult,
+  ArcaClientReverseInput,
   ArcaClientStatusInput,
 } from "@/lib/payments/arca/types";
-import { createMockArcaPaymentClient, isArcaMockModeEnabled } from "@/lib/payments/arca/mock-client";
+import {
+  createMockArcaPaymentClient,
+  isArcaMockModeEnabled,
+} from "@/lib/payments/arca/mock-client";
 
 export type ArcaPaymentClient = {
   register(
@@ -43,90 +49,11 @@ export type ArcaPaymentClient = {
   getOrderStatusExtended(
     input: ArcaClientStatusInput,
   ): Promise<ArcaStatusResponse>;
+  reverse(input: ArcaClientReverseInput): Promise<void>;
+  refund(input: ArcaClientRefundInput): Promise<void>;
 };
 
-/**
- * ARCA returns JSON as `text/plain`. `Accept: application/json` triggers HTTP 406
- * on the production gateway (WebLogic content negotiation).
- */
-export const ARCA_REQUEST_ACCEPT = "*/*";
-
-function buildFormBody(
-  fields: Record<string, string | undefined>,
-): URLSearchParams {
-  const body = new URLSearchParams();
-  for (const [key, value] of Object.entries(fields)) {
-    if (value !== undefined) {
-      body.set(key, value);
-    }
-  }
-  return body;
-}
-
-async function postArca(
-  config: ArcaRuntimeConfig,
-  path: string,
-  fields: Record<string, string | undefined>,
-): Promise<unknown> {
-  const url = `${config.apiBaseUrl}${path}`;
-  const controller = new AbortController();
-  const timeout = setTimeout(
-    () => controller.abort(),
-    config.requestTimeoutMs,
-  );
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        Accept: ARCA_REQUEST_ACCEPT,
-        "Cache-Control": "no-store",
-      },
-      body: buildFormBody(fields),
-      signal: controller.signal,
-      redirect: "error",
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      const contentType = response.headers.get("content-type");
-      logger.warn("arca.http_error", {
-        provider: "arca",
-        endpointPath: path,
-        httpStatus: response.status,
-        httpStatusText: response.statusText || undefined,
-        responseContentType: contentType,
-      });
-      throw new ArcaHttpError({
-        httpStatus: response.status,
-        httpStatusText: response.statusText || undefined,
-        responseContentType: contentType,
-        endpointPath: path,
-      });
-    }
-
-    const text = await response.text();
-    try {
-      return JSON.parse(text) as unknown;
-    } catch {
-      throw new ArcaMalformedResponseError();
-    }
-  } catch (error) {
-    if (error instanceof ArcaHttpError || error instanceof ArcaMalformedResponseError) {
-      throw error;
-    }
-    if (
-      error instanceof Error &&
-      (error.name === "AbortError" || error.message.includes("aborted"))
-    ) {
-      throw new ArcaTimeoutError();
-    }
-    throw error;
-  } finally {
-    clearTimeout(timeout);
-  }
-}
+export { ARCA_REQUEST_ACCEPT };
 
 /** Coolify/ops grep key — keep this exact message. */
 const ARCA_REGISTER_RESPONSE_LOG = "ARCA register response";
@@ -216,6 +143,31 @@ function interpretRegisterPayload(
   };
 }
 
+function interpretMutationPayload(
+  raw: unknown,
+  operation: "reverse" | "refund",
+): void {
+  const parsed = arcaMutationResponseSchema.safeParse(raw);
+  if (!parsed.success) {
+    throw new ArcaMalformedResponseError();
+  }
+
+  const errorCode = normalizeErrorCode(parsed.data.errorCode);
+  const errorMessage = sanitizeArcaErrorMessage(parsed.data.errorMessage);
+  if (!isArcaSystemOk(parsed.data.errorCode)) {
+    logger.warn("arca.mutation_rejected", {
+      provider: "arca",
+      operation,
+      errorCode,
+    });
+    throw new ArcaBusinessError(
+      errorCode ?? "unknown",
+      `ARCA ${operation} was rejected.`,
+      errorMessage,
+    );
+  }
+}
+
 /**
  * Official ARCA EPG REST client (Merchant Manual §7).
  * Never logs credentials or raw card data.
@@ -292,6 +244,27 @@ export function createArcaPaymentClient(
       }
 
       return data;
+    },
+
+    async reverse(input) {
+      const raw = await postArca(config, ARCA_REVERSE_PATH, {
+        userName: config.username,
+        password: config.password,
+        orderId: input.orderId,
+        language: input.language ?? config.language,
+      });
+      interpretMutationPayload(raw, "reverse");
+    },
+
+    async refund(input) {
+      const raw = await postArca(config, ARCA_REFUND_PATH, {
+        userName: config.username,
+        password: config.password,
+        orderId: input.orderId,
+        amount: formatArcaAmountParam(input.amountMinorUnits),
+        language: input.language ?? config.language,
+      });
+      interpretMutationPayload(raw, "refund");
     },
   };
 }

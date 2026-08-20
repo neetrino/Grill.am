@@ -2,6 +2,8 @@
 export const ARCA_REGISTER_PATH = "/register.do";
 export const ARCA_REGISTER_PREAUTH_PATH = "/registerPreAuth.do";
 export const ARCA_STATUS_PATH = "/getOrderStatusExtended.do";
+export const ARCA_REVERSE_PATH = "/reverse.do";
+export const ARCA_REFUND_PATH = "/refund.do";
 
 export function resolveRegisterPath(
   mode: "one_stage" | "two_stage",

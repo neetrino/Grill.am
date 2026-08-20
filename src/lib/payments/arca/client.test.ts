@@ -210,4 +210,56 @@ describe("ARCA HTTP client Accept / transport", () => {
     expect(logged).not.toContain("should-not-leak");
     warnSpy.mockRestore();
   });
+
+  it("posts reverse.do without amount", async () => {
+    stubArcaEnv();
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ errorCode: 0 }), {
+        status: 200,
+        headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { createArcaPaymentClient } = await import(
+      "@/lib/payments/arca/client"
+    );
+    const { requireArcaConfig } = await import("@/lib/payments/arca/config");
+    const client = createArcaPaymentClient(requireArcaConfig());
+    await client.reverse({ orderId: "e5b59d3d-746b-4828-9da4-06f126e01b68" });
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/reverse.do");
+    const body = String(
+      (fetchMock.mock.calls[0]?.[1] as RequestInit).body,
+    );
+    expect(body).toContain("orderId=");
+    expect(body).not.toContain("amount=");
+  });
+
+  it("posts refund.do with full minor-unit amount", async () => {
+    stubArcaEnv();
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ errorCode: 0 }), {
+        status: 200,
+        headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { createArcaPaymentClient } = await import(
+      "@/lib/payments/arca/client"
+    );
+    const { requireArcaConfig } = await import("@/lib/payments/arca/config");
+    const client = createArcaPaymentClient(requireArcaConfig());
+    await client.refund({
+      orderId: "5e97e3fd-1d20-4b4b-a542-f5995f5e8208",
+      amountMinorUnits: 250000n,
+    });
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/refund.do");
+    const body = String(
+      (fetchMock.mock.calls[0]?.[1] as RequestInit).body,
+    );
+    expect(body).toContain("amount=250000");
+  });
 });

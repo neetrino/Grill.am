@@ -16,7 +16,9 @@ import { consumeRateLimit } from "@/features/payments/providers/arca/rate-limit"
 import {
   isPaymentDomainError,
   PaymentAlreadyCapturedError,
+  PaymentAlreadyRefundedError,
 } from "@/features/payments/domain/errors";
+import { isPaymentRetryBlockedByRefund } from "@/features/payments/domain/refund-retry-barrier";
 import {
   logPaymentInfo,
   logPaymentWarn,
@@ -117,6 +119,15 @@ export async function retryPaymentAction(
         type: "already_captured",
         orderNumber: order.orderNumber,
       };
+    }
+
+    if (
+      isPaymentRetryBlockedByRefund(
+        order.paymentStatus,
+        latestAttempt?.status ?? null,
+      )
+    ) {
+      return { ok: false, error: "This order can no longer be paid." };
     }
 
     const availability = getPaymentMethodAvailability({
@@ -220,6 +231,9 @@ export async function retryPaymentAction(
   } catch (error) {
     if (error instanceof PaymentAccessDeniedError) {
       return { ok: false, error: "Access denied." };
+    }
+    if (error instanceof PaymentAlreadyRefundedError) {
+      return { ok: false, error: "This order can no longer be paid." };
     }
     if (error instanceof PaymentAlreadyCapturedError) {
       const [order] = await getDb()

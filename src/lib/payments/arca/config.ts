@@ -8,6 +8,8 @@ import {
   ARCA_REGISTER_PATH,
   ARCA_REGISTER_PREAUTH_PATH,
   ARCA_STATUS_PATH,
+  ARCA_REVERSE_PATH,
+  ARCA_REFUND_PATH,
   isFormUrlHostAllowed,
   resolveRegisterPath,
 } from "@/lib/payments/arca/paths";
@@ -17,6 +19,8 @@ export {
   ARCA_REGISTER_PATH,
   ARCA_REGISTER_PREAUTH_PATH,
   ARCA_STATUS_PATH,
+  ARCA_REVERSE_PATH,
+  ARCA_REFUND_PATH,
   isFormUrlHostAllowed,
   resolveRegisterPath,
 };

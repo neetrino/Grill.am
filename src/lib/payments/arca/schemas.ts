@@ -47,6 +47,16 @@ export const arcaStatusResponseSchema = z
 
 export type ArcaStatusResponse = z.infer<typeof arcaStatusResponseSchema>;
 
+/** reverse.do / refund.do — Merchant Manual §7.1.3–§7.1.4. */
+export const arcaMutationResponseSchema = z
+  .object({
+    errorCode: errorCodeSchema.optional(),
+    errorMessage: z.string().max(512).optional(),
+  })
+  .passthrough();
+
+export type ArcaMutationResponse = z.infer<typeof arcaMutationResponseSchema>;
+
 /**
  * Browser return query params.
  * Official manual does not document gateway-appended success flags.

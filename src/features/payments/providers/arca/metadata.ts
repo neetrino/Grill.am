@@ -23,6 +23,8 @@ export type ArcaPaymentMetadata = {
     httpStatusText?: string;
     responseContentType?: string;
     endpointPath?: string;
+    refundClaimedAt?: string;
+    refundClaimId?: string;
   };
 };
 
@@ -93,6 +95,12 @@ export function readArcaPaymentMetadata(
           : undefined,
       endpointPath:
         typeof arca.endpointPath === "string" ? arca.endpointPath : undefined,
+      refundClaimedAt:
+        typeof arca.refundClaimedAt === "string"
+          ? arca.refundClaimedAt
+          : undefined,
+      refundClaimId:
+        typeof arca.refundClaimId === "string" ? arca.refundClaimId : undefined,
     },
   };
 }

@@ -24,7 +24,7 @@ Browser query `?state=` is UX-only; CAPTURED / REQUIRES_REVIEW always win.
 ## Retry policy
 
 - Entry: `retryPaymentAction` (owner / guest / staff).
-- Rejects CAPTURED and REQUIRES_REVIEW.
+- Rejects CAPTURED, REFUNDED, and REQUIRES_REVIEW.
 - Preserves previous attempts; provider services decide reuse vs new attempt.
 - Provider switch blocked while PENDING/AUTHORIZED without verification.
 
@@ -32,7 +32,7 @@ Browser query `?state=` is UX-only; CAPTURED / REQUIRES_REVIEW always win.
 
 - Order detail: payment attempts panel, event timeline, review resolution form.
 - Filters: `REQUIRES_REVIEW`, richer payment statuses.
-- Actions: verify ARCA, mark expired, copy support ref, resolve review.
+- Actions: verify ARCA, mark expired, copy support ref, resolve review, full ARCA refund.
 - Permissions: `requireOrdersStaff` (ADMIN \| OPERATOR).
 
 ## Review workflow
@@ -76,4 +76,4 @@ Do not automate real charges.
 
 - False success: never trust SUCCESS_URL / return query flags.
 - Duplicate side effects: confirm/fail are idempotent; emails schedule only on fresh transitions (not replay).
-- Manual refunds: external process; no automated reverse in Phase 5.
+- ARCA full refund: staff **Refund** on a captured attempt (`reverse.do`, then `refund.do` if reverse is invalid). Local payment becomes `REFUNDED`. Fulfillment status and stock are left unchanged. iDram remains external.
