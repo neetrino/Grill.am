@@ -4,7 +4,8 @@ import type {
   StorefrontAddon,
   StorefrontExclusion,
 } from "@/features/products/domain/customization";
-import { Check, X } from "lucide-react";
+import { ProductExclusionList } from "@/features/products/ui/ProductExclusionList";
+import { Check } from "lucide-react";
 
 type ProductAddonChecklistProps = {
   addons: StorefrontAddon[];
@@ -33,13 +34,21 @@ export function ProductAddonChecklist({
   onToggleAddon,
   onToggleExclusion,
 }: ProductAddonChecklistProps) {
-  if (addons.length === 0 && exclusions.length === 0) {
+  const hasAddons = addons.length > 0;
+  const hasExclusions = exclusions.length > 0;
+  if (!hasAddons && !hasExclusions) {
     return null;
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {addons.length > 0 ? (
+    <div
+      className={
+        hasAddons
+          ? "flex flex-col gap-6"
+          : "hidden lg:flex lg:flex-col lg:gap-6"
+      }
+    >
+      {hasAddons ? (
         <section className="rounded-[30px] bg-white p-6">
           <h2 className="text-sm leading-5 font-bold text-[#101828]">
             {labels.addons}
@@ -89,45 +98,20 @@ export function ProductAddonChecklist({
         </section>
       ) : null}
 
-      {exclusions.length > 0 ? (
-        <section className="rounded-[30px] bg-white p-6">
+      {hasExclusions ? (
+        <section className="hidden rounded-[30px] bg-white p-6 lg:block">
           <h2 className="text-sm leading-5 font-bold text-[#101828]">
             {labels.exclusions}
           </h2>
-          <ul className="mt-4 grid grid-cols-1 gap-2 lg:grid-cols-2">
-            {exclusions.map((exclusion) => {
-              const selected = selectedExclusionIds.includes(exclusion.id);
-              return (
-                <li key={exclusion.id} className="min-w-0">
-                  <button
-                    type="button"
-                    onClick={() => onToggleExclusion(exclusion.id)}
-                    aria-pressed={selected}
-                    className={`flex w-full items-center gap-3 rounded-[14px] border px-4 py-3 text-left transition ${
-                      selected
-                        ? "border-brand-red/30 bg-[#fff4ee]"
-                        : "border-[#f3f4f6] bg-[#fafafa] hover:border-[#e5e7eb]"
-                    }`}
-                  >
-                    <span
-                      className={`inline-flex size-5 shrink-0 items-center justify-center rounded-lg ${
-                        selected
-                          ? "bg-brand-red text-white"
-                          : "bg-[#e5e7eb] text-transparent"
-                      }`}
-                      aria-hidden
-                    >
-                      <X className="size-3" strokeWidth={3} />
-                    </span>
-                    <span className="min-w-0 flex-1 text-sm font-medium text-[#1e2939]">
-                      {exclusion.label}
-                    </span>
-                    <span className="sr-only">{labels.removeModifier}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="mt-4">
+            <ProductExclusionList
+              exclusions={exclusions}
+              selectedExclusionIds={selectedExclusionIds}
+              removeModifierLabel={labels.removeModifier}
+              onToggle={onToggleExclusion}
+              columns="twoOnDesktop"
+            />
+          </div>
         </section>
       ) : null}
     </div>
