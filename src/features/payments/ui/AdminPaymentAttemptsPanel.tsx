@@ -187,6 +187,8 @@ export function AdminPaymentAttemptsPanel({
                         paymentId={view.paymentId}
                         provider={view.provider}
                         status={view.status}
+                        amount={view.amount}
+                        currency={view.currency}
                         supportReference={`${orderNumber}#${view.attemptNumber}`}
                       />
                     </td>

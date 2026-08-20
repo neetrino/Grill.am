@@ -86,6 +86,46 @@ export class PaymentNotFoundError extends PaymentDomainError {
   }
 }
 
+export class PaymentRefundNotAllowedError extends PaymentDomainError {
+  constructor() {
+    super(
+      "PAYMENT_REFUND_NOT_ALLOWED",
+      "This payment cannot be refunded through the bank.",
+    );
+    this.name = "PaymentRefundNotAllowedError";
+  }
+}
+
+export class PaymentRefundUnconfirmedError extends PaymentDomainError {
+  constructor() {
+    super(
+      "PAYMENT_REFUND_UNCONFIRMED",
+      "Bank refund was requested but the payment status is not yet refunded.",
+    );
+    this.name = "PaymentRefundUnconfirmedError";
+  }
+}
+
+export class PaymentAlreadyRefundedError extends PaymentDomainError {
+  constructor() {
+    super(
+      "PAYMENT_ALREADY_REFUNDED",
+      "This payment has already been refunded.",
+    );
+    this.name = "PaymentAlreadyRefundedError";
+  }
+}
+
+export class PaymentRefundInProgressError extends PaymentDomainError {
+  constructor() {
+    super(
+      "PAYMENT_REFUND_IN_PROGRESS",
+      "A refund is already in progress for this payment.",
+    );
+    this.name = "PaymentRefundInProgressError";
+  }
+}
+
 export function isPaymentDomainError(
   error: unknown,
 ): error is PaymentDomainError {

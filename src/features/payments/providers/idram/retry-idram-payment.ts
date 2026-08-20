@@ -9,10 +9,12 @@ import { failPayment } from "@/features/payments/application/fail-payment";
 import { fingerprintCartItems } from "@/features/payments/domain/cart-fingerprint";
 import {
   PaymentAlreadyCapturedError,
+  PaymentAlreadyRefundedError,
   PaymentNotFoundError,
   PaymentProviderNotConfiguredError,
 } from "@/features/payments/domain/errors";
 import { assertOrderPaymentAccess } from "@/features/payments/providers/arca/access";
+import { isPaymentRetryBlockedByRefund } from "@/features/payments/domain/refund-retry-barrier";
 import { createIdramPaymentForm } from "@/features/payments/providers/idram/create-idram-payment";
 import { requireIdramConfig } from "@/lib/payments/idram/config";
 import type { IdramPaymentFormPayload } from "@/lib/payments/idram/types";
@@ -35,6 +37,9 @@ export async function retryIdramPayment(input: {
 
   if (order.paymentStatus === "CAPTURED" || order.status === "REQUIRES_REVIEW") {
     throw new PaymentAlreadyCapturedError();
+  }
+  if (isPaymentRetryBlockedByRefund(order.paymentStatus, null)) {
+    throw new PaymentAlreadyRefundedError();
   }
 
   // Expire stale PENDING outside the create transaction (failPayment uses its own tx).
@@ -80,7 +85,6 @@ export async function retryIdramPayment(input: {
     ) {
       throw new PaymentAlreadyCapturedError();
     }
-
     const [newest] = await tx
       .select()
       .from(payments)
@@ -90,6 +94,9 @@ export async function retryIdramPayment(input: {
 
     if (!newest || newest.provider !== "idram") {
       throw new PaymentNotFoundError();
+    }
+    if (isPaymentRetryBlockedByRefund(lockedOrder.paymentStatus, newest.status)) {
+      throw new PaymentAlreadyRefundedError();
     }
 
     if (

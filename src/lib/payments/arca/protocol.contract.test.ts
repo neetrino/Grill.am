@@ -13,6 +13,8 @@ import {
   isFormUrlHostAllowed,
   ARCA_REGISTER_PATH,
   ARCA_STATUS_PATH,
+  ARCA_REVERSE_PATH,
+  ARCA_REFUND_PATH,
   resolveRegisterPath,
 } from "@/lib/payments/arca/paths";
 
@@ -20,6 +22,8 @@ describe("ARCA protocol contract fields", () => {
   it("uses official register and status paths", () => {
     expect(ARCA_REGISTER_PATH).toBe("/register.do");
     expect(ARCA_STATUS_PATH).toBe("/getOrderStatusExtended.do");
+    expect(ARCA_REVERSE_PATH).toBe("/reverse.do");
+    expect(ARCA_REFUND_PATH).toBe("/refund.do");
     expect(resolveRegisterPath("one_stage")).toBe("/register.do");
     expect(resolveRegisterPath("two_stage")).toBe("/registerPreAuth.do");
   });

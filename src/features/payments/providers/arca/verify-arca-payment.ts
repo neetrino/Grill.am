@@ -20,7 +20,10 @@ import {
   normalizeArcaCurrencyCode,
   parseArcaAmountField,
 } from "@/lib/payments/arca/amount";
-import { createArcaPaymentClient } from "@/lib/payments/arca/client";
+import {
+  createArcaPaymentClient,
+  type ArcaPaymentClient,
+} from "@/lib/payments/arca/client";
 import { requireArcaConfig } from "@/lib/payments/arca/config";
 import { mapArcaOrderStatus } from "@/lib/payments/arca/status-map";
 import { parseOrderStatusCode } from "@/lib/payments/arca/schemas";
@@ -44,12 +47,15 @@ export type VerifyArcaPaymentResult = {
  * Authoritative server-to-server status verification (Merchant Manual §7.1.5).
  * Never trusts browser return parameters for success.
  */
-export async function verifyArcaPayment(input: {
-  paymentId: string;
-  /** Optional gateway orderId from return URL — must match stored reference when both present. */
-  claimedProviderOrderId?: string;
-  language?: string;
-}): Promise<VerifyArcaPaymentResult> {
+export async function verifyArcaPayment(
+  input: {
+    paymentId: string;
+    /** Optional gateway orderId from return URL — must match stored reference when both present. */
+    claimedProviderOrderId?: string;
+    language?: string;
+  },
+  deps: { client?: ArcaPaymentClient } = {},
+): Promise<VerifyArcaPaymentResult> {
   let config;
   try {
     config = requireArcaConfig();
@@ -83,7 +89,7 @@ export async function verifyArcaPayment(input: {
     throw new PaymentNotFoundError();
   }
 
-  const client = createArcaPaymentClient(config);
+  const client = deps.client ?? createArcaPaymentClient(config);
   const status = await client.getOrderStatusExtended({
     orderId: providerReference ?? undefined,
     orderNumber: providerReference ? undefined : (localOrderNumber ?? undefined),

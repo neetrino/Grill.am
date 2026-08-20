@@ -1,9 +1,12 @@
 import "server-only";
 
 import type { ArcaPaymentClient } from "@/lib/payments/arca/client";
+import { ArcaBusinessError } from "@/lib/payments/arca/errors";
 import type {
+  ArcaClientRefundInput,
   ArcaClientRegisterInput,
   ArcaClientRegisterResult,
+  ArcaClientReverseInput,
 } from "@/lib/payments/arca/types";
 import type { ArcaStatusResponse } from "@/lib/payments/arca/schemas";
 import { createId } from "@/lib/id";
@@ -13,6 +16,8 @@ export type ArcaMockStatus =
   | "captured"
   | "declined"
   | "authorized"
+  | "refunded"
+  | "reversed"
   | "timeout";
 
 type MockEntry = {
@@ -101,6 +106,10 @@ function toOfficialStatus(status: ArcaMockStatus): number {
       return 2;
     case "authorized":
       return 1;
+    case "reversed":
+      return 3;
+    case "refunded":
+      return 4;
     case "declined":
       return 6;
     case "pending":
@@ -108,6 +117,14 @@ function toOfficialStatus(status: ArcaMockStatus): number {
     default:
       return 0;
   }
+}
+
+function requireMockEntry(orderId: string): MockEntry {
+  const entry = store().byProviderOrderId.get(orderId);
+  if (!entry) {
+    throw new ArcaBusinessError("6", "ARCA mutation was rejected.");
+  }
+  return entry;
 }
 
 /**
@@ -156,6 +173,25 @@ export function createMockArcaPaymentClient(options?: {
         providerOrderId,
         formUrl: `${formUrlBase}?orderId=${encodeURIComponent(providerOrderId)}`,
       };
+    },
+
+    async reverse(input: ArcaClientReverseInput): Promise<void> {
+      const entry = requireMockEntry(input.orderId);
+      if (entry.status !== "captured") {
+        throw new ArcaBusinessError("7", "ARCA reverse was rejected.");
+      }
+      entry.status = "reversed";
+    },
+
+    async refund(input: ArcaClientRefundInput): Promise<void> {
+      const entry = requireMockEntry(input.orderId);
+      if (entry.status !== "captured" && entry.status !== "reversed") {
+        throw new ArcaBusinessError("7", "ARCA refund was rejected.");
+      }
+      if (input.amountMinorUnits !== BigInt(entry.amountMinorUnits)) {
+        throw new ArcaBusinessError("5", "ARCA refund was rejected.");
+      }
+      entry.status = "refunded";
     },
 
     async getOrderStatusExtended(input): Promise<ArcaStatusResponse> {

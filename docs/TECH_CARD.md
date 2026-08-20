@@ -102,7 +102,7 @@ Connection pool size, `statement_timeout`, `lock_timeout`, `idle_in_transaction_
 |---|---|---|---|
 | Hosting | Vercel-compatible (deploy deferred) | ✅ | Local-first; production deploy միայն explicit approval-ով |
 | Environments | Local + preview/staging + production | ✅ | Առանձին DB/Redis/R2 resources կամ safe namespaces |
-| CI | GitHub Actions | ✅ | format, lint, typecheck, unit/integration, build, selected E2E |
+| CI | GitHub Actions | ✅ | PR: lint, typecheck, unit/integration, build. Selected E2E on main/manual |
 | CDN/WAF | Hosting edge + optional Cloudflare WAF | ✅ | Domain/DNS decision-ից հետո |
 | Logs | Structured server logs | ✅ | Secret/PII redaction պարտադիր |
 | Backups | Neon capabilities + restore drill policy | ✅ | Retention/RPO/RTO՝ ops phase-ում |

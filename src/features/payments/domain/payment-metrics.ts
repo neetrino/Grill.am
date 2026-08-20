@@ -83,6 +83,7 @@ export const PAYMENT_METRIC_NAMES = {
   captured: "payment_captured",
   failed: "payment_failed",
   cancelled: "payment_cancelled",
+  refunded: "payment_refunded",
   replay: "payment_callback_replay",
   requiresReview: "payment_requires_review",
   pendingStale: "payment_pending_stale",

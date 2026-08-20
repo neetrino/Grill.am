@@ -7,6 +7,7 @@ import { createPaymentAttempt } from "@/features/payments/application/create-pay
 import { fingerprintCartItems } from "@/features/payments/domain/cart-fingerprint";
 import {
   PaymentAlreadyCapturedError,
+  PaymentAlreadyRefundedError,
   PaymentNotFoundError,
   PaymentProviderNotConfiguredError,
 } from "@/features/payments/domain/errors";
@@ -14,6 +15,7 @@ import { assertOrderPaymentAccess } from "@/features/payments/providers/arca/acc
 import { initializeArcaPayment } from "@/features/payments/providers/arca/initialize-arca-payment";
 import { readArcaPaymentMetadata } from "@/features/payments/providers/arca/metadata";
 import { processArcaPaymentStatus } from "@/features/payments/providers/arca/process-arca-status";
+import { isPaymentRetryBlockedByRefund } from "@/features/payments/domain/refund-retry-barrier";
 import { requireArcaConfig } from "@/lib/payments/arca/config";
 
 export type RetryArcaPaymentResult =
@@ -77,6 +79,14 @@ export async function retryArcaPayment(input: {
 
   if (snapshot.order.paymentStatus === "CAPTURED") {
     throw new PaymentAlreadyCapturedError();
+  }
+  if (
+    isPaymentRetryBlockedByRefund(
+      snapshot.order.paymentStatus,
+      snapshot.payment?.status ?? null,
+    )
+  ) {
+    throw new PaymentAlreadyRefundedError();
   }
 
   const payment = snapshot.payment;

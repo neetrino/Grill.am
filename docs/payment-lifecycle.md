@@ -15,7 +15,7 @@
 - Admin new-order alert: COD on place; online only after `CAPTURED` / `REQUIRES_REVIEW`
 - Immediate order emails via Next.js `after()` + Resend/capture/sink (`scheduleOrderEmails`)
 - HY/RU/EN payment email templates (sink/capture delivery)
-- Playwright E2E: port 3100, `/api/health`, mock ARCA, CI workflow
+- Playwright E2E: port 3100, `/api/health`, mock ARCA (CI on main / manual)
 - Readiness: `pnpm payments:readiness`
 - Ops docs: `docs/ops/PAYMENT-OPERATIONS.md`, `docs/ops/OUTBOX-RUNBOOK.md`,
   `docs/testing/PAYMENT-E2E.md`
@@ -145,6 +145,21 @@ Production schedule: Vercel Cron `GET /api/v1/cron/payments-reconcile` every 30 
 (`PAYMENT_RECONCILE_INTERVAL_MINUTES` + `CRON_SECRET`). Job syncs ARCA status then expires
 local attempts past `PAYMENT_PENDING_TIMEOUT_MINUTES` (default 60).
 
+## Staff refund (ARCA, one-stage)
+
+Admin/operator **Refund** on a `CAPTURED` ARCA attempt:
+
+```text
+getOrderStatusExtended.do
+→ reverse.do if still DEPOSITED
+→ refund.do (full original amount) if reverse returns official error 7
+→ getOrderStatusExtended.do must be REVERSED or REFUNDED
+→ payments.status + orders.paymentStatus = REFUNDED
+```
+
+Does not change `orders.status`, does not restore `stock_on_hand`, does not call EHDM.  
+iDram and two-stage `deposit.do` are out of scope.
+
 ## Not implemented yet
 
-ARCA reverse/refund automation; automatic deposit for two-stage holds; iDram refund/reversal (not documented as merchant self-serve in the official API text used).
+Automatic deposit for two-stage holds; iDram refund/reversal (not documented as merchant self-serve in the official API text used).
