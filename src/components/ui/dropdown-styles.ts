@@ -41,6 +41,8 @@ export type DropdownPortalPosition = {
   right?: number;
   minWidth?: number;
   maxWidth?: number;
+  /** Overrides `--dropdown-max-height` (e.g. `"none"`). */
+  maxHeight?: string;
 };
 
 /**
@@ -67,6 +69,9 @@ export function dropdownPortalStyle(
   }
   if (position.maxWidth != null) {
     style["--dropdown-max-width"] = `${position.maxWidth}px`;
+  }
+  if (position.maxHeight != null) {
+    style["--dropdown-max-height"] = position.maxHeight;
   }
   return style;
 }

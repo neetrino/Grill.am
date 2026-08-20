@@ -24,9 +24,18 @@ export async function assertAdminRequiresReviewUx(
   page: Page,
   orderNumber: string,
 ): Promise<void> {
-  const path = `/en/admin/orders/${encodeURIComponent(orderNumber)}`;
-  await loginAsE2eOperator(page, path);
-  await expect(page.getByRole("heading", { name: /requires review/i })).toBeVisible({
+  await loginAsE2eOperator(page, "/en/admin/orders");
+  const search = page.getByLabel(/search orders/i);
+  await search.fill(orderNumber);
+  await search.press("Enter");
+  await page
+    .getByRole("button", {
+      name: new RegExp(`open order ${orderNumber}`, "i"),
+    })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: /requires review/i }),
+  ).toBeVisible({
     timeout: 30_000,
   });
   await expect(

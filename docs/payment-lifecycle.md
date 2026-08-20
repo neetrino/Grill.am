@@ -147,7 +147,8 @@ local attempts past `PAYMENT_PENDING_TIMEOUT_MINUTES` (default 60).
 
 ## Staff refund (ARCA, one-stage)
 
-Admin/operator **Refund** on a `CAPTURED` ARCA attempt:
+Admin/operator sets payment status to **Refunded** on a captured ARCA order
+(list pill or order drawer):
 
 ```text
 getOrderStatusExtended.do

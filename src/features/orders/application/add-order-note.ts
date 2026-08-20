@@ -67,7 +67,7 @@ export async function addOrderNoteAction(
       return { orderNumber: existing.orderNumber };
     });
 
-    revalidatePath(`/${locale}/admin/orders/${result.orderNumber}`);
+    revalidatePath(`/${locale}/admin/orders`);
     return ok(result);
   } catch (error) {
     if (error instanceof Error && error.message === "NOT_FOUND") {

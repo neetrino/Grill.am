@@ -15,6 +15,8 @@ export const ADMIN_PAYMENT_STATUS_OPTIONS = [
   { value: "CAPTURED", label: "Paid" },
   { value: "PENDING", label: "pending" },
   { value: "FAILED", label: "Failed" },
+  { value: "REFUNDED", label: "Refunded" },
+  { value: "CANCELLED", label: "Cancelled" },
 ] as const satisfies ReadonlyArray<{ value: PaymentStatus; label: string }>;
 
 /**
@@ -35,8 +37,8 @@ const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   AUTHORIZED: "pending",
   CAPTURED: "Paid",
   FAILED: "Failed",
-  REFUNDED: "Failed",
-  CANCELLED: "Failed",
+  REFUNDED: "Refunded",
+  CANCELLED: "Cancelled",
 };
 
 export function isPaymentStatus(value: string): value is PaymentStatus {

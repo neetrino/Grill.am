@@ -4,7 +4,9 @@ import { SideSheet } from "@/components/drawer/SideSheet";
 import { Button } from "@/components/ui/Button";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
+import type { AdminOrderDrawerControls } from "@/features/orders/ui/admin-order-drawer-controls";
 import { OrderDetailsDrawerItems } from "@/features/orders/ui/OrderDetailsDrawerItems";
+import { OrderDetailsDrawerReview } from "@/features/orders/ui/OrderDetailsDrawerReview";
 import { OrderDetailsDrawerShipping } from "@/features/orders/ui/OrderDetailsDrawerShipping";
 import { OrderDetailsDrawerSummary } from "@/features/orders/ui/OrderDetailsDrawerSummary";
 import { OrderDetailsDrawerTotals } from "@/features/orders/ui/OrderDetailsDrawerTotals";
@@ -26,6 +28,8 @@ type OrderDetailsDrawerProps = {
   isLoading: boolean;
   /** Customer-only reorder control in the drawer header. */
   reorder?: OrderDetailsDrawerReorder;
+  /** Admin list/dashboard: status dropdowns + review tools. */
+  adminControls?: AdminOrderDrawerControls;
 };
 
 export function OrderDetailsDrawer({
@@ -35,6 +39,7 @@ export function OrderDetailsDrawer({
   error,
   isLoading,
   reorder,
+  adminControls,
 }: OrderDetailsDrawerProps) {
   const dictionary = useAdminDictionary();
   const drawer = dictionary.orders.drawer;
@@ -91,7 +96,18 @@ export function OrderDetailsDrawer({
       {error ? <p className="py-8 text-sm text-red-700">{error}</p> : null}
       {!isLoading && !error && detail ? (
         <div className="space-y-3">
-          <OrderDetailsDrawerSummary detail={detail} />
+          <OrderDetailsDrawerSummary
+            detail={detail}
+            adminControls={adminControls}
+          />
+          {adminControls ? (
+            <OrderDetailsDrawerReview
+              detailStatus={detail.status}
+              paymentStatus={detail.paymentStatus}
+              orderNumber={detail.orderNumber}
+              adminControls={adminControls}
+            />
+          ) : null}
           <OrderDetailsDrawerItems detail={detail} />
           <OrderDetailsDrawerTotals detail={detail} />
           <OrderDetailsDrawerShipping

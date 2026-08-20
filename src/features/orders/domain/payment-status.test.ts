@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  ADMIN_PAYMENT_STATUS_OPTIONS,
   canTransitionPaymentStatus,
   getEligiblePaymentStatuses,
 } from "@/features/orders/domain/payment-status";
@@ -15,6 +16,16 @@ describe("payment status transitions", () => {
 
   it("allows refund after capture", () => {
     expect(canTransitionPaymentStatus("CAPTURED", "REFUNDED")).toBe(true);
+  });
+
+  it("exposes Refunded and Cancelled in the admin payment list", () => {
+    expect(ADMIN_PAYMENT_STATUS_OPTIONS.map((option) => option.value)).toEqual([
+      "CAPTURED",
+      "PENDING",
+      "FAILED",
+      "REFUNDED",
+      "CANCELLED",
+    ]);
   });
 
   it("allows retry from failed back to pending", () => {

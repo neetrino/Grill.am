@@ -7,11 +7,13 @@ import { resolvePaymentReviewAction } from "@/features/payments/application/reso
 type ResolvePaymentReviewFormProps = {
   locale: string;
   orderNumber: string;
+  onResolved?: () => void;
 };
 
 export function ResolvePaymentReviewForm({
   locale,
   orderNumber,
+  onResolved,
 }: ResolvePaymentReviewFormProps) {
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
@@ -39,6 +41,7 @@ export function ResolvePaymentReviewForm({
           setMessage(
             `Resolved to ${result.value.toStatus} (${result.value.resolutionType}).`,
           );
+          onResolved?.();
         });
       }}
     >

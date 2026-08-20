@@ -76,4 +76,4 @@ Do not automate real charges.
 
 - False success: never trust SUCCESS_URL / return query flags.
 - Duplicate side effects: confirm/fail are idempotent; emails schedule only on fresh transitions (not replay).
-- ARCA full refund: staff **Refund** on a captured attempt (`reverse.do`, then `refund.do` if reverse is invalid). Local payment becomes `REFUNDED`. Fulfillment status and stock are left unchanged. iDram remains external.
+- ARCA full refund: staff set payment status to **Refunded** on a captured ARCA order (list or drawer). Confirms in the branded modal, then `reverse.do` / `refund.do`. Local payment becomes `REFUNDED`. Fulfillment status and stock are left unchanged. iDram remains external.
