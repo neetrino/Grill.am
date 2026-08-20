@@ -3,14 +3,17 @@
 import { desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+import { getDb } from "@/db/client";
 import { auditLogs, orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { planAdminPaymentStatusChange } from "@/features/orders/domain/admin-payment-status-plan";
 import {
   canTransitionPaymentStatus,
   isPaymentStatus,
   type PaymentStatus,
 } from "@/features/orders/domain/payment-status";
 import { paymentLifecycleTimestampPatch } from "@/features/payments/domain/payment-lifecycle-timestamps";
+import { refundArcaPaymentAction } from "@/features/payments/application/refund-arca-payment-action";
 import {
   changePaymentStatusSchema,
   type ChangePaymentStatusInput,
@@ -29,6 +32,7 @@ export type ChangePaymentStatusData = {
 /**
  * Admin payment transition: updates order + latest payment row,
  * appends payment history event and audit log.
+ * Refunded on ARCA captured attempts goes through the bank.
  */
 export async function changePaymentStatusAction(
   locale: string,
@@ -45,6 +49,13 @@ export async function changePaymentStatusAction(
 
   const actor = await requireOrdersStaff(locale as Locale);
   const { orderNumber, toStatus, note } = parsed.data;
+  const bankResult = await applyBankRefundIfNeeded(locale, {
+    orderNumber,
+    toStatus,
+  });
+  if (bankResult) {
+    return bankResult;
+  }
 
   try {
     const result = await withTransaction(async (tx) => {
@@ -67,6 +78,10 @@ export async function changePaymentStatusAction(
 
       if (fromStatus === toStatus) {
         throw new Error("SAME_STATUS");
+      }
+
+      if (fromStatus === "CAPTURED" && toStatus === "CANCELLED") {
+        throw new Error("CAPTURED_USE_REFUND");
       }
 
       if (!canTransitionPaymentStatus(fromStatus, toStatus)) {
@@ -147,34 +162,115 @@ export async function changePaymentStatusAction(
       return { orderNumber, fromStatus, toStatus };
     });
 
-    revalidatePath(`/${locale}/admin/orders`);
-    revalidatePath(`/${locale}/admin/orders/${orderNumber}`);
-    revalidatePath(`/${locale}/profile/orders`);
-
+    revalidateAdminOrderPaths(locale);
     return ok(result);
   } catch (error) {
-    const code = error instanceof Error ? error.message : "UNKNOWN";
+    return mapPaymentStatusError(error);
+  }
+}
 
-    switch (code) {
-      case "ORDER_NOT_FOUND":
-        return err("ORDER_NOT_FOUND", "Order not found.");
-      case "SAME_STATUS":
-        return err("SAME_STATUS", "Payment already has this status.");
-      case "INVALID_TRANSITION":
-        return err(
-          "INVALID_TRANSITION",
-          "That payment transition is not allowed.",
-        );
-      case "INVALID_CURRENT_STATUS":
-        return err(
-          "INVALID_CURRENT_STATUS",
-          "Order has an unknown payment status.",
-        );
-      default:
-        return err(
-          "PAYMENT_STATUS_FAILED",
-          "Unable to update payment status.",
-        );
-    }
+async function applyBankRefundIfNeeded(
+  locale: Locale,
+  input: { orderNumber: string; toStatus: PaymentStatus },
+): Promise<Result<ChangePaymentStatusData> | null> {
+  const db = getDb();
+  const [order] = await db
+    .select({
+      id: orders.id,
+      orderNumber: orders.orderNumber,
+      paymentStatus: orders.paymentStatus,
+    })
+    .from(orders)
+    .where(eq(orders.orderNumber, input.orderNumber))
+    .limit(1);
+
+  if (!order || !isPaymentStatus(order.paymentStatus)) {
+    return null;
+  }
+
+  const [latestPayment] = await db
+    .select({ id: payments.id, provider: payments.provider })
+    .from(payments)
+    .where(eq(payments.orderId, order.id))
+    .orderBy(desc(payments.attemptNumber))
+    .limit(1);
+
+  const plan = planAdminPaymentStatusChange({
+    toStatus: input.toStatus,
+    provider: latestPayment?.provider ?? null,
+  });
+
+  if (plan.type === "local") {
+    return null;
+  }
+
+  if (plan.type === "unsupported_provider_refund") {
+    return err(
+      "IDRAM_REFUND_UNSUPPORTED",
+      "iDram refund is not available in the shop. Return funds in the iDram cabinet.",
+    );
+  }
+
+  if (order.paymentStatus === input.toStatus) {
+    return err("SAME_STATUS", "Payment already has this status.");
+  }
+
+  if (!canTransitionPaymentStatus(order.paymentStatus, input.toStatus)) {
+    return err(
+      "INVALID_TRANSITION",
+      "That payment transition is not allowed.",
+    );
+  }
+
+  if (!latestPayment) {
+    return err("PAYMENT_NOT_FOUND", "No payment attempt to refund.");
+  }
+
+  const refunded = await refundArcaPaymentAction({
+    paymentId: latestPayment.id,
+    locale,
+  });
+  if (!refunded.ok) {
+    return err("PAYMENT_REFUND_FAILED", refunded.error);
+  }
+
+  revalidateAdminOrderPaths(locale);
+  return ok({
+    orderNumber: order.orderNumber,
+    fromStatus: order.paymentStatus,
+    toStatus: "REFUNDED",
+  });
+}
+
+function revalidateAdminOrderPaths(locale: string): void {
+  revalidatePath(`/${locale}/admin/orders`);
+  revalidatePath(`/${locale}/profile/orders`);
+}
+
+function mapPaymentStatusError(error: unknown): Result<never> {
+  const code = error instanceof Error ? error.message : "UNKNOWN";
+
+  switch (code) {
+    case "ORDER_NOT_FOUND":
+      return err("ORDER_NOT_FOUND", "Order not found.");
+    case "SAME_STATUS":
+      return err("SAME_STATUS", "Payment already has this status.");
+    case "CAPTURED_USE_REFUND":
+      return err(
+        "CAPTURED_USE_REFUND",
+        "Captured card funds must be returned with Refunded, not Cancelled.",
+      );
+    case "INVALID_TRANSITION":
+      return err(
+        "INVALID_TRANSITION",
+        "That payment transition is not allowed.",
+      );
+    case "INVALID_CURRENT_STATUS":
+      return err(
+        "INVALID_CURRENT_STATUS",
+        "Order has an unknown payment status.",
+      );
+    default:
+      return err("PAYMENT_STATUS_FAILED", "Unable to update payment status.");
   }
 }

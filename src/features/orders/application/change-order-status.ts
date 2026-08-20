@@ -176,7 +176,6 @@ export async function changeOrderStatusAction(
     });
 
     revalidatePath(`/${locale}/admin/orders`);
-    revalidatePath(`/${locale}/admin/orders/${orderNumber}`);
     revalidatePath(`/${locale}/profile/orders`);
 
     return ok(result);

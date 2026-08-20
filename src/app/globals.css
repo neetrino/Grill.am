@@ -97,7 +97,8 @@ img {
   --dropdown-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   --dropdown-anim-ms: 150ms;
   --dropdown-border: #f3f4f6;
-  --dropdown-option-hover: #f9fafb;
+  --dropdown-option-hover: #e5e7eb;
+  --dropdown-option-selected: #f3f4f6;
 }
 
 .dropdown-panel {
@@ -167,9 +168,13 @@ img {
 }
 
 .dropdown-option--selected {
-  background: var(--dropdown-option-hover);
+  background: var(--dropdown-option-selected);
   font-weight: 500;
   color: #111827;
+}
+
+.dropdown-option--selected:hover {
+  background: var(--dropdown-option-hover);
 }
 
 /* Native <select> + select-like triggers — checkout city picker look.

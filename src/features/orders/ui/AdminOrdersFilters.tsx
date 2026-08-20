@@ -31,6 +31,7 @@ const PAYMENT_STATUS_FILTERS = [
   { statusKey: "paid", value: "CAPTURED" },
   { statusKey: "pending", value: "PENDING" },
   { statusKey: "failed", value: "FAILED" },
+  { statusKey: "refunded", value: "REFUNDED" },
   { statusKey: "cancelled", value: "CANCELLED" },
   { statusKey: "authorized", value: "AUTHORIZED" },
 ] as const satisfies ReadonlyArray<{

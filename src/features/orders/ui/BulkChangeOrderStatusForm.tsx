@@ -50,25 +50,24 @@ type BulkChangeOrderStatusFormProps = {
   locale: string;
   orders: BulkOrderRow[];
   onOpenOrder: (orderNumber: string) => void;
+  onStatusUpdated?: () => void;
 };
 
 function formatMoney(amount: number, currency: string): string {
   return `${amount.toLocaleString("en-US")} ${currency}`;
 }
 
-/** Row cells with their own controls (checkbox, inline status selects). */
 const ROW_CONTROL_SELECTOR = "button, input, select, textarea, a, label";
 
 function isRowControl(target: EventTarget | null): boolean {
-  return (
-    target instanceof Element && target.closest(ROW_CONTROL_SELECTOR) !== null
-  );
+  return target instanceof Element && target.closest(ROW_CONTROL_SELECTOR) !== null;
 }
 
 export function BulkChangeOrderStatusForm({
   locale,
   orders,
   onOpenOrder,
+  onStatusUpdated,
 }: BulkChangeOrderStatusFormProps) {
   const dictionary = useAdminDictionary();
   const list = dictionary.orders.list;
@@ -257,6 +256,7 @@ export function BulkChangeOrderStatusForm({
                         kind="order"
                         value={order.status}
                         disabled={isPending || order.isArchived}
+                        onSuccess={onStatusUpdated}
                       />
                     </div>
                   </td>
@@ -268,6 +268,7 @@ export function BulkChangeOrderStatusForm({
                         kind="payment"
                         value={order.paymentStatus}
                         disabled={isPending || order.isArchived}
+                        onSuccess={onStatusUpdated}
                       />
                     </div>
                   </td>

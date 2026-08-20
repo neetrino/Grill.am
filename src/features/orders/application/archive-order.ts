@@ -82,7 +82,6 @@ export async function archiveOrderAction(
     });
 
     revalidatePath(`/${locale}/admin/orders`);
-    revalidatePath(`/${locale}/admin/orders/${result.orderNumber}`);
     return ok(result);
   } catch (error) {
     const code = error instanceof Error ? error.message : "UNKNOWN";

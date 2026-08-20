@@ -46,9 +46,9 @@ export function adminPaymentStatusLabel(
     case "FAILED":
       return labels.failed;
     case "REFUNDED":
-      return labels.failed;
+      return labels.refunded;
     case "CANCELLED":
-      return labels.cancelled ?? labels.failed;
+      return labels.cancelled;
     default:
       return status;
   }

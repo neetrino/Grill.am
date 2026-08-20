@@ -255,6 +255,7 @@
       "paid": "Paid",
       "pending": "Pending",
       "failed": "Failed",
+      "refunded": "Refunded",
       "cancelled": "Cancelled",
       "authorized": "Authorized"
     },
@@ -282,6 +283,22 @@
       "deletedResult": "Deleted {deleted}, skipped {skipped}."
     },
     "changeStatusAria": "Change {kind} status",
+    "statusConfirm": {
+      "title": "Change status?",
+      "message": "Change {kind} status from {from} to {to}?",
+      "kindOrder": "order",
+      "kindPayment": "payment",
+      "refundTitle": "Refund this payment?",
+      "refundMessage": "The full amount will be returned through the bank. Kitchen order status will not change.",
+      "cancelPaymentTitle": "Cancel this payment?",
+      "cancelPaymentMessage": "Mark the payment as cancelled. This does not return captured card funds — choose Refunded to return money.",
+      "confirm": "Confirm",
+      "back": "Back"
+    },
+    "reviewBanner": {
+      "title": "Requires review",
+      "body": "Payment was received (CAPTURED). Fulfillment is blocked — allocate stock, confirm delayed fulfillment, cancel with external refund, or escalate to finance. Do not mark payment as failed."
+    },
     "drawer": {
       "title": "Order Details",
       "loading": "Loading order…",

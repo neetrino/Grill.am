@@ -13,15 +13,9 @@ import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
 
+import { useConfirmDelete } from "@/components/modal/ConfirmDeleteProvider";
 import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
-
-import {
-  DROPDOWN_ANIMATION_MS,
-  DROPDOWN_PANEL_PORTAL_CLASS,
-  dropdownOptionClass,
-  dropdownPanelStateClass,
-  dropdownPortalStyle,
-} from "@/components/ui/dropdown-styles";
+import { DROPDOWN_ANIMATION_MS } from "@/components/ui/dropdown-styles";
 import { useDropdownPortalPosition } from "@/components/ui/use-dropdown-portal-position";
 import {
   formatAdminMessage,
@@ -33,16 +27,10 @@ import {
 } from "@/features/admin/ui/status-badge";
 import { changeOrderStatusAction } from "@/features/orders/application/change-order-status";
 import { changePaymentStatusAction } from "@/features/orders/application/change-payment-status";
-import {
-  ADMIN_ORDER_STATUS_OPTIONS,
-  orderStatusLabel,
-  type OrderStatus,
-} from "@/features/orders/domain/order-status";
-import {
-  ADMIN_PAYMENT_STATUS_OPTIONS,
-  paymentStatusLabel,
-  type PaymentStatus,
-} from "@/features/orders/domain/payment-status";
+import { type OrderStatus } from "@/features/orders/domain/order-status";
+import { type PaymentStatus } from "@/features/orders/domain/payment-status";
+import { AdminInlineStatusMenu } from "@/features/orders/ui/AdminInlineStatusMenu";
+import { buildAdminStatusChangeConfirm } from "@/features/orders/ui/admin-status-change-confirm";
 import {
   adminOrderStatusLabel,
   adminPaymentStatusLabel,
@@ -54,6 +42,7 @@ type AdminInlineStatusSelectProps = {
   kind: "order" | "payment";
   value: string;
   disabled?: boolean;
+  onSuccess?: () => void;
 };
 
 function subscribeNoop(): () => void {
@@ -66,8 +55,10 @@ export function AdminInlineStatusSelect({
   kind,
   value,
   disabled = false,
+  onSuccess,
 }: AdminInlineStatusSelectProps) {
   const dictionary = useAdminDictionary();
+  const { confirmDelete } = useConfirmDelete();
   const router = useRouter();
   const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [open, setOpen] = useState(false);
@@ -90,11 +81,6 @@ export function AdminInlineStatusSelect({
     setSyncedValue(value);
     setDisplayValue(value);
   }
-
-  const options =
-    kind === "order"
-      ? ADMIN_ORDER_STATUS_OPTIONS
-      : ADMIN_PAYMENT_STATUS_OPTIONS;
 
   const currentLabel =
     kind === "order"
@@ -183,63 +169,64 @@ export function AdminInlineStatusSelect({
     }
 
     const previous = displayValue;
-    setDisplayValue(next);
+    const fromLabel = currentLabel;
+    const toLabel = optionDisplayLabel(next);
     closeDropdown();
 
-    startTransition(async () => {
-      setError(null);
-      const result =
-        kind === "order"
-          ? await changeOrderStatusAction(locale, {
-              orderNumber,
-              toStatus: next as OrderStatus,
-            })
-          : await changePaymentStatusAction(locale, {
-              orderNumber,
-              toStatus: next as PaymentStatus,
-            });
-
-      if (!result.ok) {
-        setDisplayValue(previous);
-        setError(result.error.message);
+    void (async () => {
+      const accepted = await confirmDelete(
+        buildAdminStatusChangeConfirm({
+          kind,
+          fromLabel,
+          toValue: next,
+          toLabel,
+          copy: dictionary.orders.statusConfirm,
+        }),
+      );
+      if (!accepted) {
         return;
       }
 
-      router.refresh();
-    });
+      setDisplayValue(next);
+      startTransition(async () => {
+        setError(null);
+        const result =
+          kind === "order"
+            ? await changeOrderStatusAction(locale, {
+                orderNumber,
+                toStatus: next as OrderStatus,
+              })
+            : await changePaymentStatusAction(locale, {
+                orderNumber,
+                toStatus: next as PaymentStatus,
+              });
+
+        if (!result.ok) {
+          setDisplayValue(previous);
+          setError(result.error.message);
+          return;
+        }
+
+        router.refresh();
+        onSuccess?.();
+      });
+    })();
   }
 
   const panel =
     canPortal && panelVisible && menuPosition
       ? createPortal(
-          <ul
-            ref={panelRef}
-            id={menuId}
-            role="listbox"
-            className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-1 ${dropdownPanelStateClass(panelExpanded)}`}
-            style={dropdownPortalStyle(menuPosition)}
-          >
-            {options.map((option) => {
-              const selected =
-                option.value === displayValue ||
-                (kind === "order" &&
-                  orderStatusLabel(displayValue) === option.label) ||
-                (kind === "payment" &&
-                  paymentStatusLabel(displayValue) === option.label);
-              return (
-                <li key={option.value} role="option" aria-selected={selected}>
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    className={`${dropdownOptionClass(selected)} uppercase`}
-                    onClick={() => selectStatus(option.value)}
-                  >
-                    {optionDisplayLabel(option.value)}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>,
+          <AdminInlineStatusMenu
+            kind={kind}
+            displayValue={displayValue}
+            isPending={isPending}
+            menuId={menuId}
+            menuPosition={menuPosition}
+            panelExpanded={panelExpanded}
+            panelRef={panelRef}
+            optionLabel={optionDisplayLabel}
+            onSelect={selectStatus}
+          />,
           getDropdownPortalRoot(),
         )
       : null;

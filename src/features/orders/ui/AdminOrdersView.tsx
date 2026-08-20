@@ -32,6 +32,7 @@ export function AdminOrdersView({ locale, orders }: AdminOrdersViewProps) {
         locale={locale}
         orders={orders}
         onOpenOrder={drawer.openOrder}
+        onStatusUpdated={drawer.refreshOpenOrder}
       />
       <OrderDetailsDrawer
         open={drawer.open}
@@ -39,6 +40,10 @@ export function AdminOrdersView({ locale, orders }: AdminOrdersViewProps) {
         detail={drawer.detail}
         error={drawer.error}
         isLoading={drawer.isLoading}
+        adminControls={{
+          locale,
+          onStatusUpdated: drawer.refreshOpenOrder,
+        }}
       />
     </>
   );

@@ -121,6 +121,10 @@ export function DashboardRecentOrders({
         detail={drawer.detail}
         error={drawer.error}
         isLoading={drawer.isLoading}
+        adminControls={{
+          locale,
+          onStatusUpdated: drawer.refreshOpenOrder,
+        }}
       />
     </div>
   );

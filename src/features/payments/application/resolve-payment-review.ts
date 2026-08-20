@@ -164,7 +164,6 @@ export async function resolvePaymentReviewAction(
     });
 
     revalidatePath(`/${locale}/admin/orders`);
-    revalidatePath(`/${locale}/admin/orders/${orderNumber}`);
     return ok(result);
   } catch (error) {
     const code = error instanceof Error ? error.message : "UNKNOWN";

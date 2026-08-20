@@ -67,8 +67,7 @@
 |---|---|
 | `/[locale]/admin` | Dashboard |
 | `/[locale]/admin/hero` | Hero slide management |
-| `/[locale]/admin/orders` | Order list/bulk actions |
-| `/[locale]/admin/orders/[orderNumber]` | Detail/deep-link drawer |
+| `/[locale]/admin/orders` | Order list, bulk actions, side drawer |
 | `/[locale]/admin/products` | Product list/create/edit drawer routes |
 | `/[locale]/admin/products/[id]` | Product editor/deep link |
 | `/[locale]/admin/categories` | Category hierarchy CRUD |
