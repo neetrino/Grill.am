@@ -15,6 +15,7 @@ import {
   type StorefrontCustomization,
 } from "@/features/products/domain/customization";
 import { ProductAddonChecklist } from "@/features/products/ui/ProductAddonChecklist";
+import { ProductExclusionsAccordion } from "@/features/products/ui/ProductExclusionsAccordion";
 import type { Locale } from "@/lib/i18n/config";
 import { convertAmount } from "@/lib/money/convert";
 import type { Currency } from "@/lib/money/currency";
@@ -268,6 +269,16 @@ export function ProductBuyBox({
             {blurb}
           </p>
         ) : null}
+
+        <ProductExclusionsAccordion
+          exclusions={customization.exclusions}
+          selectedExclusionIds={modifiers.exclusionIds}
+          labels={{
+            exclusions: labels.exclusions,
+            removeModifier: labels.removeModifier,
+          }}
+          onToggleExclusion={toggleExclusion}
+        />
 
         {customization.optionGroups.length > 0 ? (
           <fieldset className="mt-5 flex flex-col gap-4 border-b border-[#f3f4f6] pb-5">
