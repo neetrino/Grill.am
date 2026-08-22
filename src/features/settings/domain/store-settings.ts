@@ -279,3 +279,17 @@ export function meetsMinimumOrder(
   }
   return subtotalAmount >= minimumAmount;
 }
+
+/**
+ * Store minimum applies to delivery only. Take Away (pickup) has no minimum.
+ */
+export function meetsStorefrontMinimumOrder(
+  subtotalAmount: number,
+  minimumAmount: number | null,
+  shippingMethod: "pickup" | "delivery",
+): boolean {
+  if (shippingMethod === "pickup") {
+    return true;
+  }
+  return meetsMinimumOrder(subtotalAmount, minimumAmount);
+}

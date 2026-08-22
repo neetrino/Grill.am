@@ -15,6 +15,7 @@ export {
   DEFAULT_REVENUE_STATUSES,
   listEnabledCurrencies,
   meetsMinimumOrder,
+  meetsStorefrontMinimumOrder,
   parseEnabledCurrencies,
   parseFxRates,
   parseIdentity,

@@ -77,7 +77,7 @@ import {
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import { getStoreMinimumOrder } from "@/features/settings/application/queries";
-import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
+import { meetsStorefrontMinimumOrder } from "@/features/settings/domain/store-settings";
 import {
   describeModifiers,
   parseCartModifiers,
@@ -469,7 +469,13 @@ export async function createOrderAction(
       // Admins may place test/small orders below the storefront minimum.
       if (user?.role !== "ADMIN") {
         const { amount: minimumOrderAmount } = await getStoreMinimumOrder();
-        if (!meetsMinimumOrder(subtotal, minimumOrderAmount)) {
+        if (
+          !meetsStorefrontMinimumOrder(
+            subtotal,
+            minimumOrderAmount,
+            input.shippingMethod,
+          )
+        ) {
           const amountLabel = formatMoneyAmount(
             minimumOrderAmount ?? 0,
             "AMD",

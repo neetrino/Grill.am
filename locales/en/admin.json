@@ -547,10 +547,10 @@
     "deleteNamed": "Delete {city}",
     "minimumOrder": {
       "title": "Minimum order",
-      "subtitle": "Customers cannot place an order below this cart subtotal",
+      "subtitle": "Applies to delivery only. Take Away orders have no minimum.",
       "amountAria": "Minimum order amount in AMD",
-      "empty": "No minimum. Leave empty or clear to allow any order size.",
-      "active": "Active minimum: {amount}.",
+      "empty": "No delivery minimum. Leave empty or clear to allow any delivery order size.",
+      "active": "Active delivery minimum: {amount}. Take Away has no minimum.",
       "cleared": "Minimum order cleared.",
       "setTo": "Minimum order set to {amount}.",
       "invalid": "Enter a whole number of at least 1 AMD, or leave empty."
