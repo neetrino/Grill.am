@@ -9,6 +9,7 @@ import {
   CHECKOUT_OPTION_COMPACT_CLASS,
   CHECKOUT_OPTION_DEFAULT_CLASS,
   CHECKOUT_OPTION_SELECTED_CLASS,
+  CHECKOUT_RADIO_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
   CHECKOUT_SECTION_TITLE_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
@@ -115,7 +116,7 @@ function MethodToggle({
         value={value}
         checked={selected}
         onChange={onSelect}
-        className="mr-3 shrink-0 accent-brand-red"
+        className={`mr-3 ${CHECKOUT_RADIO_CLASS}`}
         disabled={disabled}
         suppressHydrationWarning
       />

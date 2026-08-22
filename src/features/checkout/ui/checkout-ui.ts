@@ -19,12 +19,19 @@ export const CHECKOUT_OPTION_BASE_CLASS =
 export const CHECKOUT_OPTION_COMPACT_CLASS =
   "flex h-full cursor-pointer items-center rounded-[15px] border-2 px-3 py-2.5 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none";
 
-const CHECKOUT_SCROLLBAR_HIDDEN_CLASS =
-  "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
+/** Thin rounded scrollbar so the pickup list looks scrollable. */
+const CHECKOUT_PICKUP_SCROLLBAR_CLASS = [
+  "[scrollbar-width:thin]",
+  "[scrollbar-color:#C4C4C4_transparent]",
+  "[&::-webkit-scrollbar]:w-1.5",
+  "[&::-webkit-scrollbar-track]:bg-transparent",
+  "[&::-webkit-scrollbar-thumb]:rounded-full",
+  "[&::-webkit-scrollbar-thumb]:bg-[#C4C4C4]",
+].join(" ");
 
-/** Six compact branch rows; extra branches scroll without a visible scrollbar. */
+/** Six compact branch rows; extra branches scroll with a thin custom bar. */
 export const CHECKOUT_PICKUP_BRANCH_LIST_CLASS =
-  `max-h-[13.5rem] divide-y divide-gray-100 overflow-y-auto overscroll-contain rounded-[15px] border border-gray-200 ${CHECKOUT_SCROLLBAR_HIDDEN_CLASS}`;
+  `max-h-[13.5rem] divide-y divide-gray-100 overflow-y-auto overscroll-contain rounded-[15px] border border-gray-200 ${CHECKOUT_PICKUP_SCROLLBAR_CLASS}`;
 
 export const CHECKOUT_PICKUP_BRANCH_ROW_CLASS =
   "flex cursor-pointer items-center px-3 py-2 outline-none transition-colors [-webkit-tap-highlight-color:transparent] focus-within:bg-gray-50";
@@ -41,6 +48,10 @@ export const CHECKOUT_OPTION_SELECTED_CLASS =
 
 export const CHECKOUT_OPTION_DEFAULT_CLASS =
   "border-gray-200 hover:bg-gray-50/80";
+
+/** Custom radio — Grill circle, not the browser control. */
+export const CHECKOUT_RADIO_CLASS =
+  "size-[1.125rem] shrink-0 appearance-none rounded-full border-[1.5px] border-gray-300 bg-white transition checked:border-brand-red checked:bg-brand-red checked:shadow-[inset_0_0_0_3px_#fff] focus-visible:ring-2 focus-visible:ring-brand-red/25 disabled:opacity-50";
 
 export const CHECKOUT_ALERT_CLASS = "rounded-[15px]";
 

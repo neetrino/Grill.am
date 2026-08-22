@@ -9,6 +9,7 @@ import {
   CHECKOUT_PICKUP_BRANCH_ROW_DEFAULT_CLASS,
   CHECKOUT_PICKUP_BRANCH_ROW_SELECTED_CLASS,
   CHECKOUT_PICKUP_TRIGGER_CLASS,
+  CHECKOUT_RADIO_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import type { StorePickupOption } from "@/features/stores/yandex-map-embed";
 
@@ -154,7 +155,7 @@ function ExpandedPickupBranchList({
                 value={store.id}
                 checked={selected}
                 onChange={() => onSelect(store.id)}
-                className="mr-2.5 shrink-0 accent-brand-red"
+                className={`mr-2.5 ${CHECKOUT_RADIO_CLASS}`}
                 disabled={pending}
                 required
                 suppressHydrationWarning
