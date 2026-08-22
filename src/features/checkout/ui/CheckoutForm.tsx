@@ -28,7 +28,7 @@ import {
   resolveCheckoutDeliveryCity,
 } from "@/features/checkout/domain/checkout-delivery-cities";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
-import { meetsMinimumOrder } from "@/features/settings/domain/store-settings";
+import { meetsStorefrontMinimumOrder } from "@/features/settings/domain/store-settings";
 import type { StorePickupOption } from "@/features/stores/yandex-map-embed";
 import { createId } from "@/lib/id";
 import type { Locale } from "@/lib/i18n/config";
@@ -281,7 +281,11 @@ export function CheckoutForm({
   const shippingAmount = shippingMethod === "pickup" ? 0 : quotedDelivery;
   const totalAmount =
     Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
-  const meetsMinimum = meetsMinimumOrder(subtotalAmount, minimumOrderAmount);
+  const meetsMinimum = meetsStorefrontMinimumOrder(
+    subtotalAmount,
+    minimumOrderAmount,
+    shippingMethod,
+  );
   const minimumOrderMessage =
     !meetsMinimum && minimumOrderAmount != null
       ? labels.minimumOrder.replace(

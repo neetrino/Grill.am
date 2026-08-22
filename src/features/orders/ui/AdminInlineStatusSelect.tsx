@@ -30,6 +30,7 @@ import { changePaymentStatusAction } from "@/features/orders/application/change-
 import { type OrderStatus } from "@/features/orders/domain/order-status";
 import { type PaymentStatus } from "@/features/orders/domain/payment-status";
 import { AdminInlineStatusMenu } from "@/features/orders/ui/AdminInlineStatusMenu";
+import { resolveAdminPaymentStatusError } from "@/features/orders/ui/admin-payment-status-error";
 import { buildAdminStatusChangeConfirm } from "@/features/orders/ui/admin-status-change-confirm";
 import {
   adminOrderStatusLabel,
@@ -203,7 +204,15 @@ export function AdminInlineStatusSelect({
 
         if (!result.ok) {
           setDisplayValue(previous);
-          setError(result.error.message);
+          setError(
+            kind === "payment"
+              ? resolveAdminPaymentStatusError(
+                  dictionary.orders.paymentRefundErrors,
+                  result.error.code,
+                  result.error.message,
+                )
+              : result.error.message,
+          );
           return;
         }
 
@@ -264,7 +273,7 @@ export function AdminInlineStatusSelect({
       {panel}
 
       {error ? (
-        <p className="mt-1 whitespace-nowrap text-[10px] text-red-700">
+        <p className="mt-1 max-w-[16rem] text-left text-[10px] leading-snug text-red-700">
           {error}
         </p>
       ) : null}

@@ -261,5 +261,6 @@ describe("ARCA HTTP client Accept / transport", () => {
       (fetchMock.mock.calls[0]?.[1] as RequestInit).body,
     );
     expect(body).toContain("amount=250000");
+    expect(body).toContain("currency=051");
   });
 });

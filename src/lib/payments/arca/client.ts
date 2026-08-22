@@ -262,6 +262,7 @@ export function createArcaPaymentClient(
         password: config.password,
         orderId: input.orderId,
         amount: formatArcaAmountParam(input.amountMinorUnits),
+        currency: config.currencyCode,
         language: input.language ?? config.language,
       });
       interpretMutationPayload(raw, "refund");

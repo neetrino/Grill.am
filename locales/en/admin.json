@@ -295,6 +295,17 @@
       "confirm": "Confirm",
       "back": "Back"
     },
+    "paymentRefundErrors": {
+      "accessDenied": "The bank API login cannot reverse or refund. Ask the bank to enable reverse and refund for this merchant user.",
+      "invalidState": "The bank refused this refund (payment state or amount). Check the payment in the ARCA cabinet.",
+      "orderNotFound": "The bank did not find this payment.",
+      "notAllowed": "This payment cannot be refunded through the bank in its current state.",
+      "unconfirmed": "The bank accepted the refund request, but the status is not updated yet. Wait a minute and try again.",
+      "inProgress": "A refund is already in progress. Wait and refresh.",
+      "amountMismatch": "The amount at the bank does not match this payment.",
+      "rateLimited": "Too many refund attempts. Try again shortly.",
+      "generic": "Unable to refund this payment right now."
+    },
     "reviewBanner": {
       "title": "Requires review",
       "body": "Payment was received (CAPTURED). Fulfillment is blocked — allocate stock, confirm delayed fulfillment, cancel with external refund, or escalate to finance. Do not mark payment as failed."
@@ -536,10 +547,10 @@
     "deleteNamed": "Delete {city}",
     "minimumOrder": {
       "title": "Minimum order",
-      "subtitle": "Customers cannot place an order below this cart subtotal",
+      "subtitle": "Applies to delivery only. Take Away orders have no minimum.",
       "amountAria": "Minimum order amount in AMD",
-      "empty": "No minimum. Leave empty or clear to allow any order size.",
-      "active": "Active minimum: {amount}.",
+      "empty": "No delivery minimum. Leave empty or clear to allow any delivery order size.",
+      "active": "Active delivery minimum: {amount}. Take Away has no minimum.",
       "cleared": "Minimum order cleared.",
       "setTo": "Minimum order set to {amount}.",
       "invalid": "Enter a whole number of at least 1 AMD, or leave empty."

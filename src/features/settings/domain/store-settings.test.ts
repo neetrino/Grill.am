@@ -6,6 +6,7 @@ import {
   DEFAULT_REVENUE_STATUSES,
   listEnabledCurrencies,
   meetsMinimumOrder,
+  meetsStorefrontMinimumOrder,
   parseEnabledCurrencies,
   parseFxRates,
   parseMaintenance,
@@ -59,6 +60,12 @@ describe("store settings parsers", () => {
     expect(meetsMinimumOrder(1000, 0)).toBe(true);
     expect(meetsMinimumOrder(5000, 5000)).toBe(true);
     expect(meetsMinimumOrder(4999, 5000)).toBe(false);
+  });
+
+  it("skips the storefront minimum for pickup and keeps it for delivery", () => {
+    expect(meetsStorefrontMinimumOrder(1100, 2000, "pickup")).toBe(true);
+    expect(meetsStorefrontMinimumOrder(1100, 2000, "delivery")).toBe(false);
+    expect(meetsStorefrontMinimumOrder(2000, 2000, "delivery")).toBe(true);
   });
 
   it("defaults enabled currencies and rejects an empty set", () => {
