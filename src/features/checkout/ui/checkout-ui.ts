@@ -15,6 +15,14 @@ export const CHECKOUT_FIELD_CLASS =
 export const CHECKOUT_OPTION_BASE_CLASS =
   "flex cursor-pointer items-center rounded-[15px] border-2 p-4 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none";
 
+/** Compact option row for side-by-side method toggles and pickup branches. */
+export const CHECKOUT_OPTION_COMPACT_CLASS =
+  "flex h-full cursor-pointer items-center rounded-[15px] border-2 px-3 py-2.5 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none";
+
+/** About four branch rows; additional branches scroll inside the card. */
+export const CHECKOUT_PICKUP_BRANCH_LIST_CLASS =
+  "max-h-[13.25rem] space-y-2 overflow-y-auto overscroll-contain pr-0.5";
+
 export const CHECKOUT_OPTION_SELECTED_CLASS =
   "border-brand-red bg-brand-red/10";
 
