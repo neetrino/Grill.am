@@ -1,5 +1,7 @@
 "use client";
 
+import { Truck, UserRound, type LucideIcon } from "lucide-react";
+
 import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import {
   CHECKOUT_FIELD_CLASS,
@@ -70,6 +72,7 @@ function ShippingMethodToggles({
         selected={shippingMethod === "pickup"}
         value="pickup"
         disabled={pending}
+        icon={UserRound}
         title={labels.storePickup}
         description={labels.storePickupDescription}
         onSelect={() => onShippingMethodChange("pickup")}
@@ -78,6 +81,7 @@ function ShippingMethodToggles({
         selected={shippingMethod === "delivery"}
         value="delivery"
         disabled={pending || deliveryDisabled}
+        icon={Truck}
         title={labels.delivery}
         description={labels.deliveryDescription}
         onSelect={() => onShippingMethodChange("delivery")}
@@ -90,6 +94,7 @@ function MethodToggle({
   selected,
   value,
   disabled,
+  icon: Icon,
   title,
   description,
   onSelect,
@@ -97,6 +102,7 @@ function MethodToggle({
   selected: boolean;
   value: "pickup" | "delivery";
   disabled: boolean;
+  icon: LucideIcon;
   title: string;
   description: string;
   onSelect: () => void;
@@ -114,7 +120,15 @@ function MethodToggle({
         suppressHydrationWarning
       />
       <span className="min-w-0">
-        <span className="block font-medium text-gray-900">{title}</span>
+        <span className="flex items-center gap-2 font-medium text-gray-900">
+          <Icon
+            className={`size-5 shrink-0 ${
+              selected ? "text-brand-red" : "text-gray-500"
+            }`}
+            aria-hidden
+          />
+          {title}
+        </span>
         <span className="mt-0.5 block text-xs leading-snug text-gray-600">
           {description}
         </span>
