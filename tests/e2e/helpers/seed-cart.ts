@@ -159,12 +159,9 @@ export async function fillCheckoutContact(
     page.locator('input[name="shippingMethod"][value="pickup"]'),
   ).toBeChecked();
 
-  const branch = page.getByRole("combobox", { name: /^branch$/i });
-  await expect(branch).toBeVisible();
-  await branch.click();
-  const firstBranch = page.getByRole("option").first();
+  const firstBranch = page.locator('input[name="pickupStoreId"]').first();
   await expect(firstBranch).toBeVisible();
-  await firstBranch.click();
+  await firstBranch.check();
 }
 
 export async function selectCod(page: Page): Promise<void> {
