@@ -2,13 +2,13 @@
 
 import { Truck, UserRound, type LucideIcon } from "lucide-react";
 
+import { CheckoutPickupBranchList } from "@/features/checkout/ui/CheckoutPickupBranchList";
 import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import {
   CHECKOUT_FIELD_CLASS,
   CHECKOUT_OPTION_COMPACT_CLASS,
   CHECKOUT_OPTION_DEFAULT_CLASS,
   CHECKOUT_OPTION_SELECTED_CLASS,
-  CHECKOUT_PICKUP_BRANCH_LIST_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
   CHECKOUT_SECTION_TITLE_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
@@ -163,7 +163,7 @@ export function CheckoutFulfillmentSection({
         onShippingMethodChange={onShippingMethodChange}
       />
       {shippingMethod === "pickup" ? (
-        <PickupBranchList
+        <CheckoutPickupBranchList
           labels={labels}
           pending={pending}
           pickupStores={pickupStores}
@@ -181,57 +181,6 @@ export function CheckoutFulfillmentSection({
         />
       )}
     </section>
-  );
-}
-
-function PickupBranchList({
-  labels,
-  pending,
-  pickupStores,
-  pickupStoreId,
-  onPickupStoreChange,
-}: {
-  labels: CheckoutFulfillmentLabels;
-  pending: boolean;
-  pickupStores: StorePickupOption[];
-  pickupStoreId: string;
-  onPickupStoreChange: (storeId: string) => void;
-}) {
-  return (
-    <div className="mt-5">
-      <p className="sr-only">{labels.pickupBranch}</p>
-      <div
-        role="radiogroup"
-        aria-label={labels.pickupBranch}
-        className={CHECKOUT_PICKUP_BRANCH_LIST_CLASS}
-      >
-        {pickupStores.length === 0 ? (
-          <p className="text-sm text-gray-500">{labels.selectPickupBranch}</p>
-        ) : (
-          pickupStores.map((store) => {
-            const selected = pickupStoreId === store.id;
-            return (
-              <label key={store.id} className={compactOptionClass(selected)}>
-                <input
-                  type="radio"
-                  name="pickupStoreId"
-                  value={store.id}
-                  checked={selected}
-                  onChange={() => onPickupStoreChange(store.id)}
-                  className="mr-3 shrink-0 accent-brand-red"
-                  disabled={pending}
-                  required
-                  suppressHydrationWarning
-                />
-                <span className="min-w-0 text-sm font-medium text-gray-900">
-                  {store.label}
-                </span>
-              </label>
-            );
-          })
-        )}
-      </div>
-    </div>
   );
 }
 
