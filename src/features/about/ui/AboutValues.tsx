@@ -53,7 +53,7 @@ export function AboutValues({ copy }: AboutValuesProps) {
             const theme = VALUE_THEMES[index] ?? VALUE_THEMES[0];
             const from = VALUE_FROM[index] ?? "up";
             return (
-              <AboutStaggerItem key={item.title} from={from}>
+              <AboutStaggerItem key={`${item.title}-${index}`} from={from}>
                 <ValueBlock
                   icon={
                     <Icon className="size-6" strokeWidth={1.75} aria-hidden />
@@ -91,10 +91,18 @@ function ValueBlock({
       >
         {icon}
       </div>
-      <h3 className="mt-5 text-lg font-bold sm:text-xl">{title}</h3>
-      <p className={`mt-2 text-sm leading-relaxed sm:text-base ${theme.body}`}>
-        {body}
-      </p>
+      {title ? (
+        <>
+          <h3 className="mt-5 text-lg font-bold sm:text-xl">{title}</h3>
+          <p className={`mt-2 text-sm leading-relaxed sm:text-base ${theme.body}`}>
+            {body}
+          </p>
+        </>
+      ) : (
+        <p className={`mt-5 text-base leading-relaxed font-semibold sm:text-lg ${theme.body}`}>
+          {body}
+        </p>
+      )}
     </div>
   );
 }
