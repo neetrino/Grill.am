@@ -3,6 +3,7 @@ import { Geist_Mono, Montserrat } from "next/font/google";
 
 import { notoSansArmenian, notoSerifArmenian } from "@/lib/fonts/armenian";
 import { mirageBoldFree } from "@/lib/fonts/mirage-bold";
+import { createRootMetadata } from "@/lib/seo/site-metadata";
 
 import "./globals.css";
 
@@ -17,19 +18,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Grill.am",
-    template: "%s · Grill.am",
-  },
-  description: "Fresh grilled food delivery in Armenia",
-  icons: {
-    icon: [
-      { url: "/favicon.ico", type: "image/x-icon", sizes: "128x128" },
-      { url: "/favicon.png", type: "image/png", sizes: "128x128" },
-    ],
-  },
-};
+export function generateMetadata(): Metadata {
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://grill.am";
+  return createRootMetadata(appUrl);
+}
 
 export default function RootLayout({
   children,

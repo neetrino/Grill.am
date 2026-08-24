@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { CrispChat } from "@/components/layout/CrispChat";
@@ -5,6 +6,7 @@ import { LocaleClientProviders } from "@/components/providers/LocaleClientProvid
 import { getEnv } from "@/config/env";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { createLocaleMetadata } from "@/lib/seo/site-metadata";
 
 type LocaleLayoutProps = {
   children: React.ReactNode;
@@ -13,6 +15,23 @@ type LocaleLayoutProps = {
 
 export function generateStaticParams(): Array<{ locale: Locale }> {
   return locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: LocaleLayoutProps): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+
+  if (!isLocale(rawLocale)) {
+    return {};
+  }
+
+  const dictionary = getDictionary(rawLocale);
+  const description = `${dictionary.home.subtitle} — ${dictionary.brand}`;
+  const appUrl =
+    getEnv().NEXT_PUBLIC_APP_URL.trim() || "https://grill.am";
+
+  return createLocaleMetadata(rawLocale, description, appUrl);
 }
 
 export default async function LocaleLayout({
