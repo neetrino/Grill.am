@@ -1,5 +1,4 @@
 import { AboutBandDivider } from "@/features/about/ui/AboutBandDivider";
-import { AboutCta } from "@/features/about/ui/AboutCta";
 import { AboutHero } from "@/features/about/ui/AboutHero";
 import { AboutMotionShell } from "@/features/about/ui/AboutMotionShell";
 import { AboutStory } from "@/features/about/ui/AboutStory";
@@ -30,8 +29,6 @@ export function AboutPageView({ copy, locale }: AboutPageViewProps) {
           <AboutTimeline copy={copy.timeline} />
           <AboutBandDivider />
           <AboutValues copy={copy.values} />
-          <AboutBandDivider />
-          <AboutCta copy={copy.cta} locale={locale} />
         </div>
       </div>
     </AboutMotionShell>
