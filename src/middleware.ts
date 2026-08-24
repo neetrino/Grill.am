@@ -11,6 +11,9 @@ function nextWithPathname(request: NextRequest, pathname: string): NextResponse 
   });
 }
 
+const PUBLIC_ASSET =
+  /\.(?:ico|png|jpg|jpeg|webp|svg|gif|txt|xml|json|webmanifest)$/i;
+
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
@@ -18,7 +21,11 @@ export function middleware(request: NextRequest): NextResponse {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/wc-api") ||
-    pathname.includes(".")
+    pathname.startsWith("/assets/") ||
+    pathname === "/og-image.png" ||
+    pathname === "/apple-icon.png" ||
+    pathname === "/icon.png" ||
+    PUBLIC_ASSET.test(pathname)
   ) {
     return nextWithPathname(request, pathname);
   }
@@ -38,5 +45,7 @@ export function middleware(request: NextRequest): NextResponse {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|og-image.png|apple-icon.png|icon.png|assets/).*)",
+  ],
 };
