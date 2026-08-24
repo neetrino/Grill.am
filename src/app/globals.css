@@ -67,10 +67,17 @@
   --color-brand-cream: var(--brand-cream);
   --color-brand-ink: var(--brand-ink);
   --color-brand-surface: var(--brand-surface);
-  --font-sans: var(--font-montserrat);
+  --font-sans: var(--font-montserrat), var(--font-noto-sans-armenian), ui-sans-serif,
+    system-ui, sans-serif;
   --font-display: var(--font-display);
   --font-mirage: var(--font-mirage-bold);
+  --font-armenian-display: var(--font-noto-serif-armenian), var(--font-noto-sans-armenian),
+    ui-serif, Georgia, serif;
+  --font-armenian-sans: var(--font-noto-sans-armenian), var(--font-montserrat), ui-sans-serif,
+    sans-serif;
   --font-mono: var(--font-geist-mono);
+  --font-auth-display: var(--font-noto-serif-armenian), var(--font-noto-sans-armenian),
+    ui-serif, Georgia, serif;
 }
 
 html {
@@ -80,7 +87,12 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-montserrat), ui-sans-serif, sans-serif;
+  font-family: var(--font-montserrat), var(--font-noto-sans-armenian), ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+body.auth-page-active {
+  background-color: var(--brand-ink);
 }
 
 /* Photos: no drag / blue selection highlight; surrounding text stays copyable. */

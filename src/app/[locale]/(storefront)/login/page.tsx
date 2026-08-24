@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
+import { AuthPosterShell } from "@/features/auth/ui/AuthPosterShell";
 import { LoginForm } from "@/features/auth/ui/LoginForm";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -17,26 +18,17 @@ export default async function LoginPage({ params }: LoginPageProps) {
   }
 
   const dictionary = getDictionary(rawLocale);
+  const auth = dictionary.auth;
 
   return (
-    <section className="mx-auto w-full max-w-lg py-2 sm:py-4">
-      <div className="rounded-[15px] bg-white px-4 py-12 shadow-[0_8px_28px_rgba(0,0,0,0.08)] sm:px-5 sm:py-10 lg:px-6">
-        <div className="mx-auto w-full max-w-sm">
-          <div className="mb-8 sm:mb-9">
-            <h1 className="text-[26px] leading-tight font-black uppercase sm:text-[30px] sm:leading-[1.2]">
-              <span className="text-brand-red">
-                {dictionary.auth.loginTitleLead}
-              </span>{" "}
-              <span className="text-brand-yellow">
-                {dictionary.auth.loginTitleAccent}
-              </span>
-            </h1>
-          </div>
-          <Suspense fallback={<p className="text-sm text-gray-500">…</p>}>
-            <LoginForm locale={rawLocale} dictionary={dictionary.auth} />
-          </Suspense>
-        </div>
-      </div>
-    </section>
+    <AuthPosterShell
+      mode="login"
+      formLead={auth.loginTitleLead}
+      formAccent={auth.loginTitleAccent}
+    >
+      <Suspense fallback={<p className="text-sm text-brand-ink/50">…</p>}>
+        <LoginForm locale={rawLocale} dictionary={auth} />
+      </Suspense>
+    </AuthPosterShell>
   );
 }

@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { isAuthSurfacePath } from "@/lib/routes/auth-surface-path";
+
 type FooterCornerShellProps = {
   children: ReactNode;
 };
@@ -21,6 +23,7 @@ const GRAY_SHELL_PATTERNS = [
  */
 export function FooterCornerShell({ children }: FooterCornerShellProps) {
   const pathname = usePathname() ?? "";
+  const isAuthPage = isAuthSurfacePath(pathname);
   const grayCorners = GRAY_SHELL_PATTERNS.some((pattern) =>
     pattern.test(pathname),
   );
@@ -28,7 +31,11 @@ export function FooterCornerShell({ children }: FooterCornerShellProps) {
   return (
     <div
       className={`mt-auto hidden lg:block ${
-        grayCorners ? "bg-[#f2f0f0]" : "bg-white"
+        isAuthPage
+          ? "storefront-bleed bg-transparent"
+          : grayCorners
+            ? "bg-[#f2f0f0]"
+            : "bg-white"
       }`}
     >
       {children}

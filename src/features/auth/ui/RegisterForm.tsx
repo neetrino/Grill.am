@@ -3,9 +3,13 @@
 import { useActionState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 import { registerAction } from "@/features/auth/register-action";
 import { PASSWORD_REQUIREMENTS_ERROR } from "@/features/auth/schemas";
+import type { AuthActionState } from "@/features/auth/ui/auth-action-state";
+import {
+  AuthAnimatedInput,
+  AuthMotionField,
+} from "@/features/auth/ui/AuthMotionField";
 import { AuthTermsAgreement } from "@/features/auth/ui/AuthTermsAgreement";
 import {
   AUTH_BTN_PRIMARY_CLASS,
@@ -43,10 +47,13 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
       className="flex flex-col gap-5"
       noValidate
     >
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <AuthMotionField
+        index={0}
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2"
+      >
         <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
           {dictionary.firstName}
-          <input
+          <AuthAnimatedInput
             required
             name="firstName"
             autoComplete="given-name"
@@ -57,7 +64,7 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
           {dictionary.lastName}
-          <input
+          <AuthAnimatedInput
             required
             name="lastName"
             autoComplete="family-name"
@@ -66,12 +73,15 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
             className={authFieldClassName(Boolean(fieldErrors?.lastName))}
           />
         </label>
-      </div>
+      </AuthMotionField>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <AuthMotionField
+        index={1}
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2"
+      >
         <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
           {dictionary.email}
-          <input
+          <AuthAnimatedInput
             required
             name="email"
             type="email"
@@ -83,7 +93,7 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
           {dictionary.phone}
-          <input
+          <AuthAnimatedInput
             required
             name="phone"
             type="tel"
@@ -93,9 +103,12 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
             className={authFieldClassName(Boolean(fieldErrors?.phone))}
           />
         </label>
-      </div>
+      </AuthMotionField>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <AuthMotionField
+        index={2}
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2"
+      >
         <PasswordField
           name="password"
           label={dictionary.password}
@@ -105,7 +118,6 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
           defaultValue={values?.password}
           invalid={Boolean(fieldErrors?.password)}
         />
-
         <PasswordField
           name="confirmPassword"
           label={dictionary.confirmPassword}
@@ -115,47 +127,61 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
           defaultValue={values?.confirmPassword}
           invalid={Boolean(fieldErrors?.confirmPassword)}
         />
-      </div>
+      </AuthMotionField>
 
       {showPasswordRequirements ? (
-        <PasswordRequirementsDisclaimer
-          title={dictionary.passwordRequirementsTitle}
-          rules={dictionary.passwordRequirements}
-        />
+        <AuthMotionField index={3}>
+          <PasswordRequirementsDisclaimer
+            title={dictionary.passwordRequirementsTitle}
+            rules={dictionary.passwordRequirements}
+          />
+        </AuthMotionField>
       ) : null}
 
       {alertError ? (
-        <p
-          role="alert"
-          className="rounded-[15px] border border-red-200 bg-red-50 p-3 text-sm text-red-600"
-        >
-          {alertError}
-        </p>
+        <AuthMotionField index={3}>
+          <p
+            role="alert"
+            className="rounded-[10px] border-2 border-red-700 bg-red-50 p-3 text-sm font-medium text-red-800"
+          >
+            {alertError}
+          </p>
+        </AuthMotionField>
       ) : null}
 
-      <AuthTermsAgreement
-        locale={locale}
-        dictionary={dictionary}
-        defaultChecked={values?.acceptTerms === "on"}
-        invalid={Boolean(fieldErrors?.acceptTerms)}
-      />
+      <AuthMotionField index={3}>
+        <AuthTermsAgreement
+          locale={locale}
+          dictionary={dictionary}
+          defaultChecked={values?.acceptTerms === "on"}
+          invalid={Boolean(fieldErrors?.acceptTerms)}
+        />
+      </AuthMotionField>
 
-      <button type="submit" disabled={isPending} className={AUTH_BTN_PRIMARY_CLASS}>
-        {isPending
-          ? dictionary.submittingRegister
-          : dictionary.submitRegister}
-      </button>
-
-      <p className="text-center text-sm text-gray-600">
-        {dictionary.hasAccount}{" "}
-        <AppLink
-          href={`/${locale}/login`}
-          prefetchPolicy="intent"
-          className={AUTH_LINK_CLASS}
+      <AuthMotionField index={4}>
+        <button
+          type="submit"
+          disabled={isPending}
+          className={AUTH_BTN_PRIMARY_CLASS}
         >
-          {dictionary.signInLink}
-        </AppLink>
-      </p>
+          {isPending
+            ? dictionary.submittingRegister
+            : dictionary.submitRegister}
+        </button>
+      </AuthMotionField>
+
+      <AuthMotionField index={5}>
+        <p className="text-center text-sm text-gray-600">
+          {dictionary.hasAccount}{" "}
+          <AppLink
+            href={`/${locale}/login`}
+            prefetchPolicy="intent"
+            className={AUTH_LINK_CLASS}
+          >
+            {dictionary.signInLink}
+          </AppLink>
+        </p>
+      </AuthMotionField>
     </form>
   );
 }
