@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 
 import { isLocale } from "@/lib/i18n/config";
+import { isAuthSurfacePath } from "@/lib/routes/auth-surface-path";
 
 type StorefrontSurfaceProps = {
   children: ReactNode;
@@ -13,6 +14,8 @@ const SURFACE_WHITE = "#ffffff";
 const SURFACE_GRAY = "#f2f0f0";
 /** Matches footer `lg:block` / bottom nav `lg:hidden`; mirrors `--breakpoint-lg`. */
 const DESKTOP_CHROME_MQ = "(min-width: 1025px)";
+
+const SURFACE_INK = "#071014";
 
 /** White page wash on home + marketing pages — matches content and mobile bottom gap. */
 function isWhiteSurfacePath(pathname: string): boolean {
@@ -41,6 +44,7 @@ function isWhiteSurfacePath(pathname: string): boolean {
 export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
   const pathname = usePathname() ?? "";
   const isWhitePage = isWhiteSurfacePath(pathname);
+  const isAuthPage = isAuthSurfacePath(pathname);
   const mobileSurface = isWhitePage ? SURFACE_WHITE : SURFACE_GRAY;
 
   useEffect(() => {
@@ -48,6 +52,10 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
     const mq = window.matchMedia(DESKTOP_CHROME_MQ);
 
     function syncBody(): void {
+      if (isAuthPage || document.body.classList.contains("auth-page-active")) {
+        document.body.style.backgroundColor = SURFACE_INK;
+        return;
+      }
       document.body.style.backgroundColor = mq.matches
         ? SURFACE_WHITE
         : mobileSurface;
@@ -59,12 +67,14 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
       mq.removeEventListener("change", syncBody);
       document.body.style.backgroundColor = previous;
     };
-  }, [mobileSurface]);
+  }, [isAuthPage, mobileSurface]);
 
   return (
     <div
-      className={`flex min-h-dvh flex-1 flex-col overflow-x-clip bg-white ${
-        isWhitePage ? "" : "max-lg:bg-[#f2f0f0]"
+      className={`flex min-h-dvh flex-1 flex-col overflow-x-clip ${
+        isAuthPage
+          ? "relative z-[2] bg-transparent"
+          : `bg-white ${isWhitePage ? "" : "max-lg:bg-[#f2f0f0]"}`
       }`}
     >
       {children}

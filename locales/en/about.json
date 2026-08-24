@@ -1,15 +1,79 @@
 {
-  "eyebrow": "About us",
-  "titleLead": "Flavor in the fire,",
-  "titleAccent": "our story from the heart",
-  "paragraphs": [
-    "Welcome to the tastiest grill site — our dishes are made only from fresh local meat, and skilled couriers deliver them hot and fast.",
-    "Grill.am is one of the longest-running food chains on the Armenian market, preparing meals with the most delicious, high-quality meat products.",
-    "Since 2013-05-20 we have been operating under the grill.am brand, which is also our website address.",
-    "We promise: the fastest and tastiest dishes are waiting for you on our menu.",
-    "We are at 9 locations — Khorenatsi 95/2, Khorenatsi 88, Pushkin 43/3, Totovents 2/7, Baghramyan 50/5, Admiral Isakov 27, Andranik 94/4, Sebastia 16/1, Tigran Petrosyan 13/8 — and we also offer fast, delicious delivery."
-  ],
-  "badgeLabel": "Since",
-  "badgeYear": "2013",
-  "heroImageAlt": "Grilled skewers with fresh bread and sauces"
+  "hero": {
+    "brand": "Grill.am",
+    "title": "Flavor in the fire",
+    "lead": "Fresh meat, real flame, and hot delivery — since 2013.",
+    "primaryCta": "View menu",
+    "secondaryCta": "Our stores",
+    "imageAlt": "Grilled skewers with fresh bread and sauces"
+  },
+  "story": {
+    "eyebrow": "Our story",
+    "title": "From the heart to the table",
+    "cards": [
+      {
+        "title": "Welcome",
+        "body": "Welcome to the tastiest grill site. Flavor starts in the heart and lands on your table."
+      },
+      {
+        "title": "Fresh meat",
+        "body": "Every dish is made only from fresh local meat — no compromise on quality."
+      },
+      {
+        "title": "Fast delivery",
+        "body": "Skilled couriers bring your order hot and fast — home or office."
+      },
+      {
+        "title": "Experience",
+        "body": "A long-standing Armenian food chain built on premium meat products."
+      },
+      {
+        "title": "Tasty menu",
+        "body": "The fastest and tastiest dishes are waiting for you on our menu."
+      }
+    ]
+  },
+  "timeline": {
+    "title": "The path of fire",
+    "items": [
+      {
+        "year": "2013",
+        "title": "The first flame",
+        "body": "On May 20 we began operating under the grill.am brand — putting flavor at the center of everything."
+      },
+      {
+        "year": "Growth",
+        "title": "Network expansion",
+        "body": "We opened new locations across the city so grill flavor stays close to every neighborhood."
+      },
+      {
+        "year": "Today",
+        "title": "9 addresses + delivery",
+        "body": "We operate in nine places and deliver hot, delicious food to your home or office."
+      }
+    ]
+  },
+  "values": {
+    "title": "What sets us apart",
+    "items": [
+      {
+        "title": "Real fire",
+        "body": "Dishes are cooked on the grill — with the true taste of smoke and flame."
+      },
+      {
+        "title": "Fresh local meat",
+        "body": "Only fresh, high-quality meat products — no compromise."
+      },
+      {
+        "title": "Fast and hot",
+        "body": "Skilled couriers make sure your order arrives hot and on time."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready for the taste of fire?",
+    "lead": "Open the menu or find a store near you.",
+    "menuLabel": "Menu",
+    "storesLabel": "Stores"
+  }
 }

@@ -1,91 +1,105 @@
-import Image from "next/image";
-import { Flame, Star } from "lucide-react";
+"use client";
 
+import Image from "next/image";
+import { motion, useReducedMotion } from "motion/react";
+
+import { AppLink } from "@/components/ui/AppLink";
 import { ABOUT_HERO_IMAGE } from "@/features/about/content/team-members";
+import { ABOUT_SECTION_SURFACE } from "@/features/about/ui/about-section-surface";
+import { AboutHeroMotion } from "@/features/about/ui/AboutReveal";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AboutHeroProps = {
-  copy: Dictionary["about"];
+  copy: Dictionary["about"]["hero"];
+  locale: Locale;
 };
 
-function AboutFlameIcon({ className }: { className?: string }) {
-  return (
-    <Flame
-      className={className}
-      fill="currentColor"
-      strokeWidth={1.5}
-      aria-hidden
-    />
-  );
-}
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-function AboutSinceBadge({ label, year }: { label: string; year: string }) {
-  return (
-    <div className="absolute bottom-2 left-2 z-20 flex size-[80px] flex-col items-center justify-center rounded-full border-2 border-white bg-brand-red text-white sm:bottom-5 sm:left-5 sm:size-[124px] sm:border-[3px]">
-      <AboutFlameIcon className="mb-0.5 size-3 text-brand-yellow sm:size-5" />
-      <span className="text-[8px] font-semibold tracking-[0.12em] uppercase opacity-90 sm:text-[11px]">
-        {label}
-      </span>
-      <span className="text-[20px] leading-none font-black tracking-tight sm:text-[32px]">
-        {year}
-      </span>
-      <span className="mt-1 flex items-center gap-0.5 sm:mt-1.5" aria-hidden>
-        <Star
-          className="size-2 fill-brand-yellow text-brand-yellow sm:size-3"
-          strokeWidth={0}
-        />
-        <Star
-          className="mt-0.5 size-2.5 fill-brand-yellow text-brand-yellow sm:size-4"
-          strokeWidth={0}
-        />
-        <Star
-          className="size-2 fill-brand-yellow text-brand-yellow sm:size-3"
-          strokeWidth={0}
-        />
-      </span>
-    </div>
-  );
-}
+export function AboutHero({ copy, locale }: AboutHeroProps) {
+  const menuHref = `/${locale}/products`;
+  const storesHref = `/${locale}/stores`;
+  const reduceMotion = useReducedMotion();
 
-export function AboutHero({ copy }: AboutHeroProps) {
   return (
-    <section className="bg-white pt-6 pb-10 sm:pt-8 sm:pb-12 md:pt-8 md:pb-14 lg:py-16">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
-        <div className="mb-8 flex flex-col items-start gap-3 sm:mb-10">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-brand-cream px-4 py-2 text-xs font-bold tracking-[0.14em] text-[#5c3d1e] uppercase sm:text-[13px]">
-            <AboutFlameIcon className="size-3.5 text-[#e85a1c]" />
-            {copy.eyebrow}
-          </span>
+    <section
+      className={`relative isolate min-h-[min(92vh,820px)] overflow-hidden bg-brand-ink ${ABOUT_SECTION_SURFACE}`}
+    >
+      <motion.div
+        data-about-hero-media
+        className="absolute inset-0"
+        initial={reduceMotion ? false : { scale: 1.18, opacity: 0.35 }}
+        animate={{ scale: 1.08, opacity: 1 }}
+        transition={{ duration: 1.6, ease: EASE }}
+      >
+        <Image
+          src={ABOUT_HERO_IMAGE}
+          alt={copy.imageAlt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </motion.div>
 
-          <h1 className="text-[22px] leading-[1.2] font-black tracking-tight text-brand-ink uppercase sm:whitespace-nowrap sm:text-[26px] md:text-[28px] lg:text-[40px]">
-            <span className="block sm:inline">{copy.titleLead}</span>{" "}
-            <span className="block text-brand-red sm:inline">
-              {copy.titleAccent}
-            </span>
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-brand-ink/72 via-brand-ink/35 to-transparent"
+        aria-hidden
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, delay: 0.15, ease: EASE }}
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-brand-ink/55 via-transparent to-brand-ink/20"
+        aria-hidden
+      />
+
+      <motion.div
+        className="pointer-events-none absolute -right-16 bottom-0 font-mirage text-[clamp(120px,28vw,320px)] leading-none text-white/[0.06] uppercase select-none"
+        aria-hidden
+        initial={reduceMotion ? false : { opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1.4, delay: 0.35, ease: EASE }}
+      >
+        Grill
+      </motion.div>
+
+      <div className="page-container relative z-10 flex min-h-[min(92vh,820px)] flex-col justify-end pb-14 pt-28 sm:pb-16 sm:pt-32 lg:pb-20 lg:pt-36">
+        <AboutHeroMotion>
+          <p className="font-mirage text-[clamp(2.75rem,8vw,5.5rem)] leading-[0.9] tracking-tight text-white">
+            {copy.brand}
+          </p>
+        </AboutHeroMotion>
+
+        <AboutHeroMotion delay={0.14} className="mt-5 max-w-xl sm:mt-6">
+          <h1 className="text-[clamp(1.5rem,3.5vw,2.35rem)] font-black leading-tight tracking-tight text-white uppercase">
+            {copy.title}
           </h1>
-        </div>
+          <p className="mt-3 max-w-md text-base leading-relaxed text-white/80 sm:text-lg">
+            {copy.lead}
+          </p>
+        </AboutHeroMotion>
 
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-stretch lg:gap-10 xl:gap-12">
-          <div className="relative w-full shrink-0 pt-[66%] lg:w-1/2 lg:pt-0">
-            <div className="absolute inset-0 overflow-hidden rounded-[24px] sm:rounded-[28px]">
-              <Image
-                src={ABOUT_HERO_IMAGE}
-                alt={copy.heroImageAlt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center"
-                priority
-              />
-              <AboutSinceBadge label={copy.badgeLabel} year={copy.badgeYear} />
-            </div>
-          </div>
-
-          <div className="w-full space-y-4 text-base leading-7 text-[#2a2a2a] sm:text-[17px] sm:leading-8 lg:w-1/2">
-            {copy.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-        </div>
+        <AboutHeroMotion
+          delay={0.28}
+          className="mt-8 flex flex-wrap gap-3 sm:mt-10"
+        >
+          <AppLink
+            href={menuHref}
+            prefetchPolicy="intent"
+            className="inline-flex h-12 min-w-[160px] items-center justify-center rounded-full bg-brand-red px-7 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow"
+          >
+            {copy.primaryCta}
+          </AppLink>
+          <AppLink
+            href={storesHref}
+            prefetchPolicy="intent"
+            className="inline-flex h-12 min-w-[160px] items-center justify-center rounded-full border border-white/35 bg-white/5 px-7 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-white/60 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow"
+          >
+            {copy.secondaryCta}
+          </AppLink>
+        </AboutHeroMotion>
       </div>
     </section>
   );

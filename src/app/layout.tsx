@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Montserrat } from "next/font/google";
 
+import { notoSansArmenian, notoSerifArmenian } from "@/lib/fonts/armenian";
 import { mirageBoldFree } from "@/lib/fonts/mirage-bold";
 
 import "./globals.css";
@@ -38,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="hy" className="h-full" suppressHydrationWarning>
       <body
-        className={`${montserrat.variable} ${geistMono.variable} ${mirageBoldFree.variable} flex min-h-dvh flex-col overflow-x-hidden bg-white font-sans antialiased`}
+        className={`${montserrat.variable} ${geistMono.variable} ${mirageBoldFree.variable} ${notoSerifArmenian.variable} ${notoSansArmenian.variable} flex min-h-dvh flex-col overflow-x-hidden bg-white font-sans antialiased`}
         style={
           {
             "--font-display": "var(--font-montserrat)",
