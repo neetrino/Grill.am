@@ -123,7 +123,7 @@ export function SitePopupOverlay({
           alt=""
           decoding="async"
           fetchPriority="high"
-          className="max-h-[90dvh] w-full rounded-lg object-contain shadow-2xl"
+          className="max-h-[90dvh] w-full rounded-[20px] object-contain shadow-2xl"
         />
       </div>
     </div>

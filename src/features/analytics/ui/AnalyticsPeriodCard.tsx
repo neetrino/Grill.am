@@ -14,6 +14,7 @@ import {
   type AnalyticsPeriodPreset,
 } from "@/features/analytics/domain/date-range";
 import { AdminSelect } from "@/features/admin/ui/AdminSelect";
+import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
 type AnalyticsPeriodCardProps = {
   locale: string;
@@ -63,6 +64,7 @@ export function AnalyticsPeriodCard({
   const selectedPreset: AnalyticsPeriodPreset = forceCustom
     ? "custom"
     : preset;
+  const resolvedLocale: Locale = isLocale(locale) ? locale : defaultLocale;
 
   function navigate(nextFrom: string, nextTo: string): void {
     const params = new URLSearchParams({ from: nextFrom, to: nextTo });
@@ -108,7 +110,8 @@ export function AnalyticsPeriodCard({
           <div className="min-w-0">
             <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
             <p className="text-xs text-gray-500">
-              {formatAnalyticsDisplayDate(from)} – {formatAnalyticsDisplayDate(to)}
+              {formatAnalyticsDisplayDate(from, resolvedLocale)} –{" "}
+              {formatAnalyticsDisplayDate(to, resolvedLocale)}
             </p>
           </div>
         </div>

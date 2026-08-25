@@ -12,6 +12,8 @@ export {
   analyticsDateRangeSchema,
   defaultAnalyticsDateRange,
   formatAnalyticsDisplayDate,
+  formatAnalyticsMonthLabel,
+  formatAnalyticsMonthShort,
   formatAnalyticsShortDate,
   formatPeriodDelta,
   matchAnalyticsPeriodPreset,

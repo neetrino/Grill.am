@@ -122,6 +122,7 @@ export default async function AdminPage({
   const trendPoints = buildDashboardMonthlySeries(
     chartSummary.dailyRows,
     chartRange,
+    locale,
   );
 
   const snapshots: DashboardPeriodSnapshot[] = [

@@ -47,9 +47,20 @@ const HY_MONTHS = [
   "դկտ",
 ] as const;
 
+const SHORT_MONTHS: Record<Locale, readonly string[]> = {
+  en: EN_MONTHS,
+  ru: RU_MONTHS,
+  hy: HY_MONTHS,
+};
+
 function normalizeDateLocale(locale: string): Locale {
   const base = locale.split("-")[0] ?? "en";
   return isLocale(base) ? base : "en";
+}
+
+/** Short month label (0 = January). Avoids Intl ICU gaps for `hy`. */
+export function shortMonthName(locale: Locale, monthIndex: number): string {
+  return SHORT_MONTHS[locale][monthIndex] ?? "";
 }
 
 /**

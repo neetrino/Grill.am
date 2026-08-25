@@ -1,14 +1,59 @@
 "use client";
 
 import gsap from "gsap";
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type ComponentProps, type ReactNode } from "react";
 
-import { AUTH_BACKGROUND_IMAGE } from "@/features/auth/content/auth-assets";
+import {
+  AUTH_BACKGROUND_IMAGE,
+  AUTH_BACKGROUND_IMAGE_MOBILE,
+} from "@/features/auth/content/auth-assets";
 import { AuthPageBackdrop } from "@/features/auth/ui/AuthPageBackdrop";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+const AUTH_BG_IMAGE_CLASS =
+  "absolute inset-0 h-full w-full object-cover object-center brightness-[1.06] contrast-[1.05] saturate-[1.1]";
+
+function AuthBackgroundArt() {
+  const common = {
+    alt: "",
+    priority: true,
+    sizes: "100vw",
+    quality: 82,
+  } as const;
+
+  const {
+    props: { srcSet: mobileSrcSet },
+  } = getImageProps({
+    ...common,
+    src: AUTH_BACKGROUND_IMAGE_MOBILE,
+    width: 1024,
+    height: 1536,
+  });
+  const {
+    props: { srcSet: desktopSrcSet, ...desktopRest },
+  } = getImageProps({
+    ...common,
+    src: AUTH_BACKGROUND_IMAGE,
+    width: 1920,
+    height: 1080,
+  });
+
+  return (
+    <picture className="absolute inset-0 block h-full w-full">
+      <source media="(max-width: 1023px)" srcSet={mobileSrcSet} sizes="100vw" />
+      <source media="(min-width: 1024px)" srcSet={desktopSrcSet} sizes="100vw" />
+      <img
+        {...desktopRest}
+        alt=""
+        className={AUTH_BG_IMAGE_CLASS}
+        suppressHydrationWarning
+      />
+    </picture>
+  );
+}
 
 type AuthPosterShellProps = {
   mode: "login" | "register";
@@ -138,14 +183,7 @@ export function AuthPosterShell({
     <>
       <AuthPageBackdrop ref={backdropRef}>
         <div data-poster-bg className="absolute inset-0 will-change-transform">
-          <Image
-            src={AUTH_BACKGROUND_IMAGE}
-            alt=""
-            fill
-            priority
-            className="object-cover object-center brightness-[1.06] contrast-[1.05] saturate-[1.1]"
-            sizes="100vw"
-          />
+          <AuthBackgroundArt />
         </div>
         <div className="absolute inset-0 bg-brand-ink/10" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_42%,rgba(7,16,20,0.62)_100%)]" />

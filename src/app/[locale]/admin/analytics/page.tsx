@@ -117,7 +117,11 @@ export default async function AdminAnalyticsPage({
     to: range.to,
   }).toString();
 
-  const trendPoints = buildAnalyticsTrendSeries(summary.dailyRows, range);
+  const trendPoints = buildAnalyticsTrendSeries(
+    summary.dailyRows,
+    range,
+    locale,
+  );
   const aggregatedMonthly = countAnalyticsRangeDays(range) > 45;
 
   const snapshots: DashboardPeriodSnapshot[] = [
