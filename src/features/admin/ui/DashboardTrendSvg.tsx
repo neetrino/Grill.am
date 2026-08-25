@@ -1,7 +1,18 @@
 import type { DashboardTrendPoint } from "@/features/analytics/domain/dashboard-periods";
+import { formatAnalyticsMonthShort } from "@/features/analytics/domain/date-range";
+import { defaultLocale, type Locale } from "@/lib/i18n/config";
 
 export const DASHBOARD_REVENUE_COLOR = "#db0b20";
 export const DASHBOARD_ORDERS_COLOR = "#ffc12c";
+
+const ISO_DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+type MonthBand = {
+  monthKey: string;
+  label: string;
+  startIndex: number;
+  endIndex: number;
+};
 
 function niceCeiling(value: number): number {
   if (value <= 0) {
@@ -32,20 +43,82 @@ function formatAxisAmount(amount: number): string {
   return String(Math.round(amount));
 }
 
+function isDailyIsoKey(key: string): boolean {
+  return ISO_DAY_KEY_PATTERN.test(key);
+}
+
+function isDailySeries(points: DashboardTrendPoint[]): boolean {
+  return points.length > 0 && points.every((point) => isDailyIsoKey(point.key));
+}
+
+function dayNumberFromIso(isoDate: string): string {
+  return String(Number(isoDate.slice(8, 10)));
+}
+
+/** Groups contiguous daily points by calendar month for axis headers. */
+function buildMonthBands(
+  points: DashboardTrendPoint[],
+  locale: Locale,
+): MonthBand[] {
+  const bands: MonthBand[] = [];
+
+  for (let index = 0; index < points.length; index += 1) {
+    const point = points[index];
+    if (!point) {
+      continue;
+    }
+    const monthKey = point.key.slice(0, 7);
+    const last = bands[bands.length - 1];
+    if (last && last.monthKey === monthKey) {
+      last.endIndex = index;
+      continue;
+    }
+    bands.push({
+      monthKey,
+      label: formatAnalyticsMonthShort(point.key, locale),
+      startIndex: index,
+      endIndex: index,
+    });
+  }
+
+  return bands;
+}
+
+function xForIndex(
+  index: number,
+  pointCount: number,
+  paddingLeft: number,
+  plotWidth: number,
+): number {
+  if (pointCount === 1) {
+    return paddingLeft + plotWidth / 2;
+  }
+  return paddingLeft + (index / (pointCount - 1)) * plotWidth;
+}
+
 type DashboardTrendSvgProps = {
   points: DashboardTrendPoint[];
   chartAria: string;
+  locale?: Locale;
 };
 
 export function DashboardTrendSvg({
   points,
   chartAria,
+  locale = defaultLocale,
 }: DashboardTrendSvgProps) {
+  const daily = isDailySeries(points);
   const width = 720;
-  const height = 220;
-  const padding = { top: 16, right: 40, bottom: 36, left: 48 };
+  const height = daily ? 300 : 280;
+  const padding = {
+    top: 12,
+    right: 36,
+    bottom: daily ? 48 : 32,
+    left: 44,
+  };
   const plotWidth = width - padding.left - padding.right;
   const plotHeight = height - padding.top - padding.bottom;
+  const monthBands = daily ? buildMonthBands(points, locale) : [];
 
   const maxRevenue = niceCeiling(
     Math.max(...points.map((point) => point.revenueAmount), 1),
@@ -55,10 +128,7 @@ export function DashboardTrendSvg({
   );
 
   const revenuePoints = points.map((point, index) => {
-    const x =
-      points.length === 1
-        ? padding.left + plotWidth / 2
-        : padding.left + (index / (points.length - 1)) * plotWidth;
+    const x = xForIndex(index, points.length, padding.left, plotWidth);
     const y =
       padding.top +
       plotHeight -
@@ -90,7 +160,8 @@ export function DashboardTrendSvg({
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      className="h-48 w-full sm:h-52"
+      preserveAspectRatio="none"
+      className="h-full min-h-[18rem] w-full sm:min-h-[20rem]"
       role="img"
       aria-label={chartAria}
     >
@@ -142,10 +213,7 @@ export function DashboardTrendSvg({
       })}
 
       {points.map((point, index) => {
-        const x =
-          points.length === 1
-            ? padding.left + plotWidth / 2
-            : padding.left + (index / (points.length - 1)) * plotWidth;
+        const x = xForIndex(index, points.length, padding.left, plotWidth);
         const barHeight = (point.orderCount / maxOrders) * plotHeight;
         const y = padding.top + plotHeight - barHeight;
         return (
@@ -173,24 +241,59 @@ export function DashboardTrendSvg({
       />
 
       {revenuePoints.map((entry) => (
-        <g key={`dot-${entry.point.key}`}>
-          <circle
-            cx={entry.x}
-            cy={entry.y}
-            r="5"
-            fill={DASHBOARD_REVENUE_COLOR}
-            stroke="white"
-            strokeWidth="2"
-          />
-          <text
-            x={entry.x}
-            y={height - 14}
-            textAnchor="middle"
-            className="fill-gray-500 text-[11px]"
-          >
-            {entry.point.label}
-          </text>
-        </g>
+        <circle
+          key={`dot-${entry.point.key}`}
+          cx={entry.x}
+          cy={entry.y}
+          r="5"
+          fill={DASHBOARD_REVENUE_COLOR}
+          stroke="white"
+          strokeWidth="2"
+        />
+      ))}
+
+      {daily
+        ? monthBands.map((band) => {
+            const startX = xForIndex(
+              band.startIndex,
+              points.length,
+              padding.left,
+              plotWidth,
+            );
+            const endX = xForIndex(
+              band.endIndex,
+              points.length,
+              padding.left,
+              plotWidth,
+            );
+            return (
+              <text
+                key={`month-${band.monthKey}`}
+                x={(startX + endX) / 2}
+                y={height - 30}
+                textAnchor="middle"
+                className="fill-gray-500 text-[11px] font-medium"
+              >
+                {band.label}
+              </text>
+            );
+          })
+        : null}
+
+      {revenuePoints.map((entry) => (
+        <text
+          key={`tick-${entry.point.key}`}
+          x={entry.x}
+          y={daily ? height - 12 : height - 14}
+          textAnchor="middle"
+          className={
+            daily
+              ? "fill-gray-400 text-[9px]"
+              : "fill-gray-500 text-[11px]"
+          }
+        >
+          {daily ? dayNumberFromIso(entry.point.key) : entry.point.label}
+        </text>
       ))}
     </svg>
   );

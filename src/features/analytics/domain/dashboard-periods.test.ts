@@ -79,27 +79,31 @@ describe("buildDashboardMonthlySeries", () => {
       },
     ];
 
-    const series = buildDashboardMonthlySeries(rows, {
-      from: "2026-01-01",
-      to: "2026-03-31",
-    });
+    const series = buildDashboardMonthlySeries(
+      rows,
+      {
+        from: "2026-01-01",
+        to: "2026-03-31",
+      },
+      "en",
+    );
 
     expect(series).toEqual([
       {
         key: "2026-01",
-        label: "Jan 26",
+        label: "January 26",
         orderCount: 3,
         revenueAmount: 140,
       },
       {
         key: "2026-02",
-        label: "Feb 26",
+        label: "February 26",
         orderCount: 0,
         revenueAmount: 0,
       },
       {
         key: "2026-03",
-        label: "Mar 26",
+        label: "March 26",
         orderCount: 4,
         revenueAmount: 200,
       },

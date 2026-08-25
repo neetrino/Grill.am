@@ -6,9 +6,11 @@ import {
 } from "@/lib/datetime/app-timezone";
 import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
 import {
+  formatAnalyticsMonthLabel,
   formatAnalyticsShortDate,
   type AnalyticsDateRange,
 } from "@/features/analytics/domain/date-range";
+import { defaultLocale, type Locale } from "@/lib/i18n/config";
 
 export const DASHBOARD_METRIC_PERIODS = [
   "today",
@@ -49,14 +51,6 @@ function shiftAppMonths(isoDate: string, deltaMonths: number): string {
 
 function monthKeyFromIso(isoDate: string): string {
   return isoDate.slice(0, 7);
-}
-
-function formatMonthLabel(monthKey: string): string {
-  return new Date(`${monthKey}-01T12:00:00.000Z`).toLocaleDateString("en-US", {
-    month: "short",
-    year: "2-digit",
-    timeZone: "UTC",
-  });
 }
 
 function listMonthKeys(from: string, to: string): string[] {
@@ -155,6 +149,7 @@ function listDayKeys(from: string, to: string): string[] {
 export function buildAnalyticsDailySeries(
   rows: AnalyticsCsvRow[],
   range: AnalyticsDateRange,
+  locale: Locale = defaultLocale,
 ): DashboardTrendPoint[] {
   const byDate = new Map<
     string,
@@ -175,7 +170,7 @@ export function buildAnalyticsDailySeries(
     };
     return {
       key,
-      label: formatAnalyticsShortDate(key),
+      label: formatAnalyticsShortDate(key, locale),
       orderCount: totalsForDay.orderCount,
       revenueAmount: Math.round(totalsForDay.revenueAmount * 100) / 100,
     };
@@ -188,16 +183,18 @@ export function buildAnalyticsDailySeries(
 export function buildAnalyticsTrendSeries(
   rows: AnalyticsCsvRow[],
   range: AnalyticsDateRange,
+  locale: Locale = defaultLocale,
 ): DashboardTrendPoint[] {
   if (countAnalyticsRangeDays(range) > ANALYTICS_DAILY_SERIES_MAX_DAYS) {
-    return buildDashboardMonthlySeries(rows, range);
+    return buildDashboardMonthlySeries(rows, range, locale);
   }
-  return buildAnalyticsDailySeries(rows, range);
+  return buildAnalyticsDailySeries(rows, range, locale);
 }
 
 export function buildDashboardMonthlySeries(
   rows: AnalyticsCsvRow[],
   range: AnalyticsDateRange,
+  locale: Locale = defaultLocale,
 ): DashboardTrendPoint[] {
   const totals = new Map<
     string,
@@ -219,7 +216,7 @@ export function buildDashboardMonthlySeries(
     };
     return {
       key,
-      label: formatMonthLabel(key),
+      label: formatAnalyticsMonthLabel(key, locale),
       orderCount: totalsForMonth.orderCount,
       revenueAmount: Math.round(totalsForMonth.revenueAmount * 100) / 100,
     };
