@@ -15,10 +15,6 @@ export const CHECKOUT_FIELD_CLASS =
 export const CHECKOUT_OPTION_BASE_CLASS =
   "flex cursor-pointer items-center rounded-[15px] border-2 p-4 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none";
 
-/** Compact option row for side-by-side method toggles. */
-export const CHECKOUT_OPTION_COMPACT_CLASS =
-  "flex h-full cursor-pointer items-center rounded-[15px] border-2 px-3 py-2.5 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none";
-
 /** Thin rounded scrollbar so the pickup list looks scrollable. */
 const CHECKOUT_PICKUP_SCROLLBAR_CLASS = [
   "[scrollbar-width:thin]",

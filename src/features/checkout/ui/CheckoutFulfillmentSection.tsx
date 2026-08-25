@@ -6,7 +6,7 @@ import { CheckoutPickupBranchList } from "@/features/checkout/ui/CheckoutPickupB
 import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import {
   CHECKOUT_FIELD_CLASS,
-  CHECKOUT_OPTION_COMPACT_CLASS,
+  CHECKOUT_OPTION_BASE_CLASS,
   CHECKOUT_OPTION_DEFAULT_CLASS,
   CHECKOUT_OPTION_SELECTED_CLASS,
   CHECKOUT_RADIO_CLASS,
@@ -44,8 +44,8 @@ type CheckoutFulfillmentSectionProps = {
   defaultLine1: string;
 };
 
-function compactOptionClass(selected: boolean): string {
-  return `${CHECKOUT_OPTION_COMPACT_CLASS} ${
+function methodOptionClass(selected: boolean): string {
+  return `${CHECKOUT_OPTION_BASE_CLASS} ${
     selected ? CHECKOUT_OPTION_SELECTED_CLASS : CHECKOUT_OPTION_DEFAULT_CLASS
   }`;
 }
@@ -67,7 +67,7 @@ function ShippingMethodToggles({
     <div
       role="radiogroup"
       aria-label={labels.shippingMethod}
-      className="grid grid-cols-2 gap-3"
+      className="flex flex-col gap-3"
     >
       <MethodToggle
         selected={shippingMethod === "pickup"}
@@ -109,7 +109,7 @@ function MethodToggle({
   onSelect: () => void;
 }) {
   return (
-    <label className={compactOptionClass(selected)}>
+    <label className={methodOptionClass(selected)}>
       <input
         type="radio"
         name="shippingMethod"
