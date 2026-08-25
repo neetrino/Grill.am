@@ -76,6 +76,7 @@ function ShippingMethodToggles({
         icon={UserRound}
         title={labels.storePickup}
         description={labels.storePickupDescription}
+        className="order-2 md:order-1"
         onSelect={() => onShippingMethodChange("pickup")}
       />
       <MethodToggle
@@ -85,6 +86,7 @@ function ShippingMethodToggles({
         icon={Truck}
         title={labels.delivery}
         description={labels.deliveryDescription}
+        className="order-1 md:order-2"
         onSelect={() => onShippingMethodChange("delivery")}
       />
     </div>
@@ -98,6 +100,7 @@ function MethodToggle({
   icon: Icon,
   title,
   description,
+  className,
   onSelect,
 }: {
   selected: boolean;
@@ -106,10 +109,11 @@ function MethodToggle({
   icon: LucideIcon;
   title: string;
   description: string;
+  className?: string;
   onSelect: () => void;
 }) {
   return (
-    <label className={methodOptionClass(selected)}>
+    <label className={`${methodOptionClass(selected)} ${className ?? ""}`}>
       <input
         type="radio"
         name="shippingMethod"
