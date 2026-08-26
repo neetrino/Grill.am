@@ -246,7 +246,7 @@ export function MobileBottomNav({
     <nav
       aria-label={dictionary.nav.navigation}
       data-mobile-bottom-nav
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(12px,env(safe-area-inset-bottom))] min-[390px]:px-8 lg:hidden"
+      className="pointer-events-none page-container fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(12px,env(safe-area-inset-bottom))] lg:hidden"
       style={
         {
           "--bottom-nav-ms": `${BOTTOM_NAV_TRANSITION_MS}ms`,
@@ -255,7 +255,7 @@ export function MobileBottomNav({
     >
       <div
         ref={trackRef}
-        className="pointer-events-auto relative flex h-[54px] w-full max-w-[327px] items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-1.5 py-1 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[62px] min-[390px]:px-2.5 min-[390px]:py-1.5 md:max-w-[420px]"
+        className="pointer-events-auto relative flex h-[54px] w-full items-center justify-evenly overflow-hidden rounded-[100px] bg-[#171717] px-1.5 py-1 shadow-[0_12px_40px_rgba(0,0,0,0.35)] min-[390px]:h-[62px] min-[390px]:px-2.5 min-[390px]:py-1.5"
       >
         {indicator && activeId ? (
           <span
