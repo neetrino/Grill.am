@@ -3,7 +3,7 @@
 import gsap from "gsap";
 import { getImageProps } from "next/image";
 import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, type ComponentProps, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import {
   AUTH_BACKGROUND_IMAGE,
@@ -63,20 +63,6 @@ type AuthPosterShellProps = {
   children: ReactNode;
 };
 
-function PosterCorner({
-  className,
-  ...props
-}: ComponentProps<"span">) {
-  return (
-    <span
-      data-poster-corner
-      className={`pointer-events-none absolute size-3.5 border-brand-yellow/80 ${className ?? ""}`}
-      aria-hidden
-      {...props}
-    />
-  );
-}
-
 /**
  * Shared Poster Gate stage for login + register.
  * Backdrop is portaled to `body` for true full-viewport coverage.
@@ -108,12 +94,6 @@ export function AuthPosterShell({
           { opacity: 1, duration: 0.55 },
         )
         .fromTo(
-          root.querySelector("[data-poster-shadow]"),
-          { x: 24, y: 24, opacity: 0 },
-          { x: 0, y: 0, opacity: 1, duration: 0.75 },
-          "-=0.35",
-        )
-        .fromTo(
           root.querySelector("[data-poster-card]"),
           { y: 28, opacity: 0, rotate: 1.2, filter: "blur(10px)" },
           {
@@ -124,24 +104,6 @@ export function AuthPosterShell({
             duration: 0.9,
             ease: "power4.out",
           },
-          "-=0.55",
-        )
-        .fromTo(
-          root.querySelectorAll("[data-poster-corner]"),
-          { scale: 0, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.35,
-            stagger: 0.05,
-            ease: "back.out(2.2)",
-          },
-          "-=0.45",
-        )
-        .fromTo(
-          root.querySelector("[data-poster-rule]"),
-          { scaleX: 0 },
-          { scaleX: 1, duration: 0.55 },
           "-=0.2",
         );
     }, root);
@@ -215,16 +177,14 @@ export function AuthPosterShell({
           data-poster-stage
           className="relative flex min-h-dvh px-5 pt-[calc(var(--storefront-header-offset,5rem)+1rem)] pb-28 sm:px-8 sm:pt-[calc(var(--storefront-header-offset,5rem)+1.5rem)] lg:px-10 lg:pb-10"
         >
-          <div className="relative mx-auto my-auto w-full max-w-[420px] -translate-y-24 sm:-translate-y-28">
-            <div
-              data-poster-shadow
-              className="absolute inset-0 translate-x-2.5 translate-y-2.5 rounded-[22px] bg-brand-yellow sm:translate-x-3 sm:translate-y-3"
-              aria-hidden
-            />
-
+          <div
+            className={`relative mx-auto my-auto w-full -translate-y-24 sm:-translate-y-28 ${
+              mode === "register" ? "max-w-[560px]" : "max-w-[420px]"
+            }`}
+          >
             <motion.div
               data-poster-card
-              className="relative overflow-hidden rounded-[22px] border-[3px] border-brand-ink bg-white/95 p-6 shadow-[0_28px_90px_rgba(7,16,20,0.32)] backdrop-blur-xl sm:p-8"
+              className="relative overflow-hidden rounded-[22px] bg-white/95 p-6 shadow-[0_28px_90px_rgba(7,16,20,0.32)] backdrop-blur-xl sm:p-8"
               initial={
                 reduceMotion
                   ? false
@@ -233,41 +193,16 @@ export function AuthPosterShell({
               animate={{ opacity: 1, y: 0, filter: "blur(0px)", rotate: 0 }}
               transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
             >
-              <div
-                className="pointer-events-none absolute inset-0 opacity-[0.04]"
-                style={{
-                  backgroundImage:
-                    "repeating-linear-gradient(-12deg, transparent, transparent 14px, rgba(7,16,20,0.5) 14px, rgba(7,16,20,0.5) 15px)",
-                }}
-                aria-hidden
-              />
-
-              <PosterCorner className="top-3.5 left-3.5 border-t-2 border-l-2" />
-              <PosterCorner className="top-3.5 right-3.5 border-t-2 border-r-2" />
-              <PosterCorner className="bottom-3.5 left-3.5 border-b-2 border-l-2" />
-              <PosterCorner className="right-3.5 bottom-3.5 border-r-2 border-b-2" />
-
               <motion.div
-                className="relative mb-7 border-b-[3px] border-brand-ink pb-5"
+                className="relative mb-7"
                 initial={reduceMotion ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.28, ease: EASE }}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <h1 className="font-auth-display text-[1.65rem] leading-[1.15] font-extrabold tracking-[-0.03em] text-brand-ink sm:text-[1.85rem]">
-                    <span className="text-brand-red">{formLead}</span>{" "}
-                    <span className="text-brand-ink">{formAccent}</span>
-                  </h1>
-                  <span
-                    className="mt-1 size-3 shrink-0 bg-brand-red"
-                    aria-hidden
-                  />
-                </div>
-                <div
-                  data-poster-rule
-                  className="mt-4 h-[3px] w-16 origin-left bg-brand-yellow"
-                  aria-hidden
-                />
+                <h1 className="font-auth-display text-[1.65rem] leading-[1.15] font-extrabold tracking-[-0.03em] text-brand-ink sm:text-[1.85rem]">
+                  <span className="text-brand-red">{formLead}</span>{" "}
+                  <span className="text-brand-ink">{formAccent}</span>
+                </h1>
               </motion.div>
 
               <div className="relative">{children}</div>
