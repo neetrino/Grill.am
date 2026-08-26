@@ -37,6 +37,7 @@
     "deliveryDescription": "Доставим заказ по вашему адресу",
     "freePickup": "Бесплатно (Take Away)",
     "enterCity": "Укажите город",
+    "selectShippingMethod": "Выберите Take Away или доставку",
     "selectDeliveryLocation": "Выберите место доставки"
   },
   "deliveryCities": {

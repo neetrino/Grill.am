@@ -633,6 +633,7 @@ export function ProductDrawer({
             <ProductDrawerCustomization
               value={customization}
               catalog={modifierCatalog}
+              activeLocale={activeLocale}
               onChange={setCustomization}
               disabled={isPending}
             />

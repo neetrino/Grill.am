@@ -5,30 +5,46 @@ import { useState } from "react";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_CARD_RADIUS_CLASS } from "@/features/admin/ui/admin-ui";
 import type { ModifierCatalogItem } from "@/features/products/domain/modifier-catalog";
-import type { ProductCustomization } from "@/features/products/domain/customization";
+import {
+  resolveLocaleLabel,
+  type ProductCustomization,
+} from "@/features/products/domain/customization";
 import { ProductDrawerModifierPanels } from "@/features/products/ui/ProductDrawerModifierPanels";
 import { createId } from "@/lib/id";
+import type { Locale } from "@/lib/i18n/config";
+
+type LocaleLabel = Partial<Record<Locale, string>>;
 
 type ProductDrawerCustomizationProps = {
   value: ProductCustomization;
   catalog: ModifierCatalogItem[];
+  activeLocale: Locale;
   onChange: (next: ProductCustomization) => void;
   disabled?: boolean;
 };
-
-function localeTriple(label: string): { hy: string; en: string; ru: string } {
-  const trimmed = label.trim();
-  return { hy: trimmed, en: trimmed, ru: trimmed };
-}
 
 function normalizeLabel(value: string): string {
   return value.trim().toLocaleLowerCase();
 }
 
-function catalogDisplayLabel(
-  label: Partial<Record<"hy" | "en" | "ru", string>>,
-): string {
-  return label.hy ?? label.en ?? label.ru ?? "";
+function withLocaleLabel(
+  label: LocaleLabel,
+  locale: Locale,
+  value: string,
+): LocaleLabel {
+  const trimmed = value.trim();
+  const next: LocaleLabel = { ...label };
+  if (trimmed) {
+    next[locale] = trimmed;
+  } else {
+    delete next[locale];
+  }
+  return next;
+}
+
+function newLocaleLabel(locale: Locale, value: string): LocaleLabel {
+  const trimmed = value.trim();
+  return trimmed ? { [locale]: trimmed } : {};
 }
 
 function findCatalogMatch(
@@ -49,6 +65,7 @@ function findCatalogMatch(
 export function ProductDrawerCustomization({
   value,
   catalog,
+  activeLocale,
   onChange,
   disabled = false,
 }: ProductDrawerCustomizationProps) {
@@ -95,7 +112,11 @@ export function ProductDrawerCustomization({
       ...value,
       addons: [
         ...value.addons,
-        { id: createId(), label: localeTriple(label), priceAmount },
+        {
+          id: createId(),
+          label: newLocaleLabel(activeLocale, label),
+          priceAmount,
+        },
       ],
     });
     setAddonDraft("");
@@ -128,7 +149,7 @@ export function ProductDrawerCustomization({
       ...value,
       exclusions: [
         ...value.exclusions,
-        { id: createId(), label: localeTriple(label) },
+        { id: createId(), label: newLocaleLabel(activeLocale, label) },
       ],
     });
     setExclusionDraft("");
@@ -183,13 +204,14 @@ export function ProductDrawerCustomization({
         exclusions={value.exclusions}
         libraryAddons={libraryAddons.map((item) => ({
           id: item.id,
-          label: catalogDisplayLabel(item.label),
+          label: resolveLocaleLabel(item.label, activeLocale),
           priceAmount: item.priceAmount,
         }))}
         libraryExclusions={libraryExclusions.map((item) => ({
           id: item.id,
-          label: catalogDisplayLabel(item.label),
+          label: resolveLocaleLabel(item.label, activeLocale),
         }))}
+        activeLocale={activeLocale}
         addonDraft={addonDraft}
         addonPriceDraft={addonPriceDraft}
         exclusionDraft={exclusionDraft}
@@ -221,7 +243,7 @@ export function ProductDrawerCustomization({
                     ...item,
                     label:
                       patch.label != null
-                        ? localeTriple(patch.label)
+                        ? withLocaleLabel(item.label, activeLocale, patch.label)
                         : item.label,
                     priceAmount: patch.priceAmount ?? item.priceAmount,
                   }
@@ -239,7 +261,12 @@ export function ProductDrawerCustomization({
           commit({
             ...value,
             exclusions: value.exclusions.map((item) =>
-              item.id === id ? { ...item, label: localeTriple(label) } : item,
+              item.id === id
+                ? {
+                    ...item,
+                    label: withLocaleLabel(item.label, activeLocale, label),
+                  }
+                : item,
             ),
           })
         }
