@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   useCallback,
@@ -19,11 +18,6 @@ import {
   type StorefrontNavItem,
 } from "@/components/layout/storefront-nav";
 import { AppLink } from "@/components/ui/AppLink";
-import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
-import {
-  CatalogAllCategoriesIcon,
-  resolveCatalogCategoryIcon,
-} from "@/features/products/ui/catalog-category-icon";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -34,8 +28,6 @@ export type MobileNavPanelProps = {
   availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
-  categories: readonly StorefrontNavCategory[];
-  categorySlug: string | null;
   isOpen: boolean;
   menuId: string;
   onClose: () => void;
@@ -69,22 +61,18 @@ export function MobileNavPanel({
   availableCurrencies,
   dictionary,
   navItems,
-  categories,
-  categorySlug,
   isOpen,
   menuId,
   onClose,
 }: MobileNavPanelProps) {
   const pathname = usePathname() ?? `/${locale}`;
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
   // Tracks the `isOpen` prop value last synced into `visible`/`expanded`.
   const [openSynced, setOpenSynced] = useState(isOpen);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const productsPath = `/${locale}/products`;
 
   const clearCloseTimer = useCallback(() => {
     if (closeTimerRef.current != null) {
@@ -227,145 +215,34 @@ export function MobileNavPanel({
         >
           <div className="flex flex-col py-3">
             {navItems
-              .filter((item) => item.id !== "home")
+              .filter((item) => item.id !== "home" && item.kind !== "categories")
               .map((item) => {
-              if (item.kind === "categories") {
-                const sectionActive =
-                  pathname === productsPath ||
-                  pathname.startsWith(`${productsPath}/`);
+                const active = isStorefrontNavActive(pathname, item, locale);
 
                 return (
-                  <div key={item.id}>
-                    <div className="flex w-full items-center gap-2">
-                      <AppLink
-                        href={productsPath}
-                        prefetchPolicy="intent"
-                        className={
-                          sectionActive
-                            ? "flex-1 rounded-xl px-1 py-3.5 text-left text-base font-semibold text-brand-red"
-                            : "flex-1 rounded-xl px-1 py-3.5 text-left text-base font-semibold text-[#171717]"
-                        }
-                        onClick={onClose}
-                      >
-                        {item.label}
-                      </AppLink>
-                      <button
-                        type="button"
-                        className={
-                          sectionActive || categoriesOpen
-                            ? "rounded-xl p-2 text-brand-red"
-                            : "rounded-xl p-2 text-[#171717]"
-                        }
-                        aria-expanded={categoriesOpen}
-                        aria-label={item.label}
-                        onClick={() => setCategoriesOpen((value) => !value)}
-                      >
-                        <ChevronDown
-                          className={`size-4 transition ${
-                            categoriesOpen ? "rotate-180" : ""
-                          }`}
-                          aria-hidden
-                        />
-                      </button>
-                    </div>
-                    {categoriesOpen ? (
-                      <div className="pb-1">
-                        <AppLink
-                          href={productsPath}
-                          prefetchPolicy="intent"
-                          className={
-                            pathname === productsPath && !categorySlug
-                              ? "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-brand-red"
-                              : "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                          }
-                          onClick={onClose}
-                        >
-                          <span
-                            className={`flex size-8 shrink-0 items-center justify-center rounded-xl ${
-                              pathname === productsPath && !categorySlug
-                                ? "bg-[#fff4ee] text-brand-red"
-                                : "bg-[#f3f4f6] text-[#6b7280]"
-                            }`}
-                            aria-hidden
-                          >
-                            <CatalogAllCategoriesIcon
-                              className="size-4"
-                              strokeWidth={1.85}
-                            />
-                          </span>
-                          {dictionary.nav.allCategories}
-                        </AppLink>
-                        {categories.map((category, index) => {
-                          const href = `${productsPath}?category=${encodeURIComponent(category.slug)}`;
-                          const active = categorySlug === category.slug;
-                          const Icon = resolveCatalogCategoryIcon(
-                            category.slug,
-                            category.title,
-                            index,
-                          );
-                          return (
-                            <AppLink
-                              key={category.id}
-                              href={href}
-                              prefetchPolicy="intent"
-                              className={
-                                active
-                                  ? "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-brand-red"
-                                  : "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                              }
-                              onClick={onClose}
-                            >
-                              <span
-                                className={`flex size-8 shrink-0 items-center justify-center rounded-xl ${
-                                  active
-                                    ? "bg-[#fff4ee] text-brand-red"
-                                    : "bg-[#f3f4f6] text-[#6b7280]"
-                                }`}
-                                aria-hidden
-                              >
-                                <Icon
-                                  className="size-4"
-                                  strokeWidth={1.85}
-                                />
-                              </span>
-                              {category.title}
-                            </AppLink>
-                          );
-                        })}
-                      </div>
-                    ) : null}
-                  </div>
-                );
-              }
-
-              const active = isStorefrontNavActive(pathname, item, locale, {
-                categorySlug,
-              });
-
-              return (
-                <AppLink
-                  key={item.id}
-                  href={item.href}
-                  prefetchPolicy="intent"
-                  aria-current={active ? "page" : undefined}
-                  className={
-                    active
-                      ? "rounded-xl px-1 py-3.5 text-base font-semibold text-brand-red"
-                      : "rounded-xl px-1 py-3.5 text-base font-semibold text-[#171717] hover:bg-gray-50"
-                  }
-                  onClick={(event) => {
-                    onClose();
-                    if (!active) {
-                      return;
+                  <AppLink
+                    key={item.id}
+                    href={item.href}
+                    prefetchPolicy="intent"
+                    aria-current={active ? "page" : undefined}
+                    className={
+                      active
+                        ? "rounded-xl px-1 py-3.5 text-base font-semibold text-brand-red"
+                        : "rounded-xl px-1 py-3.5 text-base font-semibold text-[#171717] hover:bg-gray-50"
                     }
-                    event.preventDefault();
-                    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-                  }}
-                >
-                  {item.label}
-                </AppLink>
-              );
-            })}
+                    onClick={(event) => {
+                      onClose();
+                      if (!active) {
+                        return;
+                      }
+                      event.preventDefault();
+                      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                    }}
+                  >
+                    {item.label}
+                  </AppLink>
+                );
+              })}
 
             <AppLink
               href={`/${locale}/legal`}

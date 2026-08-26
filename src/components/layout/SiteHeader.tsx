@@ -44,7 +44,6 @@ export async function SiteHeader({
           availableCurrencies={availableCurrencies}
           dictionary={dictionary}
           navItems={navItems}
-          categories={categories}
         />
       }
       desktopActions={

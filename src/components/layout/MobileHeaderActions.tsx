@@ -1,16 +1,13 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 
 import {
   MobileNavPanel,
   type MobileNavPanelProps,
 } from "@/components/layout/MobileNavPanel";
 import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
-import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
-import type { SessionUser } from "@/lib/auth/session";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -20,9 +17,7 @@ type MobileHeaderActionsProps = {
   currency: Currency;
   availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
-  user: SessionUser | null;
   navItems: readonly StorefrontNavItem[];
-  categories: readonly StorefrontNavCategory[];
 };
 
 /** Slightly tighter than bottom-nav idle tabs: 44px on small phones, 48px from 390px. */
@@ -42,7 +37,6 @@ export function MobileHeaderActions({
   availableCurrencies,
   dictionary,
   navItems,
-  categories,
 }: MobileHeaderActionsProps) {
   const [open, setOpen] = useState(false);
   const menuId = `mobile-nav-${useId().replace(/:/g, "")}`;
@@ -62,13 +56,12 @@ export function MobileHeaderActions({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [open]);
 
-  const panelProps: Omit<MobileNavPanelProps, "categorySlug"> = {
+  const panelProps: MobileNavPanelProps = {
     locale,
     currency,
     availableCurrencies,
     dictionary,
     navItems,
-    categories,
     isOpen: open,
     menuId,
     onClose: () => setOpen(false),
@@ -115,22 +108,7 @@ export function MobileHeaderActions({
         />
       </button>
 
-      <Suspense
-        fallback={
-          <MobileNavPanel {...panelProps} categorySlug={null} />
-        }
-      >
-        <MobileNavPanelWithSearchParams {...panelProps} />
-      </Suspense>
+      <MobileNavPanel {...panelProps} />
     </div>
-  );
-}
-
-function MobileNavPanelWithSearchParams(
-  props: Omit<MobileNavPanelProps, "categorySlug">,
-) {
-  const searchParams = useSearchParams();
-  return (
-    <MobileNavPanel {...props} categorySlug={searchParams.get("category")} />
   );
 }

@@ -5,7 +5,6 @@ import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
 import { MobileHeaderActions } from "@/components/layout/MobileHeaderActions";
 import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { getCartItemCount } from "@/features/cart/cart";
-import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -88,31 +87,7 @@ type HeaderMobileNavProps = {
   availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
-  categories: readonly StorefrontNavCategory[];
 };
-
-async function HeaderMobileNavAsync({
-  locale,
-  currency,
-  availableCurrencies,
-  dictionary,
-  navItems,
-  categories,
-}: HeaderMobileNavProps) {
-  const { user } = await loadHeaderSessionData();
-
-  return (
-    <MobileHeaderActions
-      locale={locale}
-      currency={currency}
-      availableCurrencies={availableCurrencies}
-      dictionary={dictionary}
-      user={user}
-      navItems={navItems}
-      categories={categories}
-    />
-  );
-}
 
 /**
  * Session-dependent header controls stream in without remounting sticky chrome.
@@ -127,20 +102,12 @@ export function HeaderDesktopActionsIsland(props: HeaderDesktopActionsProps) {
 
 export function HeaderMobileNavIsland(props: HeaderMobileNavProps) {
   return (
-    <Suspense
-      fallback={
-        <MobileHeaderActions
-          locale={props.locale}
-          currency={props.currency}
-          availableCurrencies={props.availableCurrencies}
-          dictionary={props.dictionary}
-          user={null}
-          navItems={props.navItems}
-          categories={props.categories}
-        />
-      }
-    >
-      <HeaderMobileNavAsync {...props} />
-    </Suspense>
+    <MobileHeaderActions
+      locale={props.locale}
+      currency={props.currency}
+      availableCurrencies={props.availableCurrencies}
+      dictionary={props.dictionary}
+      navItems={props.navItems}
+    />
   );
 }
