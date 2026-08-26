@@ -1,18 +1,13 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 
-import { HeaderUserIcon } from "@/components/layout/HeaderIcons";
 import {
   MobileNavPanel,
   type MobileNavPanelProps,
 } from "@/components/layout/MobileNavPanel";
 import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
-import { AppLink } from "@/components/ui/AppLink";
-import type { StorefrontNavCategory } from "@/features/categories/storefront-nav-category";
-import type { SessionUser } from "@/lib/auth/session";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -22,9 +17,7 @@ type MobileHeaderActionsProps = {
   currency: Currency;
   availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
-  user: SessionUser | null;
   navItems: readonly StorefrontNavItem[];
-  categories: readonly StorefrontNavCategory[];
 };
 
 /** Slightly tighter than bottom-nav idle tabs: 44px on small phones, 48px from 390px. */
@@ -34,26 +27,19 @@ const actionButtonClassName =
 const MENU_ICON_MS = 280;
 
 /**
- * Figma mobile header `164:379` — red circular menu + profile.
+ * Figma mobile header `164:379` — red circular menu.
  * Burger morphs to X like MaMarie when the dropdown menu is open.
- * Burger stays through tablet (`lg`); profile circle is phone-only — on iPad Mini
- * profile lives in the bottom navbar instead.
+ * Profile lives in the bottom navbar (right), not in the header.
  */
 export function MobileHeaderActions({
   locale,
   currency,
   availableCurrencies,
   dictionary,
-  user,
   navItems,
-  categories,
 }: MobileHeaderActionsProps) {
   const [open, setOpen] = useState(false);
   const menuId = `mobile-nav-${useId().replace(/:/g, "")}`;
-  const profileHref = user ? `/${locale}/profile` : `/${locale}/login`;
-  const profileLabel = user
-    ? dictionary.header.profile
-    : dictionary.header.login;
 
   useEffect(() => {
     if (!open) {
@@ -70,13 +56,12 @@ export function MobileHeaderActions({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [open]);
 
-  const panelProps: Omit<MobileNavPanelProps, "categorySlug"> = {
+  const panelProps: MobileNavPanelProps = {
     locale,
     currency,
     availableCurrencies,
     dictionary,
     navItems,
-    categories,
     isOpen: open,
     menuId,
     onClose: () => setOpen(false),
@@ -123,32 +108,7 @@ export function MobileHeaderActions({
         />
       </button>
 
-      <AppLink
-        href={profileHref}
-        prefetchPolicy="intent"
-        className={`${actionButtonClassName} md:hidden`}
-        aria-label={profileLabel}
-        onClick={() => setOpen(false)}
-      >
-        <HeaderUserIcon className="block size-4.5 overflow-visible text-white min-[390px]:size-5" />
-      </AppLink>
-
-      <Suspense
-        fallback={
-          <MobileNavPanel {...panelProps} categorySlug={null} />
-        }
-      >
-        <MobileNavPanelWithSearchParams {...panelProps} />
-      </Suspense>
+      <MobileNavPanel {...panelProps} />
     </div>
-  );
-}
-
-function MobileNavPanelWithSearchParams(
-  props: Omit<MobileNavPanelProps, "categorySlug">,
-) {
-  const searchParams = useSearchParams();
-  return (
-    <MobileNavPanel {...props} categorySlug={searchParams.get("category")} />
   );
 }

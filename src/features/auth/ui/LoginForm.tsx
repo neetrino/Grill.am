@@ -85,9 +85,9 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
 
       <AuthMotionField
         index={2}
-        className="flex items-center justify-between gap-3"
+        className="flex flex-nowrap items-center justify-between gap-3"
       >
-        <label className="flex items-center gap-2.5 text-sm font-semibold text-brand-ink/75">
+        <label className="flex shrink-0 items-center gap-2.5 whitespace-nowrap text-sm font-semibold text-brand-ink/75">
           <input
             type="checkbox"
             name="rememberMe"
@@ -100,7 +100,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         <AppLink
           href={`/${locale}/forgot-password`}
           prefetchPolicy="intent"
-          className={`text-sm ${AUTH_LINK_CLASS}`}
+          className={`shrink-0 whitespace-nowrap text-sm ${AUTH_LINK_CLASS}`}
         >
           {dictionary.forgotPassword}
         </AppLink>

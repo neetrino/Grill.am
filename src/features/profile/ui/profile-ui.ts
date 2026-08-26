@@ -11,11 +11,15 @@ export const PROFILE_CARD_CLASS =
 export const PROFILE_CARD_FLAT_CLASS =
   "rounded-[15px] bg-white ring-1 ring-gray-100/80";
 
-export const PROFILE_SECTION_TITLE_CLASS =
-  "text-xl font-bold text-gray-900";
-
 /** Desktop sidebar minimum; the column grows when the email is longer. */
 export const PROFILE_SIDEBAR_WIDTH_PX = 280;
+
+/**
+ * Sticky band under the header with equal top/bottom gaps (1.75rem),
+ * so sidebar + content sit in the middle of the visible viewport.
+ */
+export const PROFILE_STICKY_BAND_CLASS =
+  "lg:sticky lg:top-[calc(var(--storefront-header-offset)+1.75rem)] lg:z-10 lg:h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] lg:max-h-[calc(100dvh-var(--storefront-header-offset)-3.5rem)] lg:self-start";
 
 export const PROFILE_NAV_TRANSITION_MS = 380;
 

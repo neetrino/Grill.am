@@ -22,6 +22,7 @@ import {
   formatCouponSavings,
 } from "@/features/promotions/domain/format-coupon-offer";
 import { PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS } from "@/features/profile/ui/profile-ui";
+import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 export type CustomerPromoCodesLabels = {
@@ -50,7 +51,9 @@ export function CustomerPromoCodesView({
 }: CustomerPromoCodesViewProps) {
   return (
     <section className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-900">{labels.usedTitle}</h2>
+      <ProfilePageTitle as="h2" size="section">
+        {labels.usedTitle}
+      </ProfilePageTitle>
 
       <Card className={`${ADMIN_TABLE_CARD} !rounded-[15px] shadow-none ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
         <div className={ADMIN_TABLE_OUTER_SCROLL}>

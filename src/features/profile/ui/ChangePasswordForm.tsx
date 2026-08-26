@@ -9,6 +9,7 @@ import {
   type ChangePasswordActionState,
 } from "@/features/auth/change-password-action";
 import { PROFILE_BTN_PRIMARY_CLASS, PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS } from "@/features/profile/ui/profile-ui";
+import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
@@ -56,9 +57,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
   return (
     <Card className={`rounded-[15px] border-0 p-5 shadow-none ring-1 ring-gray-100/80 sm:p-7 lg:p-8 ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
       <div className="mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6">
-        <h1 className="text-xl font-bold tracking-tight text-gray-900">
-          {labels.title}
-        </h1>
+        <ProfilePageTitle size="section">{labels.title}</ProfilePageTitle>
       </div>
 
       <form

@@ -124,7 +124,7 @@ export function AuthAnimatedInput({
       />
 
       <motion.span
-        className="pointer-events-none absolute inset-0 rounded-[11px]"
+        className="pointer-events-none absolute inset-0 rounded-[20px]"
         animate={
           reduceMotion
             ? undefined

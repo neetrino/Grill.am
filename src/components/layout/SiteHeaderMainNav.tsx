@@ -16,6 +16,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
+import { isAuthSurfacePath } from "@/lib/routes/auth-surface-path";
 
 type SiteHeaderMainNavProps = {
   locale: Locale;
@@ -76,6 +77,8 @@ export function SiteHeaderMainNav({
   const isProfileRoute =
     pathname === `/${locale}/profile` ||
     pathname.startsWith(`/${locale}/profile/`);
+  const hideHeaderOnMobile =
+    isProfileRoute || isAuthSurfacePath(pathname ?? "");
 
   const [primaryHidden, setPrimaryHidden] = useState(false);
   const [motionEnabled, setMotionEnabled] = useState(false);
@@ -287,7 +290,7 @@ export function SiteHeaderMainNav({
       ref={headerRootRef}
       data-site-header
       className={`sticky top-0 z-50 bg-white [overflow-anchor:none] ${
-        isProfileRoute ? "max-lg:hidden" : ""
+        hideHeaderOnMobile ? "max-lg:hidden" : ""
       }`}
     >
       <div

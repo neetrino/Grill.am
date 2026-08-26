@@ -1,5 +1,7 @@
+"use client";
+
 import { Mail, Phone } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { ProfileSidebarNav } from "@/features/profile/ui/ProfileSidebarNav";
 import {
@@ -49,10 +51,51 @@ export function ProfileSidebar({
 }: ProfileSidebarProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
   const initials = `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}`.toUpperCase();
+  const asideRef = useRef<HTMLElement>(null);
+  const navScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const aside = asideRef.current;
+    if (!aside || typeof window === "undefined") {
+      return;
+    }
+
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+
+    function onWheel(event: WheelEvent): void {
+      if (!desktopQuery.matches || event.ctrlKey) {
+        return;
+      }
+
+      const nav = navScrollRef.current;
+      if (nav) {
+        const maxScroll = nav.scrollHeight - nav.clientHeight;
+        if (maxScroll > 0 && nav.contains(event.target as Node)) {
+          const atTop = nav.scrollTop <= 0;
+          const atBottom = nav.scrollTop >= maxScroll - 1;
+          if (
+            (event.deltaY < 0 && !atTop) ||
+            (event.deltaY > 0 && !atBottom)
+          ) {
+            return;
+          }
+        }
+      }
+
+      window.scrollBy({ top: event.deltaY, left: 0 });
+      event.preventDefault();
+    }
+
+    aside.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      aside.removeEventListener("wheel", onWheel);
+    };
+  }, []);
 
   return (
     <aside
-      className={`relative flex w-max min-w-[var(--profile-sidebar-width)] flex-col overflow-hidden p-4 pt-3 ${PROFILE_CARD_CLASS}`}
+      ref={asideRef}
+      className={`relative flex h-full max-h-full min-h-0 w-max min-w-[var(--profile-sidebar-width)] flex-col overflow-hidden p-4 pt-3 ${PROFILE_CARD_CLASS}`}
       aria-label={dictionary.title}
     >
       <div className="shrink-0">
@@ -85,6 +128,7 @@ export function ProfileSidebar({
         locale={locale}
         dictionary={dictionary}
         logoutAction={logoutWithLocale}
+        scrollContainerRef={navScrollRef}
       />
     </aside>
   );

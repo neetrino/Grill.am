@@ -7,6 +7,7 @@ import {
   useState,
   type CSSProperties,
   type ReactNode,
+  type RefObject,
 } from "react";
 import { usePathname } from "next/navigation";
 import {
@@ -35,6 +36,8 @@ type ProfileSidebarNavProps = {
   locale: Locale;
   dictionary: Dictionary["profile"];
   logoutAction: (formData: FormData) => void | Promise<void>;
+  /** Desktop sidebar scrollport — used to chain wheel to the page. */
+  scrollContainerRef?: RefObject<HTMLDivElement | null>;
 };
 
 type NavItem = {
@@ -134,6 +137,7 @@ export function ProfileSidebarNav({
   locale,
   dictionary,
   logoutAction,
+  scrollContainerRef,
 }: ProfileSidebarNavProps) {
   const pathname = usePathname();
   const items = buildNavItems(locale, dictionary);
@@ -215,7 +219,10 @@ export function ProfileSidebarNav({
   }
 
   return (
-    <div className="mt-6 border-t border-gray-100 pt-4">
+    <div
+      ref={scrollContainerRef}
+      className="mt-6 min-h-0 flex-1 overflow-y-auto border-t border-gray-100 pt-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
       <nav
         ref={navRef}
         className="relative flex flex-col gap-1"

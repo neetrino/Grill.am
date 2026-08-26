@@ -8,10 +8,10 @@ export const notoSerifArmenian = Noto_Serif_Armenian({
   display: "swap",
 });
 
-/** Clean Armenian UI face for auth supporting copy. */
+/** Clean Armenian UI face for auth supporting copy and storefront UI. */
 export const notoSansArmenian = Noto_Sans_Armenian({
   variable: "--font-noto-sans-armenian",
   subsets: ["armenian"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });

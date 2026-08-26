@@ -3,8 +3,8 @@ import { TicketPercent } from "lucide-react";
 import {
   PROFILE_CARD_FLAT_CLASS,
   PROFILE_ICON_TONE,
-  PROFILE_SECTION_TITLE_CLASS,
 } from "@/features/profile/ui/profile-ui";
+import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 import type { CustomerAssignedCoupon } from "@/features/promotions/application/list-customer-assigned-coupons";
 import { formatCouponOffer } from "@/features/promotions/domain/format-coupon-offer";
 import { CopyPromoCodeButton } from "@/features/promotions/ui/CopyPromoCodeButton";
@@ -38,7 +38,9 @@ export function CustomerAssignedPromoCodesView({
   return (
     <section className="space-y-4">
       <header className="space-y-2">
-        <h1 className={PROFILE_SECTION_TITLE_CLASS}>{labels.title}</h1>
+        <ProfilePageTitle as="h2" size="section">
+          {labels.title}
+        </ProfilePageTitle>
         <p className="max-w-2xl text-sm leading-relaxed text-gray-600">
           {labels.description}
         </p>
