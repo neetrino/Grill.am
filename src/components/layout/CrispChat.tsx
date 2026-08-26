@@ -15,6 +15,7 @@ import {
   openCrispChat,
 } from "@/lib/crisp/widget";
 import type { Locale } from "@/lib/i18n/config";
+import { isStorefrontMenuPath } from "@/lib/routes/storefront-menu-path";
 
 type CrispChatProps = {
   websiteId?: string;
@@ -36,6 +37,7 @@ export function CrispChat({
   const pathname = usePathname() ?? "";
   const enabled = Boolean(websiteId) && isCrispEnabledPath(pathname, locale);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const hideGreeting = isStorefrontMenuPath(pathname);
 
   useLayoutEffect(() => {
     if (!enabled || !websiteId) {
@@ -64,7 +66,7 @@ export function CrispChat({
       <ChatLauncherButton
         label={openLabel}
         greeting={greeting}
-        showGreeting={!isChatOpen}
+        showGreeting={!isChatOpen && !hideGreeting}
         isOpen={isChatOpen}
         onClick={() => {
           if (isChatOpen) {
