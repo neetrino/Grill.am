@@ -8,11 +8,11 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
 
-import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
-import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { MobileNavPanelSettings } from "@/components/layout/MobileNavPanelSettings";
 import {
   isStorefrontNavActive,
   type StorefrontNavItem,
@@ -28,6 +28,7 @@ export type MobileNavPanelProps = {
   availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
+  authAction: ReactNode;
   isOpen: boolean;
   menuId: string;
   onClose: () => void;
@@ -61,6 +62,7 @@ export function MobileNavPanel({
   availableCurrencies,
   dictionary,
   navItems,
+  authAction,
   isOpen,
   menuId,
   onClose,
@@ -265,35 +267,14 @@ export function MobileNavPanel({
             </AppLink>
           </div>
 
-          <div
-            className={`grid gap-3 border-t border-gray-100 py-4 ${
-              availableCurrencies.length > 1 ? "grid-cols-2" : "grid-cols-1"
-            }`}
-          >
-            <div className="min-w-0 space-y-2">
-              <span className="text-xs font-medium tracking-wide text-gray-500">
-                {dictionary.header.language}
-              </span>
-              <LocaleSwitcher
-                locale={locale}
-                label={dictionary.header.language}
-                variant="segmented"
-              />
-            </div>
-            {availableCurrencies.length > 1 ? (
-              <div className="min-w-0 space-y-2">
-                <span className="text-xs font-medium tracking-wide text-gray-500">
-                  {dictionary.header.currency}
-                </span>
-                <CurrencySwitcher
-                  currency={currency}
-                  availableCurrencies={availableCurrencies}
-                  label={dictionary.header.currency}
-                  variant="segmented"
-                />
-              </div>
-            ) : null}
-          </div>
+          <MobileNavPanelSettings
+            locale={locale}
+            currency={currency}
+            availableCurrencies={availableCurrencies}
+            dictionary={dictionary}
+            authAction={authAction}
+            onClose={onClose}
+          />
         </nav>
       </div>
     </div>,
