@@ -175,11 +175,11 @@ export function AuthPosterShell({
       >
         <section
           data-poster-stage
-          className="relative flex min-h-dvh px-5 pt-[calc(var(--storefront-header-offset,5rem)+1rem)] pb-28 sm:px-8 sm:pt-[calc(var(--storefront-header-offset,5rem)+1.5rem)] lg:px-10 lg:pb-10"
+          className="relative flex min-h-dvh items-center justify-center px-5 py-8 pb-28 sm:px-8 lg:block lg:px-10 lg:pt-[calc(var(--storefront-header-offset,5rem)+1.5rem)] lg:pb-10"
         >
           <div
-            className={`relative mx-auto my-auto w-full -translate-y-24 sm:-translate-y-28 ${
-              mode === "register" ? "max-w-[560px]" : "max-w-[420px]"
+            className={`relative mx-auto w-full lg:my-auto lg:-translate-y-24 ${
+              mode === "register" ? "max-w-[560px] lg:max-w-[420px]" : "max-w-[420px]"
             }`}
           >
             <motion.div

@@ -165,8 +165,6 @@ export function MobileBottomNav({
       idle: "size-4 min-[390px]:size-5",
       active: "size-5 min-[390px]:size-6",
     },
-    /** Tablet / iPad Mini: header profile circle is hidden from md. */
-    className: "max-md:hidden",
   };
 
   useLayoutEffect(() => {
@@ -176,7 +174,7 @@ export function MobileBottomNav({
         return;
       }
       const el = itemRefs.current.get(activeId);
-      // Hidden tablet-only tabs (e.g. profile below md) must not drive the pill.
+      // Hidden tabs (zero width) must not drive the pill.
       if (!el || el.offsetWidth === 0) {
         setIndicator(null);
         return;
