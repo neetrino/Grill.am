@@ -6,6 +6,7 @@ import {
   toAssignedPromoCodesLabels,
   toCustomerPromoCodesLabels,
 } from "@/features/promotions/ui/customer-promo-codes-labels";
+import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 import type { ProfileDictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerPromoCodesPageContentProps = {
@@ -25,6 +26,8 @@ export function CustomerPromoCodesPageContent({
 
   return (
     <div className="space-y-8">
+      <ProfilePageTitle>{copy.nav}</ProfilePageTitle>
+
       <CustomerAssignedPromoCodesView
         locale={locale}
         coupons={assigned}

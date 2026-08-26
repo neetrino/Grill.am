@@ -15,7 +15,7 @@ import { PersonalInformationForm } from "@/features/profile/ui/PersonalInformati
 import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView";
 import { ProfileDashboardView } from "@/features/profile/ui/ProfileDashboardView";
 import { ProfileMobileMenu } from "@/features/profile/ui/ProfileMobileMenu";
-import { PROFILE_SECTION_TITLE_CLASS } from "@/features/profile/ui/profile-ui";
+import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 import { listCustomerAssignedCoupons } from "@/features/promotions/application/list-customer-assigned-coupons";
 import { listCustomerCouponHistory } from "@/features/promotions/application/list-customer-coupon-history";
 import { CustomerPromoCodesPageContent } from "@/features/promotions/ui/CustomerPromoCodesPageContent";
@@ -101,9 +101,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           dashboard: <ProfileDashboardView {...dashboardProps} />,
           orders: (
             <div className="space-y-6">
-              <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl`}>
-                {profileCopy.orders}
-              </h1>
+              <ProfilePageTitle>{profileCopy.orders}</ProfilePageTitle>
               <CustomerOrdersView
                 locale={locale}
                 orders={customerOrders.rows}

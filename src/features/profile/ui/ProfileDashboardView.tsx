@@ -19,12 +19,12 @@ import type {
   ProfileRecentOrder,
 } from "@/features/profile/application/dashboard-queries";
 import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrderCard";
+import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
 import {
   PROFILE_CARD_CLASS,
   PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS,
   PROFILE_PRIMARY_BUTTON_CLASS,
-  PROFILE_SECTION_TITLE_CLASS,
   PROFILE_STAT_KEYS,
   type ProfileStatKey,
 } from "@/features/profile/ui/profile-ui";
@@ -126,9 +126,7 @@ export function ProfileDashboardView({
     <>
       <section className="space-y-6 lg:space-y-8">
         {!hideTitle ? (
-          <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl lg:hidden`}>
-            {dictionary.dashboard}
-          </h1>
+          <ProfilePageTitle>{dictionary.dashboard}</ProfilePageTitle>
         ) : null}
 
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
@@ -144,9 +142,9 @@ export function ProfileDashboardView({
 
         <div className={`p-5 sm:p-7 ${PROFILE_CARD_CLASS} ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
           <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className={PROFILE_SECTION_TITLE_CLASS}>
+            <ProfilePageTitle as="h2" size="section">
               {dictionary.recentOrders}
-            </h2>
+            </ProfilePageTitle>
             <AppLink
               href={`/${locale}/profile/orders`}
               prefetchPolicy="intent"

@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 
+import { ProfileContentScroller } from "@/features/profile/ui/ProfileContentScroller";
 import { ProfileMobileBackLink } from "@/features/profile/ui/ProfileMobileBackLink";
 import { ProfileSidebar } from "@/features/profile/ui/ProfileSidebar";
 import {
   PROFILE_PAGE_BG_CLASS,
   PROFILE_SIDEBAR_WIDTH_PX,
+  PROFILE_STICKY_BAND_CLASS,
 } from "@/features/profile/ui/profile-ui";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
@@ -16,8 +18,10 @@ type ProfileLayoutProps = {
 };
 
 /**
- * Desktop: sidebar keeps its full natural height. The page column is capped
- * to that height and scrolls internally; the storefront footer stays below.
+ * Desktop: both columns stick in a viewport band under the header.
+ * Content scrolls inside the right column (scrollbar hidden). When that
+ * scroll ends, further wheel/trackpad scroll chains to the page so the
+ * footer can be reached — same as Kamancha profile.
  */
 export default async function ProfileLayout({
   children,
@@ -44,20 +48,20 @@ export default async function ProfileLayout({
           } as React.CSSProperties
         }
       >
-        <div className="hidden lg:block">
+        <div className={`hidden lg:block ${PROFILE_STICKY_BAND_CLASS}`}>
           <ProfileSidebar
             locale={rawLocale}
             user={user}
             dictionary={dictionary.profile}
           />
         </div>
-        <div className="min-h-0 min-w-0 lg:h-0 lg:min-h-full lg:self-stretch lg:overflow-y-auto lg:overscroll-contain">
+        <ProfileContentScroller>
           <ProfileMobileBackLink
             locale={rawLocale}
             label={dictionary.profile.title}
           />
           {children}
-        </div>
+        </ProfileContentScroller>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status";
 import { CustomerOrdersFilters } from "@/features/orders/ui/CustomerOrdersFilters";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
-import { PROFILE_SECTION_TITLE_CLASS } from "@/features/profile/ui/profile-ui";
+import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -81,9 +81,7 @@ export default async function OrdersPage({
 
   return (
     <section className="space-y-6">
-      <h1 className={`${PROFILE_SECTION_TITLE_CLASS} text-2xl`}>
-        {profileCopy.orders}
-      </h1>
+      <ProfilePageTitle>{profileCopy.orders}</ProfilePageTitle>
 
       <div className="hidden lg:block">
         <CustomerOrdersFilters
