@@ -84,16 +84,28 @@ function buildMonthBands(
   return bands;
 }
 
+/** Centers each point in its slot so first/last bars stay clear of axis labels. */
 function xForIndex(
   index: number,
   pointCount: number,
   paddingLeft: number,
   plotWidth: number,
 ): number {
-  if (pointCount === 1) {
-    return paddingLeft + plotWidth / 2;
+  const count = Math.max(pointCount, 1);
+  const slotWidth = plotWidth / count;
+  return paddingLeft + slotWidth * (index + 0.5);
+}
+
+/** Skip dense day labels so ticks do not pile on each other. */
+function shouldShowDayLabel(index: number, pointCount: number): boolean {
+  if (pointCount <= 14) {
+    return true;
   }
-  return paddingLeft + (index / (pointCount - 1)) * plotWidth;
+  if (pointCount <= 31) {
+    return index % 2 === 0 || index === pointCount - 1;
+  }
+  const step = Math.ceil(pointCount / 12);
+  return index % step === 0 || index === pointCount - 1;
 }
 
 type DashboardTrendSvgProps = {
@@ -109,16 +121,18 @@ export function DashboardTrendSvg({
 }: DashboardTrendSvgProps) {
   const daily = isDailySeries(points);
   const width = 720;
-  const height = daily ? 300 : 280;
+  const height = daily ? 236 : 220;
   const padding = {
-    top: 12,
-    right: 36,
-    bottom: daily ? 48 : 32,
-    left: 44,
+    top: 16,
+    right: 44,
+    bottom: daily ? 52 : 36,
+    left: 56,
   };
   const plotWidth = width - padding.left - padding.right;
   const plotHeight = height - padding.top - padding.bottom;
   const monthBands = daily ? buildMonthBands(points, locale) : [];
+  const pointCount = Math.max(points.length, 1);
+  const slotWidth = plotWidth / pointCount;
 
   const maxRevenue = niceCeiling(
     Math.max(...points.map((point) => point.revenueAmount), 1),
@@ -133,7 +147,7 @@ export function DashboardTrendSvg({
       padding.top +
       plotHeight -
       (point.revenueAmount / maxRevenue) * plotHeight;
-    return { x, y, point };
+    return { x, y, point, index };
   });
 
   const linePath = revenuePoints
@@ -146,10 +160,7 @@ export function DashboardTrendSvg({
     padding.top + plotHeight
   } L ${revenuePoints[0]?.x ?? padding.left} ${padding.top + plotHeight} Z`;
 
-  const barWidth = Math.min(
-    28,
-    Math.max(10, (plotWidth / Math.max(points.length, 1)) * 0.45),
-  );
+  const barWidth = Math.min(22, Math.max(6, slotWidth * 0.5));
 
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((ratio) => ({
     ratio,
@@ -160,8 +171,8 @@ export function DashboardTrendSvg({
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      preserveAspectRatio="none"
-      className="h-full min-h-[18rem] w-full sm:min-h-[20rem]"
+      preserveAspectRatio="xMidYMid meet"
+      className="mx-auto block h-56 w-full max-w-4xl sm:h-64"
       role="img"
       aria-label={chartAria}
     >
@@ -193,18 +204,20 @@ export function DashboardTrendSvg({
               strokeDasharray="4 4"
             />
             <text
-              x={padding.left - 10}
-              y={y + 4}
+              x={padding.left - 8}
+              y={y + 3}
               textAnchor="end"
-              className="fill-gray-400 text-[10px]"
+              fill="#9CA3AF"
+              fontSize="10"
             >
               {formatAxisAmount(tick.revenue)}
             </text>
             <text
-              x={width - padding.right + 10}
-              y={y + 4}
+              x={width - padding.right + 8}
+              y={y + 3}
               textAnchor="start"
-              className="fill-gray-400 text-[10px]"
+              fill="#9CA3AF"
+              fontSize="10"
             >
               {tick.orders}
             </text>
@@ -223,7 +236,7 @@ export function DashboardTrendSvg({
             y={y}
             width={barWidth}
             height={Math.max(barHeight, point.orderCount > 0 ? 2 : 0)}
-            rx={6}
+            rx={5}
             fill={DASHBOARD_ORDERS_COLOR}
             opacity={0.85}
           />
@@ -235,7 +248,7 @@ export function DashboardTrendSvg({
         d={linePath}
         fill="none"
         stroke={DASHBOARD_REVENUE_COLOR}
-        strokeWidth="2.75"
+        strokeWidth="2.5"
         strokeLinejoin="round"
         strokeLinecap="round"
       />
@@ -245,7 +258,7 @@ export function DashboardTrendSvg({
           key={`dot-${entry.point.key}`}
           cx={entry.x}
           cy={entry.y}
-          r="5"
+          r="4"
           fill={DASHBOARD_REVENUE_COLOR}
           stroke="white"
           strokeWidth="2"
@@ -272,7 +285,9 @@ export function DashboardTrendSvg({
                 x={(startX + endX) / 2}
                 y={height - 30}
                 textAnchor="middle"
-                className="fill-gray-500 text-[11px] font-medium"
+                fill="#6B7280"
+                fontSize="11"
+                fontWeight="500"
               >
                 {band.label}
               </text>
@@ -280,21 +295,23 @@ export function DashboardTrendSvg({
           })
         : null}
 
-      {revenuePoints.map((entry) => (
-        <text
-          key={`tick-${entry.point.key}`}
-          x={entry.x}
-          y={daily ? height - 12 : height - 14}
-          textAnchor="middle"
-          className={
-            daily
-              ? "fill-gray-400 text-[9px]"
-              : "fill-gray-500 text-[11px]"
-          }
-        >
-          {daily ? dayNumberFromIso(entry.point.key) : entry.point.label}
-        </text>
-      ))}
+      {revenuePoints.map((entry) => {
+        if (daily && !shouldShowDayLabel(entry.index, points.length)) {
+          return null;
+        }
+        return (
+          <text
+            key={`tick-${entry.point.key}`}
+            x={entry.x}
+            y={daily ? height - 12 : height - 14}
+            textAnchor="middle"
+            fill={daily ? "#9CA3AF" : "#6B7280"}
+            fontSize={daily ? 9 : 11}
+          >
+            {daily ? dayNumberFromIso(entry.point.key) : entry.point.label}
+          </text>
+        );
+      })}
     </svg>
   );
 }

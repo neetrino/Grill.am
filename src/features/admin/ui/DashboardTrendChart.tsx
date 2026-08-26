@@ -169,15 +169,13 @@ export function DashboardTrendChart({
         </p>
       ) : (
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-stretch">
-          <div className="flex min-h-0 min-w-0 flex-col rounded-[12px] bg-gradient-to-b from-brand-surface/70 to-white p-1.5 ring-1 ring-gray-100/80 lg:min-h-full">
-            <div className="min-h-0 flex-1">
-              <DashboardTrendSvg
-                points={points}
-                chartAria={copy.chartAria}
-                locale={locale}
-              />
-            </div>
-            <div className="mt-1.5 flex flex-wrap items-center justify-center gap-4 pb-0.5 text-[11px] text-gray-500">
+          <div className="flex min-w-0 flex-col items-center justify-center overflow-hidden rounded-[12px] bg-gradient-to-b from-brand-surface/70 to-white p-3 ring-1 ring-gray-100/80">
+            <DashboardTrendSvg
+              points={points}
+              chartAria={copy.chartAria}
+              locale={locale}
+            />
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500">
               <span className="inline-flex items-center gap-1.5">
                 <span
                   className="h-2 w-2 rounded-full"
