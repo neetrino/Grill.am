@@ -171,15 +171,15 @@ export function AuthPosterShell({
 
       <div
         ref={rootRef}
-        className="storefront-bleed relative z-[2] -mt-10 -mb-28 min-h-dvh lg:-mb-10"
+        className="storefront-bleed relative z-[2] -mt-10 -mb-28 min-h-dvh lg:mb-0 lg:min-h-0"
       >
         <section
           data-poster-stage
-          className="relative flex min-h-dvh items-center justify-center px-5 py-8 pb-28 sm:px-8 lg:block lg:px-10 lg:pt-[calc(var(--storefront-header-offset,5rem)+1.5rem)] lg:pb-10"
+          className="relative flex min-h-dvh items-center justify-center px-5 py-8 pb-28 sm:px-8 lg:block lg:min-h-0 lg:px-10 lg:pt-[calc(var(--storefront-header-offset,5rem)+1.5rem)] lg:pb-4"
         >
           <div
-            className={`relative mx-auto w-full lg:my-auto lg:-translate-y-24 ${
-              mode === "register" ? "max-w-[560px] lg:max-w-[420px]" : "max-w-[420px]"
+            className={`relative mx-auto w-full lg:-translate-y-16 ${
+              mode === "register" ? "max-w-[560px]" : "max-w-[420px]"
             }`}
           >
             <motion.div
