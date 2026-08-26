@@ -1,7 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 
 import {
   MobileNavPanel,
@@ -18,6 +18,7 @@ type MobileHeaderActionsProps = {
   availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
   navItems: readonly StorefrontNavItem[];
+  authAction: ReactNode;
 };
 
 /** Slightly tighter than bottom-nav idle tabs: 44px on small phones, 48px from 390px. */
@@ -37,6 +38,7 @@ export function MobileHeaderActions({
   availableCurrencies,
   dictionary,
   navItems,
+  authAction,
 }: MobileHeaderActionsProps) {
   const [open, setOpen] = useState(false);
   const menuId = `mobile-nav-${useId().replace(/:/g, "")}`;
@@ -62,6 +64,7 @@ export function MobileHeaderActions({
     availableCurrencies,
     dictionary,
     navItems,
+    authAction,
     isOpen: open,
     menuId,
     onClose: () => setOpen(false),

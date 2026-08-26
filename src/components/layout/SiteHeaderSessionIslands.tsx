@@ -3,6 +3,10 @@ import { cache, Suspense } from "react";
 import { AccountControls } from "@/components/layout/AccountControls";
 import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
 import { MobileHeaderActions } from "@/components/layout/MobileHeaderActions";
+import {
+  MobileNavAuthButton,
+  MobileNavAuthButtonFallback,
+} from "@/components/layout/MobileNavAuthButton";
 import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { getCartItemCount } from "@/features/cart/cart";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
@@ -100,6 +104,25 @@ export function HeaderDesktopActionsIsland(props: HeaderDesktopActionsProps) {
   );
 }
 
+async function MobileNavAuthActionAsync({
+  locale,
+  loginLabel,
+  profileLabel,
+}: {
+  locale: Locale;
+  loginLabel: string;
+  profileLabel: string;
+}) {
+  const { user } = await loadHeaderSessionData();
+
+  return (
+    <MobileNavAuthButton
+      href={user ? `/${locale}/profile` : `/${locale}/login`}
+      label={user ? profileLabel : loginLabel}
+    />
+  );
+}
+
 export function HeaderMobileNavIsland(props: HeaderMobileNavProps) {
   return (
     <MobileHeaderActions
@@ -108,6 +131,15 @@ export function HeaderMobileNavIsland(props: HeaderMobileNavProps) {
       availableCurrencies={props.availableCurrencies}
       dictionary={props.dictionary}
       navItems={props.navItems}
+      authAction={
+        <Suspense fallback={<MobileNavAuthButtonFallback />}>
+          <MobileNavAuthActionAsync
+            locale={props.locale}
+            loginLabel={props.dictionary.header.login}
+            profileLabel={props.dictionary.header.profile}
+          />
+        </Suspense>
+      }
     />
   );
 }
