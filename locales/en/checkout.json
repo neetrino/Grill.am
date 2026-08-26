@@ -37,6 +37,7 @@
     "deliveryDescription": "We will deliver your order to your address",
     "freePickup": "Free (Take Away)",
     "enterCity": "Enter City",
+    "selectShippingMethod": "Select take away or delivery",
     "selectDeliveryLocation": "Select delivery location"
   },
   "deliveryCities": {

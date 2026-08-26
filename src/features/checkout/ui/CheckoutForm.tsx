@@ -67,6 +67,7 @@ type CheckoutLabels = {
   pickupBranch: string;
   selectPickupBranch: string;
   enterCity: string;
+  selectShippingMethod: string;
   selectDeliveryLocation: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
@@ -191,9 +192,9 @@ export function CheckoutForm({
     deliveryOptions,
     defaultCity,
   );
-  const [shippingMethod, setShippingMethod] = useState<"pickup" | "delivery">(
-    deliveryOptions.length > 0 ? "delivery" : "pickup",
-  );
+  const [shippingMethod, setShippingMethod] = useState<
+    "pickup" | "delivery" | null
+  >(null);
   const [deliveryRuleId, setDeliveryRuleId] = useState(defaultRuleId);
   const [pickupStoreId, setPickupStoreId] = useState("");
   const [paymentMethod, setPaymentMethod] =
@@ -278,14 +279,18 @@ export function CheckoutForm({
   }
 
   const quotedDelivery = quoteDeliveryAmount(selectedDelivery, subtotalAmount);
-  const shippingAmount = shippingMethod === "pickup" ? 0 : quotedDelivery;
+  const shippingAmount =
+    shippingMethod === "delivery" ? quotedDelivery : 0;
   const totalAmount =
     Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
-  const meetsMinimum = meetsStorefrontMinimumOrder(
-    subtotalAmount,
-    minimumOrderAmount,
-    shippingMethod,
-  );
+  const meetsMinimum =
+    shippingMethod == null
+      ? true
+      : meetsStorefrontMinimumOrder(
+          subtotalAmount,
+          minimumOrderAmount,
+          shippingMethod,
+        );
   const minimumOrderMessage =
     !meetsMinimum && minimumOrderAmount != null
       ? labels.minimumOrder.replace(
@@ -303,11 +308,17 @@ export function CheckoutForm({
   const shippingFormatted =
     shippingMethod === "pickup"
       ? (selectedPickupStore?.label ?? labels.selectPickupBranch)
-      : selectedDelivery
-        ? `${formatMoney(shippingAmount)} (${selectedDelivery.label})`
-        : labels.selectDeliveryLocation;
+      : shippingMethod === "delivery"
+        ? selectedDelivery
+          ? `${formatMoney(shippingAmount)} (${selectedDelivery.label})`
+          : labels.selectDeliveryLocation
+        : labels.selectShippingMethod;
   const shippingLabel =
-    shippingMethod === "pickup" ? labels.pickup : labels.shipping;
+    shippingMethod === "pickup"
+      ? labels.pickup
+      : shippingMethod === "delivery"
+        ? labels.shipping
+        : labels.shippingMethod;
 
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
@@ -368,6 +379,10 @@ export function CheckoutForm({
 
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
+    if (shippingMethod == null) {
+      setError(labels.selectShippingMethod);
+      return;
+    }
     if (!meetsMinimum) {
       setError(minimumOrderMessage);
       return;
@@ -591,7 +606,7 @@ export function CheckoutForm({
               isApplyingCoupon={applyingCoupon}
               error={error}
               isSubmitting={pending}
-              canPlaceOrder={meetsMinimum}
+              canPlaceOrder={shippingMethod != null && meetsMinimum}
               placeOrderLabel={labels.placeOrder}
               processingLabel={labels.processing}
             />

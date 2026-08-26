@@ -37,6 +37,7 @@
     "deliveryDescription": "Կառաքենք ձեր հասցեով",
     "freePickup": "Անվճար (Take Away)",
     "enterCity": "Մուտքագրեք քաղաքը",
+    "selectShippingMethod": "Ընտրեք Take Away կամ առաքում",
     "selectDeliveryLocation": "Ընտրեք առաքման վայրը"
   },
   "deliveryCities": {

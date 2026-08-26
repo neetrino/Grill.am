@@ -30,11 +30,13 @@ type CheckoutFulfillmentLabels = {
   addressPlaceholder: string;
 };
 
+type CheckoutShippingMethod = "pickup" | "delivery";
+
 type CheckoutFulfillmentSectionProps = {
   labels: CheckoutFulfillmentLabels;
   pending: boolean;
-  shippingMethod: "pickup" | "delivery";
-  onShippingMethodChange: (method: "pickup" | "delivery") => void;
+  shippingMethod: CheckoutShippingMethod | null;
+  onShippingMethodChange: (method: CheckoutShippingMethod) => void;
   deliveryOptions: CheckoutDeliveryOption[];
   deliveryRuleId: string;
   onDeliveryRuleChange: (ruleId: string) => void;
@@ -59,9 +61,9 @@ function ShippingMethodToggles({
 }: {
   labels: CheckoutFulfillmentLabels;
   pending: boolean;
-  shippingMethod: "pickup" | "delivery";
+  shippingMethod: CheckoutShippingMethod | null;
   deliveryDisabled: boolean;
-  onShippingMethodChange: (method: "pickup" | "delivery") => void;
+  onShippingMethodChange: (method: CheckoutShippingMethod) => void;
 }) {
   return (
     <div
@@ -104,7 +106,7 @@ function MethodToggle({
   onSelect,
 }: {
   selected: boolean;
-  value: "pickup" | "delivery";
+  value: CheckoutShippingMethod;
   disabled: boolean;
   icon: LucideIcon;
   title: string;
@@ -175,7 +177,8 @@ export function CheckoutFulfillmentSection({
           pickupStoreId={pickupStoreId}
           onPickupStoreChange={onPickupStoreChange}
         />
-      ) : (
+      ) : null}
+      {shippingMethod === "delivery" ? (
         <DeliveryAddressFields
           labels={labels}
           pending={pending}
@@ -184,7 +187,7 @@ export function CheckoutFulfillmentSection({
           onDeliveryRuleChange={onDeliveryRuleChange}
           defaultLine1={defaultLine1}
         />
-      )}
+      ) : null}
     </section>
   );
 }

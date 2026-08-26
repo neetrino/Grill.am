@@ -51,7 +51,7 @@ type PaymentOption = {
 type CheckoutDetailsSectionsProps = {
   labels: CheckoutDetailsLabels;
   pending: boolean;
-  shippingMethod: "pickup" | "delivery";
+  shippingMethod: "pickup" | "delivery" | null;
   onShippingMethodChange: (method: "pickup" | "delivery") => void;
   deliveryOptions: CheckoutDeliveryOption[];
   deliveryRuleId: string;
