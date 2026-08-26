@@ -62,9 +62,9 @@ function MobilePromoCard({
         {limitedOfferLabel}
       </span>
 
-      <p className="absolute bottom-4 left-4 z-20 max-w-[55%] text-[22px] leading-[28px] font-black tracking-[2.2px] text-[#0d0d0d] uppercase">
+      <p className="absolute bottom-4 left-4 z-20 max-w-[55%] text-[22px] leading-[28px] font-black tracking-[2.2px] text-[#0d0d0d] uppercase [text-shadow:0.4px_0_0_currentColor,-0.4px_0_0_currentColor,0_0.4px_0_currentColor,0_-0.4px_0_currentColor]">
         {eyebrowLead ? `${eyebrowLead} ` : null}
-        <span className="text-brand-red">{eyebrowAccent}</span>
+        <span className="font-black text-brand-red">{eyebrowAccent}</span>
       </p>
 
       <AppLink
