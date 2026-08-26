@@ -4,6 +4,8 @@ import { X } from "lucide-react";
 
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_CARD_RADIUS_CLASS } from "@/features/admin/ui/admin-ui";
+import { resolveLocaleLabel } from "@/features/products/domain/customization";
+import type { Locale } from "@/lib/i18n/config";
 
 type LocaleLabel = { hy?: string; en?: string; ru?: string };
 
@@ -54,6 +56,7 @@ type ProductDrawerModifierPanelsProps = {
   exclusions: ExclusionRow[];
   libraryAddons: LibraryAddon[];
   libraryExclusions: LibraryExclusion[];
+  activeLocale: Locale;
   addonDraft: string;
   addonPriceDraft: string;
   exclusionDraft: string;
@@ -74,10 +77,6 @@ type ProductDrawerModifierPanelsProps = {
   onUpdateExclusion: (id: string, label: string) => void;
   onRemoveExclusion: (id: string) => void;
 };
-
-function displayLabel(label: LocaleLabel): string {
-  return label.hy ?? label.en ?? label.ru ?? "";
-}
 
 /** `overflow-hidden` keeps the footer fill inside the rounded corners. */
 const panelClassName = `flex min-w-0 flex-col overflow-hidden border border-gray-200 bg-white ${ADMIN_CARD_RADIUS_CLASS}`;
@@ -141,6 +140,7 @@ export function ProductDrawerModifierPanels({
   exclusions,
   libraryAddons,
   libraryExclusions,
+  activeLocale,
   addonDraft,
   addonPriceDraft,
   exclusionDraft,
@@ -187,7 +187,7 @@ export function ProductDrawerModifierPanels({
             addons.map((addon) => (
               <li key={addon.id} className={additionRowClassName}>
                 <input
-                  value={displayLabel(addon.label)}
+                  value={resolveLocaleLabel(addon.label, activeLocale)}
                   onChange={(event) =>
                     onUpdateAddon(addon.id, { label: event.target.value })
                   }
@@ -302,7 +302,7 @@ export function ProductDrawerModifierPanels({
                 className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2"
               >
                 <input
-                  value={displayLabel(exclusion.label)}
+                  value={resolveLocaleLabel(exclusion.label, activeLocale)}
                   onChange={(event) =>
                     onUpdateExclusion(exclusion.id, event.target.value)
                   }
