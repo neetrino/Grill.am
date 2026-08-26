@@ -215,7 +215,7 @@ export function MobileNavPanel({
         >
           <div className="flex flex-col py-3">
             {navItems
-              .filter((item) => item.id !== "home" && item.kind !== "categories")
+              .filter((item) => item.id !== "home")
               .map((item) => {
                 const active = isStorefrontNavActive(pathname, item, locale);
 
