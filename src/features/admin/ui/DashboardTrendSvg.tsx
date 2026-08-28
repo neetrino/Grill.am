@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 import type { DashboardTrendPoint } from "@/features/analytics/domain/dashboard-periods";
 import { formatAnalyticsMonthShort } from "@/features/analytics/domain/date-range";
 import { defaultLocale, type Locale } from "@/lib/i18n/config";
@@ -12,6 +16,13 @@ type MonthBand = {
   label: string;
   startIndex: number;
   endIndex: number;
+};
+
+export type DashboardTrendTooltipCopy = {
+  revenueLabel: string;
+  ordersLabel: string;
+  formatRevenue: (amount: number) => string;
+  formatOrders: (count: number) => string;
 };
 
 function niceCeiling(value: number): number {
@@ -112,13 +123,17 @@ type DashboardTrendSvgProps = {
   points: DashboardTrendPoint[];
   chartAria: string;
   locale?: Locale;
+  /** When set, hovering a day/month shows a detail card. */
+  tooltip?: DashboardTrendTooltipCopy;
 };
 
 export function DashboardTrendSvg({
   points,
   chartAria,
   locale = defaultLocale,
+  tooltip,
 }: DashboardTrendSvgProps) {
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const daily = isDailySeries(points);
   const width = 720;
   const height = daily ? 236 : 220;
@@ -168,150 +183,240 @@ export function DashboardTrendSvg({
     orders: Math.round(maxOrders * ratio),
   }));
 
+  const hovered = revenuePoints.find((entry) => entry.point.key === hoveredKey);
+  const tooltipEnabled = Boolean(tooltip);
+
   return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      preserveAspectRatio="xMidYMid meet"
-      className="mx-auto block h-56 w-full max-w-4xl sm:h-64"
-      role="img"
-      aria-label={chartAria}
+    <div
+      className="relative mx-auto w-full max-w-4xl"
+      onMouseLeave={() => {
+        setHoveredKey(null);
+      }}
     >
-      <defs>
-        <linearGradient id="dashboardRevenueFill" x1="0" y1="0" x2="0" y2="1">
-          <stop
-            offset="0%"
-            stopColor={DASHBOARD_REVENUE_COLOR}
-            stopOpacity="0.28"
-          />
-          <stop
-            offset="100%"
-            stopColor={DASHBOARD_REVENUE_COLOR}
-            stopOpacity="0.02"
-          />
-        </linearGradient>
-      </defs>
-
-      {yTicks.map((tick) => {
-        const y = padding.top + plotHeight - tick.ratio * plotHeight;
-        return (
-          <g key={tick.ratio}>
-            <line
-              x1={padding.left}
-              y1={y}
-              x2={width - padding.right}
-              y2={y}
-              stroke="#E5E7EB"
-              strokeDasharray="4 4"
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="block h-56 w-full sm:h-64"
+        role="img"
+        aria-label={chartAria}
+      >
+        <defs>
+          <linearGradient id="dashboardRevenueFill" x1="0" y1="0" x2="0" y2="1">
+            <stop
+              offset="0%"
+              stopColor={DASHBOARD_REVENUE_COLOR}
+              stopOpacity="0.28"
             />
-            <text
-              x={padding.left - 8}
-              y={y + 3}
-              textAnchor="end"
-              fill="#9CA3AF"
-              fontSize="10"
-            >
-              {formatAxisAmount(tick.revenue)}
-            </text>
-            <text
-              x={width - padding.right + 8}
-              y={y + 3}
-              textAnchor="start"
-              fill="#9CA3AF"
-              fontSize="10"
-            >
-              {tick.orders}
-            </text>
-          </g>
-        );
-      })}
+            <stop
+              offset="100%"
+              stopColor={DASHBOARD_REVENUE_COLOR}
+              stopOpacity="0.02"
+            />
+          </linearGradient>
+        </defs>
 
-      {points.map((point, index) => {
-        const x = xForIndex(index, points.length, padding.left, plotWidth);
-        const barHeight = (point.orderCount / maxOrders) * plotHeight;
-        const y = padding.top + plotHeight - barHeight;
-        return (
-          <rect
-            key={`bar-${point.key}`}
-            x={x - barWidth / 2}
-            y={y}
-            width={barWidth}
-            height={Math.max(barHeight, point.orderCount > 0 ? 2 : 0)}
-            rx={5}
-            fill={DASHBOARD_ORDERS_COLOR}
-            opacity={0.85}
-          />
-        );
-      })}
-
-      <path d={areaPath} fill="url(#dashboardRevenueFill)" />
-      <path
-        d={linePath}
-        fill="none"
-        stroke={DASHBOARD_REVENUE_COLOR}
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
-
-      {revenuePoints.map((entry) => (
-        <circle
-          key={`dot-${entry.point.key}`}
-          cx={entry.x}
-          cy={entry.y}
-          r="4"
-          fill={DASHBOARD_REVENUE_COLOR}
-          stroke="white"
-          strokeWidth="2"
-        />
-      ))}
-
-      {daily
-        ? monthBands.map((band) => {
-            const startX = xForIndex(
-              band.startIndex,
-              points.length,
-              padding.left,
-              plotWidth,
-            );
-            const endX = xForIndex(
-              band.endIndex,
-              points.length,
-              padding.left,
-              plotWidth,
-            );
-            return (
+        {yTicks.map((tick) => {
+          const y = padding.top + plotHeight - tick.ratio * plotHeight;
+          return (
+            <g key={tick.ratio}>
+              <line
+                x1={padding.left}
+                y1={y}
+                x2={width - padding.right}
+                y2={y}
+                stroke="#E5E7EB"
+                strokeDasharray="4 4"
+              />
               <text
-                key={`month-${band.monthKey}`}
-                x={(startX + endX) / 2}
-                y={height - 30}
-                textAnchor="middle"
-                fill="#6B7280"
-                fontSize="11"
-                fontWeight="500"
+                x={padding.left - 8}
+                y={y + 3}
+                textAnchor="end"
+                fill="#9CA3AF"
+                fontSize="10"
               >
-                {band.label}
+                {formatAxisAmount(tick.revenue)}
               </text>
-            );
-          })
-        : null}
+              <text
+                x={width - padding.right + 8}
+                y={y + 3}
+                textAnchor="start"
+                fill="#9CA3AF"
+                fontSize="10"
+              >
+                {tick.orders}
+              </text>
+            </g>
+          );
+        })}
 
-      {revenuePoints.map((entry) => {
-        if (daily && !shouldShowDayLabel(entry.index, points.length)) {
-          return null;
-        }
-        return (
-          <text
-            key={`tick-${entry.point.key}`}
-            x={entry.x}
-            y={daily ? height - 12 : height - 14}
-            textAnchor="middle"
-            fill={daily ? "#9CA3AF" : "#6B7280"}
-            fontSize={daily ? 9 : 11}
-          >
-            {daily ? dayNumberFromIso(entry.point.key) : entry.point.label}
-          </text>
-        );
-      })}
-    </svg>
+        {points.map((point, index) => {
+          const x = xForIndex(index, points.length, padding.left, plotWidth);
+          const barHeight = (point.orderCount / maxOrders) * plotHeight;
+          const y = padding.top + plotHeight - barHeight;
+          const active = point.key === hoveredKey;
+          return (
+            <rect
+              key={`bar-${point.key}`}
+              x={x - barWidth / 2}
+              y={y}
+              width={barWidth}
+              height={Math.max(barHeight, point.orderCount > 0 ? 2 : 0)}
+              rx={5}
+              fill={DASHBOARD_ORDERS_COLOR}
+              opacity={active ? 1 : 0.85}
+            />
+          );
+        })}
+
+        <path d={areaPath} fill="url(#dashboardRevenueFill)" />
+        <path
+          d={linePath}
+          fill="none"
+          stroke={DASHBOARD_REVENUE_COLOR}
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+
+        {hovered ? (
+          <line
+            x1={hovered.x}
+            y1={padding.top}
+            x2={hovered.x}
+            y2={padding.top + plotHeight}
+            stroke="#D1D5DB"
+            strokeDasharray="3 3"
+            strokeWidth="1"
+          />
+        ) : null}
+
+        {revenuePoints.map((entry) => {
+          const active = entry.point.key === hoveredKey;
+          return (
+            <circle
+              key={`dot-${entry.point.key}`}
+              cx={entry.x}
+              cy={entry.y}
+              r={active ? 6 : 4}
+              fill={DASHBOARD_REVENUE_COLOR}
+              stroke="white"
+              strokeWidth="2"
+            />
+          );
+        })}
+
+        {tooltipEnabled
+          ? revenuePoints.map((entry) => (
+              <rect
+                key={`hit-${entry.point.key}`}
+                x={entry.x - slotWidth / 2}
+                y={padding.top}
+                width={slotWidth}
+                height={plotHeight}
+                fill="transparent"
+                className="cursor-pointer"
+                onMouseEnter={() => {
+                  setHoveredKey(entry.point.key);
+                }}
+              />
+            ))
+          : null}
+
+        {daily
+          ? monthBands.map((band) => {
+              const startX = xForIndex(
+                band.startIndex,
+                points.length,
+                padding.left,
+                plotWidth,
+              );
+              const endX = xForIndex(
+                band.endIndex,
+                points.length,
+                padding.left,
+                plotWidth,
+              );
+              return (
+                <text
+                  key={`month-${band.monthKey}`}
+                  x={(startX + endX) / 2}
+                  y={height - 30}
+                  textAnchor="middle"
+                  fill="#6B7280"
+                  fontSize="11"
+                  fontWeight="500"
+                >
+                  {band.label}
+                </text>
+              );
+            })
+          : null}
+
+        {revenuePoints.map((entry) => {
+          if (daily && !shouldShowDayLabel(entry.index, points.length)) {
+            return null;
+          }
+          return (
+            <text
+              key={`tick-${entry.point.key}`}
+              x={entry.x}
+              y={daily ? height - 12 : height - 14}
+              textAnchor="middle"
+              fill={daily ? "#9CA3AF" : "#6B7280"}
+              fontSize={daily ? 9 : 11}
+            >
+              {daily ? dayNumberFromIso(entry.point.key) : entry.point.label}
+            </text>
+          );
+        })}
+      </svg>
+
+      {hovered && tooltip ? (
+        <div
+          className={`pointer-events-none absolute z-10 min-w-[10.5rem] -translate-x-1/2 rounded-xl bg-white px-3 py-2.5 shadow-lg ring-1 ring-black/5 ${
+            hovered.y < 72
+              ? "translate-y-3"
+              : "-translate-y-[calc(100%+10px)]"
+          }`}
+          style={{
+            left: `${Math.min(88, Math.max(12, (hovered.x / width) * 100))}%`,
+            top: `${(hovered.y / height) * 100}%`,
+          }}
+          role="tooltip"
+        >
+          <p className="text-xs font-semibold text-gray-900">
+            {hovered.point.label}
+          </p>
+          <div className="mt-1.5 space-y-1 text-[11px] leading-snug text-gray-600">
+            <p className="flex items-center gap-1.5">
+              <span
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ backgroundColor: DASHBOARD_REVENUE_COLOR }}
+                aria-hidden
+              />
+              <span>
+                {tooltip.revenueLabel}:{" "}
+                <span className="font-semibold text-gray-900">
+                  {tooltip.formatRevenue(hovered.point.revenueAmount)}
+                </span>
+              </span>
+            </p>
+            <p className="flex items-center gap-1.5">
+              <span
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ backgroundColor: DASHBOARD_ORDERS_COLOR }}
+                aria-hidden
+              />
+              <span>
+                {tooltip.ordersLabel}:{" "}
+                <span className="font-semibold text-gray-900">
+                  {tooltip.formatOrders(hovered.point.orderCount)}
+                </span>
+              </span>
+            </p>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }

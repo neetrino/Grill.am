@@ -169,11 +169,18 @@ export function DashboardTrendChart({
         </p>
       ) : (
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-stretch">
-          <div className="flex min-w-0 flex-col items-center justify-center overflow-hidden rounded-[12px] bg-gradient-to-b from-brand-surface/70 to-white p-3 ring-1 ring-gray-100/80">
+          <div className="flex min-w-0 flex-col items-center justify-center rounded-[12px] bg-gradient-to-b from-brand-surface/70 to-white p-3 ring-1 ring-gray-100/80">
             <DashboardTrendSvg
               points={points}
               chartAria={copy.chartAria}
               locale={locale}
+              tooltip={{
+                revenueLabel: copy.chartRevenue,
+                ordersLabel: copy.chartOrders,
+                formatRevenue: (amount) =>
+                  formatMoneyAmount(amount, "AMD", locale),
+                formatOrders: (count) => String(count),
+              }}
             />
             <div className="mt-2 flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500">
               <span className="inline-flex items-center gap-1.5">
