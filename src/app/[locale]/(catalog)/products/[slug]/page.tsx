@@ -3,15 +3,13 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { getEnv } from "@/config/env";
-import {
-  getActiveProducts,
-  getProductDetailBySlug,
-} from "@/features/products/queries";
+import { listProductStaticParams } from "@/features/products/application/list-product-static-params";
+import { getProductDetailBySlug } from "@/features/products/queries";
 import { ProductDetailView } from "@/features/products/ui/ProductDetailView";
 import { ProductRelatedSection } from "@/features/products/ui/ProductRelatedSection";
 import { ProductReviewsIsland } from "@/features/products/ui/ProductReviewsIsland";
 import { getCachedPublicProductReviews } from "@/features/reviews/application/queries";
-import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { defaultCurrency } from "@/lib/money/currency";
 import { formatBaseCatalogPrice } from "@/lib/money/catalog-price";
@@ -26,16 +24,7 @@ export const revalidate = 900;
 export async function generateStaticParams(): Promise<
   Array<{ locale: string; slug: string }>
 > {
-  const perLocale = await Promise.all(
-    locales.map(async (locale) => {
-      const products = await getActiveProducts(locale);
-      return products.flatMap((product) => {
-        const slug = product.translation.slug;
-        return slug ? [{ locale, slug }] : [];
-      });
-    }),
-  );
-  return perLocale.flat();
+  return listProductStaticParams();
 }
 
 function buildProductJsonLd(input: {
