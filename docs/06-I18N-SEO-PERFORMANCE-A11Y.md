@@ -2,7 +2,7 @@
 
 **Կարգավիճակ.** Draft
 **Տարբերակ.** 1.0
-**Վերջին թարմացում.** 2026-07-18
+**Վերջին թարմացում.** 2026-08-30
 
 ## 1. Locale model
 
@@ -154,6 +154,11 @@ interface ExchangeRateProvider {
 - `loading.tsx`, Suspense boundaries և feature skeleton-ները stream են անում meaningful shell/sections։
 - `error.tsx` retry boundary-ն client-safe է և չի կորցնում արդեն պահպանված data-ն։
 - Public reads-ը tag-based cache/revalidation ունեն; authenticated/checkout data-ն shared public cache չի մտնում։
+- `/[locale]/products/[slug]` ISR է (`revalidate` 900 / 15 րոպե, prerendered)՝ առանց session/currency cookies։ Public reviews cache են; write/edit CTA client-personalize է session-ով։
+- `/[locale]/products` listing-ը dynamic HTML է (`searchParams`); catalog read model-ը `unstable_cache` 15 րոպե։ HTML-ը AMD է; cart/wishlist badges client sync են։
+- Admin layout-ը մնում է `force-dynamic` (ոչ CDN cache)։ New-order poll-ը 30 վրկ է և `document.hidden` ժամանակ չի աշխատում; ձայնը մնում է visible tab-ում։
+- Next Image Optimization՝ միայն `webp`, quality 75, device widths մինչև 1920px (hero/100vw), առանց 2K/4K, `minimumCacheTTL` 30 օր։
+- WooCommerce legacy `statusCode: 301` (ոչ Next `permanent`/308)՝ `/product/:slug`, `/product-category/:slug`, `/shop` և locale-prefixed `/hy/shop` (ոչ `/products`)։
 - N+1 query-ները կանխվում են joined/batched read models-ով։
 - Catalog pagination server-side է; admin tables-ը bounded են։
 - Product link prefetch-ը selective է. հարյուրավոր cards default eager prefetch չեն անում։ Header/high-intent links-ը կարող են prefetch լինել։

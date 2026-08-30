@@ -224,8 +224,8 @@ export function ProductGallery({
                 <Image
                   src={selected.url}
                   alt={selected.alt || title}
-                  width={1600}
-                  height={1600}
+                  width={1200}
+                  height={1200}
                   sizes="(max-width: 768px) 96vw, 92vh"
                   className="h-full w-auto max-w-full rounded-[24px] object-contain"
                 />

@@ -1,7 +1,14 @@
 # White Shop — progress
 
 **Overall status.** Phases 0–11 delivered as working product slices (launch hardening docs ready; production deploy not executed)
-**Last update.** 2026-07-18
+**Last update.** 2026-08-30
+
+## Ops — Vercel origin load (2026-08-30)
+
+- Admin new-order poll: 30s, skipped while `document.hidden`; sound unchanged
+- Storefront PDP: ISR 15m, no session cookies in cached HTML; listing data-cached, HTML dynamic
+- Image Optimization: webp-only, widths ≤1920, quality 75, 30-day image cache
+- Woo legacy HTTP 301 (`statusCode`, not Next `permanent`/308)
 
 ## Milestones
 
@@ -54,5 +61,5 @@
 - Email verify/reset, Playwright E2E suite
 - Approved legal copy (OPEN-014)
 - Online payment provider selection (OPEN-002)
-- Real Upstash/Resend adapters when credentials provided
+- Real Resend adapter when credentials provided
 - Re-upload existing media after enabling R2 (local `public/uploads` keys are not in the bucket)

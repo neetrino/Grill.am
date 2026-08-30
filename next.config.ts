@@ -4,6 +4,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { CONTENT_SECURITY_POLICY } from "./src/config/content-security-policy";
+import {
+  IMAGE_DEVICE_SIZES,
+  IMAGE_INLINE_SIZES,
+  IMAGE_MINIMUM_CACHE_TTL_SECONDS,
+  IMAGE_OPTIMIZATION_FORMATS,
+  IMAGE_QUALITY,
+} from "./src/config/image-optimization";
+import { getWooLegacyRedirects } from "./src/lib/seo/woo-legacy-redirects";
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
@@ -87,6 +95,14 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: buildImageRemotePatterns(),
+    formats: [...IMAGE_OPTIMIZATION_FORMATS],
+    deviceSizes: [...IMAGE_DEVICE_SIZES],
+    imageSizes: [...IMAGE_INLINE_SIZES],
+    qualities: [IMAGE_QUALITY],
+    minimumCacheTTL: IMAGE_MINIMUM_CACHE_TTL_SECONDS,
+  },
+  async redirects() {
+    return getWooLegacyRedirects();
   },
   async headers() {
     return [

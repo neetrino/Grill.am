@@ -553,8 +553,7 @@ export const getProductDetailBySlug = cache(
   },
 );
 
-/** Active products sharing at least one category with the given product. */
-export async function getRelatedProducts(
+async function loadRelatedProducts(
   locale: Locale,
   productId: string,
 ): Promise<CatalogProduct[]> {
@@ -585,4 +584,19 @@ export async function getRelatedProducts(
     .limit(RELATED_PRODUCTS_LIMIT);
 
   return withProductImages(rows, locale);
+}
+
+/** Active products sharing at least one category with the given product. */
+export async function getRelatedProducts(
+  locale: Locale,
+  productId: string,
+): Promise<CatalogProduct[]> {
+  return unstable_cache(
+    async () => loadRelatedProducts(locale, productId),
+    ["related-products", locale, productId],
+    {
+      tags: [CACHE_TAGS.products, CACHE_TAGS.product(productId)],
+      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+    },
+  )();
 }

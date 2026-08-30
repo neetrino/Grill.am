@@ -6,8 +6,9 @@ import { getRelatedProducts } from "@/features/products/queries";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { defaultCurrency, type Currency } from "@/lib/money/currency";
+import { formatBaseCatalogPrice } from "@/lib/money/catalog-price";
 import { createDisplayPriceFormatter } from "@/lib/money/display-price";
-import type { Currency } from "@/lib/money/currency";
 
 type ProductRelatedSectionProps = {
   locale: Locale;
@@ -33,8 +34,14 @@ export async function ProductRelatedSection({
   }
 
   const [wishlistIds, formatPrice] = await Promise.all([
-    getWishlistProductIds(related.map((item) => item.id)),
-    createDisplayPriceFormatter(locale, currency),
+    isSignedIn
+      ? getWishlistProductIds(related.map((item) => item.id))
+      : Promise.resolve(new Set<string>()),
+    currency === defaultCurrency
+      ? Promise.resolve((amount: number) =>
+          formatBaseCatalogPrice(amount, locale),
+        )
+      : createDisplayPriceFormatter(locale, currency),
   ]);
 
   const labels = dictionary.product;

@@ -13,8 +13,10 @@ import {
   loadOrderAlertStorage,
   type OrderAlertStorageState,
 } from "@/features/orders/ui/orderAlertStorage";
+import { shouldPollNewOrderAlerts } from "@/features/orders/ui/should-poll-new-order-alerts";
 
-const POLL_INTERVAL_MS = 7_000;
+/** Visible cashier tab only. Hidden tabs must not POST the admin URL. */
+const POLL_INTERVAL_MS = 30_000;
 const GESTURE_EVENTS = [
   "pointerdown",
   "keydown",
@@ -103,6 +105,9 @@ function attachOrderAlertAudio(options: {
   );
 
   const pollId = window.setInterval(() => {
+    if (!shouldPollNewOrderAlerts(document.visibilityState)) {
+      return;
+    }
     void refreshQueue();
   }, POLL_INTERVAL_MS);
 
@@ -200,7 +205,9 @@ export function useNewOrderAlert({
     storageRef.current = loadOrderAlertStorage();
     const audio = new OrderAlertAudio();
     audioRef.current = audio;
-    void refreshQueue();
+    if (shouldPollNewOrderAlerts(document.visibilityState)) {
+      void refreshQueue();
+    }
     const detach = attachOrderAlertAudio({
       audio,
       skipAckClickRef,
