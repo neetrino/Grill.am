@@ -21,4 +21,4 @@ export const CACHE_TAGS = {
 } as const;
 
 /** Default revalidation window for public catalog/content caches (seconds). */
-export const PUBLIC_CACHE_REVALIDATE_SECONDS = 60;
+export const PUBLIC_CACHE_REVALIDATE_SECONDS = 15 * 60;

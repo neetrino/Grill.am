@@ -54,5 +54,5 @@
 - Email verify/reset, Playwright E2E suite
 - Approved legal copy (OPEN-014)
 - Online payment provider selection (OPEN-002)
-- Real Upstash/Resend adapters when credentials provided
+- Real Resend adapter when credentials provided
 - Re-upload existing media after enabling R2 (local `public/uploads` keys are not in the bucket)

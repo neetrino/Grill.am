@@ -5,7 +5,7 @@ type Entry = {
   expiresAt: number | null;
 };
 
-/** In-memory Redis stand-in for local/unit paths without Upstash. */
+/** In-memory Redis stand-in when Upstash REST credentials are absent. */
 export function createMemoryRedisAdapter(): RedisAdapter {
   const store = new Map<string, Entry>();
 

@@ -6,6 +6,7 @@ import { createStubEmailAdapter } from "@/lib/email/stub-adapter";
 import type { EmailAdapter } from "@/lib/email/types";
 import { createStaticExchangeRateAdapter } from "@/lib/fx/static-adapter";
 import type { ExchangeRateAdapter } from "@/lib/fx/types";
+import { logger } from "@/lib/observability/logger";
 import { getPaymentAdapter } from "@/lib/payments/registry";
 import type { PaymentAdapter } from "@/lib/payments/types";
 import {
@@ -14,8 +15,10 @@ import {
 import { isR2Configured } from "@/lib/r2/is-configured";
 import { createStubObjectStorageAdapter } from "@/lib/r2/stub-adapter";
 import type { ObjectStorageAdapter } from "@/lib/r2/types";
+import { isUpstashRedisConfigured } from "@/lib/redis/is-configured";
 import { createMemoryRedisAdapter } from "@/lib/redis/memory-adapter";
 import type { RedisAdapter } from "@/lib/redis/types";
+import { createUpstashRedisAdapter } from "@/lib/redis/upstash-adapter";
 
 export type AppProviders = {
   redis: RedisAdapter;
@@ -52,6 +55,20 @@ function createStorageAdapter(): ObjectStorageAdapter {
   return createStubObjectStorageAdapter(env.R2_PUBLIC_BASE_URL ?? "");
 }
 
+function createRedisAdapter(): RedisAdapter {
+  const env = getEnv();
+  const credentials = {
+    url: env.UPSTASH_REDIS_REST_URL,
+    token: env.UPSTASH_REDIS_REST_TOKEN,
+  };
+
+  if (isUpstashRedisConfigured(credentials)) {
+    return createUpstashRedisAdapter(credentials);
+  }
+
+  return createMemoryRedisAdapter();
+}
+
 /**
  * Provider composition root. Real Upstash/R2/Resend adapters replace stubs
  * when credentials are present and feature wiring needs them.
@@ -61,8 +78,11 @@ export function getProviders(): AppProviders {
     return cachedProviders;
   }
 
+  const redis = createRedisAdapter();
+  logger.info("redis.adapter.selected", { name: redis.name });
+
   cachedProviders = {
-    redis: createMemoryRedisAdapter(),
+    redis,
     storage: createStorageAdapter(),
     email: createStubEmailAdapter(),
     payment: getPaymentAdapter("cod"),
