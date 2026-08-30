@@ -2,7 +2,7 @@ import {
   RatingDistribution,
   RatingStars,
 } from "@/features/products/ui/ProductReviewRating";
-import { ProductWriteReviewCta } from "@/features/products/ui/ProductWriteReviewCta";
+import { ProductWriteReviewIsland } from "@/features/products/ui/ProductWriteReviewIsland";
 import type { ProductReviewsView } from "@/features/reviews/application/queries";
 import { buildReviewAggregate } from "@/features/reviews/domain/review-rules";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -13,7 +13,6 @@ type ProductReviewsSectionProps = {
   productId: string;
   productSlug: string;
   reviewsView: ProductReviewsView;
-  isSignedIn: boolean;
   labels: Dictionary["product"];
 };
 
@@ -26,7 +25,6 @@ export function ProductReviewsSection({
   productId,
   productSlug,
   reviewsView,
-  isSignedIn,
   labels,
 }: ProductReviewsSectionProps) {
   const { reviews, viewerReview } = reviewsView;
@@ -82,35 +80,12 @@ export function ProductReviewsSection({
         </ul>
       ) : null}
 
-      <ProductWriteReviewCta
+      <ProductWriteReviewIsland
         locale={locale}
         productId={productId}
         productSlug={productSlug}
-        canSubmit={reviewsView.canSubmit}
-        isSignedIn={isSignedIn}
-        existingReviewId={reviewsView.existingReviewId}
-        viewerReview={reviewsView.viewerReview}
         showEmptyPrompt={isEmpty}
-        labels={{
-          writeReview: labels.writeReview,
-          writeReviewTitle: labels.writeReviewTitle,
-          editReview: labels.editReview,
-          editReviewTitle: labels.editReviewTitle,
-          ratingLabel: labels.ratingLabel,
-          yourReviewLabel: labels.yourReviewLabel,
-          reviewPlaceholder: labels.reviewPlaceholder,
-          submitReview: labels.submitReview,
-          submittingReview: labels.submittingReview,
-          saveReview: labels.saveReview,
-          savingReview: labels.savingReview,
-          cancelReview: labels.cancelReview,
-          reviewPending: labels.reviewPending,
-          emptyPrompt: labels.emptyPrompt,
-          alreadyReviewed: labels.alreadyReviewed,
-          reviewsUnlock: labels.reviewsUnlock,
-          signIn: labels.signIn,
-          signInToReview: labels.signInToReview,
-        }}
+        labels={labels}
       />
     </section>
   );

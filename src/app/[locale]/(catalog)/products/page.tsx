@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { CatalogCartSidebar } from "@/features/cart/ui/CatalogCartSidebar";
-import { getCartItemCount } from "@/features/cart/cart";
 import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
 import {
   catalogHref,
@@ -15,21 +14,18 @@ import { CatalogListingView } from "@/features/products/ui/CatalogListingView";
 import { MobileCatalogCategoryChips } from "@/features/products/ui/MobileCatalogCategoryChips";
 import { MobileCatalogPriceFilters } from "@/features/products/ui/MobileCatalogPriceFilters";
 import { ProductCard } from "@/features/products/ui/ProductCard";
-import { getWishlistProductIds } from "@/features/wishlist/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { currencySymbols } from "@/lib/money/currency";
-import {
-  createDisplayPriceFormatter,
-  getSelectedCurrency,
-} from "@/lib/money/display-price";
+import { currencySymbols, defaultCurrency } from "@/lib/money/currency";
+import { formatBaseCatalogPrice } from "@/lib/money/catalog-price";
 
 type ProductsPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+/** Shared public catalog HTML — no session/currency cookies. Must be a literal. */
+export const revalidate = 900;
 
 export default async function ProductsPage({
   params,
@@ -45,43 +41,21 @@ export default async function ProductsPage({
   let filters = parseCatalogSearchParams(rawSearch);
   const dictionary = getDictionary(rawLocale);
   const catalogCopy = dictionary.catalog;
+  const currency = defaultCurrency;
 
-  const [currency, user, cartItemCount] = await Promise.all([
-    getSelectedCurrency(),
-    getCurrentUser(),
-    getCartItemCount(),
-  ]);
-  const rateQuote = await getCheckoutRateSnapshot(currency);
-
-  let catalog = await listCatalogProducts(
-    rawLocale,
-    filters,
-    currency,
-    rateQuote.rate,
-  );
+  let catalog = await listCatalogProducts(rawLocale, filters, currency, "1");
 
   const totalPages = Math.max(1, Math.ceil(catalog.total / catalog.pageSize));
   if (filters.page > totalPages) {
     filters = { ...filters, page: totalPages };
-    catalog = await listCatalogProducts(
-      rawLocale,
-      filters,
-      currency,
-      rateQuote.rate,
-    );
+    catalog = await listCatalogProducts(rawLocale, filters, currency, "1");
   }
 
-  const { products } = catalog;
-  const [wishlistIds, formatPrice] = await Promise.all([
-    getWishlistProductIds(products.map((product) => product.id)),
-    createDisplayPriceFormatter(rawLocale, currency),
-  ]);
-
-  const priced = products.map((product) => {
-    const price = formatPrice(product.priceAmount);
+  const priced = catalog.products.map((product) => {
+    const price = formatBaseCatalogPrice(product.priceAmount, rawLocale);
     const compareAt =
       product.compareAtAmount != null
-        ? formatPrice(product.compareAtAmount)
+        ? formatBaseCatalogPrice(product.compareAtAmount, rawLocale)
         : null;
 
     return {
@@ -241,8 +215,8 @@ export default async function ProductsPage({
                 locale={rawLocale}
                 currency={currency}
                 productId={product.id}
-                inWishlist={wishlistIds.has(product.id)}
-                isSignedIn={Boolean(user)}
+                inWishlist={false}
+                isSignedIn={false}
                 wishlistLabel={dictionary.nav.wishlist}
                 addToCartLabel={dictionary.product.addToCart}
                 requiresConfiguration={product.requiresConfiguration}
@@ -301,7 +275,7 @@ export default async function ProductsPage({
               locale={rawLocale}
               currency={currency}
               labels={dictionary.cartDrawer}
-              initialItemCount={cartItemCount}
+              initialItemCount={0}
             />
           </div>
         </div>

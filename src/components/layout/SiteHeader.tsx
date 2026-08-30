@@ -1,10 +1,14 @@
-import { listStorefrontNavCategories } from "@/features/categories/application/list-storefront-nav-categories";
+import {
+  HeaderGuestDesktopActions,
+  HeaderGuestMobileNav,
+} from "@/components/layout/SiteHeaderGuestPersonalization";
 import {
   HeaderDesktopActionsIsland,
   HeaderMobileNavIsland,
 } from "@/components/layout/SiteHeaderSessionIslands";
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
 import { getStorefrontNavItems } from "@/components/layout/storefront-nav";
+import { listStorefrontNavCategories } from "@/features/categories/application/list-storefront-nav-categories";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -14,6 +18,11 @@ type SiteHeaderProps = {
   currency: Currency;
   availableCurrencies: readonly Currency[];
   dictionary: Dictionary;
+  /**
+   * When false, skip session/cart/wishlist cookies so the route can be ISR.
+   * Client cart/wishlist badges still hydrate from local sync.
+   */
+  personalize?: boolean;
 };
 
 /**
@@ -25,9 +34,11 @@ export async function SiteHeader({
   currency,
   availableCurrencies,
   dictionary,
+  personalize = true,
 }: SiteHeaderProps) {
   const navItems = getStorefrontNavItems(locale, dictionary);
   const categories = await listStorefrontNavCategories(locale);
+  const guest = !personalize;
 
   return (
     <SiteHeaderMainNav
@@ -38,20 +49,38 @@ export async function SiteHeader({
       navItems={navItems}
       categories={categories}
       mobileNav={
-        <HeaderMobileNavIsland
-          locale={locale}
-          currency={currency}
-          availableCurrencies={availableCurrencies}
-          dictionary={dictionary}
-          navItems={navItems}
-        />
+        guest ? (
+          <HeaderGuestMobileNav
+            locale={locale}
+            currency={currency}
+            availableCurrencies={availableCurrencies}
+            dictionary={dictionary}
+            navItems={navItems}
+          />
+        ) : (
+          <HeaderMobileNavIsland
+            locale={locale}
+            currency={currency}
+            availableCurrencies={availableCurrencies}
+            dictionary={dictionary}
+            navItems={navItems}
+          />
+        )
       }
       desktopActions={
-        <HeaderDesktopActionsIsland
-          locale={locale}
-          currency={currency}
-          dictionary={dictionary}
-        />
+        guest ? (
+          <HeaderGuestDesktopActions
+            locale={locale}
+            currency={currency}
+            dictionary={dictionary}
+          />
+        ) : (
+          <HeaderDesktopActionsIsland
+            locale={locale}
+            currency={currency}
+            dictionary={dictionary}
+          />
+        )
       }
     />
   );

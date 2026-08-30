@@ -6,6 +6,7 @@ export const CACHE_TAGS = {
   product: (id: string) => `product:${id}`,
   productSlug: (locale: string, slug: string) =>
     `product-slug:${locale}:${slug}`,
+  productReviews: (id: string) => `product-reviews:${id}`,
   hero: "hero",
   popups: "popups",
   stores: "stores",
@@ -20,5 +21,9 @@ export const CACHE_TAGS = {
   settings: "settings",
 } as const;
 
-/** Default revalidation window for public catalog/content caches (seconds). */
+/**
+ * Default revalidation window for public catalog/content caches (seconds).
+ * Route `export const revalidate` must repeat the literal `900` — Next cannot
+ * statically analyze this imported constant.
+ */
 export const PUBLIC_CACHE_REVALIDATE_SECONDS = 15 * 60;

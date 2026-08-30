@@ -3,23 +3,40 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { getEnv } from "@/config/env";
-import { getProductDetailBySlug } from "@/features/products/queries";
+import {
+  getActiveProducts,
+  getProductDetailBySlug,
+} from "@/features/products/queries";
 import { ProductDetailView } from "@/features/products/ui/ProductDetailView";
 import { ProductRelatedSection } from "@/features/products/ui/ProductRelatedSection";
 import { ProductReviewsIsland } from "@/features/products/ui/ProductReviewsIsland";
-import { getProductReviewsView } from "@/features/reviews/application/queries";
-import { isProductInWishlist } from "@/features/wishlist/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale, type Locale } from "@/lib/i18n/config";
+import { getCachedPublicProductReviews } from "@/features/reviews/application/queries";
+import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import {
-  createDisplayPriceFormatter,
-  getSelectedCurrency,
-} from "@/lib/money/display-price";
+import { defaultCurrency } from "@/lib/money/currency";
+import { formatBaseCatalogPrice } from "@/lib/money/catalog-price";
 
 type ProductPageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
+
+/** Shared public PDP HTML — no session/currency cookies. Must be a literal. */
+export const revalidate = 900;
+
+export async function generateStaticParams(): Promise<
+  Array<{ locale: string; slug: string }>
+> {
+  const perLocale = await Promise.all(
+    locales.map(async (locale) => {
+      const products = await getActiveProducts(locale);
+      return products.flatMap((product) => {
+        const slug = product.translation.slug;
+        return slug ? [{ locale, slug }] : [];
+      });
+    }),
+  );
+  return perLocale.flat();
+}
 
 function buildProductJsonLd(input: {
   locale: Locale;
@@ -108,17 +125,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const [user, currency, inWishlist, reviewsView] = await Promise.all([
-    getCurrentUser(),
-    getSelectedCurrency(),
-    isProductInWishlist(product.id),
-    getProductReviewsView(product.id),
-  ]);
-  const formatPrice = await createDisplayPriceFormatter(locale, currency);
-  const displayPrice = formatPrice(product.priceAmount);
+  const reviewsView = await getCachedPublicProductReviews(product.id);
+  const displayPrice = formatBaseCatalogPrice(product.priceAmount, locale);
   const compareAt =
     product.compareAtAmount != null
-      ? formatPrice(product.compareAtAmount)
+      ? formatBaseCatalogPrice(product.compareAtAmount, locale)
       : null;
 
   const jsonLd = buildProductJsonLd({
@@ -133,7 +144,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     inStock: product.stockOnHand > 0,
   });
 
-  const isSignedIn = Boolean(user);
   const ratingAverage =
     reviewsView.aggregate.count > 0 ? reviewsView.aggregate.average : null;
   const ratingCount =
@@ -142,13 +152,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <ProductDetailView
       locale={locale}
-      currency={currency}
+      currency={defaultCurrency}
       fxRate={displayPrice.rate}
       product={product}
       priceFormatted={displayPrice.formatted}
       compareAtFormatted={compareAt?.formatted ?? null}
-      isSignedIn={isSignedIn}
-      inWishlist={inWishlist}
+      isSignedIn={false}
+      inWishlist={false}
       ratingAverage={ratingAverage}
       ratingCount={ratingCount}
       dictionary={dictionary}
@@ -159,8 +169,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
             locale={locale}
             productId={product.id}
             categorySlug={product.categories[0]?.slug ?? null}
-            currency={currency}
-            isSignedIn={isSignedIn}
+            currency={defaultCurrency}
+            isSignedIn={false}
             dictionary={dictionary}
           />
         </Suspense>
@@ -171,8 +181,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             locale={locale}
             productId={product.id}
             productSlug={product.translation.slug}
-            userId={user?.id}
-            isSignedIn={isSignedIn}
             dictionary={dictionary}
           />
         </Suspense>

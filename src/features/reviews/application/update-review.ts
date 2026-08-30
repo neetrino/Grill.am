@@ -1,7 +1,7 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 
 import { products, reviews } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
@@ -15,6 +15,7 @@ import {
   type UpdateReviewInput,
 } from "@/features/reviews/schemas/reviews";
 import { requireUser } from "@/lib/auth/policies";
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
@@ -96,9 +97,10 @@ export async function updateReviewAction(
         product.translations.hy?.slug ??
         null;
 
-      return { id: existing.id, slug };
+      return { id: existing.id, slug, productId: existing.productId };
     });
 
+    updateTag(CACHE_TAGS.productReviews(result.productId));
     revalidatePath(`/${locale}/products`);
     if (result.slug) {
       revalidatePath(`/${locale}/products/${result.slug}`);

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, desc, eq } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
 
 import { getDb } from "@/db/client";
 import { orderItems, orders, reviews, users } from "@/db/schema";
@@ -9,6 +10,10 @@ import {
   isReviewEligibleOrderStatus,
   type ReviewAggregate,
 } from "@/features/reviews/domain/review-rules";
+import {
+  CACHE_TAGS,
+  PUBLIC_CACHE_REVALIDATE_SECONDS,
+} from "@/lib/cache/tags";
 
 export type PublicReview = {
   id: string;
@@ -104,6 +109,29 @@ export async function getProductReviewsView(
     };
   }
 
+  const viewer = await loadViewerReviewState(productId, viewerUserId);
+  return { reviews: publicReviews, aggregate, ...viewer };
+}
+
+export type ViewerReviewState = {
+  canSubmit: boolean;
+  eligibleOrderItemId: string | null;
+  existingReviewId: string | null;
+  viewerReview: ViewerReview | null;
+};
+
+/** Session-scoped review eligibility — not cached; do not call from ISR RSC. */
+export async function getViewerReviewState(
+  productId: string,
+  viewerUserId: string,
+): Promise<ViewerReviewState> {
+  return loadViewerReviewState(productId, viewerUserId);
+}
+
+async function loadViewerReviewState(
+  productId: string,
+  viewerUserId: string,
+): Promise<ViewerReviewState> {
   const [existing] = await getDb()
     .select({
       id: reviews.id,
@@ -122,35 +150,40 @@ export async function getProductReviewsView(
     .limit(1);
 
   if (existing) {
-    const viewerReview: ViewerReview = {
-      id: existing.id,
-      rating: existing.rating,
-      comment: existing.comment,
-      createdAt: existing.createdAt,
-      authorName: `${existing.firstName} ${existing.lastName.charAt(0)}.`,
-      moderationStatus: existing.moderationStatus,
-    };
-
     return {
-      reviews: publicReviews,
-      aggregate,
       canSubmit: false,
       eligibleOrderItemId: null,
       existingReviewId: existing.id,
-      viewerReview,
+      viewerReview: {
+        id: existing.id,
+        rating: existing.rating,
+        comment: existing.comment,
+        createdAt: existing.createdAt,
+        authorName: `${existing.firstName} ${existing.lastName.charAt(0)}.`,
+        moderationStatus: existing.moderationStatus,
+      },
     };
   }
 
   const eligible = await findEligibleOrderItem(viewerUserId, productId);
-
   return {
-    reviews: publicReviews,
-    aggregate,
-    // Signed-in customers without an existing review may submit; purchase
-    // verification is attached when an eligible order item exists.
     canSubmit: true,
     eligibleOrderItemId: eligible?.orderItemId ?? null,
     existingReviewId: null,
     viewerReview: null,
   };
+}
+
+/** Approved reviews only — no session. Safe for ISR PDP HTML. */
+export async function getCachedPublicProductReviews(
+  productId: string,
+): Promise<ProductReviewsView> {
+  return unstable_cache(
+    async () => getProductReviewsView(productId),
+    ["product-reviews-public", productId],
+    {
+      tags: [CACHE_TAGS.productReviews(productId)],
+      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+    },
+  )();
 }
