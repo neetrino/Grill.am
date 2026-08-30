@@ -24,8 +24,12 @@ type ProductsPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-/** Shared public catalog HTML — no session/currency cookies. Must be a literal. */
-export const revalidate = 900;
+/**
+ * Filters live in searchParams, so this route is request-rendered.
+ * Do not set `revalidate` here — CI has no DATABASE_URL and would fail
+ * prerendering `/hy/products`. Listing data is still `unstable_cache`d.
+ */
+export const dynamic = "force-dynamic";
 
 export default async function ProductsPage({
   params,

@@ -10,9 +10,6 @@ type CatalogLayoutProps = {
   params: Promise<{ locale: string }>;
 };
 
-/** Public catalog HTML is ISR; session/cart stay in client islands. Must be a literal. */
-export const revalidate = 900;
-
 export default async function CatalogLayout({
   children,
   params,
