@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StorefrontScrollToTop } from "@/components/layout/StorefrontScrollToTop";
 import { StorefrontSurface } from "@/components/layout/StorefrontSurface";
+import { CartMinOrderAlertHost } from "@/features/cart/ui/CartMinOrderAlertHost";
 import { getActiveStorefrontPopup } from "@/features/popups/application/queries";
 import { SitePopupOverlayLazy } from "@/features/popups/ui/SitePopupOverlayLazy";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -75,6 +76,10 @@ export async function StorefrontShell({
           closeLabel={dictionary.popup.close}
         />
       ) : null}
+      <CartMinOrderAlertHost
+        messageTemplate={dictionary.cartDrawer.minOrderQuantity}
+        closeLabel={dictionary.cartDrawer.close}
+      />
     </StorefrontSurface>
   );
 }

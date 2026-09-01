@@ -4,6 +4,8 @@ import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { addCartLineQuantity } from "@/features/cart/cart-line-coordinator";
+import { getDisplayedCartLineQuantity } from "@/features/cart/cart-drawer-local-store";
+import { notifyCartMinOrderBlocked } from "@/features/cart/cart-min-order-alert";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
 import {
   computeModifiersDelta,
@@ -114,8 +116,7 @@ export function ProductBuyBox({
 }: ProductBuyBoxProps) {
   const maxQty = Math.max(stockOnHand, 0);
   const minQty = minOrderQuantityForSlug(slug);
-  const initialQty =
-    maxQty > 0 ? Math.min(Math.max(minQty, 1), maxQty) : 0;
+  const initialQty = maxQty > 0 ? 1 : 0;
   const [modifiers, setModifiers] = useState<CartModifiers>({
     optionChoices: {},
     addonIds: [],
@@ -160,7 +161,7 @@ export function ProductBuyBox({
 
   function changeQuantity(next: number): void {
     if (disabled) return;
-    setQuantity(Math.min(Math.max(minQty, next), maxQty));
+    setQuantity(Math.min(Math.max(1, next), maxQty));
     setMessage(null);
     setError(null);
   }
@@ -203,9 +204,22 @@ export function ProductBuyBox({
   }
 
   function handleAdd(): void {
-    if (!canAdd || quantity < minQty) return;
+    if (!canAdd) return;
     setMessage(null);
     setError(null);
+
+    const selectionKey = selectionKeyFromModifiers(modifiers);
+    const currentCartQty = getDisplayedCartLineQuantity(productId, selectionKey);
+    let addQuantity = quantity;
+
+    if (currentCartQty < minQty) {
+      const targetTotal = Math.max(minQty, currentCartQty + quantity);
+      addQuantity = targetTotal - currentCartQty;
+      if (quantity < minQty) {
+        notifyCartMinOrderBlocked(minQty);
+        setQuantity(minQty);
+      }
+    }
 
     const flyOrigin = document.querySelector("[data-product-fly-origin]");
     playCartFlyAnimation({
@@ -213,7 +227,6 @@ export function ProductBuyBox({
       imageUrl: imageUrl?.trim() || null,
     });
 
-    const selectionKey = selectionKeyFromModifiers(modifiers);
     const displayUnitAmount = Number(
       convertAmount(unitAmount, fxRate, defaultCurrency, currency).amount,
     );
@@ -222,14 +235,14 @@ export function ProductBuyBox({
     void addCartLineQuantity({
       productId,
       selectionKey,
-      addQuantity: quantity,
+      addQuantity,
       modifiers,
       display: {
         productId,
         selectionKey,
         title,
         slug,
-        quantity,
+        quantity: addQuantity,
         imageUrl,
         unitPriceAmount: displayUnitAmount,
         unitPriceFormatted: priceFormatted,
@@ -343,7 +356,7 @@ export function ProductBuyBox({
             <button
               type="button"
               aria-label={labels.decreaseQuantity}
-              disabled={disabled || quantity <= minQty}
+              disabled={disabled || quantity <= 1}
               onClick={() => changeQuantity(quantity - 1)}
               className="inline-flex size-8 items-center justify-center rounded-full bg-white/45 text-white transition hover:bg-white/60 disabled:opacity-40"
             >
