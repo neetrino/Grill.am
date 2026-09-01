@@ -45,18 +45,26 @@ export function assertPositiveQuantityMeetsMinOrder(
 }
 
 /**
- * Maps a desired cart quantity so values below min become 0 (remove line)
- * instead of an illegal partial quantity.
+ * Maps a desired cart quantity: values below min are raised to min (not removed).
+ * Explicit zero still removes the line.
  */
+export function resolveCartLineQuantity(
+  quantity: number,
+  minOrderQuantity: number,
+): { quantity: number; raisedToMin: boolean } {
+  if (!Number.isInteger(quantity) || quantity <= 0) {
+    return { quantity: 0, raisedToMin: false };
+  }
+  if (quantity < minOrderQuantity) {
+    return { quantity: minOrderQuantity, raisedToMin: true };
+  }
+  return { quantity, raisedToMin: false };
+}
+
+/** @deprecated Use resolveCartLineQuantity — kept for cart page server actions. */
 export function clampCartQuantityToMinOrder(
   quantity: number,
   minOrderQuantity: number,
 ): number {
-  if (!Number.isInteger(quantity) || quantity <= 0) {
-    return 0;
-  }
-  if (quantity < minOrderQuantity) {
-    return 0;
-  }
-  return quantity;
+  return resolveCartLineQuantity(quantity, minOrderQuantity).quantity;
 }

@@ -13,5 +13,6 @@
   "close": "Close cart",
   "removeItem": "Remove item",
   "decreaseQuantity": "Decrease quantity",
-  "increaseQuantity": "Increase quantity"
+  "increaseQuantity": "Increase quantity",
+  "minOrderQuantity": "Minimum order for this product is {count} items."
 }

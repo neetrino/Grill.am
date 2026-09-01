@@ -13,5 +13,6 @@
   "close": "Закрыть корзину",
   "removeItem": "Удалить товар",
   "decreaseQuantity": "Уменьшить количество",
-  "increaseQuantity": "Увеличить количество"
+  "increaseQuantity": "Увеличить количество",
+  "minOrderQuantity": "Минимальный заказ этого товара — {count} шт."
 }

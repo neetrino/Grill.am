@@ -5,6 +5,7 @@ import {
   clampCartQuantityToMinOrder,
   minOrderQuantityForSlug,
   minOrderQuantityFromTranslations,
+  resolveCartLineQuantity,
 } from "@/features/products/domain/min-order-quantity";
 
 describe("min-order-quantity", () => {
@@ -35,8 +36,23 @@ describe("min-order-quantity", () => {
     expect(() => assertPositiveQuantityMeetsMinOrder(0, 2)).not.toThrow();
   });
 
-  it("clamps below-min desired quantities to 0 (remove)", () => {
-    expect(clampCartQuantityToMinOrder(1, 2)).toBe(0);
+  it("raises below-min desired quantities to the minimum", () => {
+    expect(resolveCartLineQuantity(1, 2)).toEqual({
+      quantity: 2,
+      raisedToMin: true,
+    });
+    expect(resolveCartLineQuantity(2, 2)).toEqual({
+      quantity: 2,
+      raisedToMin: false,
+    });
+    expect(resolveCartLineQuantity(0, 2)).toEqual({
+      quantity: 0,
+      raisedToMin: false,
+    });
+  });
+
+  it("clampCartQuantityToMinOrder delegates to resolveCartLineQuantity", () => {
+    expect(clampCartQuantityToMinOrder(1, 2)).toBe(2);
     expect(clampCartQuantityToMinOrder(2, 2)).toBe(2);
     expect(clampCartQuantityToMinOrder(0, 2)).toBe(0);
   });
