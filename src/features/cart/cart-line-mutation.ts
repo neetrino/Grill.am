@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, eq } from "drizzle-orm";
 
-import { cartItems, carts, products } from "@/db/schema";
+import { cartItems, carts, products, type TranslationsJson } from "@/db/schema";
 import { withTransaction, type DatabaseTransaction } from "@/db/transaction";
 import { assertCartLineQuantityWithinStock } from "@/features/cart/cart-line-stock";
 import type { SetCartLineQuantityInput } from "@/features/cart/cart-line-types";
@@ -14,6 +14,10 @@ import {
   validateModifiers,
   type CartModifiers,
 } from "@/features/products/domain/customization";
+import {
+  assertPositiveQuantityMeetsMinOrder,
+  minOrderQuantityFromTranslations,
+} from "@/features/products/domain/min-order-quantity";
 import { createId } from "@/lib/id";
 import { logger } from "@/lib/observability/logger";
 
@@ -30,6 +34,7 @@ type ProductStockRow = {
   stock: number;
   status: string;
   customization: unknown;
+  translations: TranslationsJson;
 };
 
 type CartLineQtyRow = {
@@ -75,6 +80,7 @@ async function lockProduct(
       stock: products.stockOnHand,
       status: products.status,
       customization: products.customization,
+      translations: products.translations,
     })
     .from(products)
     .where(eq(products.id, productId))
@@ -208,6 +214,11 @@ async function mutateCartLineInTx(
   if (!product || product.status !== "ACTIVE" || product.stock < 1) {
     throw new Error("Product unavailable.");
   }
+
+  assertPositiveQuantityMeetsMinOrder(
+    quantity,
+    minOrderQuantityFromTranslations(product.translations),
+  );
 
   const modifiers = resolveValidatedModifiers(
     product,

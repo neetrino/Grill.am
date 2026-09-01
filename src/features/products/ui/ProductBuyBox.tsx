@@ -14,6 +14,7 @@ import {
   type ProductCustomization,
   type StorefrontCustomization,
 } from "@/features/products/domain/customization";
+import { minOrderQuantityForSlug } from "@/features/products/domain/min-order-quantity";
 import { ProductAddonChecklist } from "@/features/products/ui/ProductAddonChecklist";
 import { ProductExclusionsAccordion } from "@/features/products/ui/ProductExclusionsAccordion";
 import type { Locale } from "@/lib/i18n/config";
@@ -112,12 +113,15 @@ export function ProductBuyBox({
   labels,
 }: ProductBuyBoxProps) {
   const maxQty = Math.max(stockOnHand, 0);
+  const minQty = minOrderQuantityForSlug(slug);
+  const initialQty =
+    maxQty > 0 ? Math.min(Math.max(minQty, 1), maxQty) : 0;
   const [modifiers, setModifiers] = useState<CartModifiers>({
     optionChoices: {},
     addonIds: [],
     exclusionIds: [],
   });
-  const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
+  const [quantity, setQuantity] = useState(initialQty);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   // Renders the server-formatted price until the client mounts, then
@@ -127,7 +131,7 @@ export function ProductBuyBox({
     () => true,
     () => false,
   );
-  const disabled = maxQty < 1;
+  const disabled = maxQty < minQty;
   const optionsComplete = hasRequiredModifiersSelected(
     rawCustomization,
     modifiers,
@@ -156,7 +160,7 @@ export function ProductBuyBox({
 
   function changeQuantity(next: number): void {
     if (disabled) return;
-    setQuantity(Math.min(Math.max(1, next), maxQty));
+    setQuantity(Math.min(Math.max(minQty, next), maxQty));
     setMessage(null);
     setError(null);
   }
@@ -199,7 +203,7 @@ export function ProductBuyBox({
   }
 
   function handleAdd(): void {
-    if (!canAdd || quantity < 1) return;
+    if (!canAdd || quantity < minQty) return;
     setMessage(null);
     setError(null);
 
@@ -339,7 +343,7 @@ export function ProductBuyBox({
             <button
               type="button"
               aria-label={labels.decreaseQuantity}
-              disabled={disabled || quantity <= 1}
+              disabled={disabled || quantity <= minQty}
               onClick={() => changeQuantity(quantity - 1)}
               className="inline-flex size-8 items-center justify-center rounded-full bg-white/45 text-white transition hover:bg-white/60 disabled:opacity-40"
             >
