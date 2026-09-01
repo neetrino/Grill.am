@@ -128,7 +128,6 @@ export function ProductDetailView({
                 addToCart: labels.addToCart,
                 selectRequired: labels.selectRequired,
                 outOfStock: labels.outOfStock,
-                added: labels.added,
                 error: labels.addError,
                 options: labels.options,
                 addons: labels.addons,
