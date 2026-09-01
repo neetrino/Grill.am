@@ -71,6 +71,8 @@ type CheckoutLabels = {
   selectDeliveryLocation: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
+  cashOnPickup: string;
+  cashOnPickupDescription: string;
   cashChangeTitle: string;
   cashChangeDescription: string;
   cashChangeExact: string;
@@ -226,11 +228,20 @@ export function CheckoutForm({
 
   const paymentOptions = useMemo(
     () => {
+      const cashName =
+        shippingMethod === "pickup"
+          ? labels.cashOnPickup
+          : labels.cashOnDelivery;
+      const cashDescription =
+        shippingMethod === "pickup"
+          ? labels.cashOnPickupDescription
+          : labels.cashOnDeliveryDescription;
+
       const options = [
         {
           id: "cash_on_delivery" as const,
-          name: labels.cashOnDelivery,
-          description: labels.cashOnDeliveryDescription,
+          name: cashName,
+          description: cashDescription,
           enabled: paymentAvailability.cash_on_delivery,
           unavailableLabel: labels.paymentUnavailable,
         },
@@ -258,12 +269,15 @@ export function CheckoutForm({
       labels.arcaDescription,
       labels.cashOnDelivery,
       labels.cashOnDeliveryDescription,
+      labels.cashOnPickup,
+      labels.cashOnPickupDescription,
       labels.idram,
       labels.idramDescription,
       labels.paymentUnavailable,
       paymentAvailability.arca,
       paymentAvailability.cash_on_delivery,
       paymentAvailability.idram,
+      shippingMethod,
     ],
   );
 

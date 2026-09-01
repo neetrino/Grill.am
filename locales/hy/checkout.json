@@ -55,7 +55,9 @@
   },
   "payment": {
     "cashOnDelivery": "Կանխիկ առաքման պահին",
-    "cashOnDeliveryDescription": "Վճարեք պատվերը ստանալիս։",
+    "cashOnDeliveryDescription": "Վճարեք պատվերը ստանալիս",
+    "cashOnPickup": "Կանխիկ վճարում",
+    "cashOnPickupDescription": "Վճարեք պատվերը վերցնելիս",
     "cashChangeTitle": "ՄԱՆՐ",
     "cashChangeDescription": "Սեղմեք այն թղթադրամին, որը կվճարեք, որպեսզի պատրաստենք մանրը:",
     "cashChangeExact": "Մանր պետք չէ",
