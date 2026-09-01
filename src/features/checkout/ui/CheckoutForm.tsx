@@ -559,7 +559,7 @@ export function CheckoutForm({
         ) : null}
 
         <form onSubmit={onSubmit} suppressHydrationWarning>
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_400px]">
             <CheckoutDetailsSections
               labels={labels}
               pending={pending}

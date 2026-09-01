@@ -66,7 +66,7 @@ export function CheckoutOrderSummary({
   return (
     <div className={CHECKOUT_ORDER_SUMMARY_WRAP_CLASS}>
       <section
-        className={CHECKOUT_SECTION_CARD_CLASS}
+        className={`${CHECKOUT_SECTION_CARD_CLASS} w-full`}
         aria-labelledby="checkout-order-summary-heading"
       >
         <h2
@@ -77,48 +77,34 @@ export function CheckoutOrderSummary({
         </h2>
 
         <div className="mt-5 rounded-[15px] border border-gray-200 p-4">
-          <div className="mb-3 flex items-center justify-between gap-3 sm:mb-0 sm:block">
-            <p className="text-sm text-gray-700 sm:mb-3">{couponTitle}</p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-gray-700">{couponTitle}</p>
             <button
               type="button"
               disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
               onClick={onApplyCoupon}
-              className="inline-flex h-9 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white px-3 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:hidden"
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-[15px] border border-gray-300 bg-white px-4 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
             </button>
           </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              name="couponCodeDraft"
-              value={couponDraft}
-              onChange={(event) => onCouponDraftChange(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  onApplyCoupon();
-                }
-              }}
-              placeholder={couponPlaceholder}
-              autoComplete="off"
-              disabled={isSubmitting || isApplyingCoupon}
-              size={Math.max(couponPlaceholder.length, 8)}
-              className="h-11 max-w-full max-sm:!w-full rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50"
-              style={{
-                width: `calc(${Math.max(couponPlaceholder.length, 8)}ch + 1.5rem)`,
-              }}
-              suppressHydrationWarning
-            />
-            <button
-              type="button"
-              disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
-              onClick={onApplyCoupon}
-              className="hidden h-11 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white px-4 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:inline-flex"
-            >
-              {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
-            </button>
-          </div>
+          <input
+            type="text"
+            name="couponCodeDraft"
+            value={couponDraft}
+            onChange={(event) => onCouponDraftChange(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                onApplyCoupon();
+              }
+            }}
+            placeholder={couponPlaceholder}
+            autoComplete="off"
+            disabled={isSubmitting || isApplyingCoupon}
+            className="mt-3 h-11 w-full rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50"
+            suppressHydrationWarning
+          />
           {couponError ? (
             <p className="mt-2 text-sm text-red-600" role="alert">
               {couponError}
@@ -140,8 +126,8 @@ export function CheckoutOrderSummary({
             </div>
           ) : null}
           <div className="flex justify-between gap-3">
-            <span>{shippingLabel}</span>
-            <span className="text-right font-medium text-gray-900">
+            <span className="shrink-0">{shippingLabel}</span>
+            <span className="min-w-0 text-right font-medium text-gray-900">
               {shippingFormatted}
             </span>
           </div>
