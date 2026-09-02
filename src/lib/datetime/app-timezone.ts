@@ -54,20 +54,26 @@ export function formatAppIsoDate(value: Date | string | number): string {
   return `${parts.year}-${pad2(parts.monthIndex + 1)}-${pad2(parts.day)}`;
 }
 
+/** DD/MM/YYYY in app timezone. */
+export function formatAppDisplayDate(value: Date | string | number): string {
+  const parts = toAppZonedParts(value);
+  return `${pad2(parts.day)}/${pad2(parts.monthIndex + 1)}/${parts.year}`;
+}
+
 /** HH:mm in app timezone. */
 export function formatAppTimeMinutes(value: Date | string | number): string {
   const parts = toAppZonedParts(value);
   return `${pad2(parts.hour)}:${pad2(parts.minute)}`;
 }
 
-/** YYYY-MM-DD HH:mm in app timezone. */
+/** DD/MM/YYYY HH:mm in app timezone. */
 export function formatAppDateTimeMinutes(
   value: Date | string | number,
 ): string {
-  return `${formatAppIsoDate(value)} ${formatAppTimeMinutes(value)}`;
+  return `${formatAppDisplayDate(value)} ${formatAppTimeMinutes(value)}`;
 }
 
-/** YYYY-MM-DD HH:mm:ss in app timezone. */
+/** DD/MM/YYYY HH:mm:ss in app timezone. */
 export function formatAppDateTimeSeconds(
   value: Date | string | number,
 ): string {
@@ -77,8 +83,7 @@ export function formatAppDateTimeSeconds(
 
 /** DD.MM.YYYY in app timezone. */
 export function formatAppDotDate(value: Date | string | number): string {
-  const parts = toAppZonedParts(value);
-  return `${pad2(parts.day)}.${pad2(parts.monthIndex + 1)}.${parts.year}`;
+  return formatAppDisplayDate(value).replaceAll("/", ".");
 }
 
 /** Value for `<input type="datetime-local">` in app timezone. */

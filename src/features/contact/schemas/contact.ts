@@ -30,3 +30,11 @@ export const updateContactStatusSchema = z.object({
 export type UpdateContactStatusInput = z.infer<
   typeof updateContactStatusSchema
 >;
+
+export const deleteContactMessageSchema = z.object({
+  messageId: z.string().uuid(),
+});
+
+export type DeleteContactMessageInput = z.infer<
+  typeof deleteContactMessageSchema
+>;
