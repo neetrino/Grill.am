@@ -469,6 +469,8 @@
     "searchPlaceholder": "Անուն, էլ․ փոստ, թեմա…",
     "empty": "Այս զտիչներին համապատասխանող հաղորդագրություններ չկան։",
     "openNamed": "Բացել {subject}",
+    "deleteNamed": "Ջնջել {subject}",
+    "confirmDelete": "Ջնջե՞լ «{subject}» հաղորդագրությունը։ Հետարկել հնարավոր չէ։",
     "table": {
       "subject": "Թեմա",
       "from": "Ումից",

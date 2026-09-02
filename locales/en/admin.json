@@ -469,6 +469,8 @@
     "searchPlaceholder": "Name, email, subject…",
     "empty": "No messages match these filters.",
     "openNamed": "Open {subject}",
+    "deleteNamed": "Delete {subject}",
+    "confirmDelete": "Delete message “{subject}”? This cannot be undone.",
     "table": {
       "subject": "Subject",
       "from": "From",

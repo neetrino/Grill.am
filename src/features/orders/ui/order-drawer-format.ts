@@ -1,4 +1,4 @@
-import { formatAppDotDate } from "@/lib/datetime/app-timezone";
+import { formatAppDisplayDate } from "@/lib/datetime/app-timezone";
 import { isCurrency, currencySymbols } from "@/lib/money/currency";
 
 /** Formats admin money as "2,334 ֏" style for the order drawer. */
@@ -16,10 +16,10 @@ export function formatOrderStatusLabel(status: string): string {
   return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 }
 
-/** Calendar date as DD.MM.YYYY (UTC+4), matching the order-sheet design. */
+/** Calendar date as DD/MM/YYYY (UTC+4), matching admin table dates. */
 export function formatOrderDrawerDate(value: string | Date): string {
   try {
-    return formatAppDotDate(value);
+    return formatAppDisplayDate(value);
   } catch {
     return "";
   }

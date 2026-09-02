@@ -6,6 +6,7 @@ import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
+import { AdminTableDateTime } from "@/features/admin/ui/AdminTableDateTime";
 import {
   ADMIN_TABLE_CHECKBOX,
   ADMIN_TABLE_ROW,
@@ -43,8 +44,6 @@ export function AdminProductRow({
 }: AdminProductRowProps) {
   const dictionary = useAdminDictionary();
   const isActive = product.status === "ACTIVE";
-  const created = new Date(product.createdAt);
-  const createdLabel = `${created.getDate()}/${created.getMonth() + 1}/${created.getFullYear()}`;
 
   return (
     <tr className={ADMIN_TABLE_ROW}>
@@ -180,7 +179,7 @@ export function AdminProductRow({
         </div>
       </td>
       <td className={ADMIN_TABLE_TD_CENTER}>
-        <span className="text-xs text-gray-500">{createdLabel}</span>
+        <AdminTableDateTime value={product.createdAt} />
       </td>
     </tr>
   );
