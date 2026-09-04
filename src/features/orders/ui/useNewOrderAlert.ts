@@ -119,7 +119,7 @@ function attachOrderAlertAudio(options: {
     void audio.resumeIfPossible().then((ok) => {
       applyLockState(ok);
       if (ok && hasUnackedRef.current) {
-        audio.start();
+        void audio.start();
       }
     });
   };
@@ -166,8 +166,9 @@ export function useNewOrderAlert({
         return;
       }
 
-      audio.start();
-      applyLockState(audio.isUnlocked());
+      void audio.start().then((ok) => {
+        applyLockState(ok);
+      });
     },
     [applyLockState],
   );
@@ -228,7 +229,7 @@ export function useNewOrderAlert({
     }
     void audio.unlock().then((ok) => {
       if (hasUnackedRef.current) {
-        audio.start();
+        void audio.start();
       }
       applyLockState(ok);
     });

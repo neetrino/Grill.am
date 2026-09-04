@@ -5,7 +5,8 @@ const BEEP_GAIN = 0.12;
 
 /**
  * Looping Web Audio beep for the admin new-order alert.
- * Create/resume the context only from a user gesture (browser autoplay policy).
+ * Create the context only from a user gesture (browser autoplay policy).
+ * A later resume is allowed without a new gesture if this document already unlocked audio.
  */
 export class OrderAlertAudio {
   private context: AudioContext | null = null;
@@ -50,11 +51,17 @@ export class OrderAlertAudio {
     return this.afterRunningCheck();
   }
 
-  start(): void {
+  /**
+   * Arm the loop. If the browser later suspended a previously unlocked context,
+   * resume it — that does not need a new user gesture.
+   */
+  async start(): Promise<boolean> {
     this.wantsPlaying = true;
     if (this.isUnlocked()) {
       this.startLoopInternal();
+      return true;
     }
+    return this.resumeIfPossible();
   }
 
   stop(): void {
