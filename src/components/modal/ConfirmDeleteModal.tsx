@@ -149,6 +149,7 @@ function ConfirmDeleteModalShell({
       className="fixed inset-0 flex items-center justify-center px-4"
       style={{ zIndex: APP_MODAL_Z_INDEX }}
       role="presentation"
+      data-app-confirm-modal=""
     >
       <button
         type="button"
@@ -234,6 +235,8 @@ export function ConfirmDeleteModal({
     }
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
         onCancel();
       }
     };

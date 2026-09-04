@@ -56,6 +56,8 @@
   "payment": {
     "cashOnDelivery": "Cash on Delivery",
     "cashOnDeliveryDescription": "Pay when receiving the order.",
+    "cashOnPickup": "Cash payment",
+    "cashOnPickupDescription": "Pay when picking up your order.",
     "cashChangeTitle": "CHANGE",
     "cashChangeDescription": "Click the banknote you will pay with so we can prepare the change:",
     "cashChangeExact": "No change needed",

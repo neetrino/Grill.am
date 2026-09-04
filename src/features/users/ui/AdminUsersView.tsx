@@ -13,6 +13,7 @@ import {
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
+import { AdminTableDateTime } from "@/features/admin/ui/AdminTableDateTime";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import {
   ADMIN_TABLE,
@@ -65,11 +66,6 @@ function roleFilterHref(
   return query
     ? `/${locale}/admin/users?${query}`
     : `/${locale}/admin/users`;
-}
-
-function formatCreated(value: Date | string): string {
-  const date = new Date(value);
-  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 }
 
 function displayName(user: AdminUserListItem): string {
@@ -389,9 +385,7 @@ export function AdminUsersView({
                         </button>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
-                        <span className="text-sm text-gray-600">
-                          {formatCreated(user.createdAt)}
-                        </span>
+                        <AdminTableDateTime value={user.createdAt} />
                       </td>
                     </tr>
                   );

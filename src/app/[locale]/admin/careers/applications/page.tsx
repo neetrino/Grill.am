@@ -16,6 +16,7 @@ import {
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { AdminTableDateTime } from "@/features/admin/ui/AdminTableDateTime";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import {
   listAdminJobApplicationJobOptions,
@@ -27,7 +28,6 @@ import {
 } from "@/features/careers/domain/application-rules";
 import { adminJobApplicationFilterSchema } from "@/features/careers/schemas/application";
 import { AdminApplicationsFilters } from "@/features/careers/ui/AdminApplicationsFilters";
-import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -151,7 +151,7 @@ export default async function AdminApplicationsPage({
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.job}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.status}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.cv}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.received}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.received}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -187,10 +187,8 @@ export default async function AdminApplicationsPage({
                         {application.hasCv ? copy.cvYes : copy.cvNo}
                       </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <span className="text-xs text-gray-500">
-                        {formatAppDateTimeMinutes(application.createdAt)}
-                      </span>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      <AdminTableDateTime value={application.createdAt} />
                     </td>
                   </tr>
                 ))}

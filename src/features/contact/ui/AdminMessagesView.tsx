@@ -16,9 +16,12 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { AdminTableDateTime } from "@/features/admin/ui/AdminTableDateTime";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import {
   getAdminContactMessageAction,
@@ -30,7 +33,6 @@ import {
   contactStatusBadgeClass,
   contactStatusLabel,
 } from "@/features/contact/ui/contact-status-ui";
-import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 type AdminMessagesViewMessage = {
   id: string;
@@ -106,7 +108,7 @@ export function AdminMessagesView({
                   <th className={ADMIN_TABLE_TH}>{copy.table.subject}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.from}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.status}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.received}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.received}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -142,10 +144,8 @@ export function AdminMessagesView({
                         {contactStatusLabel(message.status, copy.status)}
                       </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <span className="text-xs text-gray-500">
-                        {formatAppDateTimeMinutes(message.createdAt)}
-                      </span>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      <AdminTableDateTime value={message.createdAt} />
                     </td>
                   </tr>
                 ))}
@@ -156,7 +156,12 @@ export function AdminMessagesView({
       </Card>
       <AdminMessageDetailsSheet
         open={sheetOpen}
-        onClose={() => setSheetOpen(false)}
+        onClose={() => {
+          setSheetOpen(false);
+          setDetail(null);
+          setError(null);
+        }}
+        locale={locale}
         detail={detail}
         error={error}
         isLoading={isPending}

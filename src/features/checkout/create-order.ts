@@ -33,6 +33,10 @@ import {
 } from "@/features/checkout/domain/cod-cash-change";
 import { sanitizeCustomerNote } from "@/features/checkout/domain/customer-note";
 import {
+  assertPositiveQuantityMeetsMinOrder,
+  minOrderQuantityFromTranslations,
+} from "@/features/products/domain/min-order-quantity";
+import {
   createPaymentAttempt,
   getLatestPaymentAttempt,
 } from "@/features/payments/application/create-payment-attempt";
@@ -221,6 +225,20 @@ export async function createOrderAction(
 
   if (items.length === 0 || !cart) {
     return { ok: false, error: "Cart is empty." };
+  }
+
+  try {
+    for (const { item, product } of items) {
+      assertPositiveQuantityMeetsMinOrder(
+        item.quantity,
+        minOrderQuantityFromTranslations(product.translations),
+      );
+    }
+  } catch {
+    return {
+      ok: false,
+      error: "Cart has items below their minimum order quantity.",
+    };
   }
 
   let rateSnapshot;

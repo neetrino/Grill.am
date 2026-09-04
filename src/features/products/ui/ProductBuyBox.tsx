@@ -4,6 +4,8 @@ import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { addCartLineQuantity } from "@/features/cart/cart-line-coordinator";
+import { getDisplayedCartLineQuantity } from "@/features/cart/cart-drawer-local-store";
+import { notifyCartMinOrderBlocked } from "@/features/cart/cart-min-order-alert";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
 import {
   computeModifiersDelta,
@@ -14,6 +16,7 @@ import {
   type ProductCustomization,
   type StorefrontCustomization,
 } from "@/features/products/domain/customization";
+import { minOrderQuantityForSlug } from "@/features/products/domain/min-order-quantity";
 import { ProductAddonChecklist } from "@/features/products/ui/ProductAddonChecklist";
 import { ProductExclusionsAccordion } from "@/features/products/ui/ProductExclusionsAccordion";
 import type { Locale } from "@/lib/i18n/config";
@@ -29,7 +32,6 @@ type ProductBuyBoxLabels = {
   addToCart: string;
   selectRequired: string;
   outOfStock: string;
-  added: string;
   error: string;
   options: string;
   addons: string;
@@ -112,13 +114,14 @@ export function ProductBuyBox({
   labels,
 }: ProductBuyBoxProps) {
   const maxQty = Math.max(stockOnHand, 0);
+  const minQty = minOrderQuantityForSlug(slug);
+  const initialQty = maxQty > 0 ? 1 : 0;
   const [modifiers, setModifiers] = useState<CartModifiers>({
     optionChoices: {},
     addonIds: [],
     exclusionIds: [],
   });
-  const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
-  const [message, setMessage] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(initialQty);
   const [error, setError] = useState<string | null>(null);
   // Renders the server-formatted price until the client mounts, then
   // switches to live client-computed pricing (currency/modifier reactive).
@@ -127,7 +130,7 @@ export function ProductBuyBox({
     () => true,
     () => false,
   );
-  const disabled = maxQty < 1;
+  const disabled = maxQty < minQty;
   const optionsComplete = hasRequiredModifiersSelected(
     rawCustomization,
     modifiers,
@@ -157,7 +160,6 @@ export function ProductBuyBox({
   function changeQuantity(next: number): void {
     if (disabled) return;
     setQuantity(Math.min(Math.max(1, next), maxQty));
-    setMessage(null);
     setError(null);
   }
 
@@ -166,7 +168,6 @@ export function ProductBuyBox({
       ...prev,
       optionChoices: { ...prev.optionChoices, [groupId]: choiceId },
     }));
-    setMessage(null);
     setError(null);
   }
 
@@ -180,7 +181,6 @@ export function ProductBuyBox({
           : [...prev.addonIds, addonId],
       };
     });
-    setMessage(null);
     setError(null);
   }
 
@@ -194,14 +194,25 @@ export function ProductBuyBox({
           : [...prev.exclusionIds, exclusionId],
       };
     });
-    setMessage(null);
     setError(null);
   }
 
   function handleAdd(): void {
-    if (!canAdd || quantity < 1) return;
-    setMessage(null);
+    if (!canAdd) return;
     setError(null);
+
+    const selectionKey = selectionKeyFromModifiers(modifiers);
+    const currentCartQty = getDisplayedCartLineQuantity(productId, selectionKey);
+    let addQuantity = quantity;
+
+    if (currentCartQty < minQty) {
+      const targetTotal = Math.max(minQty, currentCartQty + quantity);
+      addQuantity = targetTotal - currentCartQty;
+      if (quantity < minQty) {
+        notifyCartMinOrderBlocked(minQty);
+        setQuantity(minQty);
+      }
+    }
 
     const flyOrigin = document.querySelector("[data-product-fly-origin]");
     playCartFlyAnimation({
@@ -209,23 +220,20 @@ export function ProductBuyBox({
       imageUrl: imageUrl?.trim() || null,
     });
 
-    const selectionKey = selectionKeyFromModifiers(modifiers);
     const displayUnitAmount = Number(
       convertAmount(unitAmount, fxRate, defaultCurrency, currency).amount,
     );
-    setMessage(labels.added);
-
     void addCartLineQuantity({
       productId,
       selectionKey,
-      addQuantity: quantity,
+      addQuantity,
       modifiers,
       display: {
         productId,
         selectionKey,
         title,
         slug,
-        quantity,
+        quantity: addQuantity,
         imageUrl,
         unitPriceAmount: displayUnitAmount,
         unitPriceFormatted: priceFormatted,
@@ -234,7 +242,6 @@ export function ProductBuyBox({
         modifierLines: describeModifiers(rawCustomization, modifiers, locale),
       },
     }).catch(() => {
-      setMessage(null);
       setError(labels.error);
     });
   }
@@ -386,11 +393,6 @@ export function ProductBuyBox({
           ) : null}
         </button>
 
-        {message ? (
-          <p className="mt-3 text-sm text-green-700" role="status">
-            {message}
-          </p>
-        ) : null}
         {error ? (
           <p className="mt-3 text-sm text-red-700" role="alert">
             {error}

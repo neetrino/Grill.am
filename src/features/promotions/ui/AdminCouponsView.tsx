@@ -27,6 +27,7 @@ import {
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { AdminTableDateTime } from "@/features/admin/ui/AdminTableDateTime";
 import { deletePromotionAction } from "@/features/promotions/application/upsert-promotion";
 import type {
   AdminPromotionListItem,
@@ -37,7 +38,6 @@ import {
   CopyPromoCodeText,
 } from "@/features/promotions/ui/CopyPromoCodeButton";
 import { CouponDrawer } from "@/features/promotions/ui/CouponDrawer";
-import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 
 type AdminCouponsViewProps = {
   locale: string;
@@ -49,14 +49,6 @@ function valueLabel(discountType: string, discountValue: number): string {
   return discountType === "PERCENTAGE"
     ? `${discountValue}%`
     : String(discountValue);
-}
-
-function formatValidUntil(
-  endsAt: Date | string | null,
-  dash: string,
-): string {
-  if (!endsAt) return dash;
-  return formatAppDateTimeMinutes(endsAt);
 }
 
 export function AdminCouponsView({
@@ -200,9 +192,11 @@ export function AdminCouponsView({
                       )}
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span className="text-sm text-gray-700">
-                        {formatValidUntil(promo.endsAt, common.dash)}
-                      </span>
+                      {promo.endsAt ? (
+                        <AdminTableDateTime value={promo.endsAt} />
+                      ) : (
+                        <span className="text-gray-400">{common.dash}</span>
+                      )}
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
                       <div className="inline-flex items-center justify-center gap-1">

@@ -131,6 +131,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         selectDeliveryLocation: copy.shipping.selectDeliveryLocation,
         cashOnDelivery: copy.payment.cashOnDelivery,
         cashOnDeliveryDescription: copy.payment.cashOnDeliveryDescription,
+        cashOnPickup: copy.payment.cashOnPickup,
+        cashOnPickupDescription: copy.payment.cashOnPickupDescription,
         cashChangeTitle: copy.payment.cashChangeTitle,
         cashChangeDescription: copy.payment.cashChangeDescription,
         cashChangeExact: copy.payment.cashChangeExact,

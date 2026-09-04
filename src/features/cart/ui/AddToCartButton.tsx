@@ -6,8 +6,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { addCartLineQuantity } from "@/features/cart/cart-line-coordinator";
+import { getDisplayedCartLineQuantity } from "@/features/cart/cart-drawer-local-store";
+import { notifyCartMinOrderBlocked } from "@/features/cart/cart-min-order-alert";
 import { playCartFlyAnimation } from "@/features/cart/cart-fly-animation";
 import { EMPTY_CART_MODIFIERS } from "@/features/products/domain/customization";
+import { minOrderQuantityForSlug } from "@/features/products/domain/min-order-quantity";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 
@@ -88,6 +91,17 @@ export function AddToCartButton({
         : 0;
     const resolvedLocale = locale ?? "hy";
     const resolvedCurrency = currency ?? "AMD";
+    const minQty = minOrderQuantityForSlug(resolvedSlug);
+    const currentQty = getDisplayedCartLineQuantity(productId, "");
+    let addQuantity = 1;
+
+    if (currentQty <= 0 && minQty > 1) {
+      notifyCartMinOrderBlocked(minQty);
+      addQuantity = minQty;
+    } else if (currentQty > 0 && currentQty < minQty) {
+      notifyCartMinOrderBlocked(minQty);
+      addQuantity = minQty - currentQty;
+    }
 
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1500);
@@ -95,14 +109,14 @@ export function AddToCartButton({
     void addCartLineQuantity({
       productId,
       selectionKey: "",
-      addQuantity: 1,
+      addQuantity,
       modifiers: EMPTY_CART_MODIFIERS,
       display: {
         productId,
         selectionKey: "",
         title: resolvedTitle,
         slug: resolvedSlug,
-        quantity: 1,
+        quantity: addQuantity,
         imageUrl: imageUrl,
         unitPriceAmount: resolvedAmount,
         unitPriceFormatted: resolvedPrice,

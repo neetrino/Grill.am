@@ -97,7 +97,6 @@ export function CatalogCartSidebar({
                   <div className="flex shrink-0 items-center gap-1">
                     <button
                       type="button"
-                      disabled={item.quantity <= 1}
                       aria-label={labels.decreaseQuantity}
                       onClick={() =>
                         changeCartLineQuantity(item, item.quantity - 1)

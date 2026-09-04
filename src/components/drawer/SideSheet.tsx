@@ -109,9 +109,14 @@ export function SideSheet({
     document.body.style.overflow = "hidden";
 
     function handleEscape(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        onClose();
+      if (event.key !== "Escape") {
+        return;
       }
+      // Confirm/other app modals sit above the sheet — let them own Escape.
+      if (document.querySelector("[data-app-confirm-modal]")) {
+        return;
+      }
+      onClose();
     }
 
     document.addEventListener("keydown", handleEscape);
@@ -160,7 +165,7 @@ export function SideSheet({
           <header
             className={`shrink-0 border-b border-gray-100 px-6 py-4 lg:px-5 ${headerClassName}`}
           >
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <h2
                   id="side-sheet-title"
@@ -173,7 +178,7 @@ export function SideSheet({
                 ) : null}
               </div>
               {headerActions ? (
-                <div className="shrink-0 lg:self-start">{headerActions}</div>
+                <div className="shrink-0 self-start">{headerActions}</div>
               ) : null}
             </div>
           </header>

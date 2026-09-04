@@ -469,6 +469,8 @@
     "searchPlaceholder": "Имя, email, тема…",
     "empty": "Нет сообщений по этим фильтрам.",
     "openNamed": "Открыть {subject}",
+    "deleteNamed": "Удалить {subject}",
+    "confirmDelete": "Удалить сообщение «{subject}»? Это нельзя отменить.",
     "table": {
       "subject": "Тема",
       "from": "От кого",

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { SiteCopyright } from "@/components/layout/SiteCopyright";
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
 import { listStorefrontNavCategories } from "@/features/categories/application/list-storefront-nav-categories";
 import { findComboCategory } from "@/features/categories/domain/combo-category";
@@ -208,6 +209,12 @@ export default async function HomePage({ params }: HomePageProps) {
             tone: "yellow",
           },
         ]}
+      />
+
+      {/* Full SiteFooter is desktop-only; on phone this sits under branches. */}
+      <SiteCopyright
+        className="page-container pt-2 pb-4 text-center text-xs leading-5 text-[#171717]/70 lg:hidden sm:text-sm"
+        linkClassName="font-bold text-brand-red transition hover:text-brand-red-hot"
       />
     </div>
   );

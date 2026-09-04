@@ -7,6 +7,7 @@ import { CUSTOMER_NOTE_MAX_LENGTH } from "@/features/checkout/domain/customer-no
 import { CheckoutFulfillmentSection } from "@/features/checkout/ui/CheckoutFulfillmentSection";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
 import {
+  CHECKOUT_DETAILS_WRAP_CLASS,
   CHECKOUT_FIELD_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
   CHECKOUT_SECTION_TITLE_CLASS,
@@ -92,7 +93,7 @@ export function CheckoutDetailsSections({
   defaultLine1,
 }: CheckoutDetailsSectionsProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className={`${CHECKOUT_DETAILS_WRAP_CLASS} flex flex-col gap-4`}>
       <section className={CHECKOUT_SECTION_CARD_CLASS}>
         <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
           {labels.contactInformation}

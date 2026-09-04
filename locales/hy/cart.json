@@ -13,5 +13,6 @@
   "close": "Փակել զամբյուղը",
   "removeItem": "Հեռացնել",
   "decreaseQuantity": "Նվազեցնել քանակը",
-  "increaseQuantity": "Ավելացնել քանակը"
+  "increaseQuantity": "Ավելացնել քանակը",
+  "minOrderQuantity": "Այս ապրանքի համար նվազագույն պատվերը {count} հատ է։"
 }

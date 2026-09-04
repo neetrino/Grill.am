@@ -54,8 +54,10 @@ export const CHECKOUT_ALERT_CLASS = "rounded-[15px]";
 export const CHECKOUT_PRIMARY_BUTTON_CLASS =
   "inline-flex h-[50px] w-full items-center justify-center rounded-full bg-brand-red px-4 text-sm font-semibold text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red disabled:cursor-not-allowed disabled:opacity-50";
 
+export const CHECKOUT_DETAILS_WRAP_CLASS = "min-w-0 w-full";
+
 export const CHECKOUT_ORDER_SUMMARY_WRAP_CLASS =
-  "w-full lg:sticky lg:top-[152px] lg:self-start lg:w-max lg:max-w-full";
+  "w-full max-w-[400px] lg:w-[400px] lg:min-w-[400px] lg:shrink-0 lg:sticky lg:top-[152px] lg:self-start";
 
 export const CHECKOUT_ORDER_ITEMS_PREVIEW_CARD_CLASS =
   "mb-6 rounded-[15px] border border-gray-200 bg-white px-5 py-4 sm:px-6 sm:py-5";

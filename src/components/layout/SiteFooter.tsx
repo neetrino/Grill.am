@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Mail } from "lucide-react";
 
 import { FooterCornerShell } from "@/components/layout/FooterCornerShell";
+import { SiteCopyright } from "@/components/layout/SiteCopyright";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
 import { FOOTER_PAYMENT_ASSETS } from "@/lib/payment-assets";
@@ -31,7 +32,6 @@ const FOOTER_PAYMENT_METHODS = [
 ] as const;
 
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
-  const year = new Date().getFullYear();
   const socialLinks = [
     {
       href: dictionary.contact.social.instagram,
@@ -210,17 +210,10 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           </div>
 
           <div className="relative z-10 mt-16 flex flex-col gap-6 pt-8 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-white">
-              {`Copyright © ${year} | All Rights Reserved | Created by `}
-              <a
-                href="https://neetrino.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold transition hover:text-white/80"
-              >
-                Neetrino IT Company
-              </a>
-            </p>
+            <SiteCopyright
+              className="text-sm text-white"
+              linkClassName="font-bold transition hover:text-white/80"
+            />
 
             <ul className="flex flex-wrap items-center gap-[11px]">
               {FOOTER_PAYMENT_METHODS.map((payment) => (

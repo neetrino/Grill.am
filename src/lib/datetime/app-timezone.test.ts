@@ -5,6 +5,7 @@ import {
   appDayStartUtc,
   formatAppDateTimeLocalInput,
   formatAppDateTimeMinutes,
+  formatAppDisplayDate,
   formatAppDotDate,
   formatAppIsoDate,
   formatAppTimeMinutes,
@@ -24,10 +25,11 @@ describe("app timezone (UTC+4)", () => {
       minute: 0,
     });
     expect(formatAppIsoDate("2026-08-03T22:00:00.000Z")).toBe("2026-08-04");
+    expect(formatAppDisplayDate("2026-08-03T22:00:00.000Z")).toBe("04/08/2026");
     expect(formatAppDotDate("2026-08-03T22:00:00.000Z")).toBe("04.08.2026");
     expect(formatAppTimeMinutes("2026-08-03T22:00:00.000Z")).toBe("02:00");
     expect(formatAppDateTimeMinutes("2026-08-03T22:00:00.000Z")).toBe(
-      "2026-08-04 02:00",
+      "04/08/2026 02:00",
     );
   });
 

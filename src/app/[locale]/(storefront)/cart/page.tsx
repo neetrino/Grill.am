@@ -12,6 +12,10 @@ import {
   parseProductCustomization,
   unitAmountWithModifiers,
 } from "@/features/products/domain/customization";
+import {
+  clampCartQuantityToMinOrder,
+  minOrderQuantityFromTranslations,
+} from "@/features/products/domain/min-order-quantity";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import { isLocale } from "@/lib/i18n/config";
 
@@ -76,7 +80,13 @@ export default async function CartPage({ params }: CartPageProps) {
               <form
                 action={async () => {
                   "use server";
-                  await updateQuantity(item.id, item.quantity - 1);
+                  const minQty = minOrderQuantityFromTranslations(
+                    product.translations,
+                  );
+                  await updateQuantity(
+                    item.id,
+                    clampCartQuantityToMinOrder(item.quantity - 1, minQty),
+                  );
                 }}
               >
                 <button className="border px-2">−</button>

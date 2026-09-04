@@ -181,7 +181,7 @@ export function BulkChangeOrderStatusForm({
                 <th className={ADMIN_TABLE_TH}>{list.order}</th>
                 <th className={ADMIN_TABLE_TH}>{list.customer}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.total}</th>
-                <th className={ADMIN_TABLE_TH}>{list.placed}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{list.placed}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.status}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.payment}</th>
                 <th className={ADMIN_TABLE_TH_CENTER}>{list.paymentMethod}</th>
@@ -245,7 +245,7 @@ export function BulkChangeOrderStatusForm({
                       {formatMoney(order.totalAmount, order.baseCurrency)}
                     </span>
                   </td>
-                  <td className={ADMIN_TABLE_TD}>
+                  <td className={ADMIN_TABLE_TD_CENTER}>
                     <AdminOrderPlacedAt placedAt={order.placedAt} />
                   </td>
                   <td className={ADMIN_TABLE_TD_CENTER}>

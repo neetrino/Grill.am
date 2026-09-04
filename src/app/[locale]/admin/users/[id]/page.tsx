@@ -31,7 +31,7 @@ import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
 import {
   formatAppDateTimeMinutes,
-  formatAppIsoDate,
+  formatAppDisplayDate,
 } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -143,7 +143,7 @@ export default async function AdminUserDetailPage({
             label={detailCopy.emailVerified}
           >
             {user.emailVerifiedAt
-              ? formatAppIsoDate(user.emailVerifiedAt)
+              ? formatAppDisplayDate(user.emailVerifiedAt)
               : common.no}
           </AdminDetailField>
           <AdminDetailField
@@ -158,7 +158,7 @@ export default async function AdminUserDetailPage({
             icon={<CalendarDays className={FIELD_ICON_CLASS} />}
             label={detailCopy.created}
           >
-            {formatAppIsoDate(user.createdAt)}
+            {formatAppDisplayDate(user.createdAt)}
           </AdminDetailField>
         </div>
       </Card>
