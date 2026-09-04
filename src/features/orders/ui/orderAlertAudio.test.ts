@@ -43,12 +43,12 @@ describe("OrderAlertAudio", () => {
     vi.restoreAllMocks();
   });
 
-  it("does not create AudioContext until a user-gesture unlock", () => {
+  it("does not create AudioContext until a user-gesture unlock", async () => {
     const ctor = vi.fn(() => createMockAudioContext());
     vi.stubGlobal("AudioContext", ctor);
     const audio = new OrderAlertAudio();
 
-    audio.start();
+    await audio.start();
 
     expect(ctor).not.toHaveBeenCalled();
     expect(audio.isUnlocked()).toBe(false);
@@ -61,7 +61,7 @@ describe("OrderAlertAudio", () => {
     vi.stubGlobal("AudioContext", ctor);
     const audio = new OrderAlertAudio();
 
-    audio.start();
+    await audio.start();
     const unlocked = await audio.unlock();
 
     expect(ctor).toHaveBeenCalledTimes(1);
@@ -85,6 +85,24 @@ describe("OrderAlertAudio", () => {
     expect(ctor).toHaveBeenCalledTimes(1);
     expect(resumed).toBe(true);
     expect(ctx.state).toBe("running");
+    audio.dispose();
+  });
+
+  it("start() resumes a previously unlocked context that the browser suspended", async () => {
+    const ctx = createMockAudioContext("running");
+    vi.stubGlobal("AudioContext", vi.fn(() => ctx));
+    const audio = new OrderAlertAudio();
+
+    await audio.unlock();
+    expect(ctx.createOscillator).not.toHaveBeenCalled();
+
+    ctx.state = "suspended";
+    const started = await audio.start();
+
+    expect(started).toBe(true);
+    expect(ctx.resume).toHaveBeenCalledTimes(1);
+    expect(ctx.createOscillator).toHaveBeenCalled();
+    expect(audio.isUnlocked()).toBe(true);
     audio.dispose();
   });
 });
