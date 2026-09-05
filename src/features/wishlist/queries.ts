@@ -146,5 +146,5 @@ export async function toggleWishlist(productId: string): Promise<{
 }
 
 function revalidateWishlistPaths(): void {
-  revalidatePath("/", "layout");
+  revalidatePath("/[locale]/wishlist", "page");
 }

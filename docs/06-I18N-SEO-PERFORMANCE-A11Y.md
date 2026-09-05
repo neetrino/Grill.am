@@ -154,7 +154,7 @@ interface ExchangeRateProvider {
 - `loading.tsx`, Suspense boundaries և feature skeleton-ները stream են անում meaningful shell/sections։
 - `error.tsx` retry boundary-ն client-safe է և չի կորցնում արդեն պահպանված data-ն։
 - Public reads-ը tag-based cache/revalidation ունեն; authenticated/checkout data-ն shared public cache չի մտնում։
-- `/[locale]/products/[slug]` ISR է (`revalidate` 900 / 15 րոպե, prerendered)՝ առանց session/currency cookies։ Public reviews cache են; write/edit CTA client-personalize է session-ով։
+- `/[locale]/products/[slug]` ISR է (`revalidate` false, on-demand; no full-catalog prerender)՝ առանց session/currency cookies։ Public reviews cache են; write/edit CTA client-personalize է session-ով։
 - `/[locale]/products` listing-ը dynamic HTML է (`searchParams`); catalog read model-ը `unstable_cache` 15 րոպե։ HTML-ը AMD է; cart/wishlist badges client sync են։
 - Admin layout-ը մնում է `force-dynamic` (ոչ CDN cache)։ New-order poll-ը 30 վրկ է և `document.hidden` ժամանակ չի աշխատում; ձայնը մնում է visible tab-ում։
 - Next Image Optimization՝ միայն `webp`, quality 75, device widths մինչև 1920px (hero/100vw), առանց 2K/4K, `minimumCacheTTL` 30 օր։

@@ -22,8 +22,11 @@ export const CACHE_TAGS = {
 } as const;
 
 /**
- * Default revalidation window for public catalog/content caches (seconds).
- * Route `export const revalidate` must repeat the literal `900` — Next cannot
- * statically analyze this imported constant.
+ * Time-based window for listing/home/content `unstable_cache` (seconds).
+ * PDP HTML uses the literal `revalidate = false` — Next cannot statically
+ * analyze an imported constant on the route module.
  */
 export const PUBLIC_CACHE_REVALIDATE_SECONDS = 15 * 60;
+
+/** Tag-only lifetime — no timer, no periodic Data Cache writes. */
+export const ON_DEMAND_CACHE_REVALIDATE = false;

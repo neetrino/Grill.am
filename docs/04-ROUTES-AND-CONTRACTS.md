@@ -19,7 +19,7 @@
 | `/` | Public | Redirect to detected/saved locale կամ `/hy` |
 | `/[locale]` | Public | Home, cached/tagged RSC |
 | `/[locale]/products` | Public | URL-filtered catalog; dynamic HTML (`searchParams`); data cache 15m; AMD |
-| `/[locale]/products/[slug]` | Public | Product detail ISR/CDN (`revalidate` 15m); locale slug lookup; 404 unpublished/missing |
+| `/[locale]/products/[slug]` | Public | Product detail ISR/CDN (on-demand, no timer); locale slug lookup; 404 unpublished/missing |
 | `/[locale]/about` | Public | Locale content |
 | `/[locale]/contact` | Public | Contact form + rate limit |
 | `/[locale]/blog` | Public | Published posts, pagination |

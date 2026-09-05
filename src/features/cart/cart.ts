@@ -195,9 +195,12 @@ export async function removeItem(itemId: string): Promise<void> {
   await revalidateCartPaths();
 }
 
-/** Invalidates storefront cart views after durable cart mutations. */
+/**
+ * Refresh cart/checkout router cache after durable mutations.
+ * Do not revalidate "/" layout — that marks every ISR PDP stale and
+ * bills a Vercel ISR write on the next hit to each product page.
+ */
 export async function revalidateCartPaths(): Promise<void> {
   revalidatePath("/[locale]/cart", "page");
   revalidatePath("/[locale]/checkout", "page");
-  revalidatePath("/", "layout");
 }

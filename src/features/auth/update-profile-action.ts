@@ -90,7 +90,6 @@ export async function updateProfileAction(
   revalidatePath(`/${locale}/profile/personal-information`);
   revalidatePath(`/${locale}/profile/addresses`);
   revalidatePath(`/${locale}/checkout`);
-  revalidatePath(`/${locale}`, "layout");
 
   return { success: "Personal information saved." };
 }
