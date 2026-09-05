@@ -18,12 +18,18 @@ type ProductPageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-/** Shared public PDP HTML — no session/currency cookies. Must be a literal. */
-export const revalidate = 900;
+/**
+ * Shared public PDP HTML — no session/currency cookies.
+ * `false` = keep until tag/path invalidation. A 15-minute timer plus
+ * full-catalog prerender billed an ISR write on every bot hit and deploy.
+ * Must be a literal — Next cannot analyze an imported constant.
+ */
+export const revalidate = false;
 
-export async function generateStaticParams(): Promise<
-  Array<{ locale: string; slug: string }>
-> {
+/** First visitor generates the page; later hits are CDN/ISR reads. */
+export const dynamicParams = true;
+
+export function generateStaticParams(): Array<{ locale: string; slug: string }> {
   return listProductStaticParams();
 }
 

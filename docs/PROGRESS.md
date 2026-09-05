@@ -6,7 +6,7 @@
 ## Ops — Vercel origin load (2026-08-30)
 
 - Admin new-order poll: 30s, skipped while `document.hidden`; sound unchanged
-- Storefront PDP: ISR 15m, no session cookies in cached HTML; listing data-cached, HTML dynamic
+- Storefront PDP: ISR on-demand (no 15m timer, no catalog prerender); listing data-cached, HTML dynamic
 - Image Optimization: webp-only, widths ≤1920, quality 75, 30-day image cache
 - Woo legacy HTTP 301 (`statusCode`, not Next `permanent`/308)
 

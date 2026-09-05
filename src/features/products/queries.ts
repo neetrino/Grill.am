@@ -23,6 +23,7 @@ import type {
 } from "@/features/products/types";
 import {
   CACHE_TAGS,
+  ON_DEMAND_CACHE_REVALIDATE,
   PUBLIC_CACHE_REVALIDATE_SECONDS,
 } from "@/lib/cache/tags";
 import type { Locale } from "@/lib/i18n/config";
@@ -547,7 +548,7 @@ export const getProductDetailBySlug = cache(
           CACHE_TAGS.productDetail,
           CACHE_TAGS.productSlug(locale, slug),
         ],
-        revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+        revalidate: ON_DEMAND_CACHE_REVALIDATE,
       },
     )();
   },
@@ -596,7 +597,7 @@ export async function getRelatedProducts(
     ["related-products", locale, productId],
     {
       tags: [CACHE_TAGS.products, CACHE_TAGS.product(productId)],
-      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+      revalidate: ON_DEMAND_CACHE_REVALIDATE,
     },
   )();
 }

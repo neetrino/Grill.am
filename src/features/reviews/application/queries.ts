@@ -10,10 +10,7 @@ import {
   isReviewEligibleOrderStatus,
   type ReviewAggregate,
 } from "@/features/reviews/domain/review-rules";
-import {
-  CACHE_TAGS,
-  PUBLIC_CACHE_REVALIDATE_SECONDS,
-} from "@/lib/cache/tags";
+import { CACHE_TAGS, ON_DEMAND_CACHE_REVALIDATE } from "@/lib/cache/tags";
 
 export type PublicReview = {
   id: string;
@@ -183,7 +180,7 @@ export async function getCachedPublicProductReviews(
     ["product-reviews-public", productId],
     {
       tags: [CACHE_TAGS.productReviews(productId)],
-      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+      revalidate: ON_DEMAND_CACHE_REVALIDATE,
     },
   )();
 }

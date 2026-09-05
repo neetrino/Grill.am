@@ -185,9 +185,6 @@ export async function upsertStoreSettingAction(
 
     revalidatePath(`/${locale}/admin/settings`);
     revalidatePath(`/${locale}/admin`);
-    if (parsed.data.key === "store.enabledCurrencies") {
-      revalidatePath("/", "layout");
-    }
     return ok({ key: parsed.data.key });
   } catch {
     return err("SETTINGS_UPSERT_FAILED", "Unable to save settings.");
