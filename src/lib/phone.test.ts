@@ -3,12 +3,12 @@ import { describe, expect, it } from "vitest";
 import { phoneDigits, telHref, whatsappHref } from "@/lib/phone";
 
 describe("telHref", () => {
-  it("encodes the leading plus so the dialer keeps it", () => {
-    expect(telHref("+374 33 600 700")).toBe("tel:%2B37433600700");
+  it("keeps a leading plus in the tel URI", () => {
+    expect(telHref("+374 33 600 700")).toBe("tel:+37433600700");
   });
 
-  it("adds an encoded plus when the stored number is digits only", () => {
-    expect(telHref("374 10 600 700")).toBe("tel:%2B37410600700");
+  it("adds a plus when the stored number is digits only", () => {
+    expect(telHref("374 10 600 700")).toBe("tel:+37410600700");
   });
 
   it("returns an empty tel URI when there are no digits", () => {
