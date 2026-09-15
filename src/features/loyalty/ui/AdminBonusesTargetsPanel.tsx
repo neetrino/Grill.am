@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { SegmentedControl } from "@/components/layout/SegmentedControl";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type {
   CategoryBonusBoardRow,
@@ -18,7 +19,7 @@ type AdminBonusesTargetsPanelProps = {
   products: ProductBonusBoardRow[];
 };
 
-/** Category / product switch for flat bonus rules (screenshot-style tabs). */
+/** Category / product switcher for flat bonus rules. */
 export function AdminBonusesTargetsPanel({
   locale,
   categories,
@@ -28,37 +29,20 @@ export function AdminBonusesTargetsPanel({
   const copy = dictionary.bonuses;
   const [tab, setTab] = useState<BonusTargetTab>("products");
 
-  const tabs: Array<{ id: BonusTargetTab; label: string }> = [
-    { id: "categories", label: copy.tabCategories },
-    { id: "products", label: copy.tabProducts },
-  ];
-
   return (
     <div className="space-y-4">
-      <div
-        role="tablist"
-        aria-label={copy.tabsAria}
-        className="inline-flex flex-wrap gap-1.5 rounded-[18px] border border-gray-200 bg-white p-1.5 shadow-sm"
-      >
-        {tabs.map((item) => {
-          const selected = item.id === tab;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setTab(item.id)}
-              className={`min-w-[9.5rem] rounded-[14px] px-6 py-3 text-base font-semibold transition-colors sm:min-w-[11rem] sm:px-8 sm:py-3.5 sm:text-lg ${
-                selected
-                  ? "bg-brand-red text-white"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              {item.label}
-            </button>
-          );
-        })}
+      <div className="w-full max-w-md">
+        <SegmentedControl
+          aria-label={copy.tabsAria}
+          value={tab}
+          options={[
+            { value: "categories", label: copy.tabCategories },
+            { value: "products", label: copy.tabProducts },
+          ]}
+          size="lg"
+          tone="filled"
+          onSelect={setTab}
+        />
       </div>
 
       {tab === "categories" ? (

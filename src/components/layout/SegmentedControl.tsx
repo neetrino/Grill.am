@@ -14,8 +14,17 @@ type SegmentedOption<T extends string> = {
   href?: string;
 };
 
-/** `sm` — compact header pills; `md` — form control matching field height. */
-type SegmentedControlSize = "sm" | "md";
+/**
+ * `sm` — compact header pills; `md` — form control matching field height;
+ * `lg` — full-round admin page switcher.
+ */
+type SegmentedControlSize = "sm" | "md" | "lg";
+
+/**
+ * `soft` — light track + white sliding pill (locale/header).
+ * `filled` — light track + solid brand sliding pill + white active label.
+ */
+type SegmentedControlTone = "soft" | "filled";
 
 type SegmentedControlProps<T extends string> = {
   "aria-label": string;
@@ -23,6 +32,7 @@ type SegmentedControlProps<T extends string> = {
   options: readonly SegmentedOption<T>[];
   disabled?: boolean;
   size?: SegmentedControlSize;
+  tone?: SegmentedControlTone;
   /** Size each segment to its label instead of equal columns. */
   fitContent?: boolean;
   onSelect?: (value: T) => void;
@@ -37,16 +47,35 @@ type SegmentedControlProps<T extends string> = {
 const SIZE_OPTION_CLASS: Record<SegmentedControlSize, string> = {
   sm: "px-1.5 py-2 text-[11px]",
   md: "px-3 py-2 text-sm",
+  lg: "px-5 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-base",
 };
 
-/** Header pills stay fully round; admin form controls follow the 15px card radius. */
+/** Header/admin pills stay fully round; `md` follows the 15px card radius. */
 const SIZE_RADIUS_CLASS: Record<SegmentedControlSize, string> = {
   sm: "rounded-full",
   md: "rounded-[15px]",
+  lg: "rounded-full",
 };
 
-const INDICATOR_CLASS =
-  "pointer-events-none absolute top-1 bottom-1 bg-white shadow-sm duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
+const TONE_TRACK_CLASS: Record<SegmentedControlTone, string> = {
+  soft: "bg-brand-surface",
+  filled: "bg-white ring-1 ring-gray-200",
+};
+
+const TONE_INDICATOR_CLASS: Record<SegmentedControlTone, string> = {
+  soft: "bg-white shadow-sm",
+  filled: "bg-brand-red shadow-sm",
+};
+
+const TONE_SELECTED_TEXT_CLASS: Record<SegmentedControlTone, string> = {
+  soft: "font-bold text-brand-red",
+  filled: "font-semibold text-white",
+};
+
+const TONE_IDLE_TEXT_CLASS: Record<SegmentedControlTone, string> = {
+  soft: "font-semibold text-gray-500 hover:text-gray-800",
+  filled: "font-semibold text-gray-800 hover:text-gray-950",
+};
 
 /**
  * Pill segmented control with a sliding active indicator.
@@ -57,6 +86,7 @@ export function SegmentedControl<T extends string>({
   options,
   disabled = false,
   size = "sm",
+  tone = "soft",
   fitContent = false,
   onSelect,
   renderOption,
@@ -109,14 +139,14 @@ export function SegmentedControl<T extends string>({
       ref={containerRef}
       role="group"
       aria-label={ariaLabel}
-      className={`relative flex items-center ${SIZE_RADIUS_CLASS[size]} bg-brand-surface p-1 ${
+      className={`relative flex items-center ${SIZE_RADIUS_CLASS[size]} ${TONE_TRACK_CLASS[tone]} p-1 ${
         fitContent ? "w-fit max-w-full" : "w-full"
       }`}
     >
       {indicatorStyle ? (
         <span
           aria-hidden
-          className={`${INDICATOR_CLASS} ${SIZE_RADIUS_CLASS[size]} ${
+          className={`pointer-events-none absolute top-1 bottom-1 duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${TONE_INDICATOR_CLASS[tone]} ${SIZE_RADIUS_CLASS[size]} ${
             fitContent ? "transition-[left,width]" : "transition-transform"
           }`}
           style={indicatorStyle}
@@ -129,8 +159,8 @@ export function SegmentedControl<T extends string>({
           fitContent ? "flex-none" : "flex-1"
         } ${SIZE_OPTION_CLASS[size]} transition-colors duration-300`;
         const className = selected
-          ? `${base} font-bold text-brand-red`
-          : `${base} font-semibold text-gray-500 hover:text-gray-800`;
+          ? `${base} ${TONE_SELECTED_TEXT_CLASS[tone]}`
+          : `${base} ${TONE_IDLE_TEXT_CLASS[tone]}`;
 
         if (renderOption) {
           return (
