@@ -70,6 +70,13 @@ export function OrderDetailsDrawer({
       </Button>
     ) : null;
 
+  const stickyTotals =
+    !isLoading && !error && detail ? (
+      <div className="border-t border-gray-100 bg-brand-surface px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] lg:px-4">
+        <OrderDetailsDrawerTotals detail={detail} />
+      </div>
+    ) : null;
+
   return (
     <SideSheet
       open={open}
@@ -78,6 +85,7 @@ export function OrderDetailsDrawer({
       subtitle={subtitle}
       closeLabel={common.close}
       headerActions={headerActions}
+      footer={stickyTotals}
       desktopWidthPercent={34}
       mobileMaxWidthClassName="max-w-md"
       panelClassName="!bg-brand-surface"
@@ -113,7 +121,6 @@ export function OrderDetailsDrawer({
             detail={detail}
             compact={isCustomerSheet}
           />
-          <OrderDetailsDrawerTotals detail={detail} />
         </div>
       ) : null}
     </SideSheet>
