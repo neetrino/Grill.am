@@ -10,7 +10,11 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/features/users/domain/user-lifecycle";
-import { adminUserRoleLabel } from "@/features/users/ui/admin-user-labels";
+import {
+  ADMIN_USER_PILL_TRIGGER_CLASS,
+  adminUserRoleLabel,
+  adminUserRolePillClass,
+} from "@/features/users/ui/admin-user-labels";
 
 type UpdateUserRoleFormProps = {
   locale: string;
@@ -62,7 +66,7 @@ export function UpdateUserRoleForm({
   }
 
   return (
-    <div className="w-full max-w-[14rem]">
+    <div className="w-fit max-w-full">
       <AdminSelect
         label={forms.role}
         name="userRole"
@@ -72,6 +76,8 @@ export function UpdateUserRoleForm({
         disabled={disabled || isPending}
         onChange={onRoleChange}
         hideLabel
+        fitContent
+        triggerClassName={`${ADMIN_USER_PILL_TRIGGER_CLASS} ${adminUserRolePillClass(role)}`}
       />
       {error ? <p className="mt-1 text-xs text-red-700">{error}</p> : null}
     </div>

@@ -10,7 +10,11 @@ import {
   USER_STATUSES,
   type UserStatus,
 } from "@/features/users/domain/user-lifecycle";
-import { adminUserStatusLabel } from "@/features/users/ui/admin-user-labels";
+import {
+  ADMIN_USER_PILL_TRIGGER_CLASS,
+  adminUserStatusLabel,
+  adminUserStatusPillClass,
+} from "@/features/users/ui/admin-user-labels";
 
 type UpdateUserStatusFormProps = {
   locale: string;
@@ -68,7 +72,7 @@ export function UpdateUserStatusForm({
   }
 
   return (
-    <div className="w-full max-w-[14rem]">
+    <div className="w-fit max-w-full">
       <AdminSelect
         label={forms.status}
         name="userStatus"
@@ -78,6 +82,8 @@ export function UpdateUserStatusForm({
         disabled={isPending}
         onChange={onStatusChange}
         hideLabel
+        fitContent
+        triggerClassName={`${ADMIN_USER_PILL_TRIGGER_CLASS} ${adminUserStatusPillClass(status)}`}
       />
       {error ? <p className="mt-1 text-xs text-red-700">{error}</p> : null}
     </div>
