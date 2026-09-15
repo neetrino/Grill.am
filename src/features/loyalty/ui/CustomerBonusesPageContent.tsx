@@ -24,6 +24,8 @@ type CustomerBonusesPageContentProps = {
   rows: CustomerBonusLedgerRow[];
   copy: Dictionary["profile"]["bonuses"];
   startShoppingLabel: string;
+  /** Hide page title when shown inside the mobile profile sheet. */
+  hideTitle?: boolean;
 };
 
 function entryLabel(
@@ -57,6 +59,7 @@ export function CustomerBonusesPageContent({
   rows,
   copy,
   startShoppingLabel,
+  hideTitle = false,
 }: CustomerBonusesPageContentProps) {
   function money(amount: number): string {
     return formatMoneyAmount(amount, "AMD", locale);
@@ -68,11 +71,13 @@ export function CustomerBonusesPageContent({
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <div>
-        <ProfilePageTitle>{copy.title}</ProfilePageTitle>
-      </div>
+      {!hideTitle ? (
+        <div>
+          <ProfilePageTitle>{copy.title}</ProfilePageTitle>
+        </div>
+      ) : null}
 
-      <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-3 lg:gap-4">
         <ProfileStatCard
           label={copy.balance}
           value={balance}

@@ -119,7 +119,7 @@ export function ProfileMobileMenu({
         : renderedSheet === "promoCodes"
           ? dictionary.promoCodes.nav
           : renderedSheet === "bonuses"
-            ? dictionary.bonuses.nav
+            ? dictionary.bonuses.title
           : renderedSheet === "personal"
             ? dictionary.personal
             : renderedSheet === "addresses"
