@@ -38,7 +38,9 @@
     "searchPlaceholder": "Поиск товаров…",
     "searchHint": "Начните вводить название товара",
     "searchNoResults": "Товары не найдены",
-    "searchViewAll": "Смотреть все результаты"
+    "searchViewAll": "Смотреть все результаты",
+    "coins": "Coins",
+    "coinsAria": "Баланс бонусов, открыть мои бонусы"
   },
   "footer": {
     "shop": "Магазины",

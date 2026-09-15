@@ -15,6 +15,7 @@ import {
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
 import { getFeaturedProducts } from "@/features/products/queries";
 import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
+import { formatProductCoinsEarnLabel } from "@/features/products/ui/format-product-coins-earn-label";
 import {
   fallbackStorefrontBranches,
   toHomeBranchItems,
@@ -29,7 +30,6 @@ import {
   createDisplayPriceFormatter,
   getSelectedCurrency,
 } from "@/lib/money/display-price";
-import { formatMoneyAmount } from "@/lib/money/format";
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;
@@ -115,13 +115,11 @@ export default async function HomePage({ params }: HomePageProps) {
         inWishlist: wishlistIds.has(product.id),
         requiresConfiguration: product.requiresConfiguration,
         hitLabel: product.isFeatured ? dictionary.product.hit : null,
-        bonusEarnLabel:
-          bonusEarnAmount > 0
-            ? dictionary.product.bonusEarn.replace(
-                "{amount}",
-                formatMoneyAmount(bonusEarnAmount, "AMD", locale),
-              )
-            : null,
+        bonusEarnLabel: formatProductCoinsEarnLabel(
+          dictionary.product.bonusEarn,
+          bonusEarnAmount,
+          locale,
+        ),
       };
     });
   }

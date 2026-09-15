@@ -1,6 +1,6 @@
 "use client";
 
-import { Gift, Minus, Plus, ShoppingCart, Star } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { addCartLineQuantity } from "@/features/cart/cart-line-coordinator";
@@ -19,6 +19,7 @@ import {
 import { minOrderQuantityForSlug } from "@/features/products/domain/min-order-quantity";
 import { ProductAddonChecklist } from "@/features/products/ui/ProductAddonChecklist";
 import { ProductAddonList } from "@/features/products/ui/ProductAddonList";
+import { ProductCoinsEarnPill } from "@/features/products/ui/ProductCoinsEarnPill";
 import { ProductExclusionList } from "@/features/products/ui/ProductExclusionList";
 import { ProductModifierAccordion } from "@/features/products/ui/ProductModifierAccordion";
 import type { Locale } from "@/lib/i18n/config";
@@ -364,10 +365,7 @@ export function ProductBuyBox({
               ) : null}
             </div>
             {bonusEarnLabel ? (
-              <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700">
-                <Gift className="size-3.5 shrink-0" aria-hidden />
-                {bonusEarnLabel}
-              </p>
+              <ProductCoinsEarnPill label={bonusEarnLabel} />
             ) : null}
           </div>
 

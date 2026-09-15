@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { ProductCard } from "@/features/products/ui/ProductCard";
+import { formatProductCoinsEarnLabel } from "@/features/products/ui/format-product-coins-earn-label";
 import { getRelatedProducts } from "@/features/products/queries";
 import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
@@ -10,7 +11,6 @@ import type { Locale } from "@/lib/i18n/config";
 import { defaultCurrency, type Currency } from "@/lib/money/currency";
 import { formatBaseCatalogPrice } from "@/lib/money/catalog-price";
 import { createDisplayPriceFormatter } from "@/lib/money/display-price";
-import { formatMoneyAmount } from "@/lib/money/format";
 
 type ProductRelatedSectionProps = {
   locale: Locale;
@@ -104,18 +104,11 @@ export async function ProductRelatedSection({
               addToCartLabel={labels.addToCart}
               requiresConfiguration={item.requiresConfiguration}
               hitLabel={item.isFeatured ? labels.hit : null}
-              bonusEarnLabel={
-                (bonusEarnByProductId.get(item.id) ?? 0) > 0
-                  ? labels.bonusEarn.replace(
-                      "{amount}",
-                      formatMoneyAmount(
-                        bonusEarnByProductId.get(item.id) ?? 0,
-                        "AMD",
-                        locale,
-                      ),
-                    )
-                  : null
-              }
+              bonusEarnLabel={formatProductCoinsEarnLabel(
+                labels.bonusEarn,
+                bonusEarnByProductId.get(item.id) ?? 0,
+                locale,
+              )}
             />
           );
         })}

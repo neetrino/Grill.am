@@ -38,7 +38,9 @@
     "searchPlaceholder": "Որոնել ապրանքներ…",
     "searchHint": "Սկսեք գրել ապրանքի անունը",
     "searchNoResults": "Ապրանքներ չեն գտնվել",
-    "searchViewAll": "Տեսնել բոլոր արդյունքները"
+    "searchViewAll": "Տեսնել բոլոր արդյունքները",
+    "coins": "Coins",
+    "coinsAria": "Բոնուսի մնացորդ, բացել իմ բոնուսները"
   },
   "footer": {
     "shop": "Խանութներ",

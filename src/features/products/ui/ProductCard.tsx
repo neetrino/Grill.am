@@ -1,12 +1,13 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { Gift, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
 import {
   FeaturedProductCard,
 } from "@/features/products/ui/FeaturedProductCard";
+import { ProductCoinsEarnPill } from "@/features/products/ui/ProductCoinsEarnPill";
 import { ProductHitBadge } from "@/features/products/ui/ProductHitBadge";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
@@ -52,7 +53,7 @@ type ProductCardProps = {
   requiresConfiguration?: boolean;
   /** Localized HIT label; omit when the product is not featured. */
   hitLabel?: string | null;
-  /** Localized bonus earn line, e.g. "+120֏ բոնուս". */
+  /** Localized bonus earn line, e.g. "+52 Coins". */
   bonusEarnLabel?: string | null;
   /** Figma mobile featured card variants (`164:457` / `164:505`). */
   variant?: ProductCardVariant;
@@ -165,7 +166,7 @@ export function ProductCard({
           ) : null}
         </AppLink>
 
-        {hitLabel || discountPercent != null || bonusEarnLabel ? (
+        {hitLabel || discountPercent != null ? (
           <div className="absolute top-3.5 left-4 z-10 flex flex-col items-start gap-1">
             {hitLabel ? (
               <ProductHitBadge
@@ -177,12 +178,6 @@ export function ProductCard({
               <span className="inline-flex h-[26px] items-center gap-1.5 rounded-full bg-brand-yellow pr-3 pl-[13px] text-[11px] leading-[18px] font-semibold text-[#222]">
                 <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
                 -{discountPercent}%
-              </span>
-            ) : null}
-            {bonusEarnLabel ? (
-              <span className="inline-flex h-[26px] max-w-[11rem] items-center gap-1.5 truncate rounded-full bg-emerald-600 pr-3 pl-[13px] text-[11px] leading-[18px] font-semibold text-white">
-                <Gift className="h-3 w-3 shrink-0" aria-hidden />
-                <span className="truncate">{bonusEarnLabel}</span>
               </span>
             ) : null}
           </div>
@@ -225,14 +220,19 @@ export function ProductCard({
         )}
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-          <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="text-base leading-5 font-extrabold text-[#0d0d0d] md:text-lg lg:text-2xl">
-              {priceFormatted}
-            </p>
-            {onSale ? (
-              <p className="text-[11px] leading-5 font-extrabold text-[#bababa] line-through md:text-xs lg:text-sm">
-                {compareAtFormatted}
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+              <p className="text-base leading-5 font-extrabold text-[#0d0d0d] md:text-lg lg:text-2xl">
+                {priceFormatted}
               </p>
+              {onSale ? (
+                <p className="text-[11px] leading-5 font-extrabold text-[#bababa] line-through md:text-xs lg:text-sm">
+                  {compareAtFormatted}
+                </p>
+              ) : null}
+            </div>
+            {bonusEarnLabel ? (
+              <ProductCoinsEarnPill label={bonusEarnLabel} />
             ) : null}
           </div>
 
@@ -250,7 +250,7 @@ export function ProductCard({
               currency={currency}
               imageUrl={resolvedImageUrl}
               configureHref={requiresConfiguration ? href : undefined}
-              className="h-11 w-11 shrink-0 -translate-y-1 translate-x-2.5 rounded-full bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 md:h-[51px] md:w-[51px] md:translate-x-0 md:translate-y-0 md:rounded-[45px] [&>svg]:h-6 [&>svg]:w-6 [&>svg]:text-white md:[&>svg]:h-[29px] md:[&>svg]:w-[29px]"
+              className="h-11 w-11 shrink-0 translate-x-2.5 rounded-full bg-brand-red text-white hover:bg-brand-red-hot disabled:bg-brand-red/40 md:h-[51px] md:w-[51px] md:translate-x-0 md:rounded-[45px] [&>svg]:h-6 [&>svg]:w-6 [&>svg]:text-white md:[&>svg]:h-[29px] md:[&>svg]:w-[29px]"
             />
           ) : null}
         </div>

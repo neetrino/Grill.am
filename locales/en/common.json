@@ -38,7 +38,9 @@
     "searchPlaceholder": "Search products…",
     "searchHint": "Start typing a product name",
     "searchNoResults": "No products found",
-    "searchViewAll": "View all results"
+    "searchViewAll": "View all results",
+    "coins": "Coins",
+    "coinsAria": "Bonus balance, open my bonuses"
   },
   "footer": {
     "shop": "Stores",

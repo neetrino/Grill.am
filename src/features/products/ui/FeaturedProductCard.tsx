@@ -1,9 +1,10 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { Gift, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
+import { ProductCoinsEarnPill } from "@/features/products/ui/ProductCoinsEarnPill";
 import { ProductHitBadge } from "@/features/products/ui/ProductHitBadge";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
@@ -109,7 +110,7 @@ export function FeaturedProductCard({
           ) : null}
         </AppLink>
 
-        {hitLabel || discountPercent != null || bonusEarnLabel ? (
+        {hitLabel || discountPercent != null ? (
           <div className="absolute top-2 left-2 z-10 flex flex-col items-start gap-1">
             {hitLabel ? (
               <ProductHitBadge
@@ -121,12 +122,6 @@ export function FeaturedProductCard({
               <span className="inline-flex items-center gap-1 rounded-full bg-brand-yellow px-2 py-[3px] text-[10px] leading-[15px] font-semibold text-[#222]">
                 <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
                 -{discountPercent}%
-              </span>
-            ) : null}
-            {bonusEarnLabel ? (
-              <span className="inline-flex max-w-[9.5rem] items-center gap-1 truncate rounded-full bg-emerald-600 px-2 py-[3px] text-[10px] leading-[15px] font-semibold text-white">
-                <Gift className="h-3 w-3 shrink-0" aria-hidden />
-                <span className="truncate">{bonusEarnLabel}</span>
               </span>
             ) : null}
           </div>
@@ -175,7 +170,7 @@ export function FeaturedProductCard({
         </div>
 
         <div className="flex items-center justify-between gap-2">
-          <div className="min-w-0">
+          <div className="flex min-w-0 flex-col gap-1">
             <p
               className={`text-base leading-4 font-extrabold ${
                 isRed ? "text-white" : "text-[#0d0d0d]"
@@ -191,6 +186,9 @@ export function FeaturedProductCard({
               >
                 {compareAtFormatted}
               </p>
+            ) : null}
+            {bonusEarnLabel ? (
+              <ProductCoinsEarnPill label={bonusEarnLabel} />
             ) : null}
           </div>
 
