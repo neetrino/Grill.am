@@ -58,16 +58,17 @@ function CoinsPillFromSession({
   bonusBalanceAmount: number;
   size?: "md" | "sm";
 }): ReactNode {
-  if (!user) {
-    return null;
-  }
-
   return (
     <HeaderCoinsPill
       locale={locale}
-      balanceAmount={bonusBalanceAmount}
+      balanceAmount={user ? bonusBalanceAmount : 0}
       coinsLabel={dictionary.header.coins}
       ariaLabel={dictionary.header.coinsAria}
+      href={
+        user
+          ? `/${locale}/profile/bonuses`
+          : `/${locale}/login`
+      }
       size={size}
     />
   );

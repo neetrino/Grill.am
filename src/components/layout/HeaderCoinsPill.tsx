@@ -9,6 +9,8 @@ type HeaderCoinsPillProps = {
   balanceAmount: number;
   coinsLabel: string;
   ariaLabel: string;
+  /** Where the pill navigates (bonuses for signed-in, login for guests). */
+  href: string;
   /** Compact control for tight mobile chrome; default matches header search height. */
   size?: "md" | "sm";
 };
@@ -19,7 +21,7 @@ function formatCoinsBalance(amount: number, locale: Locale): string {
 }
 
 /**
- * Cream bonuses pill — links to profile coins history.
+ * Cream bonuses pill — links to profile coins history (or login when guest).
  * Default height matches HeaderSearch (`h-12` / `sm:h-[49px]`).
  */
 export function HeaderCoinsPill({
@@ -27,13 +29,14 @@ export function HeaderCoinsPill({
   balanceAmount,
   coinsLabel,
   ariaLabel,
+  href,
   size = "md",
 }: HeaderCoinsPillProps) {
   const compact = size === "sm";
 
   return (
     <AppLink
-      href={`/${locale}/profile/bonuses`}
+      href={href}
       prefetchPolicy="intent"
       aria-label={ariaLabel}
       className={`inline-flex shrink-0 items-center rounded-full bg-[#FFF4D4] text-left transition hover:bg-[#FFEDC2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red ${
