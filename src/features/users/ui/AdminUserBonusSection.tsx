@@ -1,21 +1,20 @@
 "use client";
 
-import { Gift } from "lucide-react";
+import { Coins } from "lucide-react";
 
 import {
   formatAdminMessage,
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
-import { AdminSectionCard } from "@/features/admin/ui/AdminSectionCard";
+import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
+import { Card } from "@/components/ui/Card";
 import type { CustomerBonusLedgerRow } from "@/features/loyalty/application/queries";
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
 import { useAdminOrderDrawer } from "@/features/orders/ui/useAdminOrderDrawer";
-import { formatMoneyAmount } from "@/lib/money/format";
+import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
 import type { Locale } from "@/lib/i18n/config";
 import { isLocale } from "@/lib/i18n/config";
-import {
-  formatAppDateTimeMinutes,
-} from "@/lib/datetime/app-timezone";
 
 type AdminUserBonusSectionProps = {
   locale: string;
@@ -50,9 +49,13 @@ function isCredit(entryType: CustomerBonusLedgerRow["entryType"]): boolean {
   return entryType === "EARN" || entryType === "SPEND_REVERSAL";
 }
 
+function formatBonusAmount(amount: number, locale: Locale): string {
+  const safe = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
+  return `${safe.toLocaleString(locale === "en" ? "en-US" : "ru-RU")} ֏`;
+}
+
 /**
  * Loyalty wallet summary + ledger on the admin user detail page.
- * Earn rows link to the shared order drawer when an order number exists.
  */
 export function AdminUserBonusSection({
   locale,
@@ -66,135 +69,102 @@ export function AdminUserBonusSection({
   const drawer = useAdminOrderDrawer(locale);
   const moneyLocale: Locale = isLocale(locale) ? locale : "en";
 
-  function money(amount: number): string {
-    return formatMoneyAmount(amount, "AMD", moneyLocale);
-  }
-
-  const earnRows = ledger.filter((row) => row.entryType === "EARN");
+  const stats = [
+    { label: copy.bonusBalance, value: formatBonusAmount(balanceAmount, moneyLocale) },
+    {
+      label: copy.bonusTotalEarned,
+      value: formatBonusAmount(totalEarnedAmount, moneyLocale),
+    },
+    {
+      label: copy.bonusTotalSpent,
+      value: formatBonusAmount(totalSpentAmount, moneyLocale),
+    },
+  ] as const;
 
   return (
     <>
-      <AdminSectionCard
-        className="mb-4"
-        icon={<Gift className="h-5 w-5" />}
-        title={copy.bonusesTitle}
-      >
-        <div className="mb-5 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-[15px] border border-gray-200 bg-white p-3">
-            <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-              {copy.bonusBalance}
-            </p>
-            <p className="mt-1 text-lg font-semibold tabular-nums text-gray-900">
-              {money(balanceAmount)}
-            </p>
-          </div>
-          <div className="rounded-[15px] border border-gray-200 bg-white p-3">
-            <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-              {copy.bonusTotalEarned}
-            </p>
-            <p className="mt-1 text-lg font-semibold tabular-nums text-emerald-700">
-              {money(totalEarnedAmount)}
-            </p>
-          </div>
-          <div className="rounded-[15px] border border-gray-200 bg-white p-3">
-            <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-              {copy.bonusTotalSpent}
-            </p>
-            <p className="mt-1 text-lg font-semibold tabular-nums text-gray-900">
-              {money(totalSpentAmount)}
-            </p>
-          </div>
+      <Card className={`mb-4 p-5 sm:p-6 ${ADMIN_CARD_CLASS}`}>
+        <div className="flex items-center gap-3">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-red/10 text-brand-red">
+            <Coins className="size-5" aria-hidden />
+          </span>
+          <h2 className={`${ADMIN_SECTION_TITLE} uppercase tracking-wide`}>
+            {copy.bonusesTitle}
+          </h2>
         </div>
 
-        <h3 className="mb-2 text-sm font-semibold text-gray-900">
-          {copy.bonusFromOrders}
-        </h3>
-        {earnRows.length === 0 ? (
-          <p className="mb-5 text-sm text-gray-600">{copy.noBonusFromOrders}</p>
-        ) : (
-          <ul className="mb-5 divide-y divide-gray-100 overflow-hidden rounded-[15px] border border-gray-200">
-            {earnRows.map((row) => (
-              <li
-                key={row.id}
-                className="flex items-center justify-between gap-3 px-3 py-2.5"
-              >
-                <div className="min-w-0">
-                  {row.orderNumber ? (
-                    <button
-                      type="button"
-                      onClick={() => drawer.openOrder(row.orderNumber!)}
-                      className="text-sm font-medium text-brand-red hover:underline"
-                      aria-label={formatAdminMessage(
-                        dictionary.orders.list.openOrder,
-                        { orderNumber: row.orderNumber },
-                      )}
-                    >
-                      {row.orderNumber}
-                    </button>
-                  ) : (
-                    <span className="text-sm font-medium text-gray-800">
-                      {copy.bonusNoOrder}
-                    </span>
-                  )}
-                  <p className="text-xs text-gray-500">
-                    {formatAppDateTimeMinutes(new Date(row.createdAt))}
-                  </p>
-                </div>
-                <p className="shrink-0 text-sm font-semibold tabular-nums text-emerald-700">
-                  +{money(row.amount)}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-[14px] bg-[#FFF4D4] px-4 py-4"
+            >
+              <p className="text-[11px] font-semibold tracking-wide text-brand-ink/70 uppercase sm:text-xs">
+                {stat.label}
+              </p>
+              <p className="mt-2 text-2xl font-bold tabular-nums text-brand-ink sm:text-[1.65rem]">
+                {stat.value}
+              </p>
+            </div>
+          ))}
+        </div>
 
-        <h3 className="mb-2 text-sm font-semibold text-gray-900">
-          {copy.bonusHistory}
-        </h3>
-        {ledger.length === 0 ? (
-          <p className="text-sm text-gray-600">{copy.noBonusHistory}</p>
-        ) : (
-          <ul className="divide-y divide-gray-100 overflow-hidden rounded-[15px] border border-gray-200">
-            {ledger.map((row) => (
-              <li
-                key={`full-${row.id}`}
-                className="flex items-start justify-between gap-3 px-3 py-2.5"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-gray-900">
-                    {entryLabel(row.entryType, copy)}
-                    {row.orderNumber ? (
-                      <>
-                        {" · "}
-                        <button
-                          type="button"
-                          onClick={() => drawer.openOrder(row.orderNumber!)}
-                          className="text-brand-red hover:underline"
+        <div className="mt-5">
+          {ledger.length === 0 ? (
+            <p className="text-sm text-gray-600">{copy.noBonusHistory}</p>
+          ) : (
+            <ul className="space-y-3">
+              {ledger.map((row) => {
+                const credit = isCredit(row.entryType);
+                return (
+                  <li
+                    key={row.id}
+                    className="rounded-[14px] border border-gray-200 bg-white px-4 py-3.5"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold tracking-wide text-brand-ink uppercase">
+                          {entryLabel(row.entryType, copy)}
+                        </p>
+                        <p
+                          className={`mt-1 text-sm font-semibold tabular-nums ${
+                            credit ? "text-brand-red" : "text-brand-ink"
+                          }`}
                         >
-                          {row.orderNumber}
-                        </button>
-                      </>
-                    ) : null}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {formatAppDateTimeMinutes(new Date(row.createdAt))}
-                  </p>
-                </div>
-                <p
-                  className={`shrink-0 text-sm font-semibold tabular-nums ${
-                    isCredit(row.entryType)
-                      ? "text-emerald-700"
-                      : "text-gray-900"
-                  }`}
-                >
-                  {isCredit(row.entryType) ? "+" : "−"}
-                  {money(row.amount)}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </AdminSectionCard>
+                          {credit ? "+" : "−"}
+                          {formatBonusAmount(row.amount, moneyLocale)}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-right text-xs text-gray-400 sm:text-sm">
+                        {row.orderNumber ? (
+                          <button
+                            type="button"
+                            onClick={() => drawer.openOrder(row.orderNumber!)}
+                            className="block text-gray-400 transition hover:text-brand-red hover:underline"
+                            aria-label={formatAdminMessage(
+                              dictionary.orders.list.openOrder,
+                              { orderNumber: row.orderNumber },
+                            )}
+                          >
+                            {formatAdminMessage(copy.bonusOrderLabel, {
+                              orderNumber: row.orderNumber,
+                            })}
+                          </button>
+                        ) : (
+                          <p>{copy.bonusNoOrder}</p>
+                        )}
+                        <p className="mt-1">
+                          {formatAppDateTimeMinutes(new Date(row.createdAt))}
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </Card>
 
       <OrderDetailsDrawer
         open={drawer.open}
