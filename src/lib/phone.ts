@@ -1,10 +1,16 @@
-/** Digits-only phone value for tel: targets. */
+/** Digits-only phone value for uniqueness keys and WhatsApp targets. */
 export function phoneDigits(phone: string): string {
   return phone.replace(/\D/g, "");
 }
 
+/**
+ * International `tel:` URI. A raw `+` in `href` is treated as a space by
+ * Android/Chrome and some WebViews, so the dialer opens without `+` and the
+ * call never connects. `%2B` is the encoded plus the OS still shows as `+`.
+ */
 export function telHref(phone: string): string {
-  return `tel:${phoneDigits(phone)}`;
+  const digits = phoneDigits(phone);
+  return digits ? `tel:+${digits}` : "tel:";
 }
 
 /** WhatsApp deep link for a display phone number. */
