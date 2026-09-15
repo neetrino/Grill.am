@@ -372,7 +372,7 @@ export function SiteHeaderMainNav({
       </div>
 
       <div className="border-b border-black/7 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] md:shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-        <div className="page-container flex items-center gap-3 pt-4 pb-2 sm:gap-4 sm:py-4">
+        <div className="page-container flex items-center gap-3 py-3 sm:gap-4 sm:py-4">
           <div className="min-w-0 flex-1">
             <HeaderSearch
               locale={locale}

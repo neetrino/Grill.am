@@ -184,23 +184,23 @@ export function HeaderSearch({
           id={listboxId}
           role="listbox"
           aria-label={labels.search}
-          className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[60] overflow-hidden rounded-2xl border border-black/8 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)]"
+          className="absolute top-[calc(100%+0.5rem)] z-[60] overflow-hidden border border-black/8 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] max-lg:left-[calc(-1*var(--page-padding-inline)+12px)] max-lg:w-[calc(100vw-24px)] max-lg:rounded-2xl lg:left-0 lg:right-0 lg:rounded-2xl"
         >
-          <div className="max-h-[min(24rem,50vh)] overflow-y-auto">
+          <div className="max-h-[min(52dvh,22rem)] overflow-y-auto lg:max-h-[min(24rem,50vh)]">
             {!normalizedQuery ? (
-              <p className="px-4 py-6 text-center text-sm text-gray-500">
+              <p className="px-4 py-6 text-center text-sm text-gray-500 sm:px-5">
                 {labels.searchHint}
               </p>
             ) : null}
 
             {error ? (
-              <p className="px-4 py-6 text-center text-sm text-red-700">
+              <p className="px-4 py-6 text-center text-sm text-red-700 sm:px-5">
                 {error}
               </p>
             ) : null}
 
             {showEmpty ? (
-              <p className="px-4 py-6 text-center text-sm text-gray-500">
+              <p className="px-4 py-6 text-center text-sm text-gray-500 sm:px-5">
                 {labels.searchNoResults}
               </p>
             ) : null}
@@ -213,23 +213,23 @@ export function HeaderSearch({
                       href={hit.href}
                       prefetchPolicy="intent"
                       onClick={closePanel}
-                      className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50 ${
+                      className={`flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-gray-50 max-lg:gap-3.5 max-lg:px-5 max-lg:py-4 lg:py-3 ${
                         hit.inStock ? "" : "opacity-60"
                       }`}
                     >
-                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                      <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-gray-100 lg:size-12 lg:rounded-lg">
                         {hit.imageUrl ? (
                           <Image
                             src={hit.imageUrl}
                             alt=""
                             fill
-                            sizes="48px"
+                            sizes="56px"
                             className="object-cover"
                           />
                         ) : null}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900">
+                        <p className="truncate text-sm font-medium text-gray-900 max-lg:text-[15px]">
                           {hit.title}
                         </p>
                         <p className="mt-0.5 text-sm text-gray-600">
@@ -248,12 +248,12 @@ export function HeaderSearch({
           </div>
 
           {normalizedQuery ? (
-            <div className="border-t border-gray-200 px-4 py-3">
+            <div className="border-t border-gray-200 px-4 py-3.5 max-lg:px-5 max-lg:py-4">
               <AppLink
                 href={viewAllHref}
                 prefetchPolicy="intent"
                 onClick={closePanel}
-                className="block text-center text-sm font-medium text-gray-900 hover:underline"
+                className="block text-center text-sm font-medium text-gray-900 hover:underline max-lg:text-[15px]"
               >
                 {labels.searchViewAll}
               </AppLink>
