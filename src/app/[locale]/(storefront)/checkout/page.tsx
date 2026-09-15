@@ -14,9 +14,17 @@ import {
   parseProductCustomization,
   unitAmountWithModifiers,
 } from "@/features/products/domain/customization";
-import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
+import {
+  getDefaultShippingAddress,
+  listCustomerAddresses,
+} from "@/features/profile/application/address-queries";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
-import { getStoreMinimumOrder } from "@/features/settings/application/queries";
+import { getStoreLoyalty, getStoreMinimumOrder } from "@/features/settings/application/queries";
+import { getUserBonusBalance } from "@/features/loyalty/application/queries";
+import {
+  computeFlatBonusEarnAmount,
+} from "@/features/loyalty/domain/loyalty-math";
+import { resolveActiveFlatBonusByProductId } from "@/features/loyalty/application/product-bonus-board";
 import { getStorePickupOptions } from "@/features/stores/yandex-map-embed";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
@@ -34,12 +42,15 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliveryOptionsRaw, minimumOrder] = await Promise.all([
-    getCurrentUser(),
-    getCartWithItems(),
-    getCheckoutDeliveryOptions(),
-    getStoreMinimumOrder(),
-  ]);
+  const [user, { items }, deliveryOptionsRaw, minimumOrder, loyalty] =
+    await Promise.all([
+      getCurrentUser(),
+      getCartWithItems(),
+      getCheckoutDeliveryOptions(),
+      getStoreMinimumOrder(),
+      getStoreLoyalty(),
+    ]);
+  const bonusBalance = user ? await getUserBonusBalance(user.id) : 0;
   const paymentAvailability = getPaymentMethodAvailability({
     isAdmin: user?.role === "ADMIN",
   });
@@ -54,17 +65,19 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       label: copy.deliveryCities[key],
     };
   });
-  const [defaultAddress, prices, orderProducts] = await Promise.all([
-    user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
-    resolveProductPrices(
-      items.map(({ product }) => ({
-        id: product.id,
-        priceAmount: product.priceAmount,
-        compareAtAmount: product.compareAtAmount,
-      })),
-    ),
-    getCheckoutOrderProducts(rawLocale, items),
-  ]);
+  const [defaultAddress, savedAddresses, prices, orderProducts] =
+    await Promise.all([
+      user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
+      user ? listCustomerAddresses(user.id) : Promise.resolve([]),
+      resolveProductPrices(
+        items.map(({ product }) => ({
+          id: product.id,
+          priceAmount: product.priceAmount,
+          compareAtAmount: product.compareAtAmount,
+        })),
+      ),
+      getCheckoutOrderProducts(rawLocale, items),
+    ]);
   const subtotal = items.reduce((sum, { item, product }) => {
     const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
     const unit = unitAmountWithModifiers(
@@ -74,6 +87,21 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     );
     return sum + item.quantity * unit;
   }, 0);
+
+  const productBonusRules = user
+    ? await resolveActiveFlatBonusByProductId(
+        items.map(({ product }) => product.id),
+      )
+    : new Map();
+  const productBonusEarnAmount = user
+    ? computeFlatBonusEarnAmount(
+        items.map(({ item, product }) => ({
+          productId: product.id,
+          quantity: item.quantity,
+        })),
+        productBonusRules,
+      )
+    : 0;
 
   return (
     <CheckoutForm
@@ -87,6 +115,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       defaultPhone={user?.phone ?? defaultAddress?.phone ?? ""}
       defaultLine1={defaultAddress?.line1 ?? ""}
       defaultCity={defaultAddress?.city ?? ""}
+      savedAddresses={savedAddresses}
+      canSaveAddresses={Boolean(user)}
       subtotalAmount={subtotal}
       minimumOrderAmount={
         user?.role === "ADMIN" ? null : minimumOrder.amount
@@ -94,6 +124,15 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       deliveryOptions={deliveryOptions}
       pickupStores={getStorePickupOptions(rawLocale)}
       paymentAvailability={paymentAvailability}
+      bonusWallet={
+        user
+          ? {
+              balanceAmount: bonusBalance,
+              earnMinOrderAmount: loyalty.earnMinOrderAmount,
+              productBonusEarnAmount,
+            }
+          : null
+      }
       labels={{
         title: copy.title,
         titleLead: copy.titleLead,
@@ -126,6 +165,24 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         deliveryDescription: copy.shipping.deliveryDescription,
         pickupBranch: copy.form.pickupBranch,
         selectPickupBranch: copy.form.selectPickupBranch,
+        selectAddress: copy.addresses.selectAddress,
+        selectAddressRequired: copy.addresses.selectAddressRequired,
+        addressBook: {
+          title: copy.addresses.title,
+          close: dictionary.close,
+          addAddress: copy.addresses.addAddress,
+          noAddresses: copy.addresses.noAddresses,
+          newBadge: copy.addresses.newBadge,
+          defaultBadge: dictionary.profile.addressBook.defaultBadge,
+          line1: copy.form.address,
+          addressPlaceholder: copy.placeholders.address,
+          city: copy.form.city,
+          selectLocation: copy.form.selectLocation,
+          cancel: dictionary.profile.cancel,
+          add: dictionary.profile.addressBook.add,
+          saving: dictionary.profile.saving,
+          loginToSave: copy.addresses.loginToSave,
+        },
         enterCity: copy.shipping.enterCity,
         selectShippingMethod: copy.shipping.selectShippingMethod,
         selectDeliveryLocation: copy.shipping.selectDeliveryLocation,
@@ -149,6 +206,13 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         couponApply: copy.coupon.apply,
         couponApplying: copy.coupon.applying,
         discount: copy.summary.discount,
+        bonusTitle: copy.bonus.title,
+        bonusAvailable: copy.bonus.available,
+        bonusMaxButton: copy.bonus.maxButton,
+        bonusApplied: copy.bonus.applied,
+        bonusLoginRequired: copy.bonus.loginRequired,
+        bonusEarnHint: copy.bonus.earnHint,
+        bonusMinOrderHint: copy.bonus.minOrderHint,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,
         pickup: copy.summary.pickup,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
+import { Gift, Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { addCartLineQuantity } from "@/features/cart/cart-line-coordinator";
@@ -53,6 +53,8 @@ type ProductBuyBoxProps = {
   compareAtAmount: number | null;
   initialPriceFormatted: string;
   initialCompareAtFormatted: string | null;
+  /** Localized bonus earn line, e.g. "+120֏ բոնուս". */
+  bonusEarnLabel?: string | null;
   shortDescription?: string;
   description?: string;
   imageUrl?: string | null;
@@ -106,6 +108,7 @@ export function ProductBuyBox({
   compareAtAmount,
   initialPriceFormatted,
   initialCompareAtFormatted,
+  bonusEarnLabel = null,
   shortDescription,
   description,
   imageUrl = null,
@@ -349,13 +352,21 @@ export function ProductBuyBox({
         ) : null}
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <p className="text-[30px] leading-9 font-bold text-brand-red">
-              {priceFormatted}
-            </p>
-            {compareAtFormatted ? (
-              <p className="text-base leading-6 text-[#99a1af] line-through">
-                {compareAtFormatted}
+          <div className="flex min-w-0 flex-col gap-1">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <p className="text-[30px] leading-9 font-bold text-brand-red">
+                {priceFormatted}
+              </p>
+              {compareAtFormatted ? (
+                <p className="text-base leading-6 text-[#99a1af] line-through">
+                  {compareAtFormatted}
+                </p>
+              ) : null}
+            </div>
+            {bonusEarnLabel ? (
+              <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700">
+                <Gift className="size-3.5 shrink-0" aria-hidden />
+                {bonusEarnLabel}
               </p>
             ) : null}
           </div>

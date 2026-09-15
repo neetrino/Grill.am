@@ -30,6 +30,7 @@ export function ProfileAddressCard({
   onDelete,
 }: ProfileAddressCardProps) {
   const isDefault = address.isDefaultShipping;
+  const title = address.label?.trim() || address.line1;
 
   return (
     <div className={`flex h-full flex-col p-3 sm:p-3.5 ${PROFILE_CARD_CLASS}`}>
@@ -41,7 +42,7 @@ export function ProfileAddressCard({
             </span>
           ) : (
             <p className="truncate text-sm leading-snug font-medium text-gray-900">
-              {address.line1}
+              {title}
             </p>
           )}
         </div>
@@ -83,11 +84,20 @@ export function ProfileAddressCard({
       </div>
 
       <div className="mt-1.5 min-w-0 space-y-1">
-        {isDefault ? (
+        {isDefault && address.label?.trim() ? (
           <p className="text-sm leading-snug font-medium break-words text-gray-900">
-            {address.line1}
+            {address.label.trim()}
           </p>
         ) : null}
+        <p
+          className={`text-sm leading-snug break-words ${
+            address.label?.trim()
+              ? "text-gray-700"
+              : "font-medium text-gray-900"
+          }`}
+        >
+          {address.line1}
+        </p>
         <p className="text-xs leading-snug break-words text-gray-700 sm:text-sm">
           {cityLabel}
         </p>

@@ -159,6 +159,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 noAddresses: addressCopy.noAddresses,
                 formAddTitle: addressCopy.formAddTitle,
                 formEditTitle: addressCopy.formEditTitle,
+                label: addressCopy.label,
+                labelPlaceholder: addressCopy.labelPlaceholder,
                 line1: addressCopy.line1,
                 city: addressCopy.city,
                 selectCity: dictionary.checkout.form.selectLocation,

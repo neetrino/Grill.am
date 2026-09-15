@@ -2,6 +2,7 @@ import { and, eq } from "drizzle-orm";
 
 import { orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { reverseBonusSpendForOrder } from "@/features/loyalty/application/ledger";
 import { scheduleOrderEmails } from "@/features/notifications/application/schedule-order-emails";
 import {
   InvalidPaymentTransitionError,
@@ -136,6 +137,8 @@ export async function failPayment(
       .update(orders)
       .set({ paymentStatus: "FAILED", updatedAt: now })
       .where(eq(orders.id, order.id));
+
+    await reverseBonusSpendForOrder(tx, order.id);
 
     const eventKind =
       input.outcome === "FAILED" ? "PAYMENT_FAILED" : "PAYMENT_CANCELLED";

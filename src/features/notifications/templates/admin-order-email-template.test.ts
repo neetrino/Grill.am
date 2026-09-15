@@ -19,6 +19,8 @@ function sampleDetail(
     subtotalAmount: 5000,
     deliveryAmount: 500,
     discountAmount: 0,
+    bonusSpentAmount: 0,
+    bonusEarnedAmount: 0,
     totalAmount: 5500,
     deliveryLabel: "Yerevan delivery",
     couponCode: null,

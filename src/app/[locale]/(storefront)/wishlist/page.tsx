@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/features/products/ui/ProductCard";
+import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
 import { listWishlistProducts } from "@/features/wishlist/queries";
 import { WishlistEmptyState } from "@/features/wishlist/ui/WishlistEmptyState";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -10,6 +11,7 @@ import {
   createDisplayPriceFormatter,
   getSelectedCurrency,
 } from "@/lib/money/display-price";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type WishlistPageProps = {
   params: Promise<{ locale: string }>;
@@ -60,7 +62,15 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
     );
   }
 
-  const formatPrice = await createDisplayPriceFormatter(rawLocale, currency);
+  const [formatPrice, bonusEarnByProductId] = await Promise.all([
+    createDisplayPriceFormatter(rawLocale, currency),
+    resolveProductCardBonusEarnByProductId(
+      products.map((product) => ({
+        id: product.id,
+        priceAmount: product.priceAmount,
+      })),
+    ),
+  ]);
   const priced = products.map((product) => {
     const price = formatPrice(product.priceAmount);
     const compareAt =
@@ -117,6 +127,18 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   requiresConfiguration={product.requiresConfiguration}
                   hitLabel={
                     product.isFeatured ? dictionary.product.hit : null
+                  }
+                  bonusEarnLabel={
+                    (bonusEarnByProductId.get(product.id) ?? 0) > 0
+                      ? dictionary.product.bonusEarn.replace(
+                          "{amount}",
+                          formatMoneyAmount(
+                            bonusEarnByProductId.get(product.id) ?? 0,
+                            "AMD",
+                            rawLocale,
+                          ),
+                        )
+                      : null
                   }
                 />
               ),

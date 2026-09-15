@@ -22,7 +22,8 @@
     "brandName": "Grill.am",
     "storeHome": "Grill.am home",
     "closeMenu": "Close admin menu",
-    "toggleProductSubpages": "Toggle product subpages"
+    "toggleProductSubpages": "Toggle product subpages",
+    "bonuses": "Bonuses"
   },
   "common": {
     "save": "Save",
@@ -346,7 +347,9 @@
       "qty": "Qty",
       "price": "Price",
       "lineTotal": "Total",
-      "customizations": "Additions & removals"
+      "customizations": "Additions & removals",
+      "bonusSpent": "Bonus used",
+      "bonusEarned": "Bonus earned"
     },
     "detail": {
       "customer": "Customer",
@@ -450,7 +453,22 @@
       "lastLogin": "Last login",
       "created": "Created",
       "recentOrders": "Recent orders",
-      "noOrders": "No orders."
+      "noOrders": "No orders.",
+      "bonusBalance": "Bonus balance",
+      "bonusesTitle": "Bonuses",
+      "bonusTotalEarned": "Total earned",
+      "bonusTotalSpent": "Total used",
+      "bonusFromOrders": "Earned from orders",
+      "noBonusFromOrders": "No bonus earned from orders yet.",
+      "bonusHistory": "Bonus history",
+      "noBonusHistory": "No bonus activity yet.",
+      "bonusNoOrder": "No order",
+      "entryEarn": "Earned from order",
+      "entrySpend": "Used at checkout",
+      "entrySpendReversal": "Bonus restored",
+      "entryEarnReversal": "Bonus revoked",
+      "orderBonusEarned": "Earned {amount}",
+      "orderBonusSpent": "Used {amount}"
     },
     "forms": {
       "role": "Role",
@@ -983,6 +1001,56 @@
       "peakDay": "Best day",
       "ordersCount": "{count} orders",
       "revenue": "revenue"
+    }
+  },
+  "bonuses": {
+    "title": "Bonuses",
+    "subtitle": "Set flat bonuses for categories or individual products.",
+    "formTitle": "Bonus earn threshold",
+    "formSubtitle": "Bonuses are earned from product or category rules. Spend is always allowed up to the wallet balance. Here you set the minimum merchandise total required to earn.",
+    "earnMinOrderLabel": "Min. order to earn",
+    "earnMinOrderHint": "Customers earn product/category bonuses only when merchandise (after coupon) reaches this amount. Leave empty for no minimum. Bonus spend has no order minimum.",
+    "earnMinOrderPlaceholder": "e.g. 2000",
+    "invalidMinOrder": "Enter a whole AMD amount from 1, or leave empty.",
+    "saved": "Bonus settings saved.",
+    "tabsAria": "Bonus target",
+    "tabCategories": "Categories",
+    "tabProducts": "Products",
+    "categories": {
+      "title": "Category bonuses",
+      "subtitle": "Set how many AMD the customer earns per unit for products in each category, and the optional date range. Product rules override category rules.",
+      "searchPlaceholder": "Search categories...",
+      "searchAria": "Search categories",
+      "clearSearch": "Clear",
+      "empty": "No categories found",
+      "bonusFor": "Bonus for {title}",
+      "amountPlaceholder": "0",
+      "periodLabel": "Date range",
+      "startsOn": "From",
+      "endsOn": "To",
+      "clearRow": "Clear",
+      "invalidAmount": "Invalid bonus for “{title}”. Enter a positive whole number.",
+      "invalidRange": "Start date for “{title}” must be on or before the end date.",
+      "cleared": "Category bonus for “{title}” was cleared.",
+      "saved": "Saved {amount}֏ bonus for category “{title}”."
+    },
+    "products": {
+      "title": "Product bonuses",
+      "subtitle": "Set how many AMD the customer earns per unit of each product, and the optional date range.",
+      "searchPlaceholder": "Search by name or slug...",
+      "searchAria": "Search products",
+      "clearSearch": "Clear",
+      "empty": "No products found",
+      "bonusFor": "Bonus for {title}",
+      "amountPlaceholder": "0",
+      "periodLabel": "Date range",
+      "startsOn": "From",
+      "endsOn": "To",
+      "clearRow": "Clear",
+      "invalidAmount": "Invalid bonus for “{title}”. Enter a positive whole number.",
+      "invalidRange": "Start date for “{title}” must be on or before the end date.",
+      "cleared": "Product bonus for “{title}” was cleared.",
+      "saved": "Saved {amount}֏ bonus for “{title}”."
     }
   }
 }

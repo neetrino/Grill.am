@@ -25,6 +25,8 @@ export type AdminUserRecentOrderItem = {
   status: string;
   paymentStatus: string;
   totalAmount: number;
+  bonusEarnedAmount: number;
+  bonusSpentAmount: number;
   baseCurrency: string;
 };
 
@@ -70,6 +72,23 @@ function AdminUserRecentOrderButton({
       <p className="mt-1 text-sm text-gray-600">
         {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
       </p>
+      {order.bonusEarnedAmount > 0 || order.bonusSpentAmount > 0 ? (
+        <p className="mt-1 text-xs text-gray-500">
+          {order.bonusEarnedAmount > 0
+            ? formatAdminMessage(dictionary.users.detail.orderBonusEarned, {
+                amount: `${order.bonusEarnedAmount.toLocaleString("en-US")} ${order.baseCurrency}`,
+              })
+            : null}
+          {order.bonusEarnedAmount > 0 && order.bonusSpentAmount > 0
+            ? " · "
+            : null}
+          {order.bonusSpentAmount > 0
+            ? formatAdminMessage(dictionary.users.detail.orderBonusSpent, {
+                amount: `${order.bonusSpentAmount.toLocaleString("en-US")} ${order.baseCurrency}`,
+              })
+            : null}
+        </p>
+      ) : null}
     </button>
   );
 }

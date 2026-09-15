@@ -2,6 +2,7 @@ import { and, eq } from "drizzle-orm";
 
 import { auditLogs, orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { reverseBonusEarnForOrder, restoreBonusSpendAfterRefund } from "@/features/loyalty/application/ledger";
 import {
   InvalidPaymentTransitionError,
   PaymentNotFoundError,
@@ -110,6 +111,9 @@ export async function markPaymentRefunded(
       .update(orders)
       .set({ paymentStatus: "REFUNDED", updatedAt: now })
       .where(eq(orders.id, order.id));
+
+    await reverseBonusEarnForOrder(tx, order.id);
+    await restoreBonusSpendAfterRefund(tx, order.id);
 
     await tx.insert(orderEvents).values({
       id: createId(),

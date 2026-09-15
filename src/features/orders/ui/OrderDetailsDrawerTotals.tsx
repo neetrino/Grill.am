@@ -55,6 +55,32 @@ export function OrderDetailsDrawerTotals({
           </div>
         ) : null}
 
+        {detail.bonusSpentAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-gray-600">{drawer.bonusSpent}</dt>
+            <dd className="font-medium tabular-nums text-green-700">
+              −
+              {formatOrderDrawerMoney(
+                detail.bonusSpentAmount,
+                detail.baseCurrency,
+              )}
+            </dd>
+          </div>
+        ) : null}
+
+        {detail.bonusEarnedAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-gray-600">{drawer.bonusEarned}</dt>
+            <dd className="font-medium tabular-nums text-gray-900">
+              +
+              {formatOrderDrawerMoney(
+                detail.bonusEarnedAmount,
+                detail.baseCurrency,
+              )}
+            </dd>
+          </div>
+        ) : null}
+
         <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-3">
           <dt className="text-base font-bold text-gray-900">{drawer.total}</dt>
           <dd className="text-base font-bold tabular-nums text-gray-900">

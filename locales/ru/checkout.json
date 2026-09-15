@@ -40,6 +40,15 @@
     "selectShippingMethod": "Выберите Take Away или доставку",
     "selectDeliveryLocation": "Выберите место доставки"
   },
+  "addresses": {
+    "title": "Адреса доставки",
+    "selectAddress": "Выберите адрес",
+    "selectAddressRequired": "Выберите адрес доставки",
+    "addAddress": "Добавить адрес",
+    "noAddresses": "Адресов пока нет. Добавьте ниже.",
+    "newBadge": "Новый",
+    "loginToSave": "Войдите, чтобы сохранить адрес в профиле. Для этого заказа адрес всё равно будет использован."
+  },
   "deliveryCities": {
     "yerevan": "Ереван",
     "aragatsotn": "Арагацотн",
@@ -153,5 +162,14 @@
     "idramProviderUnavailable": "Оплата iDram временно недоступна. Попробуйте чуть позже.",
     "providerUnavailable": "Оплата картой временно недоступна. Попробуйте чуть позже.",
     "verificationUnavailable": "Сейчас не удалось проверить оплату. Попробуйте чуть позже."
+  },
+  "bonus": {
+    "title": "Накопительные баллы",
+    "available": "Доступно: {amount}",
+    "maxButton": "Максимум",
+    "applied": "Бонусы",
+    "loginRequired": "Войдите, чтобы оплатить бонусами",
+    "earnHint": "После статуса Paid с этого заказа будет начислено около {amount} бонусов.",
+    "minOrderHint": "Начисление бонусов доступно от суммы товаров {amount}."
   }
 }

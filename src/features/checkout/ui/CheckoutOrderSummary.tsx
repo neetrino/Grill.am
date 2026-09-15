@@ -15,6 +15,20 @@ type CheckoutOrderSummaryProps = {
   couponApplyLabel: string;
   couponApplyingLabel: string;
   discountLabel: string;
+  bonusTitle: string;
+  bonusAvailableFormatted: string | null;
+  bonusMaxButtonLabel: string;
+  bonusAppliedLabel: string;
+  bonusLoginRequired: string | null;
+  bonusEarnHint: string | null;
+  bonusMinOrderHint: string | null;
+  useBonus: boolean;
+  canUseBonus: boolean;
+  bonusDraft: string;
+  onUseBonusChange: (next: boolean) => void;
+  onBonusDraftChange: (value: string) => void;
+  onBonusMaxClick: () => void;
+  bonusFormatted: string | null;
   subtotalLabel: string;
   shippingLabel: string;
   taxLabel: string;
@@ -43,6 +57,20 @@ export function CheckoutOrderSummary({
   couponApplyLabel,
   couponApplyingLabel,
   discountLabel,
+  bonusTitle,
+  bonusAvailableFormatted,
+  bonusMaxButtonLabel,
+  bonusAppliedLabel,
+  bonusLoginRequired,
+  bonusEarnHint,
+  bonusMinOrderHint,
+  useBonus,
+  canUseBonus,
+  bonusDraft,
+  onUseBonusChange,
+  onBonusDraftChange,
+  onBonusMaxClick,
+  bonusFormatted,
   subtotalLabel,
   shippingLabel,
   taxLabel,
@@ -112,6 +140,66 @@ export function CheckoutOrderSummary({
           ) : null}
         </div>
 
+        <div className="mt-4 rounded-[15px] border border-gray-200 bg-gray-50 p-4">
+          {bonusLoginRequired ? (
+            <p className="text-sm text-gray-500">{bonusLoginRequired}</p>
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-3">
+                <label className="flex min-w-0 cursor-pointer items-center gap-2.5">
+                  <input
+                    type="checkbox"
+                    checked={useBonus}
+                    disabled={isSubmitting || !canUseBonus}
+                    onChange={(event) => onUseBonusChange(event.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-brand-red focus:ring-brand-red/30 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                  <span className="text-sm font-medium text-gray-900">
+                    {bonusTitle}
+                  </span>
+                </label>
+                {bonusAvailableFormatted ? (
+                  <span className="shrink-0 text-sm text-gray-600">
+                    {bonusAvailableFormatted}
+                  </span>
+                ) : null}
+              </div>
+
+              {useBonus ? (
+                <div className="mt-3 flex items-center gap-2">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    name="bonusSpendDraft"
+                    value={bonusDraft}
+                    onChange={(event) =>
+                      onBonusDraftChange(event.target.value)
+                    }
+                    disabled={isSubmitting || !canUseBonus}
+                    className="h-11 min-w-0 flex-1 rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-100"
+                    suppressHydrationWarning
+                  />
+                  <button
+                    type="button"
+                    disabled={isSubmitting || !canUseBonus}
+                    onClick={onBonusMaxClick}
+                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-[15px] border border-gray-300 bg-white px-4 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {bonusMaxButtonLabel}
+                  </button>
+                </div>
+              ) : null}
+
+              {bonusEarnHint ? (
+                <p className="mt-2 text-xs text-gray-500">{bonusEarnHint}</p>
+              ) : null}
+              {bonusMinOrderHint ? (
+                <p className="mt-2 text-xs text-amber-700">{bonusMinOrderHint}</p>
+              ) : null}
+            </>
+          )}
+        </div>
+
         <div className="mt-5 space-y-3 text-sm text-gray-600">
           <div className="flex justify-between gap-3">
             <span>{subtotalLabel}</span>
@@ -122,6 +210,14 @@ export function CheckoutOrderSummary({
               <span>{discountLabel}</span>
               <span className="font-medium text-emerald-700">
                 -{discountFormatted}
+              </span>
+            </div>
+          ) : null}
+          {bonusFormatted ? (
+            <div className="flex justify-between gap-3">
+              <span>{bonusAppliedLabel}</span>
+              <span className="font-medium text-emerald-700">
+                -{bonusFormatted}
               </span>
             </div>
           ) : null}

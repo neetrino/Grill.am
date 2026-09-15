@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   CircleCheckBig,
+  Gift,
   LogIn,
   Mail,
   MailCheck,
@@ -22,6 +23,7 @@ import {
   isUserRole,
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
+import { AdminUserBonusSection } from "@/features/users/ui/AdminUserBonusSection";
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import {
   adminUserRoleLabel,
@@ -35,6 +37,7 @@ import {
 } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type AdminUserDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
@@ -82,7 +85,7 @@ export default async function AdminUserDetailPage({
     notFound();
   }
 
-  const { user, recentOrders } = detail;
+  const { user, recentOrders, bonus } = detail;
   const role = isUserRole(user.role) ? user.role : null;
   const status = isUserStatus(user.status) ? user.status : null;
   const eligibleStatuses = status ? getEligibleUserStatuses(status) : [];
@@ -160,6 +163,14 @@ export default async function AdminUserDetailPage({
           >
             {formatAppDisplayDate(user.createdAt)}
           </AdminDetailField>
+          <AdminDetailField
+            icon={<Gift className={FIELD_ICON_CLASS} />}
+            label={detailCopy.bonusBalance}
+          >
+            <span className="font-semibold tabular-nums text-gray-900">
+              {formatMoneyAmount(bonus.balanceAmount, "AMD", locale)}
+            </span>
+          </AdminDetailField>
         </div>
       </Card>
 
@@ -185,6 +196,14 @@ export default async function AdminUserDetailPage({
           <p className="text-sm text-red-700">{common.unknownStatus}</p>
         )}
       </div>
+
+      <AdminUserBonusSection
+        locale={locale}
+        balanceAmount={bonus.balanceAmount}
+        totalEarnedAmount={bonus.totalEarnedAmount}
+        totalSpentAmount={bonus.totalSpentAmount}
+        ledger={bonus.ledger}
+      />
 
       <AdminUserRecentOrders locale={locale} orders={recentOrders} />
     </section>

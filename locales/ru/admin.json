@@ -22,7 +22,8 @@
     "brandName": "Grill.am",
     "storeHome": "Главная Grill.am",
     "closeMenu": "Закрыть меню админки",
-    "toggleProductSubpages": "Подстраницы товаров"
+    "toggleProductSubpages": "Подстраницы товаров",
+    "bonuses": "Бонусы"
   },
   "common": {
     "save": "Сохранить",
@@ -346,7 +347,9 @@
       "qty": "Кол-во",
       "price": "Цена",
       "lineTotal": "Итого",
-      "customizations": "Добавки и исключения"
+      "customizations": "Добавки и исключения",
+      "bonusSpent": "Списано бонусов",
+      "bonusEarned": "Начислено бонусов"
     },
     "detail": {
       "customer": "Клиент",
@@ -450,7 +453,22 @@
       "lastLogin": "Последний вход",
       "created": "Создан",
       "recentOrders": "Недавние заказы",
-      "noOrders": "Заказов нет."
+      "noOrders": "Заказов нет.",
+      "bonusBalance": "Баланс бонусов",
+      "bonusesTitle": "Бонусы",
+      "bonusTotalEarned": "Всего начислено",
+      "bonusTotalSpent": "Всего использовано",
+      "bonusFromOrders": "Начислено с заказов",
+      "noBonusFromOrders": "С заказов бонусы ещё не начислялись.",
+      "bonusHistory": "История бонусов",
+      "noBonusHistory": "Пока нет операций с бонусами.",
+      "bonusNoOrder": "Без заказа",
+      "entryEarn": "Начислено с заказа",
+      "entrySpend": "Списано на checkout",
+      "entrySpendReversal": "Бонус возвращён",
+      "entryEarnReversal": "Бонус отменён",
+      "orderBonusEarned": "Начислено {amount}",
+      "orderBonusSpent": "Списано {amount}"
     },
     "forms": {
       "role": "Роль",
@@ -983,6 +1001,56 @@
       "peakDay": "Лучший день",
       "ordersCount": "{count} заказов",
       "revenue": "выручка"
+    }
+  },
+  "bonuses": {
+    "title": "Бонусы",
+    "subtitle": "Настройте фиксированный бонус для категорий или отдельных товаров.",
+    "formTitle": "Порог начисления бонусов",
+    "formSubtitle": "Бонусы начисляются по правилам товаров или категорий. Списание всегда разрешено в пределах баланса. Здесь задаётся минимальная сумма товаров для начисления.",
+    "earnMinOrderLabel": "Мин. заказ для начисления",
+    "earnMinOrderHint": "Клиент получает бонусы по товарам/категориям только когда сумма товаров (после купона) достигает этого порога. Оставьте пустым — без минимума. Для списания минимума нет.",
+    "earnMinOrderPlaceholder": "напр. 2000",
+    "invalidMinOrder": "Укажите целое AMD от 1 или оставьте пустым.",
+    "saved": "Настройки бонусов сохранены.",
+    "tabsAria": "Цель бонуса",
+    "tabCategories": "Категории",
+    "tabProducts": "Товары",
+    "categories": {
+      "title": "Бонусы по категориям",
+      "subtitle": "Укажите, сколько AMD бонусов получит клиент за единицу товара в категории, и период действия. Правило товара имеет приоритет.",
+      "searchPlaceholder": "Поиск категорий...",
+      "searchAria": "Поиск категорий",
+      "clearSearch": "Очистить",
+      "empty": "Категории не найдены",
+      "bonusFor": "Бонус: {title}",
+      "amountPlaceholder": "0",
+      "periodLabel": "Период",
+      "startsOn": "С",
+      "endsOn": "По",
+      "clearRow": "Очистить",
+      "invalidAmount": "Неверный бонус для «{title}». Введите целое положительное число.",
+      "invalidRange": "Дата начала для «{title}» должна быть не позже даты окончания.",
+      "cleared": "Бонус категории «{title}» очищен.",
+      "saved": "Сохранено {amount}֏ бонуса для категории «{title}»."
+    },
+    "products": {
+      "title": "Бонусы по товарам",
+      "subtitle": "Укажите, сколько AMD бонусов получит клиент за единицу товара, и период действия.",
+      "searchPlaceholder": "Поиск по названию или slug...",
+      "searchAria": "Поиск товаров",
+      "clearSearch": "Очистить",
+      "empty": "Товары не найдены",
+      "bonusFor": "Бонус: {title}",
+      "amountPlaceholder": "0",
+      "periodLabel": "Период",
+      "startsOn": "С",
+      "endsOn": "По",
+      "clearRow": "Очистить",
+      "invalidAmount": "Неверный бонус для «{title}». Введите целое положительное число.",
+      "invalidRange": "Дата начала для «{title}» должна быть не позже даты окончания.",
+      "cleared": "Бонус товара «{title}» очищен.",
+      "saved": "Сохранено {amount}֏ бонуса для «{title}»."
     }
   }
 }

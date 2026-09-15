@@ -95,6 +95,7 @@ export function DateField({
       ? CALENDAR_PANEL_WITH_TIME_HEIGHT_PX
       : CALENDAR_PANEL_HEIGHT_PX,
     panelWidthPx: CALENDAR_PANEL_WIDTH_PX,
+    panelRef,
   });
 
   const currentValue = value ?? uncontrolledValue;

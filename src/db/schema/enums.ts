@@ -132,3 +132,11 @@ export const jobApplicationStatusEnum = pgEnum("job_application_status", [
   "READ",
   "ARCHIVED",
 ]);
+
+/** Loyalty wallet ledger entry kinds (amounts are always positive). */
+export const bonusLedgerEntryTypeEnum = pgEnum("bonus_ledger_entry_type", [
+  "EARN",
+  "SPEND",
+  "SPEND_REVERSAL",
+  "EARN_REVERSAL",
+]);

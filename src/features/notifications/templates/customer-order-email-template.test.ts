@@ -23,6 +23,8 @@ function sampleDetail(
     subtotalAmount: 3000,
     deliveryAmount: 0,
     discountAmount: 0,
+    bonusSpentAmount: 0,
+    bonusEarnedAmount: 0,
     totalAmount: 3000,
     deliveryLabel: null,
     couponCode: null,

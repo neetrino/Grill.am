@@ -1,11 +1,15 @@
 "use client";
 
 import { Truck, UserRound, type LucideIcon } from "lucide-react";
+import { useState } from "react";
 
-import { CheckoutPickupBranchList } from "@/features/checkout/ui/CheckoutPickupBranchList";
-import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import {
-  CHECKOUT_FIELD_CLASS,
+  CheckoutAddressList,
+  type CheckoutAddressChoice,
+  type CheckoutAddressDrawerLabels,
+} from "@/features/checkout/ui/CheckoutAddressDrawer";
+import { CheckoutPickupBranchList } from "@/features/checkout/ui/CheckoutPickupBranchList";
+import {
   CHECKOUT_OPTION_BASE_CLASS,
   CHECKOUT_OPTION_DEFAULT_CLASS,
   CHECKOUT_OPTION_SELECTED_CLASS,
@@ -13,8 +17,14 @@ import {
   CHECKOUT_SECTION_CARD_CLASS,
   CHECKOUT_SECTION_TITLE_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
+import {
+  normalizeCheckoutDeliveryCity,
+  resolveCheckoutDeliveryCity,
+} from "@/features/checkout/domain/checkout-delivery-cities";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
+import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 import type { StorePickupOption } from "@/features/stores/yandex-map-embed";
+import type { Locale } from "@/lib/i18n/config";
 
 type CheckoutFulfillmentLabels = {
   shippingMethod: string;
@@ -28,11 +38,14 @@ type CheckoutFulfillmentLabels = {
   selectLocation: string;
   address: string;
   addressPlaceholder: string;
+  selectAddress: string;
+  addressBook: CheckoutAddressDrawerLabels;
 };
 
 type CheckoutShippingMethod = "pickup" | "delivery";
 
 type CheckoutFulfillmentSectionProps = {
+  locale: Locale;
   labels: CheckoutFulfillmentLabels;
   pending: boolean;
   shippingMethod: CheckoutShippingMethod | null;
@@ -43,13 +56,33 @@ type CheckoutFulfillmentSectionProps = {
   pickupStores: StorePickupOption[];
   pickupStoreId: string;
   onPickupStoreChange: (storeId: string) => void;
-  defaultLine1: string;
+  canSaveAddresses: boolean;
+  savedAddresses: CustomerAddressListItem[];
+  selectedAddressId: string | null;
+  line1: string;
+  onAddressSelect: (address: CheckoutAddressChoice) => void;
 };
 
 function methodOptionClass(selected: boolean): string {
   return `${CHECKOUT_OPTION_BASE_CLASS} ${
     selected ? CHECKOUT_OPTION_SELECTED_CLASS : CHECKOUT_OPTION_DEFAULT_CLASS
   }`;
+}
+
+function resolveRuleIdForCity(
+  deliveryOptions: CheckoutDeliveryOption[],
+  city: string,
+): string {
+  const preferred = resolveCheckoutDeliveryCity(city) ?? city.trim();
+  const preferredKey = normalizeCheckoutDeliveryCity(preferred);
+  return (
+    deliveryOptions.find(
+      (option) =>
+        normalizeCheckoutDeliveryCity(option.city) === preferredKey,
+    )?.id ??
+    deliveryOptions[0]?.id ??
+    ""
+  );
 }
 
 function ShippingMethodToggles({
@@ -69,7 +102,7 @@ function ShippingMethodToggles({
     <div
       role="radiogroup"
       aria-label={labels.shippingMethod}
-      className="flex flex-col gap-3"
+      className="flex flex-row gap-3"
     >
       <MethodToggle
         selected={shippingMethod === "pickup"}
@@ -78,7 +111,7 @@ function ShippingMethodToggles({
         icon={UserRound}
         title={labels.storePickup}
         description={labels.storePickupDescription}
-        className="order-2 md:order-1"
+        className="min-w-0 flex-1"
         onSelect={() => onShippingMethodChange("pickup")}
       />
       <MethodToggle
@@ -88,7 +121,7 @@ function ShippingMethodToggles({
         icon={Truck}
         title={labels.delivery}
         description={labels.deliveryDescription}
-        className="order-1 md:order-2"
+        className="min-w-0 flex-1"
         onSelect={() => onShippingMethodChange("delivery")}
       />
     </div>
@@ -145,6 +178,7 @@ function MethodToggle({
 }
 
 export function CheckoutFulfillmentSection({
+  locale,
   labels,
   pending,
   shippingMethod,
@@ -155,7 +189,11 @@ export function CheckoutFulfillmentSection({
   pickupStores,
   pickupStoreId,
   onPickupStoreChange,
-  defaultLine1,
+  canSaveAddresses,
+  savedAddresses,
+  selectedAddressId,
+  line1,
+  onAddressSelect,
 }: CheckoutFulfillmentSectionProps) {
   return (
     <section className={CHECKOUT_SECTION_CARD_CLASS}>
@@ -179,65 +217,81 @@ export function CheckoutFulfillmentSection({
         />
       ) : null}
       {shippingMethod === "delivery" ? (
-        <DeliveryAddressFields
+        <DeliveryAddressPicker
+          locale={locale}
           labels={labels}
           pending={pending}
           deliveryOptions={deliveryOptions}
           deliveryRuleId={deliveryRuleId}
           onDeliveryRuleChange={onDeliveryRuleChange}
-          defaultLine1={defaultLine1}
+          canSaveAddresses={canSaveAddresses}
+          savedAddresses={savedAddresses}
+          selectedAddressId={selectedAddressId}
+          line1={line1}
+          onAddressSelect={onAddressSelect}
         />
       ) : null}
     </section>
   );
 }
 
-function DeliveryAddressFields({
+function DeliveryAddressPicker({
+  locale,
   labels,
   pending,
   deliveryOptions,
   deliveryRuleId,
   onDeliveryRuleChange,
-  defaultLine1,
+  canSaveAddresses,
+  savedAddresses,
+  selectedAddressId,
+  line1,
+  onAddressSelect,
 }: {
+  locale: Locale;
   labels: CheckoutFulfillmentLabels;
   pending: boolean;
   deliveryOptions: CheckoutDeliveryOption[];
   deliveryRuleId: string;
   onDeliveryRuleChange: (ruleId: string) => void;
-  defaultLine1: string;
+  canSaveAddresses: boolean;
+  savedAddresses: CustomerAddressListItem[];
+  selectedAddressId: string | null;
+  line1: string;
+  onAddressSelect: (address: CheckoutAddressChoice) => void;
 }) {
+  const [sessionAddresses, setSessionAddresses] = useState<
+    CheckoutAddressChoice[]
+  >([]);
+  const selectedDelivery = deliveryOptions.find(
+    (option) => option.id === deliveryRuleId,
+  );
+
+  function handleSelect(address: CheckoutAddressChoice): void {
+    onAddressSelect(address);
+    const ruleId = resolveRuleIdForCity(deliveryOptions, address.city);
+    if (ruleId) {
+      onDeliveryRuleChange(ruleId);
+    }
+  }
+
   return (
-    <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-end">
-      <div className="w-full shrink-0 md:w-[150px]">
-        <CheckoutSelect
-          label={labels.deliveryLocation}
-          name="deliveryRuleId"
-          required
-          value={deliveryRuleId}
-          onChange={onDeliveryRuleChange}
-          disabled={pending || deliveryOptions.length === 0}
-          placeholder={labels.selectLocation}
-          options={deliveryOptions.map((option) => ({
-            value: option.id,
-            label: option.label,
-          }))}
-          className="w-full"
-        />
-      </div>
-      <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-sm font-medium text-gray-700">
-        {labels.address}
-        <input
-          name="line1"
-          required
-          defaultValue={defaultLine1}
-          placeholder={labels.addressPlaceholder}
-          disabled={pending}
-          className={CHECKOUT_FIELD_CLASS}
-          autoComplete="street-address"
-          suppressHydrationWarning
-        />
-      </label>
-    </div>
+    <CheckoutAddressList
+      locale={locale}
+      labels={labels.addressBook}
+      selectAddressLabel={labels.selectAddress}
+      pending={pending}
+      canSaveAddresses={canSaveAddresses}
+      savedAddresses={savedAddresses}
+      sessionAddresses={sessionAddresses}
+      onSessionAddressesChange={setSessionAddresses}
+      selectedAddressId={selectedAddressId}
+      selectedLine1={line1}
+      selectedCityLabel={selectedDelivery?.label ?? null}
+      onSelect={handleSelect}
+      deliveryOptions={deliveryOptions}
+      draftLine1={line1}
+      draftCity={selectedDelivery?.city ?? ""}
+    />
   );
 }
