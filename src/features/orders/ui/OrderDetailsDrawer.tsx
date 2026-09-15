@@ -72,7 +72,7 @@ export function OrderDetailsDrawer({
 
   const stickyTotals =
     !isLoading && !error && detail ? (
-      <div className="border-t border-gray-100 bg-brand-surface px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] lg:px-4">
+      <div className="border-t border-gray-200 bg-white px-5 pt-4 pb-[max(16px,env(safe-area-inset-bottom))] lg:px-4">
         <OrderDetailsDrawerTotals detail={detail} />
       </div>
     ) : null;
@@ -86,7 +86,7 @@ export function OrderDetailsDrawer({
       closeLabel={common.close}
       headerActions={headerActions}
       footer={stickyTotals}
-      desktopWidthPercent={34}
+      desktopWidthPercent={28}
       mobileMaxWidthClassName="max-w-md"
       panelClassName="!bg-brand-surface"
       headerClassName="!border-0 !bg-brand-surface"

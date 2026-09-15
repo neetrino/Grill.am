@@ -349,7 +349,7 @@
       "lineTotal": "Total",
       "customizations": "Additions & removals",
       "bonusSpent": "Bonus used",
-      "bonusEarned": "Bonus earned",
+      "bonusEarned": "Received bonus",
       "grillCoinLabel": "Grill Coin"
     },
     "detail": {
