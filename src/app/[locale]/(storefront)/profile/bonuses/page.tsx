@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 
+import { AppLink } from "@/components/ui/AppLink";
 import {
   getCustomerBonusSummary,
   listCustomerBonusLedger,
 } from "@/features/loyalty/application/queries";
 import { CustomerBonusesPageContent } from "@/features/loyalty/ui/CustomerBonusesPageContent";
+import { PROFILE_BTN_SECONDARY_CLASS } from "@/features/profile/ui/profile-ui";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -60,31 +61,37 @@ export default async function ProfileBonusesPage({
         summary={summary}
         rows={rows}
         copy={copy}
+        coinsLabel={dictionary.header.coins}
+        startShoppingLabel={dictionary.profile.startShopping}
       />
 
       {totalPages > 1 ? (
-        <nav className="flex items-center gap-3 text-sm text-gray-700">
-          {page > 1 ? (
-            <Link
-              href={`/${locale}/profile/bonuses?page=${page - 1}`}
-              className="font-medium hover:underline"
-            >
-              {copy.previous}
-            </Link>
-          ) : null}
-          <span>
+        <nav className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-gray-600">
             {copy.pageLabel
               .replace("{page}", String(page))
               .replace("{total}", String(totalPages))}
-          </span>
-          {page < totalPages ? (
-            <Link
-              href={`/${locale}/profile/bonuses?page=${page + 1}`}
-              className="font-medium hover:underline"
-            >
-              {copy.next}
-            </Link>
-          ) : null}
+          </p>
+          <div className="flex items-center gap-2">
+            {page > 1 ? (
+              <AppLink
+                href={`/${locale}/profile/bonuses?page=${page - 1}`}
+                prefetchPolicy="intent"
+                className={PROFILE_BTN_SECONDARY_CLASS}
+              >
+                {copy.previous}
+              </AppLink>
+            ) : null}
+            {page < totalPages ? (
+              <AppLink
+                href={`/${locale}/profile/bonuses?page=${page + 1}`}
+                prefetchPolicy="intent"
+                className={PROFILE_BTN_SECONDARY_CLASS}
+              >
+                {copy.next}
+              </AppLink>
+            ) : null}
+          </div>
         </nav>
       ) : null}
     </div>
