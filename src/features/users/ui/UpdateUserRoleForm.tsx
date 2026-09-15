@@ -1,19 +1,20 @@
 "use client";
 
-import { Send, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { SegmentedControl } from "@/components/layout/SegmentedControl";
-import { ADMIN_BTN_PRIMARY_CLASS } from "@/features/admin/ui/admin-ui";
+import { AdminSelect } from "@/features/admin/ui/AdminSelect";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import { updateUserRoleAction } from "@/features/users/application/update-user";
 import {
   USER_ROLES,
   type UserRole,
 } from "@/features/users/domain/user-lifecycle";
-import { AdminUserActionCard } from "@/features/users/ui/AdminUserActionCard";
-import { adminUserRoleLabel } from "@/features/users/ui/admin-user-labels";
+import {
+  ADMIN_USER_PILL_TRIGGER_CLASS,
+  adminUserRoleLabel,
+  adminUserRolePillClass,
+} from "@/features/users/ui/admin-user-labels";
 
 type UpdateUserRoleFormProps = {
   locale: string;
@@ -30,7 +31,6 @@ export function UpdateUserRoleForm({
 }: UpdateUserRoleFormProps) {
   const dictionary = useAdminDictionary();
   const forms = dictionary.users.forms;
-  const common = dictionary.common;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [role, setRole] = useState<UserRole>(currentRole);
@@ -41,51 +41,45 @@ export function UpdateUserRoleForm({
     label: adminUserRoleLabel(item, dictionary.users.roles),
   }));
 
+  function onRoleChange(next: string): void {
+    if (!USER_ROLES.includes(next as UserRole)) {
+      return;
+    }
+    const nextRole = next as UserRole;
+    setRole(nextRole);
+    if (nextRole === currentRole || disabled) {
+      return;
+    }
+    startTransition(async () => {
+      setError(null);
+      const result = await updateUserRoleAction(locale, {
+        userId,
+        role: nextRole,
+      });
+      if (!result.ok) {
+        setRole(currentRole);
+        setError(result.error.message);
+        return;
+      }
+      router.refresh();
+    });
+  }
+
   return (
-    <AdminUserActionCard
-      className="w-full md:w-fit md:shrink-0"
-      icon={<Shield className="h-5 w-5" aria-hidden />}
-      title={forms.role}
-    >
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          startTransition(async () => {
-            setError(null);
-            const result = await updateUserRoleAction(locale, {
-              userId,
-              role,
-            });
-            if (!result.ok) {
-              setError(result.error.message);
-              return;
-            }
-            router.refresh();
-          });
-        }}
-      >
-        <div className="flex flex-nowrap items-center gap-3">
-          <SegmentedControl
-            aria-label={forms.newRole}
-            value={role}
-            options={roleOptions}
-            size="md"
-            fitContent
-            disabled={disabled || isPending}
-            onSelect={setRole}
-          />
-          <button
-            type="submit"
-            disabled={disabled || isPending || role === currentRole}
-            className={`${ADMIN_BTN_PRIMARY_CLASS} shrink-0 gap-2`}
-          >
-            <Send className="h-4 w-4" aria-hidden />
-            {isPending ? common.updating : common.update}
-          </button>
-        </div>
-        {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      </form>
-    </AdminUserActionCard>
+    <div className="w-fit max-w-full">
+      <AdminSelect
+        label={forms.role}
+        name="userRole"
+        value={role}
+        options={roleOptions}
+        placeholder={forms.newRole}
+        disabled={disabled || isPending}
+        onChange={onRoleChange}
+        hideLabel
+        fitContent
+        triggerClassName={`${ADMIN_USER_PILL_TRIGGER_CLASS} ${adminUserRolePillClass(role)}`}
+      />
+      {error ? <p className="mt-1 text-xs text-red-700">{error}</p> : null}
+    </div>
   );
 }

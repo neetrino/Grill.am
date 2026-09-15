@@ -14,7 +14,7 @@ import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { defaultCurrency } from "@/lib/money/currency";
 import { formatBaseCatalogPrice } from "@/lib/money/catalog-price";
-import { formatMoneyAmount } from "@/lib/money/format";
+import { formatProductCoinsEarnLabel } from "@/features/products/ui/format-product-coins-earn-label";
 
 type ProductPageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -132,13 +132,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     { id: product.id, priceAmount: product.priceAmount },
   ]);
   const bonusEarnAmount = bonusEarnByProductId.get(product.id) ?? 0;
-  const bonusEarnLabel =
-    bonusEarnAmount > 0
-      ? dictionary.product.bonusEarn.replace(
-          "{amount}",
-          formatMoneyAmount(bonusEarnAmount, "AMD", locale),
-        )
-      : null;
+  const bonusEarnLabel = formatProductCoinsEarnLabel(
+    dictionary.product.bonusEarn,
+    bonusEarnAmount,
+    locale,
+  );
 
   const jsonLd = buildProductJsonLd({
     locale,

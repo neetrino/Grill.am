@@ -3,6 +3,7 @@ import {
   HeaderGuestMobileNav,
 } from "@/components/layout/SiteHeaderGuestPersonalization";
 import {
+  HeaderCoinsIsland,
   HeaderDesktopActionsIsland,
   HeaderMobileNavIsland,
 } from "@/components/layout/SiteHeaderSessionIslands";
@@ -21,6 +22,7 @@ type SiteHeaderProps = {
   /**
    * When false, skip session/cart/wishlist cookies so the route can be ISR.
    * Client cart/wishlist badges still hydrate from local sync.
+   * Coins pill still streams (own Suspense island) so menu keeps the control.
    */
   personalize?: boolean;
 };
@@ -66,6 +68,9 @@ export async function SiteHeader({
             navItems={navItems}
           />
         )
+      }
+      coinsAction={
+        <HeaderCoinsIsland locale={locale} dictionary={dictionary} />
       }
       desktopActions={
         guest ? (

@@ -2,17 +2,25 @@
 
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import {
-  ORDER_DETAIL_CARD,
-  ORDER_DETAIL_SECTION_TITLE,
-} from "@/features/orders/ui/order-detail-card-classes";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 
 type OrderDetailsDrawerTotalsProps = {
   detail: AdminOrderDetailView;
 };
 
-/** Money summary card — subtotal, shipping, total. */
+function formatGrillCoinAmount(amount: number): string {
+  const safe = Number.isFinite(amount) ? Math.floor(amount) : 0;
+  const formatted = Math.abs(safe).toLocaleString("en-US");
+  if (safe > 0) {
+    return `+${formatted}`;
+  }
+  if (safe < 0) {
+    return `−${formatted}`;
+  }
+  return "+0";
+}
+
+/** Sticky sheet footer totals — flush rows, Grill Coin above total. */
 export function OrderDetailsDrawerTotals({
   detail,
 }: OrderDetailsDrawerTotalsProps) {
@@ -24,9 +32,8 @@ export function OrderDetailsDrawerTotals({
     : formatOrderDrawerMoney(detail.deliveryAmount, detail.baseCurrency);
 
   return (
-    <section className={ORDER_DETAIL_CARD}>
-      <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.summarySection}</h3>
-      <dl className="space-y-3 text-sm">
+    <section aria-label={drawer.summarySection}>
+      <dl className="space-y-2 text-sm">
         <div className="flex items-center justify-between gap-4">
           <dt className="text-gray-600">{drawer.subtotal}</dt>
           <dd className="font-medium tabular-nums text-gray-900">
@@ -45,7 +52,7 @@ export function OrderDetailsDrawerTotals({
               {drawer.couponDiscount}
               {detail.couponCode ? ` (${detail.couponCode})` : ""}
             </dt>
-            <dd className="font-medium tabular-nums text-green-700">
+            <dd className="font-medium tabular-nums text-emerald-700">
               −
               {formatOrderDrawerMoney(
                 detail.discountAmount,
@@ -58,7 +65,7 @@ export function OrderDetailsDrawerTotals({
         {detail.bonusSpentAmount > 0 ? (
           <div className="flex items-center justify-between gap-4">
             <dt className="text-gray-600">{drawer.bonusSpent}</dt>
-            <dd className="font-medium tabular-nums text-green-700">
+            <dd className="font-medium tabular-nums text-emerald-700">
               −
               {formatOrderDrawerMoney(
                 detail.bonusSpentAmount,
@@ -68,20 +75,16 @@ export function OrderDetailsDrawerTotals({
           </div>
         ) : null}
 
-        {detail.bonusEarnedAmount > 0 ? (
-          <div className="flex items-center justify-between gap-4">
-            <dt className="text-gray-600">{drawer.bonusEarned}</dt>
-            <dd className="font-medium tabular-nums text-gray-900">
-              +
-              {formatOrderDrawerMoney(
-                detail.bonusEarnedAmount,
-                detail.baseCurrency,
-              )}
-            </dd>
-          </div>
-        ) : null}
+        <div className="flex items-center justify-between gap-4">
+          <dt className="font-semibold text-emerald-800">
+            {drawer.bonusEarned}
+          </dt>
+          <dd className="font-semibold tabular-nums text-emerald-700">
+            {formatGrillCoinAmount(detail.bonusEarnedAmount)}
+          </dd>
+        </div>
 
-        <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-3">
+        <div className="flex items-center justify-between gap-4 pt-1">
           <dt className="text-base font-bold text-gray-900">{drawer.total}</dt>
           <dd className="text-base font-bold tabular-nums text-gray-900">
             {formatOrderDrawerMoney(detail.totalAmount, detail.baseCurrency)}

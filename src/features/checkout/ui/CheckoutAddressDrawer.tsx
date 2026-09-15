@@ -16,7 +16,6 @@ import {
   CHECKOUT_PICKUP_BRANCH_ROW_DEFAULT_CLASS,
   CHECKOUT_PICKUP_BRANCH_ROW_SELECTED_CLASS,
   CHECKOUT_PICKUP_TRIGGER_CLASS,
-  CHECKOUT_PRIMARY_BUTTON_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import { createCustomerAddressAction } from "@/features/profile/application/manage-addresses";
@@ -341,8 +340,8 @@ function ExpandedAddressPanel({
         {!canSaveAddresses ? (
           <p className="text-xs text-gray-600">{labels.loginToSave}</p>
         ) : null}
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-          <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-gray-700">
+        <div className="flex flex-col gap-2">
+          <label className="flex min-w-0 flex-col gap-1 text-sm font-medium text-gray-700">
             <span className="sr-only">{labels.line1}</span>
             <input
               value={line1}
@@ -355,34 +354,36 @@ function ExpandedAddressPanel({
               autoComplete="street-address"
             />
           </label>
-          <div className="w-full shrink-0 sm:w-[150px]">
-            <CheckoutSelect
-              label={labels.city}
-              name="addressCity"
-              hideLabel
-              value={city}
-              onChange={setCity}
-              disabled={pending || isSaving || deliveryOptions.length === 0}
-              placeholder={labels.selectLocation}
-              options={deliveryOptions.map((option) => {
-                const value =
-                  resolveCheckoutDeliveryCity(option.city) ?? option.city;
-                return {
-                  value,
-                  label: option.label,
-                };
-              })}
-              className="w-full"
-            />
+          <div className="flex items-end gap-2">
+            <div className="min-w-0 flex-1 sm:w-[150px] sm:flex-none">
+              <CheckoutSelect
+                label={labels.city}
+                name="addressCity"
+                hideLabel
+                value={city}
+                onChange={setCity}
+                disabled={pending || isSaving || deliveryOptions.length === 0}
+                placeholder={labels.selectLocation}
+                options={deliveryOptions.map((option) => {
+                  const value =
+                    resolveCheckoutDeliveryCity(option.city) ?? option.city;
+                  return {
+                    value,
+                    label: option.label,
+                  };
+                })}
+                className="w-full"
+              />
+            </div>
+            <button
+              type="button"
+              disabled={pending || isSaving || !line1.trim()}
+              onClick={submitNewAddress}
+              className="inline-flex h-11 shrink-0 items-center justify-center rounded-[15px] bg-brand-red px-4 text-sm font-semibold whitespace-nowrap text-white transition hover:bg-brand-red-hot focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red disabled:cursor-not-allowed disabled:opacity-50 sm:px-5"
+            >
+              {isSaving ? labels.saving : labels.add}
+            </button>
           </div>
-          <button
-            type="button"
-            disabled={pending || isSaving || !line1.trim()}
-            onClick={submitNewAddress}
-            className={`${CHECKOUT_PRIMARY_BUTTON_CLASS} h-11 w-full shrink-0 sm:w-auto sm:px-5`}
-          >
-            {isSaving ? labels.saving : labels.add}
-          </button>
         </div>
         {error ? (
           <p className="text-sm text-red-600" role="alert">

@@ -36,7 +36,10 @@ import {
   updateUserStatusAction,
 } from "@/features/users/application/update-user";
 import type { AdminUserListItem } from "@/features/users/application/queries";
-import { adminUserRoleLabel } from "@/features/users/ui/admin-user-labels";
+import {
+  adminUserRoleLabel,
+  adminUserRolePillClass,
+} from "@/features/users/ui/admin-user-labels";
 
 type AdminUsersViewProps = {
   locale: string;
@@ -335,13 +338,7 @@ export function AdminUsersView({
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
                         <span
-                          className={`${ADMIN_BADGE} uppercase ${
-                            user.role === "ADMIN"
-                              ? "bg-blue-100 text-blue-800"
-                              : user.role === "OPERATOR"
-                                ? "bg-amber-100 text-amber-800"
-                                : "bg-sky-100 text-sky-800"
-                          }`}
+                          className={`${ADMIN_BADGE} uppercase ${adminUserRolePillClass(user.role)}`}
                         >
                           {adminUserRoleLabel(user.role, copy.roles)}
                         </span>

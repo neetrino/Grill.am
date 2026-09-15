@@ -1,7 +1,8 @@
-import { cache, Suspense } from "react";
+import { cache, Suspense, type ReactNode } from "react";
 
 import { AccountControls } from "@/components/layout/AccountControls";
 import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
+import { HeaderCoinsPill } from "@/components/layout/HeaderCoinsPill";
 import { MobileHeaderActions } from "@/components/layout/MobileHeaderActions";
 import {
   MobileNavAuthButton,
@@ -9,6 +10,7 @@ import {
 } from "@/components/layout/MobileNavAuthButton";
 import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { getCartItemCount } from "@/features/cart/cart";
+import { getUserBonusBalance } from "@/features/loyalty/application/queries";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -21,6 +23,7 @@ type HeaderSessionData = {
   user: SessionUser | null;
   cartItemCount: number;
   wishlistCount: number;
+  bonusBalanceAmount: number;
 };
 
 const loadHeaderSessionData = cache(async (): Promise<HeaderSessionData> => {
@@ -29,8 +32,11 @@ const loadHeaderSessionData = cache(async (): Promise<HeaderSessionData> => {
     getCartItemCount(),
     getWishlistCount(),
   ]);
+  const bonusBalanceAmount = user
+    ? await getUserBonusBalance(user.id)
+    : 0;
 
-  return { user, cartItemCount, wishlistCount };
+  return { user, cartItemCount, wishlistCount, bonusBalanceAmount };
 });
 
 type HeaderDesktopActionsProps = {
@@ -38,6 +44,35 @@ type HeaderDesktopActionsProps = {
   currency: Currency;
   dictionary: Dictionary;
 };
+
+function CoinsPillFromSession({
+  locale,
+  dictionary,
+  user,
+  bonusBalanceAmount,
+  size,
+}: {
+  locale: Locale;
+  dictionary: Dictionary;
+  user: SessionUser | null;
+  bonusBalanceAmount: number;
+  size?: "md" | "sm";
+}): ReactNode {
+  return (
+    <HeaderCoinsPill
+      locale={locale}
+      balanceAmount={user ? bonusBalanceAmount : 0}
+      coinsLabel={dictionary.header.coins}
+      ariaLabel={dictionary.header.coinsAria}
+      href={
+        user
+          ? `/${locale}/profile/bonuses`
+          : `/${locale}/login`
+      }
+      size={size}
+    />
+  );
+}
 
 async function HeaderDesktopActionsAsync({
   locale,
@@ -93,6 +128,11 @@ type HeaderMobileNavProps = {
   navItems: readonly StorefrontNavItem[];
 };
 
+type HeaderCoinsIslandProps = {
+  locale: Locale;
+  dictionary: Dictionary;
+};
+
 /**
  * Session-dependent header controls stream in without remounting sticky chrome.
  */
@@ -120,6 +160,36 @@ async function MobileNavAuthActionAsync({
       href={user ? `/${locale}/profile` : `/${locale}/login`}
       label={user ? profileLabel : loginLabel}
     />
+  );
+}
+
+async function HeaderCoinsAsync({
+  locale,
+  dictionary,
+}: HeaderCoinsIslandProps) {
+  const { user, bonusBalanceAmount } = await loadHeaderSessionData();
+
+  return (
+    <CoinsPillFromSession
+      locale={locale}
+      dictionary={dictionary}
+      user={user}
+      bonusBalanceAmount={bonusBalanceAmount}
+      size="md"
+    />
+  );
+}
+
+/** Bonuses pill beside search — always mounted (incl. ISR catalog routes). */
+export function HeaderCoinsIsland(props: HeaderCoinsIslandProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-12 w-[6.5rem] animate-pulse rounded-full bg-brand-surface sm:h-[49px]" />
+      }
+    >
+      <HeaderCoinsAsync {...props} />
+    </Suspense>
   );
 }
 

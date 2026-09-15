@@ -29,6 +29,8 @@ type CheckoutSelectProps = {
   required?: boolean;
   name?: string;
   className?: string;
+  /** Extra classes for the trigger button (pill tones, etc.). */
+  triggerClassName?: string;
   /** Hide the visible label (keeps it available to assistive tech). */
   hideLabel?: boolean;
   /** Shrink trigger to content width (filter bars). */
@@ -73,6 +75,7 @@ export function CheckoutSelect({
   required = false,
   name,
   className = "",
+  triggerClassName = "",
   hideLabel = false,
   fitContent = false,
 }: CheckoutSelectProps) {
@@ -106,9 +109,15 @@ export function CheckoutSelect({
     [closeDropdown, onChange],
   );
 
-  const triggerBorderClass = disclosure.isOpen
-    ? "border-brand-red"
-    : "border-gray-200";
+  const triggerBorderClass = triggerClassName
+    ? ""
+    : disclosure.isOpen
+      ? "border-brand-red"
+      : "border-gray-200";
+
+  const triggerToneClass = triggerClassName
+    ? triggerClassName
+    : "rounded-[15px] border bg-white focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:bg-gray-50";
 
   const panel =
     canPortal && disclosure.isVisible && menuPosition
@@ -179,13 +188,17 @@ export function CheckoutSelect({
         aria-required={required || undefined}
         disabled={disabled}
         onClick={disclosure.toggle}
-        className={`flex h-11 min-w-0 items-center justify-between gap-3 rounded-[15px] border bg-white px-3 text-left transition-colors outline-none focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:cursor-not-allowed disabled:bg-gray-50 ${
+        className={`flex h-11 min-w-0 items-center justify-between gap-3 px-3 text-left transition-colors outline-none disabled:cursor-not-allowed [&_svg]:text-current ${
           fitContent ? "w-fit" : "w-full"
-        } ${triggerBorderClass}`}
+        } ${triggerToneClass} ${triggerBorderClass}`.trim()}
       >
         <span
           className={`truncate text-sm ${
-            isPlaceholder ? "text-gray-400" : "text-gray-900"
+            isPlaceholder && !triggerClassName
+              ? "text-gray-400"
+              : triggerClassName
+                ? "font-semibold"
+                : "text-gray-900"
           }`}
         >
           {displayLabel}

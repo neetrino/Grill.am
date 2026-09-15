@@ -170,6 +170,7 @@
     "applied": "Bonus",
     "loginRequired": "Sign in to use bonus",
     "earnHint": "This order will earn about {amount} in bonus after payment is marked Paid.",
-    "minOrderHint": "Bonus earn is available from {amount} merchandise total."
+    "minOrderHint": "Bonus earn is available from {amount} merchandise total.",
+    "grillCoinLabel": "Grill Coin"
   }
 }

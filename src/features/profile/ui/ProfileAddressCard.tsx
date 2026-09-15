@@ -30,7 +30,15 @@ export function ProfileAddressCard({
   onDelete,
 }: ProfileAddressCardProps) {
   const isDefault = address.isDefaultShipping;
-  const title = address.label?.trim() || address.line1;
+  const label = address.label?.trim() ?? "";
+  const street = address.line1.trim();
+  /** Header title for non-default cards. */
+  const title = label || street;
+  /**
+   * Street line in the body: skip when it would duplicate the non-default title
+   * (same text already shown next to the action icons).
+   */
+  const showStreetInBody = isDefault || (Boolean(label) && street !== label);
 
   return (
     <div className={`flex h-full flex-col p-3 sm:p-3.5 ${PROFILE_CARD_CLASS}`}>
@@ -84,20 +92,22 @@ export function ProfileAddressCard({
       </div>
 
       <div className="mt-1.5 min-w-0 space-y-1">
-        {isDefault && address.label?.trim() ? (
+        {isDefault && label && label !== street ? (
           <p className="text-sm leading-snug font-medium break-words text-gray-900">
-            {address.label.trim()}
+            {label}
           </p>
         ) : null}
-        <p
-          className={`text-sm leading-snug break-words ${
-            address.label?.trim()
-              ? "text-gray-700"
-              : "font-medium text-gray-900"
-          }`}
-        >
-          {address.line1}
-        </p>
+        {showStreetInBody ? (
+          <p
+            className={`text-sm leading-snug break-words ${
+              label && label !== street
+                ? "text-gray-700"
+                : "font-medium text-gray-900"
+            }`}
+          >
+            {street}
+          </p>
+        ) : null}
         <p className="text-xs leading-snug break-words text-gray-700 sm:text-sm">
           {cityLabel}
         </p>

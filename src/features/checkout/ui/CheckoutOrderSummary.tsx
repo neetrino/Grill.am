@@ -20,8 +20,9 @@ type CheckoutOrderSummaryProps = {
   bonusMaxButtonLabel: string;
   bonusAppliedLabel: string;
   bonusLoginRequired: string | null;
-  bonusEarnHint: string | null;
   bonusMinOrderHint: string | null;
+  grillCoinLabel: string | null;
+  grillCoinAmountFormatted: string | null;
   useBonus: boolean;
   canUseBonus: boolean;
   bonusDraft: string;
@@ -62,8 +63,9 @@ export function CheckoutOrderSummary({
   bonusMaxButtonLabel,
   bonusAppliedLabel,
   bonusLoginRequired,
-  bonusEarnHint,
   bonusMinOrderHint,
+  grillCoinLabel,
+  grillCoinAmountFormatted,
   useBonus,
   canUseBonus,
   bonusDraft,
@@ -190,9 +192,6 @@ export function CheckoutOrderSummary({
                 </div>
               ) : null}
 
-              {bonusEarnHint ? (
-                <p className="mt-2 text-xs text-gray-500">{bonusEarnHint}</p>
-              ) : null}
               {bonusMinOrderHint ? (
                 <p className="mt-2 text-xs text-amber-700">{bonusMinOrderHint}</p>
               ) : null}
@@ -240,6 +239,14 @@ export function CheckoutOrderSummary({
             <span>{totalLabel}</span>
             <span>{totalFormatted}</span>
           </div>
+          {grillCoinLabel && grillCoinAmountFormatted ? (
+            <div className="mt-3 flex justify-between gap-3 text-sm">
+              <span className="text-gray-600">{grillCoinLabel}</span>
+              <span className="font-semibold tabular-nums text-emerald-700">
+                {grillCoinAmountFormatted}
+              </span>
+            </div>
+          ) : null}
         </div>
 
         {error ? (

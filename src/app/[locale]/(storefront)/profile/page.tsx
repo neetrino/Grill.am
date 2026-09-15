@@ -5,6 +5,11 @@ import {
   CHECKOUT_DELIVERY_CITY_I18N_KEYS,
   CHECKOUT_DELIVERY_CITY_VALUES,
 } from "@/features/checkout/domain/checkout-delivery-cities";
+import {
+  getCustomerBonusSummary,
+  listCustomerBonusLedger,
+} from "@/features/loyalty/application/queries";
+import { CustomerBonusesPageContent } from "@/features/loyalty/ui/CustomerBonusesPageContent";
 import { listCustomerOrders } from "@/features/orders/application/queries";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
 import { listCustomerAddresses } from "@/features/profile/application/address-queries";
@@ -41,6 +46,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     promoHistory,
     assignedCoupons,
     customerOrders,
+    bonusSummary,
+    bonusLedger,
   ] =
     await Promise.all([
       getProfileDashboard(user.id),
@@ -56,6 +63,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         dateTo: undefined,
         q: undefined,
       }),
+      getCustomerBonusSummary(user.id),
+      listCustomerBonusLedger(user.id, 1),
     ]);
 
   const logoutWithLocale = logoutAction.bind(null, locale);
@@ -117,6 +126,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               assigned={assignedCoupons}
               rows={promoHistory.rows}
               copy={promoCopy}
+            />
+          ),
+          bonuses: (
+            <CustomerBonusesPageContent
+              locale={locale}
+              summary={bonusSummary}
+              rows={bonusLedger.rows}
+              copy={dictionary.profile.bonuses}
+              startShoppingLabel={dictionary.profile.startShopping}
+              hideTitle
             />
           ),
           personal: (
