@@ -188,7 +188,10 @@ export function FeaturedProductCard({
               </p>
             ) : null}
             {bonusEarnLabel ? (
-              <ProductCoinsEarnPill label={bonusEarnLabel} />
+              <ProductCoinsEarnPill
+                label={bonusEarnLabel}
+                compactOnMobile
+              />
             ) : null}
           </div>
 

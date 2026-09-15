@@ -232,7 +232,10 @@ export function ProductCard({
               ) : null}
             </div>
             {bonusEarnLabel ? (
-              <ProductCoinsEarnPill label={bonusEarnLabel} />
+              <ProductCoinsEarnPill
+                label={bonusEarnLabel}
+                compactOnMobile
+              />
             ) : null}
           </div>
 
