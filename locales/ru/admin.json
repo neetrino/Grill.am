@@ -349,7 +349,8 @@
       "lineTotal": "Итого",
       "customizations": "Добавки и исключения",
       "bonusSpent": "Списано бонусов",
-      "bonusEarned": "Начислено бонусов"
+      "bonusEarned": "Начислено бонусов",
+      "grillCoinLabel": "Grill Coin"
     },
     "detail": {
       "customer": "Клиент",

@@ -349,7 +349,8 @@
       "lineTotal": "Ընդամենը",
       "customizations": "Ավելացումներ և հեռացումներ",
       "bonusSpent": "Օգտագործված բոնուս",
-      "bonusEarned": "Վաստակած բոնուս"
+      "bonusEarned": "Վաստակած բոնուս",
+      "grillCoinLabel": "Grill Coin"
     },
     "detail": {
       "customer": "Հաճախորդ",

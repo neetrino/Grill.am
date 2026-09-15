@@ -12,7 +12,12 @@ type OrderDetailsDrawerTotalsProps = {
   detail: AdminOrderDetailView;
 };
 
-/** Money summary card — subtotal, shipping, total. */
+function formatGrillCoinAmount(amount: number): string {
+  const safe = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
+  return `+${safe.toLocaleString("en-US")}`;
+}
+
+/** Money summary card — last on the sheet; Grill Coin under total. */
 export function OrderDetailsDrawerTotals({
   detail,
 }: OrderDetailsDrawerTotalsProps) {
@@ -68,25 +73,21 @@ export function OrderDetailsDrawerTotals({
           </div>
         ) : null}
 
-        {detail.bonusEarnedAmount > 0 ? (
-          <div className="flex items-center justify-between gap-4">
-            <dt className="text-gray-600">{drawer.bonusEarned}</dt>
-            <dd className="font-medium tabular-nums text-gray-900">
-              +
-              {formatOrderDrawerMoney(
-                detail.bonusEarnedAmount,
-                detail.baseCurrency,
-              )}
-            </dd>
-          </div>
-        ) : null}
-
         <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-3">
           <dt className="text-base font-bold text-gray-900">{drawer.total}</dt>
           <dd className="text-base font-bold tabular-nums text-gray-900">
             {formatOrderDrawerMoney(detail.totalAmount, detail.baseCurrency)}
           </dd>
         </div>
+
+        {detail.bonusEarnedAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4 pt-1">
+            <dt className="text-gray-600">{drawer.grillCoinLabel}</dt>
+            <dd className="font-semibold tabular-nums text-emerald-700">
+              {formatGrillCoinAmount(detail.bonusEarnedAmount)}
+            </dd>
+          </div>
+        ) : null}
       </dl>
     </section>
   );

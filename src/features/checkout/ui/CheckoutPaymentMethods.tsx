@@ -74,15 +74,17 @@ export function CheckoutPaymentMethods({
 
                 {isCardMethod ? (
                   <div className="flex w-full min-w-0 flex-1 flex-col items-start gap-1.5">
-                    <span className="font-medium text-gray-900">
-                      {option.name}
-                      {!option.enabled && option.unavailableLabel ? (
-                        <span className="ml-2 text-xs font-normal text-gray-500">
-                          ({option.unavailableLabel})
-                        </span>
-                      ) : null}
-                    </span>
-                    <CheckoutPaymentMethodIcons methodId={option.id} />
+                    <div className="flex min-w-0 flex-wrap items-center gap-2.5">
+                      <span className="font-medium text-gray-900">
+                        {option.name}
+                        {!option.enabled && option.unavailableLabel ? (
+                          <span className="ml-2 text-xs font-normal text-gray-500">
+                            ({option.unavailableLabel})
+                          </span>
+                        ) : null}
+                      </span>
+                      <CheckoutPaymentMethodIcons methodId={option.id} />
+                    </div>
                     {option.description ? (
                       <div
                         id={`payment-desc-${option.id}`}
@@ -98,31 +100,29 @@ export function CheckoutPaymentMethods({
                   </div>
                 ) : option.id === "idram" ? (
                   <div className="flex w-full min-w-0 flex-1 flex-col items-start gap-1.5">
-                    <span className="font-medium text-gray-900">
-                      {option.name}
-                      {!option.enabled && option.unavailableLabel ? (
-                        <span className="ml-2 text-xs font-normal text-gray-500">
-                          ({option.unavailableLabel})
-                        </span>
-                      ) : null}
-                    </span>
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex shrink-0 items-center">
-                        <CheckoutPaymentMethodIcons methodId={option.id} />
-                      </div>
-                      {option.description ? (
-                        <div
-                          id={`payment-desc-${option.id}`}
-                          className="hidden min-w-0 text-sm text-gray-600 lg:block"
-                        >
-                          {option.description}
-                        </div>
-                      ) : (
-                        <span id={`payment-desc-${option.id}`} className="sr-only">
-                          {option.name}
-                        </span>
-                      )}
+                    <div className="flex min-w-0 flex-wrap items-center gap-2.5">
+                      <span className="font-medium text-gray-900">
+                        {option.name}
+                        {!option.enabled && option.unavailableLabel ? (
+                          <span className="ml-2 text-xs font-normal text-gray-500">
+                            ({option.unavailableLabel})
+                          </span>
+                        ) : null}
+                      </span>
+                      <CheckoutPaymentMethodIcons methodId={option.id} />
                     </div>
+                    {option.description ? (
+                      <div
+                        id={`payment-desc-${option.id}`}
+                        className="hidden min-w-0 text-sm text-gray-600 lg:block"
+                      >
+                        {option.description}
+                      </div>
+                    ) : (
+                      <span id={`payment-desc-${option.id}`} className="sr-only">
+                        {option.name}
+                      </span>
+                    )}
                   </div>
                 ) : (
                   <div className="flex min-w-0 flex-1 items-center gap-3 lg:gap-4">

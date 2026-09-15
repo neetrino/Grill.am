@@ -115,8 +115,8 @@ type CheckoutLabels = {
   bonusMaxButton: string;
   bonusApplied: string;
   bonusLoginRequired: string;
-  bonusEarnHint: string;
   bonusMinOrderHint: string;
+  grillCoinLabel: string;
   subtotal: string;
   shipping: string;
   pickup: string;
@@ -754,14 +754,6 @@ export function CheckoutForm({
               bonusLoginRequired={
                 bonusWallet == null ? labels.bonusLoginRequired : null
               }
-              bonusEarnHint={
-                bonusWallet && projectedEarn > 0
-                  ? labels.bonusEarnHint.replace(
-                      "{amount}",
-                      formatMoney(projectedEarn),
-                    )
-                  : null
-              }
               bonusMinOrderHint={
                 bonusWallet &&
                 rawProjectedEarn > 0 &&
@@ -771,6 +763,16 @@ export function CheckoutForm({
                       "{amount}",
                       formatMoney(bonusWallet.earnMinOrderAmount),
                     )
+                  : null
+              }
+              grillCoinLabel={
+                bonusWallet && projectedEarn > 0 ? labels.grillCoinLabel : null
+              }
+              grillCoinAmountFormatted={
+                bonusWallet && projectedEarn > 0
+                  ? `+${Math.floor(projectedEarn).toLocaleString(
+                      locale === "en" ? "en-US" : "ru-RU",
+                    )}`
                   : null
               }
               useBonus={useBonus}

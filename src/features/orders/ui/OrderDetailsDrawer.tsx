@@ -78,8 +78,8 @@ export function OrderDetailsDrawer({
       subtitle={subtitle}
       closeLabel={common.close}
       headerActions={headerActions}
-      desktopWidthPercent={40}
-      mobileMaxWidthClassName="max-w-2xl"
+      desktopWidthPercent={34}
+      mobileMaxWidthClassName="max-w-md"
       panelClassName="!bg-brand-surface"
       headerClassName="!border-0 !bg-brand-surface"
       bodyClassName="!bg-brand-surface"
@@ -109,11 +109,11 @@ export function OrderDetailsDrawer({
             />
           ) : null}
           <OrderDetailsDrawerItems detail={detail} />
-          <OrderDetailsDrawerTotals detail={detail} />
           <OrderDetailsDrawerShipping
             detail={detail}
             compact={isCustomerSheet}
           />
+          <OrderDetailsDrawerTotals detail={detail} />
         </div>
       ) : null}
     </SideSheet>
