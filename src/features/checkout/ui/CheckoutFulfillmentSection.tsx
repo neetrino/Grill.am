@@ -102,7 +102,7 @@ function ShippingMethodToggles({
     <div
       role="radiogroup"
       aria-label={labels.shippingMethod}
-      className="flex flex-row gap-3"
+      className="flex flex-col gap-3 sm:flex-row"
     >
       <MethodToggle
         selected={shippingMethod === "pickup"}

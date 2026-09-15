@@ -23,7 +23,6 @@ type CustomerBonusesPageContentProps = {
   summary: CustomerBonusSummary;
   rows: CustomerBonusLedgerRow[];
   copy: Dictionary["profile"]["bonuses"];
-  coinsLabel: string;
   startShoppingLabel: string;
 };
 
@@ -57,7 +56,6 @@ export function CustomerBonusesPageContent({
   summary,
   rows,
   copy,
-  coinsLabel,
   startShoppingLabel,
 }: CustomerBonusesPageContentProps) {
   function money(amount: number): string {
@@ -72,34 +70,26 @@ export function CustomerBonusesPageContent({
     <div className="space-y-6 lg:space-y-8">
       <div>
         <ProfilePageTitle>{copy.title}</ProfilePageTitle>
-        <p className="mt-2 max-w-2xl text-sm text-gray-600">{copy.subtitle}</p>
       </div>
 
-      <div className="flex items-center gap-4 rounded-[15px] bg-[#FFF4D4] px-5 py-5 sm:gap-5 sm:px-7 sm:py-6">
-        <HeaderCoinsIcon className="size-14 shrink-0 sm:size-16" />
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-[#8A735A]">{copy.balance}</p>
-          <p className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-            <span className="text-3xl font-bold tracking-tight text-[#3D2E1F] tabular-nums sm:text-4xl">
-              {balance}
-            </span>
-            <span className="text-sm font-semibold text-[#8A735A] sm:text-base">
-              {coinsLabel}
-            </span>
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:gap-4">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
+        <ProfileStatCard
+          label={copy.balance}
+          value={balance}
+          iconPlain
+          icon={<HeaderCoinsIcon className="size-11 sm:size-14" />}
+        />
         <ProfileStatCard
           label={copy.totalEarned}
           value={earned}
           icon={<ArrowUpRight aria-hidden />}
+          iconTone={{ background: "#16a34a", foreground: "#ffffff" }}
         />
         <ProfileStatCard
           label={copy.totalSpent}
           value={spent}
           icon={<ArrowDownLeft aria-hidden />}
+          iconTone={{ background: "#db0b20", foreground: "#ffffff" }}
         />
       </div>
 

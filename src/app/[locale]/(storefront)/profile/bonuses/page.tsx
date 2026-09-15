@@ -61,7 +61,6 @@ export default async function ProfileBonusesPage({
         summary={summary}
         rows={rows}
         copy={copy}
-        coinsLabel={dictionary.header.coins}
         startShoppingLabel={dictionary.profile.startShopping}
       />
 
