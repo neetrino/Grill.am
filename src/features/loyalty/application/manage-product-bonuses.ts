@@ -1,0 +1,201 @@
+"use server";
+
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+import { auditLogs, productBonusRules, products } from "@/db/schema";
+import { withTransaction } from "@/db/transaction";
+import { requireAdmin } from "@/lib/auth/policies";
+import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
+import {
+  appDayEndUtc,
+  appDayStartUtc,
+  parseAppDateTimeLocal,
+} from "@/lib/datetime/app-timezone";
+import { createId } from "@/lib/id";
+import { isLocale, type Locale } from "@/lib/i18n/config";
+import { err, ok, type Result } from "@/lib/result";
+
+const boundSchema = z
+  .string()
+  .regex(
+    /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2})?$/,
+    "Invalid date",
+  )
+  .nullable();
+
+const upsertSchema = z
+  .object({
+    productId: z.string().uuid(),
+    amount: z.number().int().min(1).max(10_000_000).nullable(),
+    startsOn: boundSchema,
+    endsOn: boundSchema,
+  })
+  .superRefine((value, ctx) => {
+    if (value.amount == null) {
+      return;
+    }
+    if (
+      value.startsOn != null &&
+      value.endsOn != null &&
+      value.startsOn > value.endsOn
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Start date must be on or before end date.",
+        path: ["endsOn"],
+      });
+    }
+  });
+
+function parseBound(
+  value: string,
+  edge: "start" | "end",
+): Date {
+  if (value.includes("T")) {
+    return parseAppDateTimeLocal(value);
+  }
+  return edge === "start" ? appDayStartUtc(value) : appDayEndUtc(value);
+}
+
+function revalidateBonuses(locale: string): void {
+  revalidatePath(`/${locale}/admin/bonuses`);
+  revalidatePath(`/${locale}/checkout`);
+  revalidatePath(`/${locale}/profile/bonuses`);
+  revalidatePath(`/${locale}/products`);
+  revalidatePath(`/${locale}/wishlist`);
+  revalidatePath(`/${locale}`);
+  invalidateProductsCache({ allProductDetails: true });
+}
+
+/** Creates, updates, or clears one product flat-bonus rule. */
+export async function upsertProductBonusRuleAction(
+  locale: string,
+  raw: z.infer<typeof upsertSchema>,
+): Promise<Result<{ productId: string }>> {
+  if (!isLocale(locale)) {
+    return err("INVALID_LOCALE", "Invalid locale.");
+  }
+
+  const parsed = upsertSchema.safeParse(raw);
+  if (!parsed.success) {
+    return err("VALIDATION_ERROR", "Invalid product bonus payload.");
+  }
+
+  const actor = await requireAdmin(locale as Locale);
+  const { productId, amount, startsOn, endsOn } = parsed.data;
+
+  try {
+    await withTransaction(async (tx) => {
+      const [product] = await tx
+        .select({ id: products.id })
+        .from(products)
+        .where(eq(products.id, productId))
+        .limit(1);
+      if (!product) {
+        throw new Error("PRODUCT_NOT_FOUND");
+      }
+
+      const [existing] = await tx
+        .select()
+        .from(productBonusRules)
+        .where(eq(productBonusRules.productId, productId))
+        .limit(1);
+
+      const now = new Date();
+      const correlationId = createId();
+
+      if (amount == null) {
+        if (!existing) return;
+        await tx
+          .delete(productBonusRules)
+          .where(eq(productBonusRules.id, existing.id));
+        await tx.insert(auditLogs).values({
+          id: createId(),
+          actorUserId: actor.id,
+          action: "product_bonus_rule.delete",
+          targetType: "product_bonus_rule",
+          targetId: existing.id,
+          beforeDiff: {
+            productId: existing.productId,
+            amount: existing.amount,
+            startsAt: existing.startsAt?.toISOString() ?? null,
+            endsAt: existing.endsAt?.toISOString() ?? null,
+          },
+          afterDiff: null,
+          correlationId,
+        });
+        return;
+      }
+
+      const startsAt = startsOn ? parseBound(startsOn, "start") : null;
+      const endsAt = endsOn ? parseBound(endsOn, "end") : null;
+
+      if (existing) {
+        await tx
+          .update(productBonusRules)
+          .set({
+            amount,
+            startsAt,
+            endsAt,
+            updatedAt: now,
+          })
+          .where(eq(productBonusRules.id, existing.id));
+        await tx.insert(auditLogs).values({
+          id: createId(),
+          actorUserId: actor.id,
+          action: "product_bonus_rule.update",
+          targetType: "product_bonus_rule",
+          targetId: existing.id,
+          beforeDiff: {
+            amount: existing.amount,
+            startsAt: existing.startsAt?.toISOString() ?? null,
+            endsAt: existing.endsAt?.toISOString() ?? null,
+          },
+          afterDiff: {
+            amount,
+            startsAt: startsAt?.toISOString() ?? null,
+            endsAt: endsAt?.toISOString() ?? null,
+          },
+          correlationId,
+        });
+        return;
+      }
+
+      const id = createId();
+      await tx.insert(productBonusRules).values({
+        id,
+        productId,
+        amount,
+        startsAt,
+        endsAt,
+        createdAt: now,
+        updatedAt: now,
+      });
+      await tx.insert(auditLogs).values({
+        id: createId(),
+        actorUserId: actor.id,
+        action: "product_bonus_rule.create",
+        targetType: "product_bonus_rule",
+        targetId: id,
+        beforeDiff: null,
+        afterDiff: {
+          productId,
+          amount,
+          startsAt: startsAt?.toISOString() ?? null,
+          endsAt: endsAt?.toISOString() ?? null,
+        },
+        correlationId,
+      });
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "PRODUCT_NOT_FOUND") {
+      return err("NOT_FOUND", "Product not found.");
+    }
+    throw error;
+  }
+
+  revalidateBonuses(locale);
+  return ok({ productId });
+}

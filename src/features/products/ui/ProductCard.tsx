@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { Zap } from "lucide-react";
+import { Gift, Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
@@ -52,6 +52,8 @@ type ProductCardProps = {
   requiresConfiguration?: boolean;
   /** Localized HIT label; omit when the product is not featured. */
   hitLabel?: string | null;
+  /** Localized bonus earn line, e.g. "+120֏ բոնուս". */
+  bonusEarnLabel?: string | null;
   /** Figma mobile featured card variants (`164:457` / `164:505`). */
   variant?: ProductCardVariant;
 };
@@ -79,6 +81,7 @@ export function ProductCard({
   addToCartLabel,
   requiresConfiguration = false,
   hitLabel = null,
+  bonusEarnLabel = null,
   variant = "catalog",
 }: ProductCardProps) {
   const resolvedImageUrl = imageUrl?.trim() || null;
@@ -129,6 +132,7 @@ export function ProductCard({
         addToCartLabel={addToCartLabel}
         requiresConfiguration={requiresConfiguration}
         hitLabel={hitLabel}
+        bonusEarnLabel={bonusEarnLabel}
         tone={variant === "featured-red" ? "red" : "light"}
       />
     );
@@ -161,7 +165,7 @@ export function ProductCard({
           ) : null}
         </AppLink>
 
-        {hitLabel || discountPercent != null ? (
+        {hitLabel || discountPercent != null || bonusEarnLabel ? (
           <div className="absolute top-3.5 left-4 z-10 flex flex-col items-start gap-1">
             {hitLabel ? (
               <ProductHitBadge
@@ -173,6 +177,12 @@ export function ProductCard({
               <span className="inline-flex h-[26px] items-center gap-1.5 rounded-full bg-brand-yellow pr-3 pl-[13px] text-[11px] leading-[18px] font-semibold text-[#222]">
                 <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
                 -{discountPercent}%
+              </span>
+            ) : null}
+            {bonusEarnLabel ? (
+              <span className="inline-flex h-[26px] max-w-[11rem] items-center gap-1.5 truncate rounded-full bg-emerald-600 pr-3 pl-[13px] text-[11px] leading-[18px] font-semibold text-white">
+                <Gift className="h-3 w-3 shrink-0" aria-hidden />
+                <span className="truncate">{bonusEarnLabel}</span>
               </span>
             ) : null}
           </div>

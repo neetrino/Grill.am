@@ -68,6 +68,15 @@ export const orders = pgTable(
     }),
     subtotalAmount: integer("subtotal_amount").notNull(),
     discountAmount: integer("discount_amount").notNull().default(0),
+    /** Loyalty bonus redeemed against this order (AMD minor units). */
+    bonusSpentAmount: integer("bonus_spent_amount").notNull().default(0),
+    /** Loyalty bonus planned/earned from this order (AMD minor units). */
+    bonusEarnedAmount: integer("bonus_earned_amount").notNull().default(0),
+    /** When planned earn was credited to the user wallet; null while pending. */
+    bonusEarnedAppliedAt: timestamp("bonus_earned_applied_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
     taxAmount: integer("tax_amount").notNull().default(0),
     deliveryAmount: integer("delivery_amount").notNull().default(0),
     totalAmount: integer("total_amount").notNull(),

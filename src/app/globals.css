@@ -237,6 +237,9 @@ select:not([data-dropdown-unstyled]):disabled,
   box-sizing: border-box;
   width: var(--calendar-width);
   max-width: calc(100vw - 2 * var(--calendar-viewport-padding));
+  max-height: var(--dropdown-max-height, none);
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 12px;
   border: 1px solid var(--dropdown-border);
   border-radius: var(--dropdown-radius);
@@ -316,6 +319,22 @@ select:not([data-dropdown-unstyled]):disabled,
   background: var(--brand-red);
   font-weight: 600;
   color: #ffffff;
+}
+
+.calendar-day--selected-soft,
+.calendar-day--selected-soft:hover {
+  background: color-mix(in srgb, var(--brand-red) 18%, white);
+  font-weight: 600;
+  color: var(--brand-red);
+}
+
+.calendar-range-panel {
+  --calendar-width: 300px;
+  --calendar-cell-size: 32px;
+  max-height: none;
+  overflow: visible;
+  overflow-x: visible;
+  overflow-y: visible;
 }
 
 /*

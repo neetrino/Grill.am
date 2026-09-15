@@ -144,6 +144,26 @@ export function renderTotalsSectionHtml(
             ${row(labels.subtotalLabel, escapeHtml(money(detail.subtotalAmount, currency, locale)))}
             ${row(labels.deliveryFeeLabel, escapeHtml(money(detail.deliveryAmount, currency, locale)))}
             ${row(labels.discountLabel, escapeHtml(money(detail.discountAmount, currency, locale)))}
+            ${
+              detail.bonusSpentAmount > 0
+                ? row(
+                    "Bonus used",
+                    escapeHtml(
+                      money(detail.bonusSpentAmount, currency, locale),
+                    ),
+                  )
+                : ""
+            }
+            ${
+              detail.bonusEarnedAmount > 0
+                ? row(
+                    "Bonus earned",
+                    escapeHtml(
+                      money(detail.bonusEarnedAmount, currency, locale),
+                    ),
+                  )
+                : ""
+            }
             ${couponHtml}
             ${row(labels.totalLabel, `<strong>${escapeHtml(money(detail.totalAmount, currency, locale))}</strong>`)}
           </table>`;
@@ -162,6 +182,22 @@ export function renderTotalsSectionText(
     textRow(labels.subtotalLabel, money(detail.subtotalAmount, currency, locale)),
     textRow(labels.deliveryFeeLabel, money(detail.deliveryAmount, currency, locale)),
     textRow(labels.discountLabel, money(detail.discountAmount, currency, locale)),
+    ...(detail.bonusSpentAmount > 0
+      ? [
+          textRow(
+            "Bonus used",
+            money(detail.bonusSpentAmount, currency, locale),
+          ),
+        ]
+      : []),
+    ...(detail.bonusEarnedAmount > 0
+      ? [
+          textRow(
+            "Bonus earned",
+            money(detail.bonusEarnedAmount, currency, locale),
+          ),
+        ]
+      : []),
     ...couponText,
     textRow(labels.totalLabel, money(detail.totalAmount, currency, locale)),
   ];

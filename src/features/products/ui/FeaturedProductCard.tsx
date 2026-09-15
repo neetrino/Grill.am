@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { Zap } from "lucide-react";
+import { Gift, Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
@@ -33,6 +33,8 @@ type FeaturedProductCardProps = {
   addToCartLabel?: string;
   requiresConfiguration?: boolean;
   hitLabel?: string | null;
+  /** Localized bonus earn line. */
+  bonusEarnLabel?: string | null;
   tone: "red" | "light";
 };
 
@@ -62,6 +64,7 @@ export function FeaturedProductCard({
   addToCartLabel,
   requiresConfiguration = false,
   hitLabel = null,
+  bonusEarnLabel = null,
   tone,
 }: FeaturedProductCardProps) {
   const resolvedImageUrl = imageUrl?.trim() || null;
@@ -106,7 +109,7 @@ export function FeaturedProductCard({
           ) : null}
         </AppLink>
 
-        {hitLabel || discountPercent != null ? (
+        {hitLabel || discountPercent != null || bonusEarnLabel ? (
           <div className="absolute top-2 left-2 z-10 flex flex-col items-start gap-1">
             {hitLabel ? (
               <ProductHitBadge
@@ -118,6 +121,12 @@ export function FeaturedProductCard({
               <span className="inline-flex items-center gap-1 rounded-full bg-brand-yellow px-2 py-[3px] text-[10px] leading-[15px] font-semibold text-[#222]">
                 <Zap className="h-3 w-3 shrink-0 fill-current" aria-hidden />
                 -{discountPercent}%
+              </span>
+            ) : null}
+            {bonusEarnLabel ? (
+              <span className="inline-flex max-w-[9.5rem] items-center gap-1 truncate rounded-full bg-emerald-600 px-2 py-[3px] text-[10px] leading-[15px] font-semibold text-white">
+                <Gift className="h-3 w-3 shrink-0" aria-hidden />
+                <span className="truncate">{bonusEarnLabel}</span>
               </span>
             ) : null}
           </div>

@@ -1,7 +1,9 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -48,6 +50,8 @@ export const users = pgTable(
       withTimezone: true,
       mode: "date",
     }),
+    /** Available loyalty bonus balance in minor AMD units. */
+    bonusBalanceAmount: integer("bonus_balance_amount").notNull().default(0),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -55,6 +59,10 @@ export const users = pgTable(
     uniqueIndex("users_email_uidx").on(table.email),
     index("users_role_status_idx").on(table.role, table.status),
     index("users_created_at_idx").on(table.createdAt),
+    check(
+      "users_bonus_balance_nonneg_chk",
+      sql`${table.bonusBalanceAmount} >= 0`,
+    ),
   ],
 );
 

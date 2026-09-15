@@ -14,6 +14,7 @@ import {
 } from "@/features/home/ui/lazy-home-sections";
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
 import { getFeaturedProducts } from "@/features/products/queries";
+import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
 import {
   fallbackStorefrontBranches,
   toHomeBranchItems,
@@ -28,6 +29,7 @@ import {
   createDisplayPriceFormatter,
   getSelectedCurrency,
 } from "@/lib/money/display-price";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;
@@ -47,6 +49,7 @@ type PricedCard = {
   inWishlist: boolean;
   requiresConfiguration: boolean;
   hitLabel: string | null;
+  bonusEarnLabel: string | null;
 };
 
 export default async function HomePage({ params }: HomePageProps) {
@@ -78,9 +81,15 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const wishlistProductIds = featuredProducts.map((product) => product.id);
 
-  const [wishlistIds, formatPrice] = await Promise.all([
+  const [wishlistIds, formatPrice, bonusEarnByProductId] = await Promise.all([
     getWishlistProductIds(wishlistProductIds),
     createDisplayPriceFormatter(locale, currency),
+    resolveProductCardBonusEarnByProductId(
+      featuredProducts.map((product) => ({
+        id: product.id,
+        priceAmount: product.priceAmount,
+      })),
+    ),
   ]);
 
   function toCards(products: typeof featuredProducts): PricedCard[] {
@@ -90,6 +99,7 @@ export default async function HomePage({ params }: HomePageProps) {
         product.compareAtAmount != null
           ? formatPrice(product.compareAtAmount)
           : null;
+      const bonusEarnAmount = bonusEarnByProductId.get(product.id) ?? 0;
 
       return {
         id: product.id,
@@ -105,6 +115,13 @@ export default async function HomePage({ params }: HomePageProps) {
         inWishlist: wishlistIds.has(product.id),
         requiresConfiguration: product.requiresConfiguration,
         hitLabel: product.isFeatured ? dictionary.product.hit : null,
+        bonusEarnLabel:
+          bonusEarnAmount > 0
+            ? dictionary.product.bonusEarn.replace(
+                "{amount}",
+                formatMoneyAmount(bonusEarnAmount, "AMD", locale),
+              )
+            : null,
       };
     });
   }

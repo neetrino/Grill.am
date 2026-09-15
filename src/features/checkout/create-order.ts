@@ -2,23 +2,41 @@
 
 import { createHash } from "node:crypto";
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 import { getPaymentAdapter } from "@/config/providers";
 import {
   cartItems,
   carts,
+  categoryBonusRules,
   deliveryRules,
   orderEvents,
   orderItems,
   orders,
+  productBonusRules,
+  productCategories,
   products,
   promotions,
   promotionUsers,
   stockMovements,
+  users,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import {
+  spendBonusForOrder,
+} from "@/features/loyalty/application/ledger";
+import {
+  applyEarnMinOrderGate,
+  clampBonusSpendAmount,
+  computeFlatBonusEarnAmount,
+  computeMaxBonusRedeemAmount,
+  computeOrderTotalWithBonus,
+  isProductBonusRuleActive,
+  merchandiseNetAmount,
+  pickFlatBonusAmount,
+} from "@/features/loyalty/domain/loyalty-math";
+import { getStoreLoyalty } from "@/features/settings/application/queries";
 import {
   getCartWithItems,
   revalidateCartPaths,
@@ -265,6 +283,7 @@ export async function createOrderAction(
       cashTenderedAmount: input.cashTenderedAmount ?? null,
       deliveryRuleId: input.deliveryRuleId ?? null,
       customerNote,
+      bonusSpendAmount: input.bonusSpendAmount ?? 0,
     }),
   );
 
@@ -516,6 +535,7 @@ export async function createOrderAction(
 
       let discountAmount = 0;
       let appliedPromotion: typeof promotions.$inferSelect | null = null;
+      const loyalty = await getStoreLoyalty();
       if (input.couponCode) {
         const code = normalizePromotionCode(input.couponCode);
         const [coupon] = await tx
@@ -562,7 +582,115 @@ export async function createOrderAction(
           .where(eq(promotions.id, coupon.id));
       }
 
-      const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryAmount;
+      const merchandiseNet = merchandiseNetAmount(subtotal, discountAmount);
+      let bonusSpentAmount = 0;
+      if (user?.id && (input.bonusSpendAmount ?? 0) > 0) {
+        const [wallet] = await tx
+          .select({ bonusBalanceAmount: users.bonusBalanceAmount })
+          .from(users)
+          .where(eq(users.id, user.id))
+          .for("update")
+          .limit(1);
+        const maxRedeem = computeMaxBonusRedeemAmount({
+          merchandiseNet,
+          deliveryAmount,
+          balanceAmount: wallet?.bonusBalanceAmount ?? 0,
+        });
+        bonusSpentAmount = clampBonusSpendAmount(
+          input.bonusSpendAmount,
+          maxRedeem,
+        );
+      }
+
+      let bonusEarnedAmount = 0;
+      if (user?.id) {
+        const productIds = [
+          ...new Set(lineSnapshots.map((line) => line.productId)),
+        ];
+        const nowForEarn = new Date();
+        const [productRuleRows, categoryLinks, categoryRuleRows] =
+          productIds.length === 0
+            ? [[], [], []]
+            : await Promise.all([
+                tx
+                  .select({
+                    productId: productBonusRules.productId,
+                    amount: productBonusRules.amount,
+                    startsAt: productBonusRules.startsAt,
+                    endsAt: productBonusRules.endsAt,
+                  })
+                  .from(productBonusRules)
+                  .where(inArray(productBonusRules.productId, productIds)),
+                tx
+                  .select({
+                    productId: productCategories.productId,
+                    categoryId: productCategories.categoryId,
+                  })
+                  .from(productCategories)
+                  .where(inArray(productCategories.productId, productIds)),
+                tx
+                  .select({
+                    categoryId: categoryBonusRules.categoryId,
+                    amount: categoryBonusRules.amount,
+                    startsAt: categoryBonusRules.startsAt,
+                    endsAt: categoryBonusRules.endsAt,
+                  })
+                  .from(categoryBonusRules),
+              ]);
+
+        const productAmount = new Map<string, number | null>();
+        for (const row of productRuleRows) {
+          productAmount.set(
+            row.productId,
+            isProductBonusRuleActive(row, nowForEarn) ? row.amount : null,
+          );
+        }
+        const categoryAmount = new Map<string, number | null>();
+        for (const row of categoryRuleRows) {
+          categoryAmount.set(
+            row.categoryId,
+            isProductBonusRuleActive(row, nowForEarn) ? row.amount : null,
+          );
+        }
+        const categoriesByProduct = new Map<string, string[]>();
+        for (const link of categoryLinks) {
+          const list = categoriesByProduct.get(link.productId) ?? [];
+          list.push(link.categoryId);
+          categoriesByProduct.set(link.productId, list);
+        }
+
+        const amountByProductId = new Map<string, number>();
+        for (const productId of productIds) {
+          const picked = pickFlatBonusAmount({
+            productAmount: productAmount.get(productId) ?? null,
+            categoryAmounts: (categoriesByProduct.get(productId) ?? []).map(
+              (categoryId) => categoryAmount.get(categoryId) ?? null,
+            ),
+          });
+          if (picked != null) {
+            amountByProductId.set(productId, picked);
+          }
+        }
+
+        const productEarn = computeFlatBonusEarnAmount(
+          lineSnapshots.map((line) => ({
+            productId: line.productId,
+            quantity: line.quantity,
+          })),
+          amountByProductId,
+        );
+        bonusEarnedAmount = applyEarnMinOrderGate(
+          productEarn,
+          merchandiseNet,
+          loyalty.earnMinOrderAmount,
+        );
+      }
+
+      const totalAmount = computeOrderTotalWithBonus({
+        merchandiseNet,
+        deliveryAmount,
+        bonusSpentAmount,
+      });
 
       if (paymentMethod === "cash_on_delivery") {
         const tender = validateCodCashTenderedAmount(
@@ -613,6 +741,8 @@ export async function createOrderAction(
         exchangeRateAsOf: rateSnapshot.asOf,
         subtotalAmount: subtotal,
         discountAmount,
+        bonusSpentAmount,
+        bonusEarnedAmount,
         taxAmount: 0,
         deliveryAmount,
         totalAmount,
@@ -665,7 +795,16 @@ export async function createOrderAction(
         });
       }
 
+      if (user?.id && bonusSpentAmount > 0) {
+        await spendBonusForOrder(tx, {
+          userId: user.id,
+          orderId,
+          amount: bonusSpentAmount,
+        });
+      }
+
       // Offline (COD): decrement stock now. Online: validate only; confirm later.
+      // Bonus earn is credited only when paymentStatus becomes CAPTURED (Paid).
       if (flowType === "offline") {
         for (const line of lineSnapshots) {
           await tx

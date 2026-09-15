@@ -67,6 +67,8 @@
     "noAddresses": "No addresses yet.",
     "formAddTitle": "Add address",
     "formEditTitle": "Edit address",
+    "label": "Address name",
+    "labelPlaceholder": "Home, Work, …",
     "line1": "Address",
     "city": "City",
     "phone": "Phone",
@@ -95,5 +97,26 @@
     "acknowledge": "I understand that this action cannot be undone.",
     "submit": "Delete account",
     "deleting": "Deleting…"
+  },
+  "bonuses": {
+    "nav": "Bonuses",
+    "title": "My bonuses",
+    "subtitle": "See your balance, how much you have used, and what each order earned.",
+    "balance": "Available",
+    "totalEarned": "Earned",
+    "totalSpent": "Used",
+    "ratesHint": "Bonuses come from product or category rules. You can spend your full bonus balance at checkout.",
+    "ratesHintWithMin": "Bonuses come from product or category rules when merchandise reaches {min}. You can spend your full bonus balance at checkout anytime.",
+    "historyTitle": "Bonus history",
+    "entryEarn": "Earned from order",
+    "entrySpend": "Used at checkout",
+    "entrySpendReversal": "Bonus restored",
+    "entryEarnReversal": "Bonus revoked",
+    "orderLabel": "Order",
+    "empty": "No bonus activity yet.",
+    "emptyHint": "Place an order to start earning bonuses.",
+    "previous": "Previous",
+    "next": "Next",
+    "pageLabel": "Page {page} / {total}"
   }
 }

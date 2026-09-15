@@ -28,6 +28,15 @@ type UseDropdownPortalPositionOptions = {
    * for panels that are wider than their trigger.
    */
   panelWidthPx?: number;
+  /**
+   * When set, remeasures the mounted panel and reclamps against the real
+   * height (taller calendars / dynamic content).
+   */
+  panelRef?: RefObject<HTMLElement | null>;
+  /**
+   * When false, never apply max-height (no inner scroll). Default true.
+   */
+  shrinkToFit?: boolean;
 };
 
 /**
@@ -48,6 +57,8 @@ export function useDropdownPortalPosition(
     placement = "auto",
     panelHeightPx = DROPDOWN_MAX_HEIGHT_PX,
     panelWidthPx = 0,
+    panelRef,
+    shrinkToFit = true,
   } = options;
   const [position, setPosition] = useState<DropdownPortalPosition | null>(null);
 
@@ -61,6 +72,14 @@ export function useDropdownPortalPosition(
       if (!trigger) {
         return;
       }
+
+      const measuredHeight = panelRef?.current?.getBoundingClientRect().height;
+      // Prefer the configured estimate so max-height clamping does not
+      // shrink-measure-loop. Upgrade only when content is taller.
+      const effectiveHeight =
+        measuredHeight != null && measuredHeight > panelHeightPx
+          ? measuredHeight
+          : panelHeightPx;
 
       const rect = trigger.getBoundingClientRect();
       const available = window.innerWidth - VIEWPORT_PADDING_PX * 2;
@@ -90,12 +109,13 @@ export function useDropdownPortalPosition(
 
       const vertical = dropdownVerticalPosition({
         placement,
-        panelHeightPx,
+        panelHeightPx: effectiveHeight,
         triggerTop: rect.top,
         triggerBottom: rect.bottom,
         viewportHeight: window.innerHeight,
         gapPx,
         paddingPx: VIEWPORT_PADDING_PX,
+        shrinkToFit,
       });
 
       setPosition({
@@ -103,13 +123,26 @@ export function useDropdownPortalPosition(
         ...horizontal,
         minWidth,
         maxWidth,
+        ...(shrinkToFit === false ? { maxHeight: "none" } : {}),
       });
     }
 
     updatePosition();
+    // Remeasure after paint once the panel exists (actual height).
+    const rafId = window.requestAnimationFrame(updatePosition);
+
+    const panel = panelRef?.current;
+    let resizeObserver: ResizeObserver | null = null;
+    if (panel != null && typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => updatePosition());
+      resizeObserver.observe(panel);
+    }
+
     window.addEventListener("resize", updatePosition);
     window.addEventListener("scroll", updatePosition, true);
     return () => {
+      window.cancelAnimationFrame(rafId);
+      resizeObserver?.disconnect();
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);
     };
@@ -120,8 +153,10 @@ export function useDropdownPortalPosition(
     lockTriggerWidth,
     matchTriggerWidth,
     panelHeightPx,
+    panelRef,
     panelWidthPx,
     placement,
+    shrinkToFit,
     triggerRef,
   ]);
 

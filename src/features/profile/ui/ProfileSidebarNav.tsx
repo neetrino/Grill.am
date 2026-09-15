@@ -19,6 +19,7 @@ import {
   TicketPercent,
   Trash2,
   User,
+  Gift,
 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
@@ -76,6 +77,12 @@ function buildNavItems(
       href: `/${locale}/profile/promo-codes`,
       label: dictionary.promoCodes.nav,
       icon: <TicketPercent className="h-5 w-5" />,
+    },
+    {
+      key: "bonuses",
+      href: `/${locale}/profile/bonuses`,
+      label: dictionary.bonuses.nav,
+      icon: <Gift className="h-5 w-5" />,
     },
     {
       key: "personal",

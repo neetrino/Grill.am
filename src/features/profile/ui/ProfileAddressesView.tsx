@@ -35,6 +35,7 @@ type CityOption = {
 };
 
 type AddressFormState = {
+  label: string;
   line1: string;
   city: string;
   isDefault: boolean;
@@ -56,6 +57,8 @@ type ProfileAddressesViewProps = {
     noAddresses: string;
     formAddTitle: string;
     formEditTitle: string;
+    label: string;
+    labelPlaceholder: string;
     line1: string;
     city: string;
     selectCity: string;
@@ -68,6 +71,7 @@ type ProfileAddressesViewProps = {
 };
 
 const emptyForm: AddressFormState = {
+  label: "",
   line1: "",
   city: CHECKOUT_DELIVERY_CITY_PRIMARY,
   isDefault: false,
@@ -129,6 +133,7 @@ export function ProfileAddressesView({
   function startEdit(address: CustomerAddressListItem): void {
     setEditingId(address.id);
     setForm({
+      label: address.label ?? "",
       line1: address.line1,
       city: resolveCityValue(address.city, cityOptions),
       isDefault: address.isDefaultShipping,
@@ -248,6 +253,20 @@ export function ProfileAddressesView({
           <h2 className="text-base font-semibold text-gray-900">
             {editingId ? labels.formEditTitle : labels.formAddTitle}
           </h2>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            {labels.label}
+            <input
+              required
+              value={form.label}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, label: event.target.value }))
+              }
+              placeholder={labels.labelPlaceholder}
+              maxLength={80}
+              className={FIELD_CLASS}
+              autoComplete="nickname"
+            />
+          </label>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 sm:items-end">
             <CheckoutSelect
               label={labels.city}

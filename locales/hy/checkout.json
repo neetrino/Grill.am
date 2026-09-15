@@ -40,6 +40,15 @@
     "selectShippingMethod": "Ընտրեք Take Away կամ առաքում",
     "selectDeliveryLocation": "Ընտրեք առաքման վայրը"
   },
+  "addresses": {
+    "title": "Առաքման հասցեներ",
+    "selectAddress": "Ընտրեք հասցեն",
+    "selectAddressRequired": "Ընտրեք առաքման հասցե",
+    "addAddress": "Ավելացնել հասցե",
+    "noAddresses": "Հասցեներ դեռ չկան։ Ավելացրեք ներքևում։",
+    "newBadge": "Նոր",
+    "loginToSave": "Մուտք գործեք՝ հասցեն պրոֆիլում պահելու համար։ Այս պատվերի համար հասցեն կօգտագործվի։"
+  },
   "deliveryCities": {
     "yerevan": "Երևան",
     "aragatsotn": "Արագածոտն",
@@ -153,5 +162,14 @@
     "idramProviderUnavailable": "iDram վճարումը ժամանակավորապես անհասանելի է։ Փորձեք մի փոքր ուշ։",
     "providerUnavailable": "Քարտով վճարումը ժամանակավորապես անհասանելի է։ Փորձեք մի փոքր ուշ։",
     "verificationUnavailable": "Հիմա հնարավոր չէ ստուգել վճարումը։ Փորձեք մի փոքր ուշ։"
+  },
+  "bonus": {
+    "title": "Կուտակային միավորներ",
+    "available": "Հասանելի՝ {amount}",
+    "maxButton": "Առավելագույնը",
+    "applied": "Բոնուս",
+    "loginRequired": "Մուտք գործեք՝ բոնուս օգտագործելու համար",
+    "earnHint": "Վճարումը Paid դառնալուց հետո այս պատվերից կստանաք մոտ {amount} բոնուս։",
+    "minOrderHint": "Բոնուսի հավաքումը հասանելի է ապրանքների {amount} գումարից։"
   }
 }

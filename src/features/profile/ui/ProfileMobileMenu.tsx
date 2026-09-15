@@ -11,6 +11,7 @@ import {
   TicketPercent,
   Trash2,
   User,
+  Gift,
 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
@@ -89,6 +90,11 @@ export function ProfileMobileMenu({
       icon: <TicketPercent />,
     },
     {
+      key: "bonuses",
+      label: dictionary.bonuses.nav,
+      icon: <Gift />,
+    },
+    {
       key: "personal",
       label: dictionary.personal,
       icon: <User />,
@@ -112,6 +118,8 @@ export function ProfileMobileMenu({
         ? dictionary.orders
         : renderedSheet === "promoCodes"
           ? dictionary.promoCodes.nav
+          : renderedSheet === "bonuses"
+            ? dictionary.bonuses.nav
           : renderedSheet === "personal"
             ? dictionary.personal
             : renderedSheet === "addresses"
@@ -187,6 +195,8 @@ export function ProfileMobileMenu({
                 href={`/${locale}/profile/${
                   row.key === "promoCodes"
                     ? "promo-codes"
+                    : row.key === "bonuses"
+                      ? "bonuses"
                     : row.key === "personal"
                       ? "personal-information"
                       : row.key === "deleteAccount"

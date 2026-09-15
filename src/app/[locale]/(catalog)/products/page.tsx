@@ -14,10 +14,12 @@ import { CatalogListingView } from "@/features/products/ui/CatalogListingView";
 import { MobileCatalogCategoryChips } from "@/features/products/ui/MobileCatalogCategoryChips";
 import { MobileCatalogPriceFilters } from "@/features/products/ui/MobileCatalogPriceFilters";
 import { ProductCard } from "@/features/products/ui/ProductCard";
+import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { currencySymbols, defaultCurrency } from "@/lib/money/currency";
 import { formatBaseCatalogPrice } from "@/lib/money/catalog-price";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type ProductsPageProps = {
   params: Promise<{ locale: string }>;
@@ -68,6 +70,13 @@ export default async function ProductsPage({
       compareAtFormatted: compareAt?.formatted ?? null,
     };
   });
+
+  const bonusEarnByProductId = await resolveProductCardBonusEarnByProductId(
+    catalog.products.map((product) => ({
+      id: product.id,
+      priceAmount: product.priceAmount,
+    })),
+  );
 
   const selectedCategory =
     filters.category.length > 0
@@ -225,6 +234,18 @@ export default async function ProductsPage({
                 addToCartLabel={dictionary.product.addToCart}
                 requiresConfiguration={product.requiresConfiguration}
                 hitLabel={product.isFeatured ? dictionary.product.hit : null}
+                bonusEarnLabel={
+                  (bonusEarnByProductId.get(product.id) ?? 0) > 0
+                    ? dictionary.product.bonusEarn.replace(
+                        "{amount}",
+                        formatMoneyAmount(
+                          bonusEarnByProductId.get(product.id) ?? 0,
+                          "AMD",
+                          rawLocale,
+                        ),
+                      )
+                    : null
+                }
               />
             ))}
           </CatalogListingView>

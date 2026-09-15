@@ -46,6 +46,7 @@ export type ProfileNavKey =
   | "dashboard"
   | "orders"
   | "promoCodes"
+  | "bonuses"
   | "personal"
   | "addresses"
   | "password"
