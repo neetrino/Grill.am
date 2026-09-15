@@ -132,11 +132,11 @@ export function useDropdownPortalPosition(
     const rafId = window.requestAnimationFrame(updatePosition);
 
     const panel = panelRef?.current;
-    const resizeObserver =
-      panel != null && typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(() => updatePosition())
-        : null;
-    resizeObserver?.observe(panel);
+    let resizeObserver: ResizeObserver | null = null;
+    if (panel != null && typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => updatePosition());
+      resizeObserver.observe(panel);
+    }
 
     window.addEventListener("resize", updatePosition);
     window.addEventListener("scroll", updatePosition, true);

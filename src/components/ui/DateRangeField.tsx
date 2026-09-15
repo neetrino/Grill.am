@@ -76,7 +76,6 @@ export function DateRangeField({
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const wasOpenRef = useRef(false);
   const triggerId = useId();
   const panelId = useId();
 
@@ -95,37 +94,33 @@ export function DateRangeField({
 
   const [activeBound, setActiveBound] = useState<DateRangeBound>("start");
   const [draft, setDraft] = useState<DateRangeValue>(value);
-  const draftRef = useRef(draft);
-  draftRef.current = draft;
+  const [wasOpen, setWasOpen] = useState(disclosure.isOpen);
 
-  if (disclosure.isOpen && !wasOpenRef.current) {
-    setDraft(value);
-    draftRef.current = value;
-    setActiveBound("start");
+  if (disclosure.isOpen !== wasOpen) {
+    setWasOpen(disclosure.isOpen);
+    if (disclosure.isOpen) {
+      setDraft(value);
+      setActiveBound("start");
+    }
   }
-  wasOpenRef.current = disclosure.isOpen;
 
   function handleBoundChange(bound: DateRangeBound, nextValue: string): void {
-    setDraft((prev) => {
-      const next =
-        bound === "start"
-          ? { ...prev, startsAt: nextValue }
-          : { ...prev, endsAt: nextValue };
-      draftRef.current = next;
-      return next;
-    });
+    setDraft((prev) =>
+      bound === "start"
+        ? { ...prev, startsAt: nextValue }
+        : { ...prev, endsAt: nextValue },
+    );
   }
 
   function handleClear(): void {
     const empty = { startsAt: "", endsAt: "" };
     setDraft(empty);
-    draftRef.current = empty;
     onChange(empty);
     disclosure.close();
   }
 
   function handleApply(): void {
-    onChange(draftRef.current);
+    onChange(draft);
     disclosure.close();
   }
 

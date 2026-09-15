@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -382,29 +381,15 @@ export function CheckoutForm({
     bonusSpentAmount,
   });
 
-  useEffect(() => {
-    if (!useBonus) {
-      return;
+  if (useBonus && maxBonusRedeem <= 0) {
+    setUseBonus(false);
+    setBonusDraft("");
+  } else if (useBonus && bonusDraft.trim() !== "") {
+    const parsed = Number.parseInt(bonusDraft.replace(/\s/g, ""), 10);
+    if (Number.isInteger(parsed) && parsed > maxBonusRedeem) {
+      setBonusDraft(String(maxBonusRedeem));
     }
-    if (maxBonusRedeem <= 0) {
-      setBonusDraft("");
-      setUseBonus(false);
-      return;
-    }
-    setBonusDraft((current) => {
-      if (current.trim() === "") {
-        return current;
-      }
-      const parsed = Number.parseInt(current.replace(/\s/g, ""), 10);
-      if (!Number.isInteger(parsed)) {
-        return current;
-      }
-      if (parsed > maxBonusRedeem) {
-        return String(maxBonusRedeem);
-      }
-      return current;
-    });
-  }, [maxBonusRedeem, useBonus]);
+  }
 
   function onUseBonusChange(next: boolean): void {
     setUseBonus(next);
