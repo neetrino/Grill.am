@@ -199,20 +199,8 @@ export function CartDrawer({
               </div>
 
               <div className="border-t border-gray-200 bg-[#fafafa] px-6 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-                <dl className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between gap-3 text-gray-500">
-                    <dt>{labels.subtotal}</dt>
-                    <dd className="font-medium tabular-nums">
-                      {view?.subtotalFormatted ?? "—"}
-                    </dd>
-                  </div>
-                  <div className="flex items-center justify-between gap-3 text-gray-500">
-                    <dt>{labels.shipping}</dt>
-                    <dd className="font-medium tabular-nums">
-                      {view?.shippingFormatted ?? "—"}
-                    </dd>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between gap-3 text-base font-bold text-gray-900">
+                <dl className="text-sm">
+                  <div className="flex items-center justify-between gap-3 text-base font-bold text-gray-900">
                     <dt>{labels.total}</dt>
                     <dd className="tabular-nums">
                       {view?.totalFormatted ?? "—"}

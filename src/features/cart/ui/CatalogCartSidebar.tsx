@@ -136,26 +136,12 @@ export function CatalogCartSidebar({
       </div>
 
       <div className="border-t border-[#f3f4f6] px-5 pt-[21px] pb-8">
-        <dl className="space-y-0 text-sm">
+        <dl className="text-sm">
           <div className="flex items-center justify-between leading-5">
-            <dt className="text-[#4a5565]">{labels.subtotal}</dt>
-            <dd className="font-medium tabular-nums text-[#101828]">
-              {view?.subtotalFormatted ?? "—"}
+            <dt className="font-bold text-[#101828]">{labels.total}</dt>
+            <dd className="font-bold tabular-nums text-brand-red">
+              {view?.totalFormatted ?? "—"}
             </dd>
-          </div>
-          <div className="flex items-center justify-between pt-2.5 leading-5">
-            <dt className="text-[#4a5565]">{labels.shipping}</dt>
-            <dd className="font-medium tabular-nums text-[#101828]">
-              {view?.shippingFormatted ?? "—"}
-            </dd>
-          </div>
-          <div className="mt-2.5 border-t border-[#f3f4f6] pt-3.5">
-            <div className="flex items-center justify-between leading-5">
-              <dt className="font-bold text-[#101828]">{labels.total}</dt>
-              <dd className="font-bold tabular-nums text-brand-red">
-                {view?.totalFormatted ?? "—"}
-              </dd>
-            </div>
           </div>
         </dl>
 
