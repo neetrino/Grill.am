@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { AUTH_FROM_COINS } from "@/features/auth/guest-coins-login";
 import { loginAction } from "@/features/auth/login-action";
 import type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 import {
@@ -30,7 +31,13 @@ type LoginFormProps = {
 export function LoginForm({ locale, dictionary }: LoginFormProps) {
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next");
+  const fromCoins = searchParams.get("from") === AUTH_FROM_COINS;
   const resetSucceeded = searchParams.get("reset") === "1";
+  const registerHref = fromCoins
+    ? `/${locale}/register?from=${AUTH_FROM_COINS}${
+        nextPath ? `&next=${encodeURIComponent(nextPath)}` : ""
+      }`
+    : `/${locale}/register`;
   const action = loginAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
   const values = state.values;
@@ -45,8 +52,14 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
     >
       {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
 
+      <AuthMotionField index={0}>
+        <p className="text-center text-sm leading-relaxed text-brand-ink/50">
+          {dictionary.loginSubtitle}
+        </p>
+      </AuthMotionField>
+
       {resetSucceeded ? (
-        <AuthMotionField index={0}>
+        <AuthMotionField index={1}>
           <p
             role="status"
             className="rounded-[10px] border-2 border-green-700 bg-green-50 p-3 text-sm font-medium text-green-800"
@@ -56,7 +69,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         </AuthMotionField>
       ) : null}
 
-      <AuthMotionField index={0}>
+      <AuthMotionField index={1}>
         <AuthAnimatedInput
           required
           name="email"
@@ -70,7 +83,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         />
       </AuthMotionField>
 
-      <AuthMotionField index={1}>
+      <AuthMotionField index={2}>
         <PasswordField
           name="password"
           label={dictionary.password}
@@ -129,12 +142,13 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
 
       <AuthMotionField index={4}>
         <p className="text-center text-sm text-brand-ink/60">
+          {dictionary.noAccount}{" "}
           <AppLink
-            href={`/${locale}/register`}
+            href={registerHref}
             prefetchPolicy="intent"
             className={AUTH_LINK_CLASS}
           >
-            {dictionary.submitRegister}
+            {dictionary.registerLink}
           </AppLink>
         </p>
       </AuthMotionField>

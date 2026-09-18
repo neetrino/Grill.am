@@ -1,16 +1,15 @@
 "use client";
 
 import { AppLink } from "@/components/ui/AppLink";
-import {
-  formatOrderDrawerMoney,
-  formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
+import { adminOrderStatusLabel } from "@/features/orders/ui/admin-order-status-labels";
+import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrderCard";
 import {
   PROFILE_PRIMARY_BUTTON_CLASS,
 } from "@/features/profile/ui/profile-ui";
 import type { Locale } from "@/lib/i18n/config";
 import { formatShortDate } from "@/lib/i18n/format-date";
+import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerOrdersCardItem = {
   id: string;
@@ -36,6 +35,7 @@ type CustomerOrdersCardsProps = {
   locale: Locale;
   orders: CustomerOrdersCardItem[];
   labels: CustomerOrdersCardsLabels;
+  statusLabels: AdminDictionary["orders"]["status"];
   onOpenOrder: (orderNumber: string) => void;
   className?: string;
 };
@@ -47,6 +47,7 @@ export function CustomerOrdersCards({
   locale,
   orders,
   labels,
+  statusLabels,
   onOpenOrder,
   className = "",
 }: CustomerOrdersCardsProps) {
@@ -78,7 +79,7 @@ export function CustomerOrdersCards({
           <li key={order.id} className="min-w-0">
             <ProfileRecentOrderCard
               orderNumber={order.orderNumber}
-              status={formatOrderStatusLabel(order.status)}
+              status={adminOrderStatusLabel(order.status, statusLabels)}
               totalLabel={formatOrderDrawerMoney(
                 order.totalAmount,
                 order.baseCurrency,

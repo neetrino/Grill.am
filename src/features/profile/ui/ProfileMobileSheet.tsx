@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type AnimationEvent,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
@@ -27,6 +28,10 @@ import {
 } from "@/features/profile/ui/profile-ui";
 
 const DISMISS_VELOCITY = 0.5;
+
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
 
 /** Drag distance at which the backdrop reaches its most transparent state. */
 const BACKDROP_DRAG_FADE_PX = 360;
@@ -58,6 +63,7 @@ export function ProfileMobileSheet({
   children,
   heightVh = PROFILE_MOBILE_SHEET_HEIGHT_VH,
 }: ProfileMobileSheetProps) {
+  const canPortal = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<SheetPhase>("enter");
   const [dragY, setDragY] = useState(0);
@@ -66,14 +72,11 @@ export function ProfileMobileSheet({
   const lastYRef = useRef(0);
   const lastTsRef = useRef(0);
   const velocityRef = useRef(0);
-  // Tracks the `open` prop value last synced into mount/phase state.
-  const [openSynced, setOpenSynced] = useState(open);
+  // Starts false so `open` already true (`?sheet=bonuses`) still counts as a flip
+  // once the client can portal — otherwise the sheet never mounts.
+  const [openSynced, setOpenSynced] = useState(false);
 
-  // Adjust mount/exit state during render when `open` flips (React
-  // "adjusting state on prop change" pattern) instead of a synchronous
-  // setState inside an effect. Only ever runs once per genuine `open`
-  // transition, so no re-entrancy guard is needed.
-  if (open !== openSynced) {
+  if (canPortal && open !== openSynced) {
     setOpenSynced(open);
     if (open) {
       setMounted(true);

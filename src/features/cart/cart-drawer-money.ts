@@ -17,6 +17,13 @@ export function safeMoneyInteger(value: number): number {
   return Math.max(0, Math.trunc(value));
 }
 
+function formatBonusEarnAmount(amount: number, locale: Locale): string {
+  if (amount <= 0) {
+    return "";
+  }
+  return `+${amount.toLocaleString(locale === "en" ? "en-US" : "ru-RU")}`;
+}
+
 /**
  * Derives item line totals and cart summary from integer minor-unit prices.
  * Server-only adjustments (coupons, etc.) stay on `adjustmentsAmount`.
@@ -29,10 +36,14 @@ export function recalculateLocalCartView(
 
   const items = current.items.map((item) => {
     const unitPriceAmount = safeMoneyInteger(item.unitPriceAmount ?? 0);
+    const bonusEarnUnitAmount = safeMoneyInteger(
+      item.bonusEarnUnitAmount ?? 0,
+    );
     const lineTotalAmount = unitPriceAmount * item.quantity;
     return {
       ...item,
       unitPriceAmount,
+      bonusEarnUnitAmount,
       lineTotalAmount,
       unitPriceFormatted: formatMoneyAmount(
         unitPriceAmount,
@@ -53,6 +64,10 @@ export function recalculateLocalCartView(
   );
   const totalAmount = Math.max(0, subtotalAmount + adjustmentsAmount);
   const shippingAmount = safeMoneyInteger(current.shippingAmount ?? 0);
+  const bonusEarnAmount = items.reduce(
+    (sum, item) => sum + item.bonusEarnUnitAmount * item.quantity,
+    0,
+  );
 
   return {
     ...current,
@@ -64,11 +79,13 @@ export function recalculateLocalCartView(
     totalAmount,
     adjustmentsAmount,
     shippingAmount,
+    bonusEarnAmount,
     subtotalFormatted: formatMoneyAmount(subtotalAmount, currency, locale),
     shippingFormatted:
       current.shippingFormatted ||
       formatMoneyAmount(shippingAmount, currency, locale),
     totalFormatted: formatMoneyAmount(totalAmount, currency, locale),
+    bonusEarnFormatted: formatBonusEarnAmount(bonusEarnAmount, locale),
   };
 }
 
@@ -85,8 +102,10 @@ export function emptyCartDrawerView(
     totalAmount: 0,
     adjustmentsAmount: 0,
     shippingAmount: 0,
+    bonusEarnAmount: 0,
     subtotalFormatted: formatMoneyAmount(0, currency, locale),
     shippingFormatted: formatMoneyAmount(0, currency, locale),
     totalFormatted: formatMoneyAmount(0, currency, locale),
+    bonusEarnFormatted: "",
   });
 }

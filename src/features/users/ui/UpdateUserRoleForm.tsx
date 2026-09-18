@@ -66,7 +66,7 @@ export function UpdateUserRoleForm({
   }
 
   return (
-    <div className="w-fit max-w-full">
+    <div className="w-fit shrink-0">
       <AdminSelect
         label={forms.role}
         name="userRole"

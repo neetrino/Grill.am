@@ -350,7 +350,10 @@
       "customizations": "Additions & removals",
       "bonusSpent": "Bonus used",
       "bonusEarned": "Received bonus",
-      "grillCoinLabel": "Grill Coin"
+      "grillCoinLabel": "Grill Coin",
+      "customerReviewNotice": "Payment was received. The order is under review — support will contact you if needed.",
+      "paymentAttempt": "Attempt {number} — {status}",
+      "paymentAttemptLatest": " (latest)"
     },
     "detail": {
       "customer": "Customer",

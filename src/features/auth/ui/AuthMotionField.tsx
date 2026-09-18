@@ -55,7 +55,7 @@ type AuthAnimatedInputProps = Omit<
 };
 
 /**
- * Text input with focus underline draw + typing pulse.
+ * Text input with a tight yellow focus ring + typing pulse.
  * Shared by login/register for a consistent interactive feel.
  */
 export function AuthAnimatedInput({
@@ -116,22 +116,14 @@ export function AuthAnimatedInput({
       />
 
       <motion.span
-        className="pointer-events-none absolute right-3 bottom-0 left-3 h-[2.5px] origin-left rounded-full bg-brand-yellow"
-        initial={false}
-        animate={{ scaleX: focused ? 1 : 0, opacity: focused ? 1 : 0 }}
-        transition={{ duration: 0.35, ease: EASE }}
-        aria-hidden
-      />
-
-      <motion.span
         className="pointer-events-none absolute inset-0 rounded-[20px]"
         animate={
           reduceMotion
             ? undefined
             : {
                 boxShadow: focused
-                  ? "0 0 0 3px rgba(255,193,44,0.22)"
-                  : "0 0 0 0px rgba(255,193,44,0)",
+                  ? "0 0 0 2px var(--brand-yellow)"
+                  : "0 0 0 0px var(--brand-yellow)",
               }
         }
         transition={{ duration: 0.28 }}

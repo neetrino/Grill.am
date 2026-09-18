@@ -1,6 +1,9 @@
 "use client";
 
-import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import {
   ORDER_DETAIL_CARD,
@@ -72,16 +75,21 @@ export function OrderDetailsDrawerSummary({
       detail.status === "REQUIRES_REVIEW" &&
       detail.paymentStatus === "CAPTURED" ? (
         <p className="mt-2 text-sm text-amber-800" role="status">
-          Payment was received. The order is under review — support will
-          contact you if needed.
+          {drawer.customerReviewNotice}
         </p>
       ) : null}
       {attempts.length > 1 ? (
         <ul className="mt-3 space-y-1 text-sm text-gray-600">
           {attempts.map((attempt) => (
             <li key={`${attempt.provider}-${attempt.attemptNumber}`}>
-              Attempt {attempt.attemptNumber} — {attempt.status}
-              {attempt.isLatest ? " (latest)" : ""}
+              {formatAdminMessage(drawer.paymentAttempt, {
+                number: String(attempt.attemptNumber),
+                status: adminPaymentStatusLabel(
+                  attempt.status,
+                  dictionary.orders.paymentStatus,
+                ),
+              })}
+              {attempt.isLatest ? drawer.paymentAttemptLatest : ""}
             </li>
           ))}
         </ul>

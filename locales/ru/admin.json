@@ -350,7 +350,10 @@
       "customizations": "Добавки и исключения",
       "bonusSpent": "Списано бонусов",
       "bonusEarned": "Полученный бонус",
-      "grillCoinLabel": "Grill Coin"
+      "grillCoinLabel": "Grill Coin",
+      "customerReviewNotice": "Оплата получена, заказ проверяется. При необходимости служба поддержки свяжется с вами.",
+      "paymentAttempt": "Попытка {number} — {status}",
+      "paymentAttemptLatest": " (последняя)"
     },
     "detail": {
       "customer": "Клиент",

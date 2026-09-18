@@ -52,10 +52,9 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
           {title}
           <WishlistEmptyState
             title={dictionary.wishlist.signInTitle}
-            hint={dictionary.wishlist.signInPrompt}
-            actionLabel={dictionary.header.login}
-            actionHref={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
-            actionIcon="login"
+            titleSecondLine={dictionary.wishlist.signInTitleAccent}
+            actionLabel={dictionary.wishlist.browseCatalog}
+            actionHref={`/${rawLocale}/products`}
           />
         </div>
       </section>

@@ -6,26 +6,29 @@ import { Search } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
 import { ADMIN_FILTER_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { formatAdminMessage } from "@/features/admin/ui/format-admin-message";
 import { CheckoutSelect } from "@/features/checkout/ui/CheckoutSelect";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
+import type { AdminDictionary, ProfileDictionary } from "@/lib/i18n/get-dictionary";
 
 const ORDER_STATUS_FILTERS = [
-  { label: "All statuses", value: "" },
-  { label: "pending", value: "PENDING" },
-  { label: "processing", value: "PROCESSING" },
-  { label: "completed", value: "DELIVERED" },
-  { label: "cancelled", value: "CANCELLED" },
-] as const satisfies ReadonlyArray<{ label: string; value: "" | OrderStatus }>;
+  { statusKey: "pending", value: "PENDING" },
+  { statusKey: "processing", value: "PROCESSING" },
+  { statusKey: "completed", value: "DELIVERED" },
+  { statusKey: "cancelled", value: "CANCELLED" },
+] as const satisfies ReadonlyArray<{
+  statusKey: keyof AdminDictionary["orders"]["status"];
+  value: OrderStatus;
+}>;
 
 const PAYMENT_STATUS_FILTERS = [
-  { label: "All payment statuses", value: "" },
-  { label: "paid", value: "CAPTURED" },
-  { label: "pending", value: "PENDING" },
-  { label: "failed", value: "FAILED" },
+  { statusKey: "paid", value: "CAPTURED" },
+  { statusKey: "pending", value: "PENDING" },
+  { statusKey: "failed", value: "FAILED" },
 ] as const satisfies ReadonlyArray<{
-  label: string;
-  value: "" | PaymentStatus;
+  statusKey: keyof AdminDictionary["orders"]["paymentStatus"];
+  value: PaymentStatus;
 }>;
 
 type CustomerOrdersFiltersProps = {
@@ -33,6 +36,9 @@ type CustomerOrdersFiltersProps = {
   status?: OrderStatus;
   paymentStatus?: string;
   q?: string;
+  copy: ProfileDictionary["ordersList"];
+  statusLabels: AdminDictionary["orders"]["status"];
+  paymentLabels: AdminDictionary["orders"]["paymentStatus"];
 };
 
 export function CustomerOrdersFilters({
@@ -40,11 +46,30 @@ export function CustomerOrdersFilters({
   status,
   paymentStatus,
   q,
+  copy,
+  statusLabels,
+  paymentLabels,
 }: CustomerOrdersFiltersProps) {
   const router = useRouter();
   const [statusValue, setStatusValue] = useState(status ?? "");
   const [paymentValue, setPaymentValue] = useState(paymentStatus ?? "");
   const [queryValue, setQueryValue] = useState(q ?? "");
+
+  const orderOptions = [
+    { value: "", label: copy.allStatuses },
+    ...ORDER_STATUS_FILTERS.map((option) => ({
+      value: option.value,
+      label: statusLabels[option.statusKey],
+    })),
+  ];
+
+  const paymentOptions = [
+    { value: "", label: copy.allPaymentStatuses },
+    ...PAYMENT_STATUS_FILTERS.map((option) => ({
+      value: option.value,
+      label: paymentLabels[option.statusKey],
+    })),
+  ];
 
   const pushFilters = useCallback(
     (next: { status: string; paymentStatus: string; q: string }) => {
@@ -80,17 +105,17 @@ export function CustomerOrdersFilters({
             name="q"
             value={queryValue}
             onChange={(event) => setQueryValue(event.target.value)}
-            placeholder="Search by order #"
+            placeholder={copy.searchPlaceholder}
             className={`${ADMIN_FILTER_INPUT} w-full min-w-0 pl-10`}
-            aria-label="Search orders"
+            aria-label={copy.searchAria}
           />
         </label>
         <CheckoutSelect
-          label="Order status"
+          label={copy.orderStatus}
           hideLabel
           fitContent
-          placeholder="All statuses"
-          options={ORDER_STATUS_FILTERS}
+          placeholder={copy.allStatuses}
+          options={orderOptions}
           value={statusValue}
           onChange={(value) => {
             setStatusValue(value);
@@ -102,11 +127,11 @@ export function CustomerOrdersFilters({
           }}
         />
         <CheckoutSelect
-          label="Payment status"
+          label={copy.paymentStatus}
           hideLabel
           fitContent
-          placeholder="All payment statuses"
-          options={PAYMENT_STATUS_FILTERS}
+          placeholder={copy.allPaymentStatuses}
+          options={paymentOptions}
           value={paymentValue}
           onChange={(value) => {
             setPaymentValue(value);
@@ -119,7 +144,9 @@ export function CustomerOrdersFilters({
         />
       </form>
       <div className="border-t border-gray-200 px-4 py-3">
-        <p className="text-sm text-gray-600">Total orders: {total}</p>
+        <p className="text-sm text-gray-600">
+          {formatAdminMessage(copy.totalOrders, { total: String(total) })}
+        </p>
       </div>
     </Card>
   );

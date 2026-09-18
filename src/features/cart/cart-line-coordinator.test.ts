@@ -78,6 +78,7 @@ function serverLine(
       "hy",
     ),
     modifierLines: [],
+    bonusEarnUnitAmount: 0,
   };
 }
 
@@ -91,9 +92,11 @@ function serverView(items: CartDrawerItemView[]): CartDrawerView {
     adjustmentsAmount: 0,
     shippingAmount: 0,
     totalAmount: 0,
+    bonusEarnAmount: 0,
     subtotalFormatted: "",
     shippingFormatted: formatMoneyAmount(0, "AMD", "hy"),
     totalFormatted: "",
+    bonusEarnFormatted: "",
   });
 }
 

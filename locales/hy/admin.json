@@ -350,7 +350,10 @@
       "customizations": "Ավելացումներ և հեռացումներ",
       "bonusSpent": "Օգտագործված բոնուս",
       "bonusEarned": "Ստացված բոնուս",
-      "grillCoinLabel": "Grill Coin"
+      "grillCoinLabel": "Grill Coin",
+      "customerReviewNotice": "Վճարումը ստացվել է, և պատվերը վերանայվում է։ Անհրաժեշտության դեպքում աջակցությունը կկապվի ձեզ հետ։",
+      "paymentAttempt": "Փորձ {number} — {status}",
+      "paymentAttemptLatest": " (վերջին)"
     },
     "detail": {
       "customer": "Հաճախորդ",

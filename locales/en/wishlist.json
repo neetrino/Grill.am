@@ -3,7 +3,7 @@
   "titleAccent": "Wishlist",
   "empty": "Your wishlist is empty.",
   "emptyHint": "Tap the heart on a product to keep it here.",
-  "browseCatalog": "Product catalog",
-  "signInTitle": "Sign in to view your wishlist",
-  "signInPrompt": "Sign in to save products to your wishlist."
+  "browseCatalog": "View menu",
+  "signInTitle": "Sign in to view your",
+  "signInTitleAccent": "wishlist"
 }
