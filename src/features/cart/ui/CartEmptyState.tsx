@@ -46,10 +46,10 @@ export function CartEmptyState({
         alt=""
         width={EMPTY_CART_MASCOT_WIDTH}
         height={EMPTY_CART_MASCOT_HEIGHT}
-        sizes={isCompact ? "96px" : "248px"}
+        sizes={isCompact ? "128px" : "248px"}
         unoptimized
         className={
-          isCompact ? "h-24 w-auto" : "-mt-2 h-[220px] w-auto sm:h-[248px]"
+          isCompact ? "h-32 w-auto" : "-mt-2 h-[220px] w-auto sm:h-[248px]"
         }
         aria-hidden
       />
