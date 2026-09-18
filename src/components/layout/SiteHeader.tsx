@@ -1,3 +1,4 @@
+import { HeaderCoinsClientIsland } from "@/components/layout/HeaderCoinsClientIsland";
 import {
   HeaderGuestDesktopActions,
   HeaderGuestMobileNav,
@@ -22,7 +23,8 @@ type SiteHeaderProps = {
   /**
    * When false, skip session/cart/wishlist cookies so the route can be ISR.
    * Client cart/wishlist badges still hydrate from local sync.
-   * Coins pill still streams (own Suspense island) so menu keeps the control.
+   * Coins pill hydrates on the client — a server Suspense island would call
+   * `cookies()` and 500 static PDP with DYNAMIC_SERVER_USAGE.
    */
   personalize?: boolean;
 };
@@ -70,7 +72,15 @@ export async function SiteHeader({
         )
       }
       coinsAction={
-        <HeaderCoinsIsland locale={locale} dictionary={dictionary} />
+        guest ? (
+          <HeaderCoinsClientIsland
+            locale={locale}
+            coinsLabel={dictionary.header.coins}
+            ariaLabel={dictionary.header.coinsAria}
+          />
+        ) : (
+          <HeaderCoinsIsland locale={locale} dictionary={dictionary} />
+        )
       }
       desktopActions={
         guest ? (

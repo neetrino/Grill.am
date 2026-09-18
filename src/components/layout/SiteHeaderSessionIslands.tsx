@@ -190,7 +190,7 @@ async function HeaderCoinsAsync({
   );
 }
 
-/** Bonuses pill beside search — always mounted (incl. ISR catalog routes). */
+/** Bonuses pill beside search — session routes only (`personalize={true}`). */
 export function HeaderCoinsIsland(props: HeaderCoinsIslandProps) {
   return (
     <Suspense
