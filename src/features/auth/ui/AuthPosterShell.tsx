@@ -60,6 +60,8 @@ type AuthPosterShellProps = {
   /** Form card heading. */
   formLead: string;
   formAccent: string;
+  /** Optional left panel (e.g. coins explainer on guest coins login). */
+  aside?: ReactNode;
   children: ReactNode;
 };
 
@@ -71,11 +73,13 @@ export function AuthPosterShell({
   mode,
   formLead,
   formAccent,
+  aside = null,
   children,
 }: AuthPosterShellProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
+  const hasAside = aside != null;
 
   useEffect(() => {
     const root = rootRef.current;
@@ -94,7 +98,7 @@ export function AuthPosterShell({
           { opacity: 1, duration: 0.55 },
         )
         .fromTo(
-          root.querySelector("[data-poster-card]"),
+          root.querySelectorAll("[data-poster-card]"),
           { y: 28, opacity: 0, rotate: 1.2, filter: "blur(10px)" },
           {
             y: 0,
@@ -103,6 +107,7 @@ export function AuthPosterShell({
             filter: "blur(0px)",
             duration: 0.9,
             ease: "power4.out",
+            stagger: 0.08,
           },
           "-=0.2",
         );
@@ -139,7 +144,7 @@ export function AuthPosterShell({
       cardCtx.revert();
       backdropCtx.revert();
     };
-  }, [mode, reduceMotion]);
+  }, [mode, hasAside, reduceMotion]);
 
   return (
     <>
@@ -179,34 +184,62 @@ export function AuthPosterShell({
         >
           <div
             className={`relative mx-auto w-full lg:-translate-y-16 ${
-              mode === "register" ? "max-w-[560px]" : "max-w-[420px]"
+              hasAside
+                ? "max-w-[920px]"
+                : mode === "register"
+                  ? "max-w-[560px]"
+                  : "max-w-[420px]"
             }`}
           >
-            <motion.div
-              data-poster-card
-              className="relative overflow-hidden rounded-[22px] bg-white/95 p-6 shadow-[0_28px_90px_rgba(7,16,20,0.32)] backdrop-blur-xl sm:p-8"
-              initial={
-                reduceMotion
-                  ? false
-                  : { opacity: 0, y: 16, filter: "blur(8px)", rotate: 0.6 }
+            <div
+              className={
+                hasAside
+                  ? "grid items-stretch gap-5 lg:grid-cols-2 lg:gap-6"
+                  : undefined
               }
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)", rotate: 0 }}
-              transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
             >
-              <motion.div
-                className="relative mb-7"
-                initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.28, ease: EASE }}
-              >
-                <h1 className="font-auth-display text-[1.65rem] leading-[1.15] font-extrabold tracking-[-0.03em] text-brand-ink sm:text-[1.85rem]">
-                  <span className="text-brand-red">{formLead}</span>{" "}
-                  <span className="text-brand-ink">{formAccent}</span>
-                </h1>
-              </motion.div>
+              {hasAside ? (
+                <motion.div
+                  data-poster-card
+                  className="relative min-h-0"
+                  initial={
+                    reduceMotion
+                      ? false
+                      : { opacity: 0, y: 16, filter: "blur(8px)", rotate: -0.6 }
+                  }
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)", rotate: 0 }}
+                  transition={{ duration: 0.85, delay: 0.08, ease: EASE }}
+                >
+                  {aside}
+                </motion.div>
+              ) : null}
 
-              <div className="relative">{children}</div>
-            </motion.div>
+              <motion.div
+                data-poster-card
+                className="relative overflow-hidden rounded-[22px] bg-white/95 p-6 shadow-[0_28px_90px_rgba(7,16,20,0.32)] backdrop-blur-xl sm:p-8"
+                initial={
+                  reduceMotion
+                    ? false
+                    : { opacity: 0, y: 16, filter: "blur(8px)", rotate: 0.6 }
+                }
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)", rotate: 0 }}
+                transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
+              >
+                <motion.div
+                  className="relative mb-7"
+                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.28, ease: EASE }}
+                >
+                  <h1 className="font-auth-display text-[1.65rem] leading-[1.15] font-extrabold tracking-[-0.03em] text-brand-ink sm:text-[1.85rem]">
+                    <span className="text-brand-red">{formLead}</span>{" "}
+                    <span className="text-brand-ink">{formAccent}</span>
+                  </h1>
+                </motion.div>
+
+                <div className="relative">{children}</div>
+              </motion.div>
+            </div>
           </div>
         </section>
       </div>

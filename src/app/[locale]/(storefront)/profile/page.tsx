@@ -96,6 +96,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     viewDetails: profileCopy.viewDetails,
     noOrders: profileCopy.noOrders,
     startShopping: profileCopy.startShopping,
+    status: profileCopy.status,
+    total: profileCopy.total,
+    ordersList: profileCopy.ordersList,
   } as const;
 
   return (

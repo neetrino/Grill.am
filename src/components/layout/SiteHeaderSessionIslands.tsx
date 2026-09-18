@@ -9,6 +9,7 @@ import {
   MobileNavAuthButtonFallback,
 } from "@/components/layout/MobileNavAuthButton";
 import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
+import { guestCoinsLoginHref } from "@/features/auth/guest-coins-login";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getUserBonusBalance } from "@/features/loyalty/application/queries";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
@@ -65,9 +66,7 @@ function CoinsPillFromSession({
       coinsLabel={dictionary.header.coins}
       ariaLabel={dictionary.header.coinsAria}
       href={
-        user
-          ? `/${locale}/profile/bonuses`
-          : `/${locale}/login`
+        user ? `/${locale}/profile/bonuses` : guestCoinsLoginHref(locale)
       }
       size={size}
     />

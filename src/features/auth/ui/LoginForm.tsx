@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { AUTH_FROM_COINS } from "@/features/auth/guest-coins-login";
 import { loginAction } from "@/features/auth/login-action";
 import type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 import {
@@ -30,7 +31,13 @@ type LoginFormProps = {
 export function LoginForm({ locale, dictionary }: LoginFormProps) {
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next");
+  const fromCoins = searchParams.get("from") === AUTH_FROM_COINS;
   const resetSucceeded = searchParams.get("reset") === "1";
+  const registerHref = fromCoins
+    ? `/${locale}/register?from=${AUTH_FROM_COINS}${
+        nextPath ? `&next=${encodeURIComponent(nextPath)}` : ""
+      }`
+    : `/${locale}/register`;
   const action = loginAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
   const values = state.values;
@@ -130,7 +137,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
       <AuthMotionField index={4}>
         <p className="text-center text-sm text-brand-ink/60">
           <AppLink
-            href={`/${locale}/register`}
+            href={registerHref}
             prefetchPolicy="intent"
             className={AUTH_LINK_CLASS}
           >
