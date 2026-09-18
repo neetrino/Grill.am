@@ -21,8 +21,6 @@ type CoinPlacement = {
 
 const FIGMA_STAGE_WIDTH_PX = 1470;
 const FIGMA_STAGE_ASPECT = "1470 / 953";
-/** Drop the fire on coins login so flame tips sit below the floating coins. */
-const COINS_FIRE_OFFSET = "7rem";
 
 /** Inner 3D coin vector (Figma 372:484) inside the Phosphor icon box. */
 const COIN_VECTOR_BOX = {
@@ -34,44 +32,44 @@ const COIN_VECTOR_BOX = {
 
 const COIN_PLACEMENTS: readonly CoinPlacement[] = [
   {
-    left: "2.47%",
+    left: "8.2%",
     top: "30.54%",
-    size: "16.2%",
+    size: "10%",
     icon: "70.84%",
     rotate: "131.59deg",
   },
   {
-    left: "4.86%",
+    left: "1.1%",
     top: "6.03%",
-    size: "15.59%",
+    size: "9.7%",
     icon: "73.59%",
     rotate: "-151.07deg",
   },
   {
-    left: "24.02%",
+    left: "17.4%",
     top: "14.38%",
-    size: "15.85%",
+    size: "9.8%",
     icon: "72.34%",
     rotate: "-57.2deg",
   },
   {
-    left: "66.09%",
+    left: "72.4%",
     top: "10.45%",
-    size: "15.88%",
+    size: "9.8%",
     icon: "72.26%",
     rotate: "-56.89deg",
   },
   {
-    left: "78.79%",
-    top: "29.41%",
-    size: "14.05%",
+    left: "84.2%",
+    top: "20%",
+    size: "8.6%",
     icon: "81.65%",
     rotate: "-105deg",
   },
   {
-    left: "83.98%",
+    left: "89.1%",
     top: "10.02%",
-    size: "11.86%",
+    size: "7.3%",
     icon: "96.67%",
     rotate: "177.99deg",
   },
@@ -115,22 +113,22 @@ function AuthStageCoin({ coin }: { coin: CoinPlacement }) {
 export function AuthFireDecor({ showCoins }: AuthFireDecorProps) {
   return (
     <div
-      className="pointer-events-none absolute inset-0 overflow-visible"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
       aria-hidden
     >
-      {/* Static public asset; native img keeps the SVG grain filter intact. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={AUTH_FIRE_SRC}
-        alt=""
-        className="absolute bottom-0 left-0 h-auto w-full max-w-none"
-        style={
-          showCoins ? { transform: `translateY(${COINS_FIRE_OFFSET})` } : undefined
-        }
-      />
+      {/* Sit in the first viewport so flames stay visible above the footer. */}
+      <div className="absolute inset-x-0 top-0 h-dvh">
+        {/* Static public asset; native img keeps the SVG grain filter intact. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={AUTH_FIRE_SRC}
+          alt=""
+          className="absolute bottom-0 left-0 h-auto w-full max-w-none -translate-y-8"
+        />
+      </div>
       {showCoins ? (
         <div
-          className="absolute top-[calc(var(--storefront-header-offset,9.5rem)-2.5rem)] left-1/2 hidden w-full -translate-x-1/2 lg:block"
+          className="absolute top-[calc(var(--storefront-header-offset,9.5rem)-4.5rem)] left-1/2 hidden w-full -translate-x-1/2 lg:block"
           style={{
             maxWidth: FIGMA_STAGE_WIDTH_PX,
             aspectRatio: FIGMA_STAGE_ASPECT,

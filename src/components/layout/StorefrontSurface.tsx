@@ -89,7 +89,7 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
       {isAuthPage ? (
         <div
           data-auth-stage-root
-          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-dvh overflow-visible"
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
           aria-hidden
         />
       ) : null}

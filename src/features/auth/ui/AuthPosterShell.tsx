@@ -62,7 +62,7 @@ export function AuthPosterShell({
       <section className="storefront-bleed relative z-[1] -mt-10 -mb-28 lg:-mb-10">
         <div
           data-poster-stage
-          className="relative mx-auto flex min-h-[calc(100dvh-var(--storefront-header-offset,9.5rem))] w-full max-w-[1440px] flex-col px-5 pt-16 pb-28 sm:px-8 sm:pt-20 lg:px-10 lg:pt-24 lg:pb-16"
+          className="relative mx-auto flex w-full max-w-[1440px] flex-col px-5 pt-16 pb-28 max-lg:min-h-[calc(100dvh-var(--storefront-header-offset,9.5rem))] sm:px-8 sm:pt-20 lg:px-10 lg:pt-24 lg:pb-16"
         >
           <motion.header
             className="relative text-center"
