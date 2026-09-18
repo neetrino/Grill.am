@@ -206,6 +206,14 @@ export function CartDrawer({
                       {view?.totalFormatted ?? "—"}
                     </dd>
                   </div>
+                  {view && view.bonusEarnAmount > 0 ? (
+                    <div className="mt-2 flex items-center justify-between gap-3 text-sm">
+                      <dt className="text-gray-500">{labels.grillCoin}</dt>
+                      <dd className="font-semibold tabular-nums text-emerald-700">
+                        {view.bonusEarnFormatted}
+                      </dd>
+                    </div>
+                  ) : null}
                 </dl>
 
                 {view && view.items.length > 0 ? (

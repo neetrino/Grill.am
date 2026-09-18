@@ -143,6 +143,14 @@ export function CatalogCartSidebar({
               {view?.totalFormatted ?? "—"}
             </dd>
           </div>
+          {view && view.bonusEarnAmount > 0 ? (
+            <div className="mt-2.5 flex items-center justify-between leading-5">
+              <dt className="text-[#4a5565]">{labels.grillCoin}</dt>
+              <dd className="font-semibold tabular-nums text-emerald-700">
+                {view.bonusEarnFormatted}
+              </dd>
+            </div>
+          ) : null}
         </dl>
 
         <AppLink
