@@ -11,7 +11,9 @@ import {
   TicketPercent,
   Trash2,
   User,
+  Gift,
 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { ProfileMobileSheet } from "@/features/profile/ui/ProfileMobileSheet";
@@ -31,6 +33,8 @@ type ProfileMobileMenuProps = {
   closeLabel: string;
   logoutAction: (formData: FormData) => void | Promise<void>;
   sheets: Partial<Record<ProfileNavKey, ReactNode>>;
+  /** Server-parsed `?sheet=` so the bonuses sheet opens on first paint. */
+  initialSheet?: ProfileNavKey | null;
 };
 
 type MenuRow = {
@@ -60,14 +64,35 @@ export function ProfileMobileMenu({
   closeLabel,
   logoutAction,
   sheets,
+  initialSheet = null,
 }: ProfileMobileMenuProps) {
-  const [activeSheet, setActiveSheet] = useState<ProfileNavKey | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [activeSheet, setActiveSheet] = useState<ProfileNavKey | null>(
+    initialSheet,
+  );
+  const [sheetSynced, setSheetSynced] = useState(initialSheet);
   // Keeps the last opened sheet rendered while the closing animation plays,
   // so the panel does not go blank before it leaves the screen.
-  const [renderedSheet, setRenderedSheet] = useState<ProfileNavKey | null>(null);
+  const [renderedSheet, setRenderedSheet] = useState<ProfileNavKey | null>(
+    initialSheet,
+  );
+  if (initialSheet !== sheetSynced) {
+    setSheetSynced(initialSheet);
+    if (initialSheet != null) {
+      setActiveSheet(initialSheet);
+    }
+  }
   if (activeSheet != null && activeSheet !== renderedSheet) {
     setRenderedSheet(activeSheet);
   }
+  function closeSheet(): void {
+    setActiveSheet(null);
+    if (initialSheet != null) {
+      router.replace(pathname, { scroll: false });
+    }
+  }
+
   const initials =
     `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}`.toUpperCase();
   const displayName = `${user.firstName} ${user.lastName}`.trim();
@@ -87,6 +112,11 @@ export function ProfileMobileMenu({
       key: "promoCodes",
       label: dictionary.promoCodes.nav,
       icon: <TicketPercent />,
+    },
+    {
+      key: "bonuses",
+      label: dictionary.bonuses.nav,
+      icon: <Gift />,
     },
     {
       key: "personal",
@@ -112,6 +142,8 @@ export function ProfileMobileMenu({
         ? dictionary.orders
         : renderedSheet === "promoCodes"
           ? dictionary.promoCodes.nav
+          : renderedSheet === "bonuses"
+            ? dictionary.bonuses.title
           : renderedSheet === "personal"
             ? dictionary.personal
             : renderedSheet === "addresses"
@@ -123,7 +155,8 @@ export function ProfileMobileMenu({
                   : "";
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-3 lg:hidden">
+    <>
+      <div className="mx-auto w-full max-w-md space-y-3 lg:hidden">
       <section
         className={`px-4 py-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${PROFILE_CARD_CLASS}`}
         aria-label={dictionary.title}
@@ -187,6 +220,8 @@ export function ProfileMobileMenu({
                 href={`/${locale}/profile/${
                   row.key === "promoCodes"
                     ? "promo-codes"
+                    : row.key === "bonuses"
+                      ? "bonuses"
                     : row.key === "personal"
                       ? "personal-information"
                       : row.key === "deleteAccount"
@@ -255,14 +290,15 @@ export function ProfileMobileMenu({
         )}
       </div>
 
+      </div>
       <ProfileMobileSheet
         open={activeSheet != null && sheets[activeSheet] != null}
         title={activeTitle}
         closeLabel={closeLabel}
-        onClose={() => setActiveSheet(null)}
+        onClose={closeSheet}
       >
         {renderedSheet ? sheets[renderedSheet] : null}
       </ProfileMobileSheet>
-    </div>
+    </>
   );
 }

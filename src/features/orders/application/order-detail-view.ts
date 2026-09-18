@@ -37,6 +37,8 @@ export type AdminOrderDetailView = {
   subtotalAmount: number;
   deliveryAmount: number;
   discountAmount: number;
+  bonusSpentAmount: number;
+  bonusEarnedAmount: number;
   totalAmount: number;
   deliveryLabel: string | null;
   couponCode: string | null;
@@ -109,6 +111,8 @@ export function toAdminOrderDetailView(
     subtotalAmount: order.subtotalAmount,
     deliveryAmount: order.deliveryAmount,
     discountAmount: order.discountAmount,
+    bonusSpentAmount: order.bonusSpentAmount,
+    bonusEarnedAmount: order.bonusEarnedAmount,
     totalAmount: order.totalAmount,
     deliveryLabel: order.deliveryLabelSnapshot,
     couponCode: order.promotionCodeSnapshot,

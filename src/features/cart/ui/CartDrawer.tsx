@@ -6,7 +6,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { createPortal } from "react-dom";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingBasket, ShoppingCart } from "lucide-react";
 
 import { DrawerCloseTab } from "@/components/drawer/DrawerCloseTab";
 import { AppLink } from "@/components/ui/AppLink";
@@ -42,16 +42,6 @@ type CartDrawerProps = {
 };
 
 const CLOSE_ANIMATION_MS = 220;
-
-function formatItemCount(
-  count: number,
-  labels: Dictionary["cartDrawer"],
-): string {
-  if (count === 1) {
-    return labels.itemsOne;
-  }
-  return labels.itemsMany.replace("{count}", String(count));
-}
 
 function subscribeNoop(): () => void {
   return () => undefined;
@@ -154,17 +144,17 @@ export function CartDrawer({
                 className="relative z-[2] flex h-full w-full flex-col overflow-hidden rounded-tl-3xl rounded-bl-3xl bg-white shadow-2xl"
                 onClick={(event) => event.stopPropagation()}
               >
-              <div className="flex items-start justify-between px-6 pt-6 pb-4">
-                <div>
-                  <h2 className="text-2xl font-bold tracking-tight text-[#101828]">
-                    {labels.title}
-                  </h2>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {showInitialLoading
-                      ? labels.loading
-                      : formatItemCount(badgeCount, labels)}
-                  </p>
-                </div>
+              <div className="flex items-center gap-2 px-6 pt-6 pb-4">
+                <ShoppingBasket
+                  className="size-6 text-[#101828]"
+                  aria-hidden
+                />
+                <h2 className="text-2xl font-bold tracking-tight text-[#101828]">
+                  {labels.title}
+                </h2>
+                <span className="ml-auto inline-flex h-[25px] min-w-[30px] items-center justify-center rounded-full bg-brand-red px-2 text-sm font-bold text-white">
+                  {badgeCount > 99 ? "99+" : badgeCount}
+                </span>
               </div>
 
               <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -199,25 +189,21 @@ export function CartDrawer({
               </div>
 
               <div className="border-t border-gray-200 bg-[#fafafa] px-6 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-                <dl className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between gap-3 text-gray-500">
-                    <dt>{labels.subtotal}</dt>
-                    <dd className="font-medium tabular-nums">
-                      {view?.subtotalFormatted ?? "—"}
-                    </dd>
-                  </div>
-                  <div className="flex items-center justify-between gap-3 text-gray-500">
-                    <dt>{labels.shipping}</dt>
-                    <dd className="font-medium tabular-nums">
-                      {view?.shippingFormatted ?? "—"}
-                    </dd>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between gap-3 text-base font-bold text-gray-900">
+                <dl className="text-sm">
+                  <div className="flex items-center justify-between gap-3 text-base font-bold text-gray-900">
                     <dt>{labels.total}</dt>
                     <dd className="tabular-nums">
                       {view?.totalFormatted ?? "—"}
                     </dd>
                   </div>
+                  {view && view.bonusEarnAmount > 0 ? (
+                    <div className="mt-2 flex items-center justify-between gap-3 text-sm">
+                      <dt className="text-gray-500">{labels.grillCoin}</dt>
+                      <dd className="font-semibold tabular-nums text-emerald-700">
+                        {view.bonusEarnFormatted}
+                      </dd>
+                    </div>
+                  ) : null}
                 </dl>
 
                 {view && view.items.length > 0 ? (

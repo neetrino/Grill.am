@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { getEnv } from "@/config/env";
+import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
 import { listProductStaticParams } from "@/features/products/application/list-product-static-params";
 import { getProductDetailBySlug } from "@/features/products/queries";
 import { ProductDetailView } from "@/features/products/ui/ProductDetailView";
@@ -13,6 +14,7 @@ import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { defaultCurrency } from "@/lib/money/currency";
 import { formatBaseCatalogPrice } from "@/lib/money/catalog-price";
+import { formatProductCoinsEarnLabel } from "@/features/products/ui/format-product-coins-earn-label";
 
 type ProductPageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -126,6 +128,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
     product.compareAtAmount != null
       ? formatBaseCatalogPrice(product.compareAtAmount, locale)
       : null;
+  const bonusEarnByProductId = await resolveProductCardBonusEarnByProductId([
+    { id: product.id, priceAmount: product.priceAmount },
+  ]);
+  const bonusEarnAmount = bonusEarnByProductId.get(product.id) ?? 0;
+  const bonusEarnLabel = formatProductCoinsEarnLabel(
+    dictionary.product.bonusEarn,
+    bonusEarnAmount,
+    locale,
+  );
 
   const jsonLd = buildProductJsonLd({
     locale,
@@ -152,6 +163,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       product={product}
       priceFormatted={displayPrice.formatted}
       compareAtFormatted={compareAt?.formatted ?? null}
+      bonusEarnLabel={bonusEarnLabel}
       isSignedIn={false}
       inWishlist={false}
       ratingAverage={ratingAverage}

@@ -6,6 +6,12 @@ import { revalidatePath } from "next/cache";
 import { getDb } from "@/db/client";
 import { auditLogs, orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import {
+  applyBonusEarnForOrder,
+  restoreBonusSpendAfterRefund,
+  reverseBonusEarnForOrder,
+  reverseBonusSpendForOrder,
+} from "@/features/loyalty/application/ledger";
 import { planAdminPaymentStatusChange } from "@/features/orders/domain/admin-payment-status-plan";
 import {
   canTransitionPaymentStatus,
@@ -158,6 +164,20 @@ export async function changePaymentStatusAction(
         correlationId,
         context: { orderNumber, note: note ?? null },
       });
+
+      if (toStatus === "CAPTURED") {
+        await applyBonusEarnForOrder(tx, locked.id);
+      }
+      if (
+        toStatus === "FAILED" ||
+        toStatus === "CANCELLED"
+      ) {
+        await reverseBonusSpendForOrder(tx, locked.id);
+      }
+      if (toStatus === "REFUNDED") {
+        await reverseBonusEarnForOrder(tx, locked.id);
+        await restoreBonusSpendAfterRefund(tx, locked.id);
+      }
 
       return { orderNumber, fromStatus, toStatus };
     });

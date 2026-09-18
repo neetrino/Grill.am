@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { formatAdminMessage } from "@/features/admin/ui/format-admin-message";
 import { listCustomerOrders } from "@/features/orders/application/queries";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status";
@@ -89,6 +90,9 @@ export default async function OrdersPage({
           status={filters.status}
           paymentStatus={filters.paymentStatus}
           q={filters.q}
+          copy={profileCopy.ordersList}
+          statusLabels={dictionary.admin.orders.status}
+          paymentLabels={dictionary.admin.orders.paymentStatus}
         />
       </div>
 
@@ -107,6 +111,9 @@ export default async function OrdersPage({
           viewDetails: profileCopy.viewDetails,
           noOrders: profileCopy.noOrders,
           startShopping: profileCopy.startShopping,
+          status: profileCopy.status,
+          total: profileCopy.total,
+          ordersList: profileCopy.ordersList,
         }}
       />
 
@@ -117,18 +124,21 @@ export default async function OrdersPage({
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {profileCopy.ordersList.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {formatAdminMessage(profileCopy.ordersList.pageLabel, {
+              page: String(filters.page),
+              total: String(totalPages),
+            })}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
               className="font-medium hover:underline"
             >
-              Next
+              {profileCopy.ordersList.next}
             </Link>
           ) : null}
         </nav>

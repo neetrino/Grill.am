@@ -74,55 +74,87 @@ export function CheckoutPaymentMethods({
 
                 {isCardMethod ? (
                   <div className="flex w-full min-w-0 flex-1 flex-col items-start gap-1.5">
-                    <span className="font-medium text-gray-900">
-                      {option.name}
-                      {!option.enabled && option.unavailableLabel ? (
-                        <span className="ml-2 text-xs font-normal text-gray-500">
-                          ({option.unavailableLabel})
+                    <div className="flex min-w-0 flex-wrap items-center gap-2.5 lg:block">
+                      <span className="font-medium text-gray-900">
+                        {option.name}
+                        {!option.enabled && option.unavailableLabel ? (
+                          <span className="ml-2 text-xs font-normal text-gray-500">
+                            ({option.unavailableLabel})
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="lg:hidden">
+                        <CheckoutPaymentMethodIcons methodId={option.id} />
+                      </span>
+                    </div>
+                    <div className="hidden w-full min-w-0 flex-col items-start gap-1.5 lg:flex">
+                      <CheckoutPaymentMethodIcons methodId={option.id} />
+                      {option.description ? (
+                        <div
+                          id={`payment-desc-${option.id}`}
+                          className="text-sm text-gray-600"
+                        >
+                          {option.description}
+                        </div>
+                      ) : (
+                        <span
+                          id={`payment-desc-${option.id}`}
+                          className="sr-only"
+                        >
+                          {option.name}
                         </span>
-                      ) : null}
-                    </span>
-                    <CheckoutPaymentMethodIcons methodId={option.id} />
+                      )}
+                    </div>
                     {option.description ? (
-                      <div
-                        id={`payment-desc-${option.id}`}
-                        className="hidden text-sm text-gray-600 lg:block"
-                      >
+                      <span className="sr-only lg:hidden">
                         {option.description}
-                      </div>
+                      </span>
                     ) : (
-                      <span id={`payment-desc-${option.id}`} className="sr-only">
+                      <span
+                        id={`payment-desc-${option.id}`}
+                        className="sr-only lg:hidden"
+                      >
                         {option.name}
                       </span>
                     )}
                   </div>
                 ) : option.id === "idram" ? (
                   <div className="flex w-full min-w-0 flex-1 flex-col items-start gap-1.5">
-                    <span className="font-medium text-gray-900">
-                      {option.name}
-                      {!option.enabled && option.unavailableLabel ? (
-                        <span className="ml-2 text-xs font-normal text-gray-500">
-                          ({option.unavailableLabel})
-                        </span>
-                      ) : null}
-                    </span>
-                    <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2.5 lg:block">
+                      <span className="font-medium text-gray-900">
+                        {option.name}
+                        {!option.enabled && option.unavailableLabel ? (
+                          <span className="ml-2 text-xs font-normal text-gray-500">
+                            ({option.unavailableLabel})
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="lg:hidden">
+                        <CheckoutPaymentMethodIcons methodId={option.id} />
+                      </span>
+                    </div>
+                    <div className="hidden min-w-0 items-center gap-3 lg:flex">
                       <div className="flex shrink-0 items-center">
                         <CheckoutPaymentMethodIcons methodId={option.id} />
                       </div>
                       {option.description ? (
                         <div
                           id={`payment-desc-${option.id}`}
-                          className="hidden min-w-0 text-sm text-gray-600 lg:block"
+                          className="min-w-0 text-sm text-gray-600"
                         >
                           {option.description}
                         </div>
-                      ) : (
-                        <span id={`payment-desc-${option.id}`} className="sr-only">
-                          {option.name}
-                        </span>
-                      )}
+                      ) : null}
                     </div>
+                    {!option.description ? (
+                      <span id={`payment-desc-${option.id}`} className="sr-only">
+                        {option.name}
+                      </span>
+                    ) : (
+                      <span className="sr-only lg:hidden">
+                        {option.description}
+                      </span>
+                    )}
                   </div>
                 ) : (
                   <div className="flex min-w-0 flex-1 items-center gap-3 lg:gap-4">

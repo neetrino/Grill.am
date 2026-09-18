@@ -19,6 +19,7 @@ import {
 import { minOrderQuantityForSlug } from "@/features/products/domain/min-order-quantity";
 import { ProductAddonChecklist } from "@/features/products/ui/ProductAddonChecklist";
 import { ProductAddonList } from "@/features/products/ui/ProductAddonList";
+import { ProductCoinsEarnPill } from "@/features/products/ui/ProductCoinsEarnPill";
 import { ProductExclusionList } from "@/features/products/ui/ProductExclusionList";
 import { ProductModifierAccordion } from "@/features/products/ui/ProductModifierAccordion";
 import type { Locale } from "@/lib/i18n/config";
@@ -53,6 +54,8 @@ type ProductBuyBoxProps = {
   compareAtAmount: number | null;
   initialPriceFormatted: string;
   initialCompareAtFormatted: string | null;
+  /** Localized bonus earn line, e.g. "+120֏ բոնուս". */
+  bonusEarnLabel?: string | null;
   shortDescription?: string;
   description?: string;
   imageUrl?: string | null;
@@ -106,6 +109,7 @@ export function ProductBuyBox({
   compareAtAmount,
   initialPriceFormatted,
   initialCompareAtFormatted,
+  bonusEarnLabel = null,
   shortDescription,
   description,
   imageUrl = null,
@@ -349,14 +353,19 @@ export function ProductBuyBox({
         ) : null}
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <p className="text-[30px] leading-9 font-bold text-brand-red">
-              {priceFormatted}
-            </p>
-            {compareAtFormatted ? (
-              <p className="text-base leading-6 text-[#99a1af] line-through">
-                {compareAtFormatted}
+          <div className="flex min-w-0 flex-col gap-1">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <p className="text-[30px] leading-9 font-bold text-brand-red">
+                {priceFormatted}
               </p>
+              {compareAtFormatted ? (
+                <p className="text-base leading-6 text-[#99a1af] line-through">
+                  {compareAtFormatted}
+                </p>
+              ) : null}
+            </div>
+            {bonusEarnLabel ? (
+              <ProductCoinsEarnPill label={bonusEarnLabel} />
             ) : null}
           </div>
 

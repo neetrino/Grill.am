@@ -15,7 +15,7 @@ const SURFACE_GRAY = "#f2f0f0";
 /** Matches footer `lg:block` / bottom nav `lg:hidden`; mirrors `--breakpoint-lg`. */
 const DESKTOP_CHROME_MQ = "(min-width: 1025px)";
 
-const SURFACE_INK = "#071014";
+const SURFACE_AUTH = "#E3181D";
 
 /** White page wash on home + marketing pages — matches content and mobile bottom gap. */
 function isWhiteSurfacePath(pathname: string): boolean {
@@ -52,10 +52,16 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
     const mq = window.matchMedia(DESKTOP_CHROME_MQ);
 
     function syncBody(): void {
-      if (isAuthPage || document.body.classList.contains("auth-page-active")) {
-        document.body.style.backgroundColor = SURFACE_INK;
+      if (isAuthPage) {
+        document.documentElement.style.backgroundColor = SURFACE_AUTH;
+        document.body.style.backgroundColor = SURFACE_AUTH;
+        document.documentElement.classList.add("auth-page-active");
+        document.body.classList.add("auth-page-active");
         return;
       }
+      document.documentElement.classList.remove("auth-page-active");
+      document.body.classList.remove("auth-page-active");
+      document.documentElement.style.backgroundColor = "";
       document.body.style.backgroundColor = mq.matches
         ? SURFACE_WHITE
         : mobileSurface;
@@ -65,18 +71,28 @@ export function StorefrontSurface({ children }: StorefrontSurfaceProps) {
     mq.addEventListener("change", syncBody);
     return () => {
       mq.removeEventListener("change", syncBody);
+      document.documentElement.classList.remove("auth-page-active");
+      document.body.classList.remove("auth-page-active");
+      document.documentElement.style.backgroundColor = "";
       document.body.style.backgroundColor = previous;
     };
   }, [isAuthPage, mobileSurface]);
 
   return (
     <div
-      className={`flex min-h-dvh flex-1 flex-col overflow-x-clip ${
+      className={`flex min-h-dvh flex-1 flex-col ${
         isAuthPage
-          ? "relative z-[2] bg-transparent"
-          : `bg-white ${isWhitePage ? "" : "max-lg:bg-[#f2f0f0]"}`
+          ? "relative z-[2] overflow-x-visible bg-[#E3181D]"
+          : `overflow-x-clip bg-white ${isWhitePage ? "" : "max-lg:bg-[#f2f0f0]"}`
       }`}
     >
+      {isAuthPage ? (
+        <div
+          data-auth-stage-root
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          aria-hidden
+        />
+      ) : null}
       {children}
     </div>
   );

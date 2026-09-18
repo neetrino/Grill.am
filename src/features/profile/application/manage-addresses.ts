@@ -76,6 +76,7 @@ export async function createCustomerAddressAction(
       await tx.insert(addresses).values({
         id,
         userId: user.id,
+        label: parsed.data.label,
         recipientFirstName: user.firstName,
         recipientLastName: user.lastName,
         phone: user.phone?.trim() || "",
@@ -141,6 +142,7 @@ export async function updateCustomerAddressAction(
       await tx
         .update(addresses)
         .set({
+          label: parsed.data.label,
           recipientFirstName: user.firstName,
           recipientLastName: user.lastName,
           phone: user.phone?.trim() || "",

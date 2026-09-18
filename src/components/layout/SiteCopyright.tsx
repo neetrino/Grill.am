@@ -11,14 +11,17 @@ export function SiteCopyright({ className, linkClassName }: SiteCopyrightProps) 
 
   return (
     <p className={className}>
-      {`Copyright © ${year} | All Rights Reserved | Created by `}
+      {`Copyright © ${year} | All Rights Reserved`}
+      <span className="hidden lg:inline">{` | `}</span>
+      <br className="lg:hidden" />
+      {"Created by "}
       <a
         href={NEETRINO_URL}
         target="_blank"
         rel="noopener noreferrer"
         className={linkClassName}
       >
-        Neetrino IT Company
+        Neetrino
       </a>
     </p>
   );

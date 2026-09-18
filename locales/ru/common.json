@@ -38,7 +38,9 @@
     "searchPlaceholder": "Поиск товаров…",
     "searchHint": "Начните вводить название товара",
     "searchNoResults": "Товары не найдены",
-    "searchViewAll": "Смотреть все результаты"
+    "searchViewAll": "Смотреть все результаты",
+    "coins": "Coins",
+    "coinsAria": "Баланс бонусов, открыть мои бонусы"
   },
   "footer": {
     "shop": "Магазины",
@@ -50,9 +52,6 @@
     "hoursWeekdays": "09:00 – 22:00",
     "hoursWeekendLabel": "Сб – Вс",
     "hoursWeekend": "10:00 – 23:00",
-    "categories": "Категории",
-    "promotions": "Акции",
-    "bestsellers": "Хиты продаж",
     "faq": "Политика возврата и компенсации",
     "legal": "Правовая информация",
     "privacyPolicy": "Политика конфиденциальности",

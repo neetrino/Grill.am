@@ -215,7 +215,7 @@
 - Cards՝ users count, products count, orders count, revenue։
 - 50/50 area՝ recent orders և top-selling products։
 - Date range + previous-period comparison։
-- Revenue-ը ներառում է միայն settings-ում revenue-generating statuses-ը; cancelled/refunded-ը default exclude են։
+- Revenue-ը ներառում է settings-ում revenue-generating statuses-ը; default-ում բոլոր status-ներն են բացի cancelled-ից։
 
 ### Analytics
 

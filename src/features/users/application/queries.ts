@@ -14,9 +14,15 @@ import {
 
 import { getDb } from "@/db/client";
 import { orders, users } from "@/db/schema";
+import {
+  getCustomerBonusSummary,
+  listCustomerBonusLedger,
+  type CustomerBonusLedgerRow,
+} from "@/features/loyalty/application/queries";
 import type { AdminUsersFilter } from "@/features/users/schemas/admin-users";
 
 const PAGE_SIZE = 20;
+const BONUS_HISTORY_PAGE_SIZE = 40;
 
 export type AdminUserListItem = {
   id: string;
@@ -45,6 +51,7 @@ export type AdminUserDetail = {
     anonymizedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
+    bonusBalanceAmount: number;
   };
   recentOrders: Array<{
     id: string;
@@ -52,10 +59,19 @@ export type AdminUserDetail = {
     status: string;
     paymentStatus: string;
     totalAmount: number;
+    bonusEarnedAmount: number;
+    bonusSpentAmount: number;
     baseCurrency: string;
     placedAt: Date;
   }>;
+  bonus: {
+    balanceAmount: number;
+    totalEarnedAmount: number;
+    totalSpentAmount: number;
+    ledger: CustomerBonusLedgerRow[];
+  };
 };
+
 
 function buildUsersWhere(filters: AdminUsersFilter): SQL | undefined {
   const conditions: SQL[] = [];
@@ -154,6 +170,7 @@ export async function getAdminUserById(
       anonymizedAt: users.anonymizedAt,
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
+      bonusBalanceAmount: users.bonusBalanceAmount,
     })
     .from(users)
     .where(eq(users.id, userId))
@@ -163,20 +180,35 @@ export async function getAdminUserById(
     return null;
   }
 
-  const recentOrders = await getDb()
-    .select({
-      id: orders.id,
-      orderNumber: orders.orderNumber,
-      status: orders.status,
-      paymentStatus: orders.paymentStatus,
-      totalAmount: orders.totalAmount,
-      baseCurrency: orders.baseCurrency,
-      placedAt: orders.placedAt,
-    })
-    .from(orders)
-    .where(eq(orders.userId, userId))
-    .orderBy(desc(orders.placedAt))
-    .limit(10);
+  const [recentOrders, bonusSummary, bonusLedger] = await Promise.all([
+    getDb()
+      .select({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+        status: orders.status,
+        paymentStatus: orders.paymentStatus,
+        totalAmount: orders.totalAmount,
+        bonusEarnedAmount: orders.bonusEarnedAmount,
+        bonusSpentAmount: orders.bonusSpentAmount,
+        baseCurrency: orders.baseCurrency,
+        placedAt: orders.placedAt,
+      })
+      .from(orders)
+      .where(eq(orders.userId, userId))
+      .orderBy(desc(orders.placedAt))
+      .limit(10),
+    getCustomerBonusSummary(userId),
+    listCustomerBonusLedger(userId, 1, BONUS_HISTORY_PAGE_SIZE),
+  ]);
 
-  return { user, recentOrders };
+  return {
+    user,
+    recentOrders,
+    bonus: {
+      balanceAmount: bonusSummary.balanceAmount,
+      totalEarnedAmount: bonusSummary.totalEarnedAmount,
+      totalSpentAmount: bonusSummary.totalSpentAmount,
+      ledger: bonusLedger.rows,
+    },
+  };
 }

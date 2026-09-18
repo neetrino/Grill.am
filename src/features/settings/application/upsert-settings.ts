@@ -116,6 +116,18 @@ const upsertSchema = z.discriminatedUnion("key", [
       amount: z.number().int().min(1).max(100_000_000).nullable(),
     }),
   }),
+  z.object({
+    key: z.literal("store.loyalty"),
+    value: z.object({
+      earnPercent: z.number().int().min(0).max(100),
+      earnMinOrderAmount: z
+        .number()
+        .int()
+        .min(1)
+        .max(100_000_000)
+        .nullable(),
+    }),
+  }),
 ]);
 
 export type UpsertStoreSettingInput = z.infer<typeof upsertSchema>;
@@ -184,6 +196,7 @@ export async function upsertStoreSettingAction(
     }
 
     revalidatePath(`/${locale}/admin/settings`);
+    revalidatePath(`/${locale}/admin/bonuses`);
     revalidatePath(`/${locale}/admin`);
     return ok({ key: parsed.data.key });
   } catch {

@@ -1,6 +1,12 @@
+import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+
+/** Local `public/` asset — not on R2 yet; do not wrap with `staticAssetUrl`. */
+const EMPTY_CART_MASCOT_SRC = "/assets/cart/empty-cart-flame.png";
+const EMPTY_CART_MASCOT_WIDTH = 551;
+const EMPTY_CART_MASCOT_HEIGHT = 640;
 
 type CartEmptyStateProps = {
   title: string;
@@ -35,21 +41,18 @@ export function CartEmptyState({
           : "gap-8 px-2 py-6 pt-10 sm:gap-10 sm:pt-14"
       }`}
     >
-      <div
-        className={`flex items-center justify-center rounded-full bg-brand-yellow ${
-          isCompact
-            ? "size-[96px]"
-            : "-mt-6 size-[168px] sm:-mt-8 sm:size-[200px]"
-        }`}
+      <Image
+        src={EMPTY_CART_MASCOT_SRC}
+        alt=""
+        width={EMPTY_CART_MASCOT_WIDTH}
+        height={EMPTY_CART_MASCOT_HEIGHT}
+        sizes={isCompact ? "128px" : "248px"}
+        unoptimized
+        className={
+          isCompact ? "h-32 w-auto" : "-mt-2 h-[220px] w-auto sm:h-[248px]"
+        }
         aria-hidden
-      >
-        <ShoppingCart
-          className={`-translate-x-[2px] text-white ${
-            isCompact ? "size-10" : "size-20 sm:size-24"
-          }`}
-          strokeWidth={2.25}
-        />
-      </div>
+      />
 
       <h3
         className={`font-bold tracking-tight text-[#101828] ${

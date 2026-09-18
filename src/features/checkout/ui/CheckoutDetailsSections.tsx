@@ -4,6 +4,10 @@ import { type ReactNode } from "react";
 
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import { CUSTOMER_NOTE_MAX_LENGTH } from "@/features/checkout/domain/customer-note";
+import type {
+  CheckoutAddressChoice,
+  CheckoutAddressDrawerLabels,
+} from "@/features/checkout/ui/CheckoutAddressDrawer";
 import { CheckoutFulfillmentSection } from "@/features/checkout/ui/CheckoutFulfillmentSection";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
 import {
@@ -13,7 +17,9 @@ import {
   CHECKOUT_SECTION_TITLE_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
+import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 import type { StorePickupOption } from "@/features/stores/yandex-map-embed";
+import type { Locale } from "@/lib/i18n/config";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -39,6 +45,8 @@ type CheckoutDetailsLabels = {
   deliveryDescription: string;
   pickupBranch: string;
   selectPickupBranch: string;
+  selectAddress: string;
+  addressBook: CheckoutAddressDrawerLabels;
 };
 
 type PaymentOption = {
@@ -50,6 +58,7 @@ type PaymentOption = {
 };
 
 type CheckoutDetailsSectionsProps = {
+  locale: Locale;
   labels: CheckoutDetailsLabels;
   pending: boolean;
   shippingMethod: "pickup" | "delivery" | null;
@@ -68,10 +77,15 @@ type CheckoutDetailsSectionsProps = {
   defaultLastName: string;
   defaultEmail: string;
   defaultPhone: string;
-  defaultLine1: string;
+  canSaveAddresses: boolean;
+  savedAddresses: CustomerAddressListItem[];
+  selectedAddressId: string | null;
+  line1: string;
+  onAddressSelect: (address: CheckoutAddressChoice) => void;
 };
 
 export function CheckoutDetailsSections({
+  locale,
   labels,
   pending,
   shippingMethod,
@@ -90,7 +104,11 @@ export function CheckoutDetailsSections({
   defaultLastName,
   defaultEmail,
   defaultPhone,
-  defaultLine1,
+  canSaveAddresses,
+  savedAddresses,
+  selectedAddressId,
+  line1,
+  onAddressSelect,
 }: CheckoutDetailsSectionsProps) {
   return (
     <div className={`${CHECKOUT_DETAILS_WRAP_CLASS} flex flex-col gap-4`}>
@@ -160,6 +178,7 @@ export function CheckoutDetailsSections({
       </section>
 
       <CheckoutFulfillmentSection
+        locale={locale}
         labels={labels}
         pending={pending}
         shippingMethod={shippingMethod}
@@ -170,7 +189,11 @@ export function CheckoutDetailsSections({
         pickupStores={pickupStores}
         pickupStoreId={pickupStoreId}
         onPickupStoreChange={onPickupStoreChange}
-        defaultLine1={defaultLine1}
+        canSaveAddresses={canSaveAddresses}
+        savedAddresses={savedAddresses}
+        selectedAddressId={selectedAddressId}
+        line1={line1}
+        onAddressSelect={onAddressSelect}
       />
 
       <CheckoutPaymentMethods

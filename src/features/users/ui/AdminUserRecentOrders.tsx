@@ -25,6 +25,8 @@ export type AdminUserRecentOrderItem = {
   status: string;
   paymentStatus: string;
   totalAmount: number;
+  bonusEarnedAmount: number;
+  bonusSpentAmount: number;
   baseCurrency: string;
 };
 
@@ -38,11 +40,14 @@ type AdminUserRecentOrderButtonProps = {
   onOpen: (orderNumber: string) => void;
 };
 
+const CARD_BADGE = `${ADMIN_BADGE} uppercase tracking-wide`;
+
 function AdminUserRecentOrderButton({
   order,
   onOpen,
 }: AdminUserRecentOrderButtonProps) {
   const dictionary = useAdminDictionary();
+  const earned = Math.max(0, Math.floor(order.bonusEarnedAmount));
 
   return (
     <button
@@ -51,25 +56,39 @@ function AdminUserRecentOrderButton({
       aria-label={formatAdminMessage(dictionary.orders.list.openOrder, {
         orderNumber: order.orderNumber,
       })}
-      className="rounded-[15px] border border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
+      className="w-full max-w-[21rem] rounded-[16px] border border-gray-200 bg-white p-4 text-left transition-colors hover:bg-gray-50"
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <strong className="text-sm text-gray-900">{order.orderNumber}</strong>
-        <span className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}>
-          {adminOrderStatusLabel(order.status, dictionary.orders.status)}
-        </span>
-        <span
-          className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-        >
-          {adminPaymentStatusLabel(
-            order.paymentStatus,
-            dictionary.orders.paymentStatus,
-          )}
-        </span>
+      <div className="flex items-start justify-between gap-3">
+        <strong className="text-base font-bold text-gray-900">
+          {order.orderNumber}
+        </strong>
+        <div className="flex flex-wrap items-center justify-end gap-1.5">
+          <span
+            className={`${CARD_BADGE} ${orderStatusBadgeClass(order.status)}`}
+          >
+            {adminOrderStatusLabel(order.status, dictionary.orders.status)}
+          </span>
+          <span
+            className={`${CARD_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
+          >
+            {adminPaymentStatusLabel(
+              order.paymentStatus,
+              dictionary.orders.paymentStatus,
+            )}
+          </span>
+        </div>
       </div>
-      <p className="mt-1 text-sm text-gray-600">
-        {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
-      </p>
+
+      <div className="mt-4 flex items-end justify-between gap-3">
+        <p className="text-sm text-gray-500 tabular-nums">
+          {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
+        </p>
+        {earned > 0 ? (
+          <p className="text-sm font-bold tabular-nums text-green-800">
+            +{earned.toLocaleString("en-US")} ֏
+          </p>
+        ) : null}
+      </div>
     </button>
   );
 }
@@ -95,7 +114,7 @@ export function AdminUserRecentOrders({
             {dictionary.users.detail.noOrders}
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex flex-wrap gap-3">
             {orders.map((order) => (
               <AdminUserRecentOrderButton
                 key={order.id}

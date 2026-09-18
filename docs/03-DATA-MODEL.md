@@ -2,9 +2,9 @@
 
 **Database.** PostgreSQL (Neon)
 **ORM/migrations.** Drizzle ORM / Drizzle Kit
-**Կարգավիճակ.** Canonical 29-table schema migrated; idempotent seed available (`pnpm db:seed`)
-**Canonical table count.** 29
-**Վերջին թարմացում.** 2026-08-19
+**Կարգավիճակ.** Canonical 32-table schema migrated; idempotent seed available (`pnpm db:seed`)
+**Canonical table count.** 32
+**Վերջին թարմացում.** 2026-09-11
 
 ## 1. Սխեմայի նպատակը
 
@@ -29,15 +29,15 @@
 - Financial, stock և audit records-ը hard delete չեն ընդունում։
 - Flexible JSONB-ը միշտ Zod schema/version ունի և business-critical relational կապերը չի փոխարինում։
 
-## 3. Canonical 29-table inventory
+## 3. Canonical 32-table inventory
 
 | # | Table | Domain | Նշանակություն |
 |---:|---|---|---|
-| 1 | `users` | Identity | Account, credentials, profile, role, status |
+| 1 | `users` | Identity | Account, credentials, profile, role, status, bonus balance |
 | 2 | `sessions` | Identity | Revocable database sessions |
 | 3 | `addresses` | Customer | Saved shipping/billing addresses |
 | 4 | `media_assets` | Media | R2 object metadata, owner, role, ordering |
-| 5 | `store_settings` | System | Typed public store configuration |
+| 5 | `store_settings` | System | Typed public store configuration (includes `store.loyalty`) |
 | 6 | `products` | Catalog | Product, translations, price, current stock |
 | 7 | `categories` | Catalog | Hierarchy և translations |
 | 8 | `product_categories` | Catalog | Product/category many-to-many կապ |
@@ -54,14 +54,17 @@
 | 19 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
 | 20 | `promotion_users` | Pricing | User-restricted promotion allowlist |
 | 21 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
-| 22 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
+| 22 | `orders` | Orders | Order, address/money/promotion/bonus snapshots, idempotency |
 | 23 | `order_items` | Orders | Immutable purchased-item snapshots |
 | 24 | `order_events` | Orders | Status, notes և payment provider events |
 | 25 | `payments` | Payments | Payment attempts/current provider state |
-| 26 | `reviews` | Engagement | Verified-purchase reviews/moderation |
-| 27 | `contact_messages` | Support | Contact inbox |
-| 28 | `job_applications` | Careers | Job applications + CV object metadata |
-| 29 | `audit_logs` | Security | Immutable admin/security audit |
+| 26 | `bonus_ledger` | Loyalty | Append-only bonus earn/spend history |
+| 27 | `product_bonus_rules` | Loyalty | Per-product flat AMD bonus (optional date window) |
+| 28 | `category_bonus_rules` | Loyalty | Per-category flat AMD bonus (optional date window) |
+| 29 | `reviews` | Engagement | Verified-purchase reviews/moderation |
+| 30 | `contact_messages` | Support | Contact inbox |
+| 31 | `job_applications` | Careers | Job applications + CV object metadata |
+| 32 | `audit_logs` | Security | Immutable admin/security audit |
 
 ### Count assumptions
 
@@ -81,6 +84,7 @@
 | Profile | first/last name, normalized phone |
 | Authorization | role `ADMIN`/`CUSTOMER`, status `ACTIVE`/`SUSPENDED`/`ANONYMIZED` |
 | Consent | terms accepted timestamp/version |
+| Loyalty | `bonus_balance_amount` ≥ 0 (AMD minor units) |
 | Lifecycle | last login, created/updated/anonymized timestamps |
 
 Last active admin invariant-ը application transaction + row/advisory lock strategy ունի։ Concurrent demotion/suspension-ը չի կարող համակարգը թողնել առանց active admin-ի։
@@ -259,7 +263,7 @@ Country, optional region/city, AMD price, optional free threshold, estimated day
 |---|---|
 | Identity | ID, unique order number, nullable user, guest/customer contact snapshot, optional `customer_note` (plain-text checkout comment) |
 | State | order status, payment status, archive flag, placed/updated timestamps |
-| Money | base/display currency, exchange-rate source/effective/rate snapshot, subtotal/discount/tax/delivery/total |
+| Money | base/display currency, exchange-rate source/effective/rate snapshot, subtotal/discount/`bonus_spent_amount`/`bonus_earned_amount`/`bonus_earned_applied_at`/tax/delivery/total |
 | Address | `shipping_address JSONB`, `billing_address JSONB` immutable validated snapshots |
 | Promotion | nullable `promotion_id`, code/type/value/discount amount snapshot |
 | Delivery | nullable rule ID + label/estimate/price snapshot |
@@ -294,6 +298,27 @@ Constraints:
 - `attempt_number > 0`
 
 Մեկ order-ը կարող է ունենալ COD row կամ բազմաթիվ online attempts, բայց առավելագույնը մեկ `CAPTURED` payment։ Card/secret/full sensitive payload չի պահվում։ COD-ի համար optional `metadata.cashTenderedAmount`։ Online confirm-ի համար optional `metadata.sourceCartFingerprint` որպես secondary cart-cleanup guard։
+
+### 10.5 `bonus_ledger`
+
+Append-only loyalty wallet history։ Fields՝ user, nullable order, `entry_type` (`EARN`/`SPEND`/`SPEND_REVERSAL`/`EARN_REVERSAL`), positive `amount`, `balance_after`, optional note, created timestamp։
+
+- Partial unique indexes՝ մեկ `EARN` և մեկ `SPEND` per order (idempotent credit/debit)։
+- Rates live in `store_settings` key `store.loyalty` (`earnPercent`, `earnMinOrderAmount`; legacy `redeemMinOrderAmount` is still read)։
+- Earn credits only when `paymentStatus` becomes `CAPTURED` (Paid) — COD placement does not credit yet; admin/provider capture does։ Flat product/category earn applies only when merchandise net meets `earnMinOrderAmount` (if set)։ Spend deducts at checkout with no order minimum (wallet balance and payable total only); unpaid failure restores spend; refund revokes earn and restores spend։
+
+### 10.6 `product_bonus_rules`
+
+Per-product flat AMD bonus (independent of `earnPercent`)։ Fields՝ `product_id` UNIQUE, positive `amount` (per purchased unit), optional `starts_at` / `ends_at` window, timestamps։
+
+- Null date bounds mean open-ended; when both are set, `starts_at <= ends_at`։
+- Checkout earn = store-wide percent earn + Σ (active rule amount × quantity)։
+- Precedence for flat bonus՝ product rule > best (max) active category rule։
+- Window check uses order placement time (UTC)։
+
+### 10.7 `category_bonus_rules`
+
+Per-category flat AMD bonus (independent of `earnPercent`)։ Fields՝ `category_id` UNIQUE, positive `amount` (per purchased unit of products in that category), optional `starts_at` / `ends_at` window, timestamps։ Same window/null conventions as product rules։
 
 ## 11. Reviews և support
 

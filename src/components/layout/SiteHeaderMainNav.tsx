@@ -27,6 +27,8 @@ type SiteHeaderMainNavProps = {
   categories: readonly StorefrontNavCategory[];
   mobileNav: React.ReactNode;
   desktopActions: React.ReactNode;
+  /** Bonuses pill beside search (all breakpoints). */
+  coinsAction?: React.ReactNode;
 };
 
 const TOP_REVEAL_Y = 8;
@@ -69,6 +71,7 @@ export function SiteHeaderMainNav({
   categories,
   mobileNav,
   desktopActions,
+  coinsAction = null,
 }: SiteHeaderMainNavProps) {
   const searchLabels = headerSearchLabels(dictionary);
   const pathname = usePathname();
@@ -369,7 +372,7 @@ export function SiteHeaderMainNav({
       </div>
 
       <div className="border-b border-black/7 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] md:shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-        <div className="page-container flex items-center gap-4 pt-4 pb-2 sm:py-4">
+        <div className="page-container flex items-center gap-3 py-3 sm:gap-4 sm:py-4">
           <div className="min-w-0 flex-1">
             <HeaderSearch
               locale={locale}
@@ -377,6 +380,10 @@ export function SiteHeaderMainNav({
               labels={searchLabels}
             />
           </div>
+
+          {coinsAction ? (
+            <div className="shrink-0">{coinsAction}</div>
+          ) : null}
 
           <div className="hidden shrink-0 items-center gap-4 lg:flex">
             {desktopActions}

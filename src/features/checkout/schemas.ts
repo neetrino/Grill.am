@@ -43,6 +43,8 @@ export const checkoutSchema = z
     idempotencyKey: z.string().trim().min(8).max(128),
     locale: z.enum(["hy", "en", "ru"]),
     couponCode: z.string().trim().max(64).optional(),
+    /** Loyalty bonus to redeem (AMD minor units); ignored for guests. */
+    bonusSpendAmount: z.number().int().min(0).max(100_000_000).optional(),
   })
   .superRefine((value, ctx) => {
     if (value.shippingMethod === "delivery") {

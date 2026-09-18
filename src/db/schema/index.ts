@@ -15,6 +15,7 @@ export {
   sessions,
   users,
 } from "@/db/schema/identity";
+export { bonusLedger, categoryBonusRules, productBonusRules } from "@/db/schema/loyalty";
 export {
   blogPosts,
   heroSlides,

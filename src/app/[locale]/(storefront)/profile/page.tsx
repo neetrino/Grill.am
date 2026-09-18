@@ -5,6 +5,11 @@ import {
   CHECKOUT_DELIVERY_CITY_I18N_KEYS,
   CHECKOUT_DELIVERY_CITY_VALUES,
 } from "@/features/checkout/domain/checkout-delivery-cities";
+import {
+  getCustomerBonusSummary,
+  listCustomerBonusLedger,
+} from "@/features/loyalty/application/queries";
+import { CustomerBonusesPageContent } from "@/features/loyalty/ui/CustomerBonusesPageContent";
 import { listCustomerOrders } from "@/features/orders/application/queries";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
 import { listCustomerAddresses } from "@/features/profile/application/address-queries";
@@ -14,8 +19,10 @@ import { DeleteAccountForm } from "@/features/profile/ui/DeleteAccountForm";
 import { PersonalInformationForm } from "@/features/profile/ui/PersonalInformationForm";
 import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView";
 import { ProfileDashboardView } from "@/features/profile/ui/ProfileDashboardView";
+import { ProfileDesktopSheetRedirect } from "@/features/profile/ui/ProfileDesktopSheetRedirect";
 import { ProfileMobileMenu } from "@/features/profile/ui/ProfileMobileMenu";
 import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
+import { parseProfileSheetParam } from "@/features/profile/ui/profile-sheet";
 import { listCustomerAssignedCoupons } from "@/features/promotions/application/list-customer-assigned-coupons";
 import { listCustomerCouponHistory } from "@/features/promotions/application/list-customer-coupon-history";
 import { CustomerPromoCodesPageContent } from "@/features/promotions/ui/CustomerPromoCodesPageContent";
@@ -25,13 +32,17 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type ProfilePageProps = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
+export default async function ProfilePage({ params, searchParams }: ProfilePageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) {
     notFound();
   }
+
+  const query = await searchParams;
+  const initialSheet = parseProfileSheetParam(query.sheet);
 
   const user = await requireUser(locale);
   const dictionary = getDictionary(locale);
@@ -41,6 +52,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     promoHistory,
     assignedCoupons,
     customerOrders,
+    bonusSummary,
+    bonusLedger,
   ] =
     await Promise.all([
       getProfileDashboard(user.id),
@@ -56,6 +69,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         dateTo: undefined,
         q: undefined,
       }),
+      getCustomerBonusSummary(user.id),
+      listCustomerBonusLedger(user.id, 1),
     ]);
 
   const logoutWithLocale = logoutAction.bind(null, locale);
@@ -87,16 +102,24 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     viewDetails: profileCopy.viewDetails,
     noOrders: profileCopy.noOrders,
     startShopping: profileCopy.startShopping,
+    status: profileCopy.status,
+    total: profileCopy.total,
+    ordersList: profileCopy.ordersList,
   } as const;
 
   return (
     <>
+      <ProfileDesktopSheetRedirect
+        locale={locale}
+        sheetOpen={initialSheet === "bonuses"}
+      />
       <ProfileMobileMenu
         locale={locale}
         user={user}
         dictionary={dictionary.profile}
         closeLabel={dictionary.profile.cancel}
         logoutAction={logoutWithLocale}
+        initialSheet={initialSheet}
         sheets={{
           dashboard: <ProfileDashboardView {...dashboardProps} />,
           orders: (
@@ -117,6 +140,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               assigned={assignedCoupons}
               rows={promoHistory.rows}
               copy={promoCopy}
+            />
+          ),
+          bonuses: (
+            <CustomerBonusesPageContent
+              locale={locale}
+              summary={bonusSummary}
+              rows={bonusLedger.rows}
+              copy={dictionary.profile.bonuses}
+              startShoppingLabel={dictionary.profile.startShopping}
+              hideTitle
             />
           ),
           personal: (
@@ -159,6 +192,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 noAddresses: addressCopy.noAddresses,
                 formAddTitle: addressCopy.formAddTitle,
                 formEditTitle: addressCopy.formEditTitle,
+                label: addressCopy.label,
+                labelPlaceholder: addressCopy.labelPlaceholder,
                 line1: addressCopy.line1,
                 city: addressCopy.city,
                 selectCity: dictionary.checkout.form.selectLocation,
