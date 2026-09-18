@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { useLayoutEffect, useState, type ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { AuthFireDecor } from "@/features/auth/ui/AuthFireDecor";
@@ -9,12 +9,16 @@ import { AuthFireDecor } from "@/features/auth/ui/AuthFireDecor";
 const EASE = [0.16, 1, 0.3, 1] as const;
 const AUTH_STAGE_ROOT = "[data-auth-stage-root]";
 
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
+
+function getAuthStageRoot(): HTMLElement | null {
+  return document.querySelector<HTMLElement>(AUTH_STAGE_ROOT);
+}
+
 function useAuthStageRoot(): HTMLElement | null {
-  const [root, setRoot] = useState<HTMLElement | null>(null);
-  useLayoutEffect(() => {
-    setRoot(document.querySelector<HTMLElement>(AUTH_STAGE_ROOT));
-  }, []);
-  return root;
+  return useSyncExternalStore(subscribeNoop, getAuthStageRoot, () => null);
 }
 
 type AuthPosterShellProps = {
