@@ -6,7 +6,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { createPortal } from "react-dom";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingBasket, ShoppingCart } from "lucide-react";
 
 import { DrawerCloseTab } from "@/components/drawer/DrawerCloseTab";
 import { AppLink } from "@/components/ui/AppLink";
@@ -42,16 +42,6 @@ type CartDrawerProps = {
 };
 
 const CLOSE_ANIMATION_MS = 220;
-
-function formatItemCount(
-  count: number,
-  labels: Dictionary["cartDrawer"],
-): string {
-  if (count === 1) {
-    return labels.itemsOne;
-  }
-  return labels.itemsMany.replace("{count}", String(count));
-}
 
 function subscribeNoop(): () => void {
   return () => undefined;
@@ -154,17 +144,17 @@ export function CartDrawer({
                 className="relative z-[2] flex h-full w-full flex-col overflow-hidden rounded-tl-3xl rounded-bl-3xl bg-white shadow-2xl"
                 onClick={(event) => event.stopPropagation()}
               >
-              <div className="flex items-start justify-between px-6 pt-6 pb-4">
-                <div>
-                  <h2 className="text-2xl font-bold tracking-tight text-[#101828]">
-                    {labels.title}
-                  </h2>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {showInitialLoading
-                      ? labels.loading
-                      : formatItemCount(badgeCount, labels)}
-                  </p>
-                </div>
+              <div className="flex items-center gap-2 px-6 pt-6 pb-4">
+                <ShoppingBasket
+                  className="size-6 text-[#101828]"
+                  aria-hidden
+                />
+                <h2 className="text-2xl font-bold tracking-tight text-[#101828]">
+                  {labels.title}
+                </h2>
+                <span className="ml-auto inline-flex h-[25px] min-w-[30px] items-center justify-center rounded-full bg-brand-red px-2 text-sm font-bold text-white">
+                  {badgeCount > 99 ? "99+" : badgeCount}
+                </span>
               </div>
 
               <div className="flex-1 overflow-y-auto px-6 py-4">
