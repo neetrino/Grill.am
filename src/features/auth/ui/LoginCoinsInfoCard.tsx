@@ -20,7 +20,7 @@ export function LoginCoinsInfoCard({ copy }: LoginCoinsInfoCardProps) {
         {copy.body}
       </p>
       <div className="mt-8">
-        <span className="inline-flex items-center rounded-full bg-brand-cream px-4 py-2 text-sm font-bold text-brand-ink">
+        <span className="inline-flex items-center rounded-full bg-brand-yellow px-4 py-2 text-sm font-bold text-brand-ink">
           {copy.ratePill}
         </span>
       </div>
