@@ -3,6 +3,7 @@ import { cache, Suspense, type ReactNode } from "react";
 import { AccountControls } from "@/components/layout/AccountControls";
 import { HeaderCartTrigger } from "@/components/layout/HeaderCartTrigger";
 import { HeaderCoinsPill } from "@/components/layout/HeaderCoinsPill";
+import { HeaderSignedInCoinsPill } from "@/components/layout/HeaderSignedInCoinsPill";
 import { MobileHeaderActions } from "@/components/layout/MobileHeaderActions";
 import {
   MobileNavAuthButton,
@@ -12,8 +13,8 @@ import type { StorefrontNavItem } from "@/components/layout/storefront-nav";
 import { guestCoinsLoginHref } from "@/features/auth/guest-coins-login";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getUserBonusBalance } from "@/features/loyalty/application/queries";
-import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import { getWishlistCount } from "@/features/wishlist/queries";
+import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import { getCurrentUser } from "@/lib/auth/session";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -59,15 +60,25 @@ function CoinsPillFromSession({
   bonusBalanceAmount: number;
   size?: "md" | "sm";
 }): ReactNode {
+  if (user) {
+    return (
+      <HeaderSignedInCoinsPill
+        locale={locale}
+        balanceAmount={bonusBalanceAmount}
+        coinsLabel={dictionary.header.coins}
+        ariaLabel={dictionary.header.coinsAria}
+        size={size}
+      />
+    );
+  }
+
   return (
     <HeaderCoinsPill
       locale={locale}
-      balanceAmount={user ? bonusBalanceAmount : 0}
+      balanceAmount={0}
       coinsLabel={dictionary.header.coins}
       ariaLabel={dictionary.header.coinsAria}
-      href={
-        user ? `/${locale}/profile/bonuses` : guestCoinsLoginHref(locale)
-      }
+      href={guestCoinsLoginHref(locale)}
       size={size}
     />
   );

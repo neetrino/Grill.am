@@ -21,8 +21,8 @@ function formatCoinsBalance(amount: number, locale: Locale): string {
 }
 
 /**
- * Cream bonuses pill — links to profile coins history (or coins login when guest).
- * Default height matches HeaderSearch (`h-12` / `sm:h-[49px]`).
+ * Cream bonuses pill. Guest → coins login; signed-in href is passed in
+ * (mobile sheet or desktop bonuses page).
  */
 export function HeaderCoinsPill({
   locale,

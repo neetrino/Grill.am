@@ -19,8 +19,10 @@ import { DeleteAccountForm } from "@/features/profile/ui/DeleteAccountForm";
 import { PersonalInformationForm } from "@/features/profile/ui/PersonalInformationForm";
 import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView";
 import { ProfileDashboardView } from "@/features/profile/ui/ProfileDashboardView";
+import { ProfileDesktopSheetRedirect } from "@/features/profile/ui/ProfileDesktopSheetRedirect";
 import { ProfileMobileMenu } from "@/features/profile/ui/ProfileMobileMenu";
 import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
+import { parseProfileSheetParam } from "@/features/profile/ui/profile-sheet";
 import { listCustomerAssignedCoupons } from "@/features/promotions/application/list-customer-assigned-coupons";
 import { listCustomerCouponHistory } from "@/features/promotions/application/list-customer-coupon-history";
 import { CustomerPromoCodesPageContent } from "@/features/promotions/ui/CustomerPromoCodesPageContent";
@@ -30,13 +32,17 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type ProfilePageProps = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
+export default async function ProfilePage({ params, searchParams }: ProfilePageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) {
     notFound();
   }
+
+  const query = await searchParams;
+  const initialSheet = parseProfileSheetParam(query.sheet);
 
   const user = await requireUser(locale);
   const dictionary = getDictionary(locale);
@@ -103,12 +109,17 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <>
+      <ProfileDesktopSheetRedirect
+        locale={locale}
+        sheetOpen={initialSheet === "bonuses"}
+      />
       <ProfileMobileMenu
         locale={locale}
         user={user}
         dictionary={dictionary.profile}
         closeLabel={dictionary.profile.cancel}
         logoutAction={logoutWithLocale}
+        initialSheet={initialSheet}
         sheets={{
           dashboard: <ProfileDashboardView {...dashboardProps} />,
           orders: (

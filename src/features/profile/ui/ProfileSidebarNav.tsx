@@ -155,7 +155,8 @@ export function ProfileSidebarNav({
 
   const activeHref = deleteAccountActive
     ? deleteAccountHref
-    : (items.find((item) => isItemActive(pathname, item))?.href ??
+    : (items.find((item) => isItemActive(pathname, item))
+        ?.href ??
       items[0]?.href ??
       "");
 

@@ -7,9 +7,9 @@ import {
 } from "@/features/auth/guest-coins-login";
 
 describe("guestCoinsLoginHref", () => {
-  it("sends guests to login with coins context and bonuses next path", () => {
+  it("sends guests to login with coins context and profile coins sheet next", () => {
     expect(guestCoinsLoginHref("hy")).toBe(
-      `/hy/login?from=${AUTH_FROM_COINS}&next=${encodeURIComponent("/hy/profile/bonuses")}`,
+      `/hy/login?from=${AUTH_FROM_COINS}&next=${encodeURIComponent("/hy/profile?sheet=bonuses")}`,
     );
   });
 });

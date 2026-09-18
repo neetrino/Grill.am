@@ -1,3 +1,4 @@
+import { profileCoinsHref } from "@/features/profile/ui/profile-sheet";
 import type { Locale } from "@/lib/i18n/config";
 
 /** Query flag that opens the coins explainer beside the login form. */
@@ -10,8 +11,8 @@ export function isCoinsAuthEntry(
   return value === AUTH_FROM_COINS;
 }
 
-/** Guest coins pill → login with coins panel, then bonuses after sign-in. */
+/** Guest coins pill → login with coins panel, then profile coins sheet after sign-in. */
 export function guestCoinsLoginHref(locale: Locale): string {
-  const next = `/${locale}/profile/bonuses`;
+  const next = profileCoinsHref(locale);
   return `/${locale}/login?from=${AUTH_FROM_COINS}&next=${encodeURIComponent(next)}`;
 }
