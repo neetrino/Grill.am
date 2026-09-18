@@ -1,9 +1,7 @@
-import { staticAssetUrl } from "@/lib/media/static-asset-url";
+/** Local `public/` assets — not on R2 yet; do not wrap with `staticAssetUrl`. */
 
-/** Landscape food-frame backdrop — full scene visible on desktop. */
-export const AUTH_BACKGROUND_IMAGE = staticAssetUrl("/assets/auth/auth-bg.webp");
+/** Flame graphic for the red login/register stage. */
+export const AUTH_FIRE_SRC = "/assets/auth/auth-fire.svg";
 
-/** Portrait food-frame backdrop — full scene visible on mobile. */
-export const AUTH_BACKGROUND_IMAGE_MOBILE = staticAssetUrl(
-  "/assets/auth/auth-bg-mobile.webp",
-);
+/** Outline coin used on the guest-coins login stage. */
+export const AUTH_COIN_SRC = "/assets/auth/auth-coin.svg";

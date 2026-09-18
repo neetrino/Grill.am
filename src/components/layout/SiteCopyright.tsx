@@ -18,7 +18,7 @@ export function SiteCopyright({ className, linkClassName }: SiteCopyrightProps) 
         rel="noopener noreferrer"
         className={linkClassName}
       >
-        Neetrino IT Company
+        Neetrino
       </a>
     </p>
   );

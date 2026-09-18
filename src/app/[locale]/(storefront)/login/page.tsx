@@ -26,16 +26,15 @@ export default async function LoginPage({
 
   const dictionary = getDictionary(rawLocale);
   const auth = dictionary.auth;
-  const showCoinsInfo = isCoinsAuthEntry(query.from);
+  const fromCoins = isCoinsAuthEntry(query.from);
 
   return (
     <AuthPosterShell
       mode="login"
       formLead={auth.loginTitleLead}
       formAccent={auth.loginTitleAccent}
-      aside={
-        showCoinsInfo ? <LoginCoinsInfoCard copy={auth.coinsGate} /> : null
-      }
+      showCoins={fromCoins}
+      aside={fromCoins ? <LoginCoinsInfoCard copy={auth.coinsGate} /> : null}
     >
       <Suspense fallback={<p className="text-sm text-brand-ink/50">…</p>}>
         <LoginForm locale={rawLocale} dictionary={auth} />

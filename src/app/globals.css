@@ -91,8 +91,9 @@ body {
     system-ui, sans-serif;
 }
 
+html.auth-page-active,
 body.auth-page-active {
-  background-color: var(--brand-ink);
+  background-color: #e3181d;
 }
 
 /* Photos: no drag / blue selection highlight; surrounding text stays copyable. */

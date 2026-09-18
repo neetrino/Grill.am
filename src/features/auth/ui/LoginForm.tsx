@@ -52,8 +52,14 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
     >
       {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
 
+      <AuthMotionField index={0}>
+        <p className="text-center text-sm leading-relaxed text-brand-ink/50">
+          {dictionary.loginSubtitle}
+        </p>
+      </AuthMotionField>
+
       {resetSucceeded ? (
-        <AuthMotionField index={0}>
+        <AuthMotionField index={1}>
           <p
             role="status"
             className="rounded-[10px] border-2 border-green-700 bg-green-50 p-3 text-sm font-medium text-green-800"
@@ -63,7 +69,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         </AuthMotionField>
       ) : null}
 
-      <AuthMotionField index={0}>
+      <AuthMotionField index={1}>
         <AuthAnimatedInput
           required
           name="email"
@@ -77,7 +83,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         />
       </AuthMotionField>
 
-      <AuthMotionField index={1}>
+      <AuthMotionField index={2}>
         <PasswordField
           name="password"
           label={dictionary.password}
@@ -136,12 +142,13 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
 
       <AuthMotionField index={4}>
         <p className="text-center text-sm text-brand-ink/60">
+          {dictionary.noAccount}{" "}
           <AppLink
             href={registerHref}
             prefetchPolicy="intent"
             className={AUTH_LINK_CLASS}
           >
-            {dictionary.submitRegister}
+            {dictionary.registerLink}
           </AppLink>
         </p>
       </AuthMotionField>
