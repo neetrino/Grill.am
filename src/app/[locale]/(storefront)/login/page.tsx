@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { isCoinsAuthEntry } from "@/features/auth/guest-coins-login";
 import { AuthPosterShell } from "@/features/auth/ui/AuthPosterShell";
 import { LoginCoinsInfoCard } from "@/features/auth/ui/LoginCoinsInfoCard";
+import { LoginCoinsInfoSheet } from "@/features/auth/ui/LoginCoinsInfoSheet";
 import { LoginForm } from "@/features/auth/ui/LoginForm";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -29,16 +30,25 @@ export default async function LoginPage({
   const fromCoins = isCoinsAuthEntry(query.from);
 
   return (
-    <AuthPosterShell
-      mode="login"
-      formLead={auth.loginTitleLead}
-      formAccent={auth.loginTitleAccent}
-      showCoins={fromCoins}
-      aside={fromCoins ? <LoginCoinsInfoCard copy={auth.coinsGate} /> : null}
-    >
-      <Suspense fallback={<p className="text-sm text-brand-ink/50">…</p>}>
-        <LoginForm locale={rawLocale} dictionary={auth} />
-      </Suspense>
-    </AuthPosterShell>
+    <>
+      <AuthPosterShell
+        mode="login"
+        formLead={auth.loginTitleLead}
+        formAccent={auth.loginTitleAccent}
+        showCoins={fromCoins}
+        aside={fromCoins ? <LoginCoinsInfoCard copy={auth.coinsGate} /> : null}
+      >
+        <Suspense fallback={<p className="text-sm text-brand-ink/50">…</p>}>
+          <LoginForm locale={rawLocale} dictionary={auth} />
+        </Suspense>
+      </AuthPosterShell>
+      {fromCoins ? (
+        <LoginCoinsInfoSheet
+          copy={auth.coinsGate}
+          closeLabel={dictionary.close}
+          title={auth.coinsGate.title}
+        />
+      ) : null}
+    </>
   );
 }

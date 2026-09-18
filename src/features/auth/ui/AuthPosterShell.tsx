@@ -45,7 +45,7 @@ export function AuthPosterShell({
   const stageRoot = useAuthStageRoot();
   const hasAside = aside != null;
   const stageMaxWidth = hasAside
-    ? "max-w-[920px]"
+    ? "max-w-[420px] lg:max-w-[920px]"
     : mode === "register"
       ? "max-w-[560px]"
       : "max-w-[420px]";
@@ -93,7 +93,7 @@ export function AuthPosterShell({
             {hasAside ? (
               <motion.div
                 data-poster-card
-                className="relative min-h-0"
+                className="relative min-h-0 max-lg:hidden"
                 initial={
                   reduceMotion
                     ? false

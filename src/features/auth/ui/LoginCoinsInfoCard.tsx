@@ -1,15 +1,15 @@
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
+type CoinsGateCopy = Dictionary["auth"]["coinsGate"];
+
 type LoginCoinsInfoCardProps = {
-  copy: Dictionary["auth"]["coinsGate"];
+  copy: CoinsGateCopy;
 };
 
-/**
- * Guest login aside — Grill Coins program explainer.
- */
-export function LoginCoinsInfoCard({ copy }: LoginCoinsInfoCardProps) {
+/** Shared Grill Coins explainer body (aside card + mobile sheet). */
+export function LoginCoinsInfoContent({ copy }: LoginCoinsInfoCardProps) {
   return (
-    <aside className="flex h-full flex-col justify-center rounded-[22px] bg-brand-ink px-7 py-8 shadow-[0_28px_90px_rgba(7,16,20,0.32)] sm:px-8 sm:py-10">
+    <>
       <h2 className="font-sans text-[2rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-white uppercase sm:text-[2.35rem]">
         {copy.title}
       </h2>
@@ -24,6 +24,17 @@ export function LoginCoinsInfoCard({ copy }: LoginCoinsInfoCardProps) {
           {copy.ratePill}
         </span>
       </div>
+    </>
+  );
+}
+
+/**
+ * Guest login aside — Grill Coins program explainer.
+ */
+export function LoginCoinsInfoCard({ copy }: LoginCoinsInfoCardProps) {
+  return (
+    <aside className="flex h-full flex-col justify-center rounded-[22px] bg-brand-ink px-7 py-8 shadow-[0_28px_90px_rgba(7,16,20,0.32)] sm:px-8 sm:py-10">
+      <LoginCoinsInfoContent copy={copy} />
     </aside>
   );
 }
