@@ -134,7 +134,7 @@ function fallingCoinStyle(coin: FallingCoin): CSSProperties {
     "--coin-sway": `${coin.swayPx}px`,
     "--coin-spin-start": `${coin.spinStartDeg}deg`,
     "--coin-spin-end": `${coin.spinEndDeg}deg`,
-  };
+  } as CSSProperties;
 }
 
 /**
