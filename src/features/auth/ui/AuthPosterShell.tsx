@@ -22,7 +22,7 @@ type AuthPosterShellProps = {
   formLead: string;
   formAccent: string;
   subtitle?: string;
-  /** Floating coins on the fire stage (guest coins login). */
+  /** Falling coin rain on the fire stage (guest coins login). */
   showCoins?: boolean;
   /** Left-side coins explainer (guest coins login). */
   aside?: ReactNode;

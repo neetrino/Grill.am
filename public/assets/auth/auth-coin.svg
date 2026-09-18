@@ -16,9 +16,9 @@
 <feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 "/>
 </feComponentTransfer>
 <feComposite operator="in" in2="shape" in="coloredNoise2" result="noise2Clipped"/>
-<feFlood flood-color="#DB0B20" result="color1Flood"/>
+<feFlood flood-color="#E5A410" result="color1Flood"/>
 <feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1"/>
-<feFlood flood-color="#FFF86D" result="color2Flood"/>
+<feFlood flood-color="#FFE14A" result="color2Flood"/>
 <feComposite operator="in" in2="noise2Clipped" in="color2Flood" result="color2"/>
 <feMerge>
 <feMergeNode in="shape"/>
