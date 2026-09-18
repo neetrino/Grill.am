@@ -92,7 +92,12 @@ export function CheckoutSelect({
   const menuPosition = useDropdownPortalPosition(
     disclosure.isVisible,
     triggerRef,
-    { matchTriggerWidth: true, lockTriggerWidth: fitContent },
+    {
+      // Keep panel at least as wide as the trigger, but never clamp max-width so
+      // longer option labels (e.g. Armenian role/status) stay fully readable.
+      matchTriggerWidth: true,
+      lockTriggerWidth: false,
+    },
   );
 
   const selectedOption = options.find((option) => option.value === value);
@@ -154,7 +159,7 @@ export function CheckoutSelect({
   return (
     <div
       ref={containerRef}
-      className={`relative ${fitContent ? "w-fit max-w-full" : "w-full"} ${className}`.trim()}
+      className={`relative ${fitContent ? "w-fit shrink-0" : "w-full"} ${className}`.trim()}
     >
       <label
         htmlFor={triggerId}
@@ -188,12 +193,16 @@ export function CheckoutSelect({
         aria-required={required || undefined}
         disabled={disabled}
         onClick={disclosure.toggle}
-        className={`flex h-11 min-w-0 items-center justify-between gap-3 px-3 text-left transition-colors outline-none disabled:cursor-not-allowed [&_svg]:text-current ${
-          fitContent ? "w-fit" : "w-full"
+        className={`flex h-11 items-center justify-between gap-3 px-3 text-left transition-colors outline-none disabled:cursor-not-allowed [&_svg]:text-current ${
+          fitContent ? "w-fit shrink-0" : "min-w-0 w-full"
         } ${triggerToneClass} ${triggerBorderClass}`.trim()}
       >
         <span
-          className={`truncate text-sm ${
+          className={`text-sm ${
+            fitContent || triggerClassName
+              ? "whitespace-nowrap"
+              : "truncate"
+          } ${
             isPlaceholder && !triggerClassName
               ? "text-gray-400"
               : triggerClassName

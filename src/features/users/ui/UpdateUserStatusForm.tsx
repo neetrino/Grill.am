@@ -72,7 +72,7 @@ export function UpdateUserStatusForm({
   }
 
   return (
-    <div className="w-fit max-w-full">
+    <div className="w-fit shrink-0">
       <AdminSelect
         label={forms.status}
         name="userStatus"
