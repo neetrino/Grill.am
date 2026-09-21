@@ -6,6 +6,7 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 import { getPaymentAdapter } from "@/config/providers";
+import { invalidateAnalyticsCache } from "@/features/analytics/application/queries";
 import {
   cartItems,
   carts,
@@ -896,6 +897,8 @@ export async function createOrderAction(
         notifyCod: flowType === "offline",
       } satisfies CreatedOrderPayload;
     });
+
+    await invalidateAnalyticsCache();
 
     if (created.guestAccessRawToken) {
       cookieStore.set(

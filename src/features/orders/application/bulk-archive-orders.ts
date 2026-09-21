@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { auditLogs, orderEvents, orders } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { invalidateAnalyticsCache } from "@/features/analytics/application/queries";
 import {
   bulkArchiveOrdersSchema,
   type BulkArchiveOrdersInput,
@@ -88,5 +89,6 @@ export async function bulkArchiveOrdersAction(
   }
 
   revalidatePath(`/${locale}/admin/orders`);
+  await invalidateAnalyticsCache();
   return ok({ archived, skipped });
 }
