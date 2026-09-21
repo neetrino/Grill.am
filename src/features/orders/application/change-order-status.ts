@@ -12,6 +12,7 @@ import {
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { invalidateAnalyticsCache } from "@/features/analytics/application/queries";
 import { syncOrderBonusEarn } from "@/features/loyalty/application/ledger";
 import {
   canTransitionOrderStatus,
@@ -180,6 +181,7 @@ export async function changeOrderStatusAction(
 
     revalidatePath(`/${locale}/admin/orders`);
     revalidatePath(`/${locale}/profile/orders`);
+    await invalidateAnalyticsCache();
 
     return ok(result);
   } catch (error) {

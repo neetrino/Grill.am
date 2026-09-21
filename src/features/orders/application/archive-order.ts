@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { auditLogs, orderEvents, orders } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { invalidateAnalyticsCache } from "@/features/analytics/application/queries";
 import {
   archiveOrderSchema,
   type ArchiveOrderInput,
@@ -82,6 +83,7 @@ export async function archiveOrderAction(
     });
 
     revalidatePath(`/${locale}/admin/orders`);
+    await invalidateAnalyticsCache();
     return ok(result);
   } catch (error) {
     const code = error instanceof Error ? error.message : "UNKNOWN";

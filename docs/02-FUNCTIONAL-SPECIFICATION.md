@@ -215,7 +215,7 @@
 - Cards՝ users count, products count, orders count, revenue։
 - 50/50 area՝ recent orders և top-selling products։
 - Date range + previous-period comparison։
-- Revenue-ը ներառում է settings-ում revenue-generating statuses-ը; default-ում բոլոր status-ներն են բացի cancelled-ից։
+- Revenue-ը գումարում է բոլոր fulfillment status-ները, ներառյալ `PENDING`-ը։ `CANCELLED` և `REFUNDED` պատվերները revenue-ում չեն մտնում, այնպես որ չեղարկելիս նախկինում ավելացված գումարը մեկ անգամ է հանվում։
 
 ### Analytics
 
