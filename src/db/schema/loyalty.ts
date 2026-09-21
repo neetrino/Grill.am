@@ -23,6 +23,7 @@ import { orders } from "@/db/schema/orders";
 /**
  * Append-only loyalty wallet history.
  * `amount` is always positive; direction is encoded by `entryType`.
+ * EARN can repeat after reversal; current credit is `orders.bonusEarnedAppliedAt`.
  */
 export const bonusLedger = pgTable(
   "bonus_ledger",
@@ -43,9 +44,6 @@ export const bonusLedger = pgTable(
   (table) => [
     index("bonus_ledger_user_created_idx").on(table.userId, table.createdAt),
     index("bonus_ledger_order_idx").on(table.orderId),
-    uniqueIndex("bonus_ledger_order_earn_uidx")
-      .on(table.orderId)
-      .where(sql`${table.entryType} = 'EARN' AND ${table.orderId} IS NOT NULL`),
     uniqueIndex("bonus_ledger_order_spend_uidx")
       .on(table.orderId)
       .where(sql`${table.entryType} = 'SPEND' AND ${table.orderId} IS NOT NULL`),

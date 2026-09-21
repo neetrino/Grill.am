@@ -4,6 +4,7 @@ import { and, eq, sql } from "drizzle-orm";
 
 import { bonusLedger, orders, users } from "@/db/schema";
 import type { DatabaseTransaction } from "@/db/transaction";
+import { shouldCreditOrderBonusEarn } from "@/features/loyalty/domain/loyalty-math";
 import { createId } from "@/lib/id";
 
 type BonusLedgerEntryType =
@@ -105,8 +106,8 @@ export async function spendBonusForOrder(
 }
 
 /**
- * Credits planned earn once payment is Paid (`CAPTURED`).
- * Idempotent via unique EARN index + bonusEarnedAppliedAt guard.
+ * Credits planned earn when payment is Paid and fulfillment is Completed.
+ * Idempotent via `bonusEarnedAppliedAt` while the credit is active.
  */
 export async function applyBonusEarnForOrder(
   tx: DatabaseTransaction,
@@ -116,6 +117,7 @@ export async function applyBonusEarnForOrder(
     .select({
       id: orders.id,
       userId: orders.userId,
+      status: orders.status,
       bonusEarnedAmount: orders.bonusEarnedAmount,
       bonusEarnedAppliedAt: orders.bonusEarnedAppliedAt,
       paymentStatus: orders.paymentStatus,
@@ -128,7 +130,12 @@ export async function applyBonusEarnForOrder(
   if (!order?.userId || order.bonusEarnedAmount <= 0) {
     return;
   }
-  if (order.paymentStatus !== "CAPTURED") {
+  if (
+    !shouldCreditOrderBonusEarn({
+      paymentStatus: order.paymentStatus,
+      orderStatus: order.status,
+    })
+  ) {
     return;
   }
   if (order.bonusEarnedAppliedAt != null) {
@@ -136,19 +143,13 @@ export async function applyBonusEarnForOrder(
   }
 
   const now = new Date();
-  try {
-    await applyLedgerEntry(tx, {
-      userId: order.userId,
-      orderId: order.id,
-      entryType: "EARN",
-      amount: order.bonusEarnedAmount,
-      note: "order_earn",
-    });
-  } catch (error) {
-    if (!isUniqueViolation(error)) {
-      throw error;
-    }
-  }
+  await applyLedgerEntry(tx, {
+    userId: order.userId,
+    orderId: order.id,
+    entryType: "EARN",
+    amount: order.bonusEarnedAmount,
+    note: "order_earn",
+  });
 
   await tx
     .update(orders)
@@ -156,6 +157,40 @@ export async function applyBonusEarnForOrder(
     .where(
       and(eq(orders.id, order.id), sql`${orders.bonusEarnedAppliedAt} IS NULL`),
     );
+}
+
+/**
+ * Credits earn when Paid + Completed; returns it if either status leaves that pair.
+ */
+export async function syncOrderBonusEarn(
+  tx: DatabaseTransaction,
+  orderId: string,
+): Promise<void> {
+  const [order] = await tx
+    .select({
+      status: orders.status,
+      paymentStatus: orders.paymentStatus,
+    })
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .for("update")
+    .limit(1);
+
+  if (!order) {
+    return;
+  }
+
+  if (
+    shouldCreditOrderBonusEarn({
+      paymentStatus: order.paymentStatus,
+      orderStatus: order.status,
+    })
+  ) {
+    await applyBonusEarnForOrder(tx, orderId);
+    return;
+  }
+
+  await reverseBonusEarnForOrder(tx, orderId);
 }
 
 /** Restores spent bonus when an unpaid attempt fails (idempotent). */
@@ -274,7 +309,7 @@ export async function restoreBonusSpendAfterRefund(
   });
 }
 
-/** Revokes credited earn after a full refund (idempotent). */
+/** Revokes currently credited earn (idempotent via `bonusEarnedAppliedAt`). */
 export async function reverseBonusEarnForOrder(
   tx: DatabaseTransaction,
   orderId: string,
@@ -299,47 +334,44 @@ export async function reverseBonusEarnForOrder(
     return;
   }
 
-  const [existingReversal] = await tx
-    .select({ id: bonusLedger.id })
-    .from(bonusLedger)
-    .where(
-      and(
-        eq(bonusLedger.orderId, order.id),
-        eq(bonusLedger.entryType, "EARN_REVERSAL"),
-      ),
-    )
-    .limit(1);
-
-  if (existingReversal) {
-    return;
-  }
-
   try {
     await applyLedgerEntry(tx, {
       userId: order.userId,
       orderId: order.id,
       entryType: "EARN_REVERSAL",
       amount: order.bonusEarnedAmount,
-      note: "order_refunded",
+      note: "order_earn_reversed",
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "LOYALTY_INSUFFICIENT_BALANCE") {
-      // Clamp reversal to remaining balance so refund still completes.
+    if (
+      error instanceof Error &&
+      error.message === "LOYALTY_INSUFFICIENT_BALANCE"
+    ) {
       const balance = await lockUserBalance(tx, order.userId);
-      if (balance <= 0) {
-        return;
+      if (balance > 0) {
+        await applyLedgerEntry(tx, {
+          userId: order.userId,
+          orderId: order.id,
+          entryType: "EARN_REVERSAL",
+          amount: Math.min(balance, order.bonusEarnedAmount),
+          note: "order_earn_reversed_partial",
+        });
       }
-      await applyLedgerEntry(tx, {
-        userId: order.userId,
-        orderId: order.id,
-        entryType: "EARN_REVERSAL",
-        amount: Math.min(balance, order.bonusEarnedAmount),
-        note: "order_refunded_partial",
-      });
-      return;
+    } else {
+      throw error;
     }
-    throw error;
   }
+
+  const now = new Date();
+  await tx
+    .update(orders)
+    .set({ bonusEarnedAppliedAt: null, updatedAt: now })
+    .where(
+      and(
+        eq(orders.id, order.id),
+        sql`${orders.bonusEarnedAppliedAt} IS NOT NULL`,
+      ),
+    );
 }
 
 function isUniqueViolation(error: unknown): boolean {

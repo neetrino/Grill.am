@@ -12,7 +12,7 @@ import {
 } from "@/db/schema";
 import type { DatabaseTransaction } from "@/db/transaction";
 import { withTransaction } from "@/db/transaction";
-import { applyBonusEarnForOrder } from "@/features/loyalty/application/ledger";
+import { syncOrderBonusEarn } from "@/features/loyalty/application/ledger";
 import {
   InsufficientStockAtConfirmationError,
   InvalidPaymentTransitionError,
@@ -182,7 +182,7 @@ export async function confirmPayment(
       attemptNumber: payment.attemptNumber,
     });
 
-    await applyBonusEarnForOrder(tx, order.id);
+    await syncOrderBonusEarn(tx, order.id);
 
     await tx.insert(orderEvents).values({
       id: createId(),

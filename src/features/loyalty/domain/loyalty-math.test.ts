@@ -12,6 +12,7 @@ import {
   isProductBonusRuleActive,
   merchandiseNetAmount,
   pickFlatBonusAmount,
+  shouldCreditOrderBonusEarn,
 } from "@/features/loyalty/domain/loyalty-math";
 
 describe("loyalty-math", () => {
@@ -193,5 +194,38 @@ describe("loyalty-math", () => {
         ]),
       ),
     ).toBe(100);
+  });
+
+  it("credits earn only when Paid and Completed", () => {
+    expect(
+      shouldCreditOrderBonusEarn({
+        paymentStatus: "CAPTURED",
+        orderStatus: "DELIVERED",
+      }),
+    ).toBe(true);
+    expect(
+      shouldCreditOrderBonusEarn({
+        paymentStatus: "CAPTURED",
+        orderStatus: "PROCESSING",
+      }),
+    ).toBe(false);
+    expect(
+      shouldCreditOrderBonusEarn({
+        paymentStatus: "PENDING",
+        orderStatus: "DELIVERED",
+      }),
+    ).toBe(false);
+    expect(
+      shouldCreditOrderBonusEarn({
+        paymentStatus: "REFUNDED",
+        orderStatus: "DELIVERED",
+      }),
+    ).toBe(false);
+    expect(
+      shouldCreditOrderBonusEarn({
+        paymentStatus: "CAPTURED",
+        orderStatus: "CANCELLED",
+      }),
+    ).toBe(false);
   });
 });
