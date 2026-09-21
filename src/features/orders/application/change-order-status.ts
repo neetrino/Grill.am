@@ -12,6 +12,7 @@ import {
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { syncOrderBonusEarn } from "@/features/loyalty/application/ledger";
 import {
   canTransitionOrderStatus,
   isOrderStatus,
@@ -171,6 +172,8 @@ export async function changeOrderStatusAction(
         correlationId,
         context: { orderNumber, note: note ?? null },
       });
+
+      await syncOrderBonusEarn(tx, locked.id);
 
       return { orderNumber, fromStatus, toStatus };
     });

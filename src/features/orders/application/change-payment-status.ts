@@ -7,10 +7,9 @@ import { getDb } from "@/db/client";
 import { auditLogs, orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
 import {
-  applyBonusEarnForOrder,
   restoreBonusSpendAfterRefund,
-  reverseBonusEarnForOrder,
   reverseBonusSpendForOrder,
+  syncOrderBonusEarn,
 } from "@/features/loyalty/application/ledger";
 import { planAdminPaymentStatusChange } from "@/features/orders/domain/admin-payment-status-plan";
 import {
@@ -165,9 +164,7 @@ export async function changePaymentStatusAction(
         context: { orderNumber, note: note ?? null },
       });
 
-      if (toStatus === "CAPTURED") {
-        await applyBonusEarnForOrder(tx, locked.id);
-      }
+      await syncOrderBonusEarn(tx, locked.id);
       if (
         toStatus === "FAILED" ||
         toStatus === "CANCELLED"
@@ -175,7 +172,6 @@ export async function changePaymentStatusAction(
         await reverseBonusSpendForOrder(tx, locked.id);
       }
       if (toStatus === "REFUNDED") {
-        await reverseBonusEarnForOrder(tx, locked.id);
         await restoreBonusSpendAfterRefund(tx, locked.id);
       }
 

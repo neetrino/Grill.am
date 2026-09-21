@@ -303,9 +303,9 @@ Constraints:
 
 Append-only loyalty wallet history։ Fields՝ user, nullable order, `entry_type` (`EARN`/`SPEND`/`SPEND_REVERSAL`/`EARN_REVERSAL`), positive `amount`, `balance_after`, optional note, created timestamp։
 
-- Partial unique indexes՝ մեկ `EARN` և մեկ `SPEND` per order (idempotent credit/debit)։
+- Partial unique index՝ մեկ `SPEND` per order (idempotent checkout debit)։ `EARN` may repeat after reversal; current credit is gated by `orders.bonus_earned_applied_at`։
 - Rates live in `store_settings` key `store.loyalty` (`earnPercent`, `earnMinOrderAmount`; legacy `redeemMinOrderAmount` is still read)։
-- Earn credits only when `paymentStatus` becomes `CAPTURED` (Paid) — COD placement does not credit yet; admin/provider capture does։ Flat product/category earn applies only when merchandise net meets `earnMinOrderAmount` (if set)։ Spend deducts at checkout with no order minimum (wallet balance and payable total only); unpaid failure restores spend; refund revokes earn and restores spend։
+- Earn credits only when payment is Paid (`CAPTURED`) **and** fulfillment is Completed (`DELIVERED`)։ Leaving either status reverses the credited earn (and re-credits if both become true again)։ COD placement does not credit yet։ Flat product/category earn applies only when merchandise net meets `earnMinOrderAmount` (if set)։ Spend deducts at checkout with no order minimum (wallet balance and payable total only); unpaid failure restores spend; refund revokes earn and restores spend։
 
 ### 10.6 `product_bonus_rules`
 

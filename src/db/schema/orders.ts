@@ -72,7 +72,7 @@ export const orders = pgTable(
     bonusSpentAmount: integer("bonus_spent_amount").notNull().default(0),
     /** Loyalty bonus planned/earned from this order (AMD minor units). */
     bonusEarnedAmount: integer("bonus_earned_amount").notNull().default(0),
-    /** When planned earn was credited to the user wallet; null while pending. */
+    /** When planned earn is currently credited; null if pending or reversed. */
     bonusEarnedAppliedAt: timestamp("bonus_earned_applied_at", {
       withTimezone: true,
       mode: "date",

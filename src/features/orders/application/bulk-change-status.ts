@@ -12,6 +12,7 @@ import {
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { syncOrderBonusEarn } from "@/features/loyalty/application/ledger";
 import {
   canTransitionOrderStatus,
   isOrderStatus,
@@ -134,6 +135,8 @@ export async function bulkChangeOrderStatusAction(
           afterDiff: { status: toStatus },
           correlationId: createId(),
         });
+
+        await syncOrderBonusEarn(tx, existing.id);
 
         return true;
       });

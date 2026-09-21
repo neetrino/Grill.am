@@ -196,6 +196,17 @@ export function computeProductCardBonusEarnAmount(input: {
   return percentEarn + flat;
 }
 
+/**
+ * Planned earn is credited only when payment is Paid and fulfillment is
+ * Completed (`DELIVERED` in the database).
+ */
+export function shouldCreditOrderBonusEarn(input: {
+  paymentStatus: string;
+  orderStatus: string;
+}): boolean {
+  return input.paymentStatus === "CAPTURED" && input.orderStatus === "DELIVERED";
+}
+
 /** Clamp a requested redeem amount to the allowed max. */
 export function clampBonusSpendAmount(
   requestedAmount: number | undefined,
