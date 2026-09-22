@@ -51,7 +51,6 @@ export function CheckoutPaymentMethods({
     <section
       id="checkout-field-payment"
       className={CHECKOUT_SECTION_CARD_CLASS}
-      aria-invalid={invalid ? true : undefined}
     >
       <h2
         id="checkout-title-payment"
