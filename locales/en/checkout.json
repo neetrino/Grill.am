@@ -109,6 +109,8 @@
   "errors": {
     "cartEmpty": "Cart is empty",
     "minimumOrder": "Minimum order is {amount}. Add more items to continue.",
+    "fillRequired": "Please fill in the highlighted field",
+    "invalidEmail": "Enter a valid email address",
     "paymentMethodDisabled": "This payment method is not available.",
     "onlineProviderPending": "Online payment integration is not enabled yet. Please choose cash on delivery."
   },

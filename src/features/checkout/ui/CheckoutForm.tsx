@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -24,13 +25,20 @@ import type {
 } from "@/features/checkout/ui/CheckoutAddressDrawer";
 import { CheckoutCodCashChange } from "@/features/checkout/ui/CheckoutCodCashChange";
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
+import {
+  isCheckoutEmailValid,
+  scrollToCheckoutField,
+  type CheckoutInvalidField,
+} from "@/features/checkout/ui/checkout-field-validation";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
 import { IdramAutoSubmitForm } from "@/features/checkout/ui/IdramAutoSubmitForm";
 import {
   CHECKOUT_ALERT_CLASS,
+  CHECKOUT_INVALID_FEEDBACK_MS,
   CHECKOUT_PRIMARY_BUTTON_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
+  CHECKOUT_TITLE_INVALID_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import {
   CHECKOUT_DELIVERY_CITY_PRIMARY,
@@ -132,6 +140,8 @@ type CheckoutLabels = {
   goToShop: string;
   cartEmpty: string;
   minimumOrder: string;
+  fillRequired: string;
+  invalidEmail: string;
   idramRedirecting: string;
   idramSubmitFallback: string;
   arcaRedirecting: string;
@@ -267,6 +277,9 @@ export function CheckoutForm({
   const [cashTenderedAmount, setCashTenderedAmount] =
     useState<CodCashDenomination | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [invalidFields, setInvalidFields] = useState<
+    Partial<Record<CheckoutInvalidField, true>>
+  >({});
   const [couponDraft, setCouponDraft] = useState("");
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(
     null,
@@ -283,6 +296,17 @@ export function CheckoutForm({
   } | null>(null);
   const [redirecting, setRedirecting] = useState(false);
   const submitLockRef = useRef(false);
+  const invalidFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  useEffect(() => {
+    return () => {
+      if (invalidFeedbackTimeoutRef.current) {
+        clearTimeout(invalidFeedbackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const selectedDelivery = deliveryOptions.find(
     (option) => option.id === deliveryRuleId,
@@ -348,6 +372,7 @@ export function CheckoutForm({
 
   function onPaymentMethodChange(method: CheckoutPaymentMethod): void {
     setPaymentMethod(method);
+    clearInvalidField("payment");
     if (method !== "cash_on_delivery") {
       setCashTenderedAmount(null);
     }
@@ -536,33 +561,92 @@ export function CheckoutForm({
     );
   }
 
+  function clearInvalidField(field: CheckoutInvalidField): void {
+    setInvalidFields((prev) => {
+      if (!prev[field]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function markInvalidAndScroll(fields: CheckoutInvalidField[]): void {
+    const next: Partial<Record<CheckoutInvalidField, true>> = {};
+    for (const field of fields) {
+      next[field] = true;
+    }
+    if (invalidFeedbackTimeoutRef.current) {
+      clearTimeout(invalidFeedbackTimeoutRef.current);
+      invalidFeedbackTimeoutRef.current = null;
+    }
+    // Drop classes first so a repeat submit restarts the red + shake.
+    setInvalidFields({});
+    setError(null);
+    requestAnimationFrame(() => {
+      setInvalidFields(next);
+      const first = fields[0];
+      if (first) {
+        scrollToCheckoutField(first);
+      }
+      invalidFeedbackTimeoutRef.current = setTimeout(() => {
+        setInvalidFields({});
+        invalidFeedbackTimeoutRef.current = null;
+      }, CHECKOUT_INVALID_FEEDBACK_MS);
+    });
+  }
+
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    if (shippingMethod == null) {
-      setError(labels.selectShippingMethod);
-      return;
-    }
-    if (paymentMethod == null) {
-      setError(labels.selectPaymentMethod);
-      return;
-    }
-    if (!meetsMinimum) {
-      setError(minimumOrderMessage);
-      return;
-    }
-    if (shippingMethod === "pickup" && !pickupStoreId) {
-      setError(labels.selectPickupBranch);
-      return;
-    }
-    if (shippingMethod === "delivery" && !line1.trim()) {
-      setError(labels.selectAddressRequired);
-      return;
-    }
     if (pending || submitLockRef.current || redirecting) {
       return;
     }
+
     const data = new FormData(event.currentTarget);
+    const firstName = String(data.get("firstName") ?? "").trim();
+    const lastName = String(data.get("lastName") ?? "").trim();
+    const contactEmail = String(data.get("contactEmail") ?? "").trim();
+    const contactPhone = String(data.get("contactPhone") ?? "").trim();
+
+    const missing: CheckoutInvalidField[] = [];
+    if (!firstName) {
+      missing.push("firstName");
+    }
+    if (!lastName) {
+      missing.push("lastName");
+    }
+    if (contactPhone.length < 5) {
+      missing.push("contactPhone");
+    }
+    if (!isCheckoutEmailValid(contactEmail)) {
+      missing.push("contactEmail");
+    }
+    if (shippingMethod == null) {
+      missing.push("shipping");
+    } else if (shippingMethod === "pickup" && !pickupStoreId) {
+      missing.push("pickup");
+    } else if (shippingMethod === "delivery" && !line1.trim()) {
+      missing.push("address");
+    }
+    if (paymentMethod == null) {
+      missing.push("payment");
+    }
+    if (!meetsMinimum) {
+      missing.push("minimum");
+    }
+
+    if (missing.length > 0) {
+      markInvalidAndScroll(missing);
+      return;
+    }
+
+    if (shippingMethod == null || paymentMethod == null) {
+      return;
+    }
+
     setError(null);
+    setInvalidFields({});
     submitLockRef.current = true;
 
     startTransition(async () => {
@@ -570,10 +654,10 @@ export function CheckoutForm({
         const result = await createOrderAction({
           locale,
           idempotencyKey,
-          firstName: String(data.get("firstName") ?? ""),
-          lastName: String(data.get("lastName") ?? ""),
-          contactEmail: String(data.get("contactEmail") ?? ""),
-          contactPhone: String(data.get("contactPhone") ?? ""),
+          firstName,
+          lastName,
+          contactEmail,
+          contactPhone,
           shippingMethod,
           paymentMethod,
           cashTenderedAmount:
@@ -697,8 +781,11 @@ export function CheckoutForm({
 
         {minimumOrderMessage ? (
           <div
+            id="checkout-field-minimum"
             role="alert"
-            className={`mb-6 flex flex-col gap-3 border border-red-200 bg-red-50 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${CHECKOUT_ALERT_CLASS}`}
+            className={`mb-6 flex flex-col gap-3 border border-red-200 bg-red-50 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${CHECKOUT_ALERT_CLASS} ${
+              invalidFields.minimum ? CHECKOUT_TITLE_INVALID_CLASS : ""
+            }`}
           >
             <p className="text-sm text-red-600">{minimumOrderMessage}</p>
             <Link
@@ -710,20 +797,30 @@ export function CheckoutForm({
           </div>
         ) : null}
 
-        <form onSubmit={onSubmit} suppressHydrationWarning>
+        <form onSubmit={onSubmit} noValidate suppressHydrationWarning>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_400px]">
             <CheckoutDetailsSections
               locale={locale}
               labels={labels}
               pending={pending}
+              invalidFields={invalidFields}
+              onClearInvalidField={clearInvalidField}
               shippingMethod={shippingMethod}
-              onShippingMethodChange={setShippingMethod}
+              onShippingMethodChange={(method) => {
+                setShippingMethod(method);
+                clearInvalidField("shipping");
+                clearInvalidField("pickup");
+                clearInvalidField("address");
+              }}
               deliveryOptions={deliveryOptions}
               deliveryRuleId={deliveryRuleId}
               onDeliveryRuleChange={setDeliveryRuleId}
               pickupStores={pickupStores}
               pickupStoreId={pickupStoreId}
-              onPickupStoreChange={setPickupStoreId}
+              onPickupStoreChange={(storeId) => {
+                setPickupStoreId(storeId);
+                clearInvalidField("pickup");
+              }}
               paymentMethod={paymentMethod}
               onPaymentMethodChange={onPaymentMethodChange}
               paymentOptions={paymentOptions}
@@ -752,6 +849,7 @@ export function CheckoutForm({
               onAddressSelect={(address: CheckoutAddressChoice) => {
                 setSelectedAddressId(address.id);
                 setLine1(address.line1);
+                clearInvalidField("address");
               }}
             />
 
@@ -833,11 +931,6 @@ export function CheckoutForm({
               isApplyingCoupon={applyingCoupon}
               error={error}
               isSubmitting={pending}
-              canPlaceOrder={
-                shippingMethod != null &&
-                paymentMethod != null &&
-                meetsMinimum
-              }
               placeOrderLabel={labels.placeOrder}
               processingLabel={labels.processing}
             />

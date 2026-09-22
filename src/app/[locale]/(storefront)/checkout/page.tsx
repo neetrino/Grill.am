@@ -232,6 +232,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         goToShop: copy.buttons.goToShop,
         cartEmpty: copy.errors.cartEmpty,
         minimumOrder: copy.errors.minimumOrder,
+        fillRequired: copy.errors.fillRequired,
+        invalidEmail: copy.errors.invalidEmail,
         idramRedirecting: copy.payment.idramRedirecting,
         idramSubmitFallback: copy.payment.idramSubmitFallback,
         arcaRedirecting:

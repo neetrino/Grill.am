@@ -741,11 +741,44 @@ select:disabled {
   animation: toast-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+@keyframes checkout-field-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-4px);
+  }
+  30% {
+    transform: translateX(4px);
+  }
+  45% {
+    transform: translateX(-3px);
+  }
+  60% {
+    transform: translateX(3px);
+  }
+  75% {
+    transform: translateX(-1.5px);
+  }
+  90% {
+    transform: translateX(1.5px);
+  }
+}
+
+.animate-checkout-field-shake {
+  animation: checkout-field-shake 0.75s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-toast-in,
   .animate-toast-out {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .animate-checkout-field-shake {
+    animation: none;
   }
 }
 

@@ -7,10 +7,20 @@ export const CHECKOUT_SECTION_CARD_CLASS =
   "rounded-3xl border border-gray-200 bg-white px-5 py-6 shadow-sm sm:px-6 sm:py-7";
 
 export const CHECKOUT_SECTION_TITLE_CLASS =
-  "text-lg font-bold tracking-tight text-gray-900";
+  "text-lg font-bold tracking-tight text-gray-900 transition-colors duration-300";
 
 export const CHECKOUT_FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 bg-white px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50";
+
+/** Invalid feedback: title turns red and shakes briefly. */
+export const CHECKOUT_TITLE_INVALID_CLASS =
+  "animate-checkout-field-shake !text-brand-red";
+
+/** @deprecated Alias for stale HMR bundles — use CHECKOUT_TITLE_INVALID_CLASS. */
+export const CHECKOUT_BLOCK_INVALID_CLASS = CHECKOUT_TITLE_INVALID_CLASS;
+
+/** How long invalid title red + shake stay visible before clearing. */
+export const CHECKOUT_INVALID_FEEDBACK_MS = 1000;
 
 export const CHECKOUT_OPTION_BASE_CLASS =
   "flex cursor-pointer items-center rounded-[15px] border-2 p-4 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none";
