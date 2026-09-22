@@ -63,6 +63,7 @@
     "vayotsDzor": "Вайоц Дзор"
   },
   "payment": {
+    "selectPaymentMethod": "Выберите способ оплаты",
     "cashOnDelivery": "Наличными при получении",
     "cashOnDeliveryDescription": "Оплатите при получении заказа.",
     "cashOnPickup": "Наличная оплата",
@@ -171,6 +172,9 @@
     "loginRequired": "Войдите, чтобы оплатить бонусами",
     "earnHint": "После статуса Paid с этого заказа будет начислено около {amount} бонусов.",
     "minOrderHint": "Начисление бонусов доступно от суммы товаров {amount}.",
-    "grillCoinLabel": "Grill Coin"
+    "grillCoinLabel": "Grill Coin",
+    "progressTitle": "Начисление Grill Coin доступно от суммы {amount}",
+    "progressHint": "Добавьте ещё {amount}, чтобы получить Grill Coin",
+    "progressCta": "Добавьте товары и получите Grill Coin"
   }
 }

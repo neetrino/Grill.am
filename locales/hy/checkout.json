@@ -63,6 +63,7 @@
     "vayotsDzor": "Վայոց Ձոր"
   },
   "payment": {
+    "selectPaymentMethod": "Ընտրեք վճարման եղանակը",
     "cashOnDelivery": "Կանխիկ առաքման պահին",
     "cashOnDeliveryDescription": "Վճարեք պատվերը ստանալիս",
     "cashOnPickup": "Կանխիկ վճարում",
@@ -171,6 +172,9 @@
     "loginRequired": "Մուտք գործեք՝ բոնուս օգտագործելու համար",
     "earnHint": "Վճարումը Paid դառնալուց հետո այս պատվերից կստանաք մոտ {amount} բոնուս։",
     "minOrderHint": "Բոնուսի հավաքումը հասանելի է ապրանքների {amount} գումարից։",
-    "grillCoinLabel": "Grill Coin"
+    "grillCoinLabel": "Grill Coin",
+    "progressTitle": "Grill Coin-ի հավաքումը հասանելի է {amount} գումարից",
+    "progressHint": "Ավելացրեք ևս {amount}, որպեսզի ստանաք Grill Coin-ներ",
+    "progressCta": "Ավելացրեք ապրանքներ և ստացեք Grill Coin-ներ"
   }
 }

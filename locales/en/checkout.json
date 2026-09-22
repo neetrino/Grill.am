@@ -63,6 +63,7 @@
     "vayotsDzor": "Vayots Dzor"
   },
   "payment": {
+    "selectPaymentMethod": "Select a payment method",
     "cashOnDelivery": "Cash on Delivery",
     "cashOnDeliveryDescription": "Pay when receiving the order.",
     "cashOnPickup": "Cash payment",
@@ -171,6 +172,9 @@
     "loginRequired": "Sign in to use bonus",
     "earnHint": "This order will earn about {amount} in bonus after payment is marked Paid.",
     "minOrderHint": "Bonus earn is available from {amount} merchandise total.",
-    "grillCoinLabel": "Grill Coin"
+    "grillCoinLabel": "Grill Coin",
+    "progressTitle": "Grill Coin earn starts from {amount}",
+    "progressHint": "Add another {amount} to receive Grill Coins",
+    "progressCta": "Add products and get Grill Coins"
   }
 }

@@ -69,7 +69,7 @@ type CheckoutDetailsSectionsProps = {
   pickupStores: StorePickupOption[];
   pickupStoreId: string;
   onPickupStoreChange: (storeId: string) => void;
-  paymentMethod: CheckoutPaymentMethod;
+  paymentMethod: CheckoutPaymentMethod | null;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
   paymentOptions: PaymentOption[];
   cashOnDeliveryExtra?: ReactNode;

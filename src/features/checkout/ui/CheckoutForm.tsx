@@ -89,6 +89,7 @@ type CheckoutLabels = {
   addressBook: CheckoutAddressDrawerLabels;
   enterCity: string;
   selectShippingMethod: string;
+  selectPaymentMethod: string;
   selectDeliveryLocation: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
@@ -117,6 +118,9 @@ type CheckoutLabels = {
   bonusLoginRequired: string;
   bonusMinOrderHint: string;
   grillCoinLabel: string;
+  grillCoinProgressTitle: string;
+  grillCoinProgressHint: string;
+  grillCoinProgressCta: string;
   subtotal: string;
   shipping: string;
   pickup: string;
@@ -168,6 +172,14 @@ type CheckoutFormProps = {
     /** Flat product/category-rule earn for current cart (AMD). */
     productBonusEarnAmount: number;
   } | null;
+  /**
+   * Earn floor + projected cart earn for the Grill Coin progress card
+   * (shown to guests and signed-in users below the min).
+   */
+  grillCoinEarnPreview: {
+    earnMinOrderAmount: number | null;
+    productBonusEarnAmount: number;
+  };
 };
 
 function quoteDeliveryAmount(
@@ -229,6 +241,7 @@ export function CheckoutForm({
   hasItems,
   paymentAvailability,
   bonusWallet,
+  grillCoinEarnPreview,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => createId(), []);
@@ -250,7 +263,7 @@ export function CheckoutForm({
   );
   const [pickupStoreId, setPickupStoreId] = useState("");
   const [paymentMethod, setPaymentMethod] =
-    useState<CheckoutPaymentMethod>("cash_on_delivery");
+    useState<CheckoutPaymentMethod | null>(null);
   const [cashTenderedAmount, setCashTenderedAmount] =
     useState<CodCashDenomination | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -365,16 +378,21 @@ export function CheckoutForm({
     requestedBonusSpend,
     maxBonusRedeem,
   );
-  const rawProjectedEarn =
-    bonusWallet != null ? bonusWallet.productBonusEarnAmount : 0;
-  const projectedEarn =
-    bonusWallet == null
-      ? 0
-      : applyEarnMinOrderGate(
-          rawProjectedEarn,
-          merchandiseNet,
-          bonusWallet.earnMinOrderAmount,
-        );
+  const rawProjectedEarn = grillCoinEarnPreview.productBonusEarnAmount;
+  const projectedEarn = applyEarnMinOrderGate(
+    rawProjectedEarn,
+    merchandiseNet,
+    grillCoinEarnPreview.earnMinOrderAmount,
+  );
+  const earnMinOrderAmount = grillCoinEarnPreview.earnMinOrderAmount;
+  const showGrillCoinProgress =
+    earnMinOrderAmount != null &&
+    earnMinOrderAmount > 0 &&
+    rawProjectedEarn > 0 &&
+    merchandiseNet < earnMinOrderAmount;
+  const remainingToEarnMin = showGrillCoinProgress
+    ? Math.max(0, earnMinOrderAmount - merchandiseNet)
+    : 0;
   const totalAmount = computeOrderTotalWithBonus({
     merchandiseNet,
     deliveryAmount: shippingAmount,
@@ -522,6 +540,10 @@ export function CheckoutForm({
     event.preventDefault();
     if (shippingMethod == null) {
       setError(labels.selectShippingMethod);
+      return;
+    }
+    if (paymentMethod == null) {
+      setError(labels.selectPaymentMethod);
       return;
     }
     if (!meetsMinimum) {
@@ -754,25 +776,34 @@ export function CheckoutForm({
               bonusLoginRequired={
                 bonusWallet == null ? labels.bonusLoginRequired : null
               }
-              bonusMinOrderHint={
-                bonusWallet &&
-                rawProjectedEarn > 0 &&
-                projectedEarn === 0 &&
-                bonusWallet.earnMinOrderAmount != null
-                  ? labels.bonusMinOrderHint.replace(
-                      "{amount}",
-                      formatMoney(bonusWallet.earnMinOrderAmount),
-                    )
-                  : null
-              }
               grillCoinLabel={
-                bonusWallet && projectedEarn > 0 ? labels.grillCoinLabel : null
+                projectedEarn > 0 ? labels.grillCoinLabel : null
               }
               grillCoinAmountFormatted={
-                bonusWallet && projectedEarn > 0
+                projectedEarn > 0
                   ? `+${Math.floor(projectedEarn).toLocaleString(
                       locale === "en" ? "en-US" : "ru-RU",
                     )}`
+                  : null
+              }
+              grillCoinProgress={
+                showGrillCoinProgress
+                  ? {
+                      productsHref,
+                      targetFormatted: formatMoney(earnMinOrderAmount),
+                      progressRatio: merchandiseNet / earnMinOrderAmount,
+                      copy: {
+                        title: labels.grillCoinProgressTitle.replace(
+                          "{amount}",
+                          formatMoney(earnMinOrderAmount),
+                        ),
+                        hint: labels.grillCoinProgressHint.replace(
+                          "{amount}",
+                          formatMoney(remainingToEarnMin),
+                        ),
+                        cta: labels.grillCoinProgressCta,
+                      },
+                    }
                   : null
               }
               useBonus={useBonus}
@@ -802,7 +833,11 @@ export function CheckoutForm({
               isApplyingCoupon={applyingCoupon}
               error={error}
               isSubmitting={pending}
-              canPlaceOrder={shippingMethod != null && meetsMinimum}
+              canPlaceOrder={
+                shippingMethod != null &&
+                paymentMethod != null &&
+                meetsMinimum
+              }
               placeOrderLabel={labels.placeOrder}
               processingLabel={labels.processing}
             />

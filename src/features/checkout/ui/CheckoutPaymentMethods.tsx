@@ -23,7 +23,7 @@ type PaymentOption = {
 type CheckoutPaymentMethodsProps = {
   title: string;
   options: PaymentOption[];
-  value: CheckoutPaymentMethod;
+  value: CheckoutPaymentMethod | null;
   onChange: (method: CheckoutPaymentMethod) => void;
   disabled: boolean;
   cashOnDeliveryExtra?: ReactNode;
