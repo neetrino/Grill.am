@@ -196,11 +196,17 @@ describe("loyalty-math", () => {
     ).toBe(100);
   });
 
-  it("credits earn only when Paid and Completed", () => {
+  it("credits earn when Paid and Completed or Confirmed", () => {
     expect(
       shouldCreditOrderBonusEarn({
         paymentStatus: "CAPTURED",
         orderStatus: "DELIVERED",
+      }),
+    ).toBe(true);
+    expect(
+      shouldCreditOrderBonusEarn({
+        paymentStatus: "CAPTURED",
+        orderStatus: "CONFIRMED",
       }),
     ).toBe(true);
     expect(

@@ -8,7 +8,7 @@ export type ReviewModerationStatus =
   (typeof REVIEW_MODERATION_STATUSES)[number];
 
 /** Order statuses that unlock verified-purchase review eligibility. */
-export const REVIEW_ELIGIBLE_ORDER_STATUSES = ["DELIVERED"] as const;
+export const REVIEW_ELIGIBLE_ORDER_STATUSES = ["DELIVERED", "CONFIRMED"] as const;
 
 export const REVIEW_RATING_MIN = 1;
 export const REVIEW_RATING_MAX = 5;

@@ -15,6 +15,7 @@ import type { AdminDictionary, ProfileDictionary } from "@/lib/i18n/get-dictiona
 const ORDER_STATUS_FILTERS = [
   { statusKey: "pending", value: "PENDING" },
   { statusKey: "processing", value: "PROCESSING" },
+  { statusKey: "confirmed", value: "CONFIRMED" },
   { statusKey: "completed", value: "DELIVERED" },
   { statusKey: "cancelled", value: "CANCELLED" },
 ] as const satisfies ReadonlyArray<{

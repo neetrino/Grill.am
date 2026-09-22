@@ -106,7 +106,7 @@ export async function spendBonusForOrder(
 }
 
 /**
- * Credits planned earn when payment is Paid and fulfillment is Completed.
+ * Credits planned earn when payment is Paid and fulfillment is Completed or Confirmed.
  * Idempotent via `bonusEarnedAppliedAt` while the credit is active.
  */
 export async function applyBonusEarnForOrder(
@@ -160,7 +160,7 @@ export async function applyBonusEarnForOrder(
 }
 
 /**
- * Credits earn when Paid + Completed; returns it if either status leaves that pair.
+ * Credits earn when Paid + Completed/Confirmed; returns it if either status leaves that pair.
  */
 export async function syncOrderBonusEarn(
   tx: DatabaseTransaction,

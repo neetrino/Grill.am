@@ -23,8 +23,9 @@ describe("review rules", () => {
     expect(sanitizeReviewComment("  nice   product  ")).toBe("nice product");
   });
 
-  it("limits eligibility to delivered orders", () => {
+  it("limits eligibility to delivered or confirmed orders", () => {
     expect(isReviewEligibleOrderStatus("DELIVERED")).toBe(true);
+    expect(isReviewEligibleOrderStatus("CONFIRMED")).toBe(true);
     expect(isReviewEligibleOrderStatus("SHIPPED")).toBe(false);
     expect(isReviewEligibleOrderStatus("REFUNDED")).toBe(false);
   });

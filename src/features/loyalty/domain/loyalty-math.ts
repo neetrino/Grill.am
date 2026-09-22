@@ -196,15 +196,21 @@ export function computeProductCardBonusEarnAmount(input: {
   return percentEarn + flat;
 }
 
+/** Fulfillment statuses that unlock planned bonus earn (with Paid payment). */
+const BONUS_EARN_ORDER_STATUSES = new Set(["DELIVERED", "CONFIRMED"]);
+
 /**
  * Planned earn is credited only when payment is Paid and fulfillment is
- * Completed (`DELIVERED` in the database).
+ * Completed (`DELIVERED`) or Confirmed (`CONFIRMED`).
  */
 export function shouldCreditOrderBonusEarn(input: {
   paymentStatus: string;
   orderStatus: string;
 }): boolean {
-  return input.paymentStatus === "CAPTURED" && input.orderStatus === "DELIVERED";
+  return (
+    input.paymentStatus === "CAPTURED" &&
+    BONUS_EARN_ORDER_STATUSES.has(input.orderStatus)
+  );
 }
 
 /** Clamp a requested redeem amount to the allowed max. */

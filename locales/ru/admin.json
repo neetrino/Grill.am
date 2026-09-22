@@ -248,6 +248,7 @@
     "status": {
       "pending": "Ожидает",
       "processing": "В обработке",
+      "confirmed": "Подтверждён",
       "completed": "Завершён",
       "cancelled": "Отменён",
       "requiresReview": "Требует проверки"
