@@ -145,7 +145,7 @@ export function CartDrawer({
                 className="relative z-[2] flex h-full w-full flex-col overflow-hidden rounded-tl-3xl rounded-bl-3xl bg-white shadow-2xl"
                 onClick={(event) => event.stopPropagation()}
               >
-              <div className="flex items-center gap-2 px-6 pt-6 pb-4">
+              <div className="flex items-center gap-2 border-b border-[#f3f4f6] px-6 pt-6 pb-4">
                 <ShoppingBasket
                   className="size-6 text-[#101828]"
                   aria-hidden
