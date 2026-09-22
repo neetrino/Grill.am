@@ -11,7 +11,7 @@ import { getStoreById } from "@/features/stores/yandex-map-embed";
 export const checkoutSchema = z
   .object({
     firstName: z.string().trim().min(1).max(80),
-    lastName: z.string().trim().min(1).max(80),
+    lastName: z.string().trim().max(80),
     contactEmail: z
       .string()
       .trim()

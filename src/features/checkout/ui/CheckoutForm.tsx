@@ -613,9 +613,6 @@ export function CheckoutForm({
     if (!firstName) {
       missing.push("firstName");
     }
-    if (!lastName) {
-      missing.push("lastName");
-    }
     if (contactPhone.length < 5) {
       missing.push("contactPhone");
     }

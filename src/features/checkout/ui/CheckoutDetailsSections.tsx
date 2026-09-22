@@ -163,7 +163,6 @@ export function CheckoutDetailsSections({
               <input
                 id="checkout-field-lastName"
                 name="lastName"
-                required
                 defaultValue={defaultLastName}
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
