@@ -36,12 +36,12 @@ function ProfileContactRow({
   iconPlain?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-[15px] bg-white px-4 py-3 ring-1 ring-gray-100/80">
+    <div className="flex items-center gap-2.5 rounded-[15px] bg-white px-3 py-2 ring-1 ring-gray-100/80">
       {iconPlain ? (
         <span className="flex shrink-0 items-center justify-center">{icon}</span>
       ) : (
         <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
           style={{
             backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
             color: PROFILE_SIDEBAR_ICON_TONE.foreground,
@@ -139,7 +139,7 @@ export function ProfileSidebar({
             className="block transition-opacity hover:opacity-90"
           >
             <ProfileContactRow
-              icon={<HeaderCoinsIcon className="size-8" />}
+              icon={<HeaderCoinsIcon className="size-7" />}
               iconPlain
               value={formatProfileBonusBalance(
                 bonusBalanceAmount,

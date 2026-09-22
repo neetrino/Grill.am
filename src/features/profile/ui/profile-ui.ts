@@ -12,7 +12,7 @@ export const PROFILE_CARD_FLAT_CLASS =
   "rounded-[15px] bg-white ring-1 ring-gray-100/80";
 
 /** Desktop sidebar minimum; the column grows when the email is longer. */
-export const PROFILE_SIDEBAR_WIDTH_PX = 280;
+export const PROFILE_SIDEBAR_WIDTH_PX = 300;
 
 /**
  * Sticky band under the header with equal top/bottom gaps (1.75rem),
