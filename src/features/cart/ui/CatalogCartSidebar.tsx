@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Minus, Plus, ShoppingBasket, Trash2 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { HeaderCoinsIcon } from "@/components/layout/HeaderCoinsIcon";
 import { useCartItemCount } from "@/features/cart/cart-client-sync";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
 import {
@@ -145,7 +146,10 @@ export function CatalogCartSidebar({
           </div>
           {view && view.bonusEarnAmount > 0 ? (
             <div className="mt-2.5 flex items-center justify-between leading-5">
-              <dt className="text-[#4a5565]">{labels.grillCoin}</dt>
+              <dt className="flex items-center gap-1.5 text-[#4a5565]">
+                <HeaderCoinsIcon className="size-5 shrink-0" />
+                <span>{labels.grillCoin}</span>
+              </dt>
               <dd className="font-semibold tabular-nums text-emerald-700">
                 {view.bonusEarnFormatted}
               </dd>

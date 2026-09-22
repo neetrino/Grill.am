@@ -117,6 +117,7 @@
   },
   "bonuses": {
     "nav": "Bonuses",
+    "cardLabel": "Grill Coin",
     "title": "My bonuses",
     "subtitle": "See your balance, how much you have used, and what each order earned.",
     "balance": "Available",

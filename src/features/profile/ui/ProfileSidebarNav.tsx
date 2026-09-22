@@ -63,44 +63,44 @@ function buildNavItems(
       key: "dashboard",
       href: `/${locale}/profile`,
       label: dictionary.dashboard,
-      icon: <LayoutDashboard className="h-5 w-5" />,
+      icon: <LayoutDashboard className="h-4 w-4" />,
       exact: true,
     },
     {
       key: "orders",
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
-      icon: <Package className="h-5 w-5" />,
+      icon: <Package className="h-4 w-4" />,
     },
     {
       key: "promoCodes",
       href: `/${locale}/profile/promo-codes`,
       label: dictionary.promoCodes.nav,
-      icon: <TicketPercent className="h-5 w-5" />,
+      icon: <TicketPercent className="h-4 w-4" />,
     },
     {
       key: "bonuses",
       href: `/${locale}/profile/bonuses`,
       label: dictionary.bonuses.nav,
-      icon: <Gift className="h-5 w-5" />,
+      icon: <Gift className="h-4 w-4" />,
     },
     {
       key: "personal",
       href: `/${locale}/profile/personal-information`,
       label: dictionary.personal,
-      icon: <User className="h-5 w-5" />,
+      icon: <User className="h-4 w-4" />,
     },
     {
       key: "addresses",
       href: `/${locale}/profile/addresses`,
       label: dictionary.addresses,
-      icon: <MapPin className="h-5 w-5" />,
+      icon: <MapPin className="h-4 w-4" />,
     },
     {
       key: "password",
       href: `/${locale}/profile/password`,
       label: dictionary.password,
-      icon: <Lock className="h-5 w-5" />,
+      icon: <Lock className="h-4 w-4" />,
     },
   ];
 }
@@ -121,7 +121,7 @@ function NavIcon({
 }) {
   return (
     <span
-      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px] ${
+      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] ${
         active
           ? "bg-transparent text-brand-yellow [&>svg]:stroke-[2.75]"
           : "[&>svg]:stroke-2"
@@ -265,7 +265,7 @@ export function ProfileSidebarNav({
               href={item.href}
               prefetchPolicy="intent"
               ref={(node) => registerLink(item.href, node)}
-              className={`relative z-10 flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left ${
+              className={`relative z-10 flex w-full items-center gap-2.5 rounded-[15px] border-l-4 border-transparent px-3 py-2 text-left ${
                 active ? "" : "hover:bg-white/70"
               }`}
               aria-current={active ? "page" : undefined}
@@ -287,16 +287,16 @@ export function ProfileSidebarNav({
         <form action={logoutAction} className="relative z-10 mt-1">
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left transition-colors hover:bg-white/70"
+            className="flex w-full items-center gap-2.5 rounded-[15px] border-l-4 border-transparent px-3 py-2 text-left transition-colors hover:bg-white/70"
           >
             <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px]"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px]"
               style={{
                 backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
                 color: PROFILE_SIDEBAR_ICON_TONE.foreground,
               }}
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4" />
             </span>
             <span className="text-sm font-semibold text-brand-red">
               {dictionary.logout}
@@ -308,13 +308,13 @@ export function ProfileSidebarNav({
           href={deleteAccountHref}
           prefetchPolicy="intent"
           ref={(node) => registerLink(deleteAccountHref, node)}
-          className={`relative z-10 mt-1 flex w-full items-center gap-3 rounded-[15px] border-l-4 border-transparent px-3 py-2.5 text-left ${
+          className={`relative z-10 mt-1 flex w-full items-center gap-2.5 rounded-[15px] border-l-4 border-transparent px-3 py-2 text-left ${
             deleteAccountActive ? "" : "hover:bg-white/70"
           }`}
           aria-current={deleteAccountActive ? "page" : undefined}
         >
           <NavIcon active={deleteAccountActive}>
-            <Trash2 className="h-5 w-5" />
+            <Trash2 className="h-4 w-4" />
           </NavIcon>
           <span
             className={`${styles.tabLabel} min-w-0 flex-1 text-sm ${

@@ -10,6 +10,7 @@ import {
   CHECKOUT_OPTION_SELECTED_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
   CHECKOUT_SECTION_TITLE_CLASS,
+  CHECKOUT_TITLE_INVALID_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 
 type PaymentOption = {
@@ -23,9 +24,10 @@ type PaymentOption = {
 type CheckoutPaymentMethodsProps = {
   title: string;
   options: PaymentOption[];
-  value: CheckoutPaymentMethod;
+  value: CheckoutPaymentMethod | null;
   onChange: (method: CheckoutPaymentMethod) => void;
   disabled: boolean;
+  invalid?: boolean;
   cashOnDeliveryExtra?: ReactNode;
 };
 
@@ -42,11 +44,22 @@ export function CheckoutPaymentMethods({
   value,
   onChange,
   disabled,
+  invalid = false,
   cashOnDeliveryExtra,
 }: CheckoutPaymentMethodsProps) {
   return (
-    <section className={CHECKOUT_SECTION_CARD_CLASS}>
-      <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>{title}</h2>
+    <section
+      id="checkout-field-payment"
+      className={CHECKOUT_SECTION_CARD_CLASS}
+    >
+      <h2
+        id="checkout-title-payment"
+        className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6 ${
+          invalid ? CHECKOUT_TITLE_INVALID_CLASS : ""
+        }`}
+      >
+        {title}
+      </h2>
       <div className="space-y-3">
         {options.map((option) => {
           const selected = value === option.id;

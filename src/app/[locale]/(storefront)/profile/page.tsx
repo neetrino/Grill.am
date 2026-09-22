@@ -120,6 +120,7 @@ export default async function ProfilePage({ params, searchParams }: ProfilePageP
         closeLabel={dictionary.profile.cancel}
         logoutAction={logoutWithLocale}
         initialSheet={initialSheet}
+        bonusBalanceAmount={bonusSummary.balanceAmount}
         sheets={{
           dashboard: <ProfileDashboardView {...dashboardProps} />,
           orders: (
@@ -149,6 +150,12 @@ export default async function ProfilePage({ params, searchParams }: ProfilePageP
               rows={bonusLedger.rows}
               copy={dictionary.profile.bonuses}
               startShoppingLabel={dictionary.profile.startShopping}
+              adminDictionary={dictionary.admin}
+              reorderCopy={{
+                reorder: dictionary.profile.reorder,
+                reordering: dictionary.profile.reordering,
+                reorderUnavailable: dictionary.profile.reorderUnavailable,
+              }}
               hideTitle
             />
           ),

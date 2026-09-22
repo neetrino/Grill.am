@@ -133,6 +133,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             }
           : null
       }
+      grillCoinEarnPreview={{
+        earnMinOrderAmount: loyalty.earnMinOrderAmount,
+        productBonusEarnAmount,
+      }}
       labels={{
         title: copy.title,
         titleLead: copy.titleLead,
@@ -185,6 +189,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         },
         enterCity: copy.shipping.enterCity,
         selectShippingMethod: copy.shipping.selectShippingMethod,
+        selectPaymentMethod: copy.payment.selectPaymentMethod,
         selectDeliveryLocation: copy.shipping.selectDeliveryLocation,
         cashOnDelivery: copy.payment.cashOnDelivery,
         cashOnDeliveryDescription: copy.payment.cashOnDeliveryDescription,
@@ -213,6 +218,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         bonusLoginRequired: copy.bonus.loginRequired,
         bonusMinOrderHint: copy.bonus.minOrderHint,
         grillCoinLabel: copy.bonus.grillCoinLabel,
+        grillCoinProgressTitle: copy.bonus.progressTitle,
+        grillCoinProgressHint: copy.bonus.progressHint,
+        grillCoinProgressCta: copy.bonus.progressCta,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,
         pickup: copy.summary.pickup,
@@ -224,6 +232,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         goToShop: copy.buttons.goToShop,
         cartEmpty: copy.errors.cartEmpty,
         minimumOrder: copy.errors.minimumOrder,
+        fillRequired: copy.errors.fillRequired,
+        invalidEmail: copy.errors.invalidEmail,
         idramRedirecting: copy.payment.idramRedirecting,
         idramSubmitFallback: copy.payment.idramSubmitFallback,
         arcaRedirecting:

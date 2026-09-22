@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import { ShoppingBasket, ShoppingCart } from "lucide-react";
 
 import { DrawerCloseTab } from "@/components/drawer/DrawerCloseTab";
+import { HeaderCoinsIcon } from "@/components/layout/HeaderCoinsIcon";
 import { AppLink } from "@/components/ui/AppLink";
 import { useCartItemCount } from "@/features/cart/cart-client-sync";
 import { CartDrawerItemRow } from "@/features/cart/ui/CartDrawerItemRow";
@@ -144,7 +145,7 @@ export function CartDrawer({
                 className="relative z-[2] flex h-full w-full flex-col overflow-hidden rounded-tl-3xl rounded-bl-3xl bg-white shadow-2xl"
                 onClick={(event) => event.stopPropagation()}
               >
-              <div className="flex items-center gap-2 px-6 pt-6 pb-4">
+              <div className="flex items-center gap-2 border-b border-[#f3f4f6] px-6 pt-6 pb-4">
                 <ShoppingBasket
                   className="size-6 text-[#101828]"
                   aria-hidden
@@ -198,7 +199,10 @@ export function CartDrawer({
                   </div>
                   {view && view.bonusEarnAmount > 0 ? (
                     <div className="mt-2 flex items-center justify-between gap-3 text-sm">
-                      <dt className="text-gray-500">{labels.grillCoin}</dt>
+                      <dt className="flex items-center gap-1.5 text-gray-500">
+                        <HeaderCoinsIcon className="size-5 shrink-0" />
+                        <span>{labels.grillCoin}</span>
+                      </dt>
                       <dd className="font-semibold tabular-nums text-emerald-700">
                         {view.bonusEarnFormatted}
                       </dd>

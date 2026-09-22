@@ -3,6 +3,9 @@
 import { Mail, Phone } from "lucide-react";
 import { useEffect, useRef, type ReactNode } from "react";
 
+import { HeaderCoinsIcon } from "@/components/layout/HeaderCoinsIcon";
+import { AppLink } from "@/components/ui/AppLink";
+import { formatProfileBonusBalance } from "@/features/profile/ui/format-profile-bonus-balance";
 import { ProfileSidebarNav } from "@/features/profile/ui/ProfileSidebarNav";
 import {
   PROFILE_CARD_CLASS,
@@ -17,29 +20,37 @@ type ProfileSidebarProps = {
   locale: Locale;
   user: SessionUser;
   dictionary: Dictionary["profile"];
+  bonusBalanceAmount: number;
 };
 
 function ProfileContactRow({
   icon,
   value,
+  valueClassName = "whitespace-nowrap text-sm font-medium text-gray-700",
+  iconPlain = false,
 }: {
   icon: ReactNode;
   value: string;
+  valueClassName?: string;
+  /** Skip the gray chip — for art that is already circular (coin). */
+  iconPlain?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-[15px] bg-white px-4 py-3 ring-1 ring-gray-100/80">
-      <span
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-        style={{
-          backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
-          color: PROFILE_SIDEBAR_ICON_TONE.foreground,
-        }}
-      >
-        {icon}
-      </span>
-      <p className="whitespace-nowrap text-sm font-medium text-gray-700">
-        {value}
-      </p>
+    <div className="flex items-center gap-2.5 rounded-[15px] bg-white px-3 py-2 ring-1 ring-gray-100/80">
+      {iconPlain ? (
+        <span className="flex shrink-0 items-center justify-center">{icon}</span>
+      ) : (
+        <span
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+          style={{
+            backgroundColor: PROFILE_SIDEBAR_ICON_TONE.background,
+            color: PROFILE_SIDEBAR_ICON_TONE.foreground,
+          }}
+        >
+          {icon}
+        </span>
+      )}
+      <p className={valueClassName}>{value}</p>
     </div>
   );
 }
@@ -48,6 +59,7 @@ export function ProfileSidebar({
   locale,
   user,
   dictionary,
+  bonusBalanceAmount,
 }: ProfileSidebarProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
   const initials = `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}`.toUpperCase();
@@ -121,6 +133,22 @@ export function ProfileSidebar({
               value={user.phone}
             />
           ) : null}
+          <AppLink
+            href={`/${locale}/profile/bonuses`}
+            prefetchPolicy="intent"
+            className="block transition-opacity hover:opacity-90"
+          >
+            <ProfileContactRow
+              icon={<HeaderCoinsIcon className="size-7" />}
+              iconPlain
+              value={formatProfileBonusBalance(
+                bonusBalanceAmount,
+                locale,
+                dictionary.bonuses.cardLabel,
+              )}
+              valueClassName="min-w-0 whitespace-nowrap text-sm font-bold text-gray-900"
+            />
+          </AppLink>
         </div>
       </div>
 

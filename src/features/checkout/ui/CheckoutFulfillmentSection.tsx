@@ -16,6 +16,7 @@ import {
   CHECKOUT_RADIO_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
   CHECKOUT_SECTION_TITLE_CLASS,
+  CHECKOUT_TITLE_INVALID_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import {
   normalizeCheckoutDeliveryCity,
@@ -48,6 +49,7 @@ type CheckoutFulfillmentSectionProps = {
   locale: Locale;
   labels: CheckoutFulfillmentLabels;
   pending: boolean;
+  invalidTitle?: boolean;
   shippingMethod: CheckoutShippingMethod | null;
   onShippingMethodChange: (method: CheckoutShippingMethod) => void;
   deliveryOptions: CheckoutDeliveryOption[];
@@ -100,6 +102,7 @@ function ShippingMethodToggles({
 }) {
   return (
     <div
+      id="checkout-field-shipping"
       role="radiogroup"
       aria-label={labels.shippingMethod}
       className="flex flex-col gap-3 sm:flex-row"
@@ -181,6 +184,7 @@ export function CheckoutFulfillmentSection({
   locale,
   labels,
   pending,
+  invalidTitle = false,
   shippingMethod,
   onShippingMethodChange,
   deliveryOptions,
@@ -197,7 +201,12 @@ export function CheckoutFulfillmentSection({
 }: CheckoutFulfillmentSectionProps) {
   return (
     <section className={CHECKOUT_SECTION_CARD_CLASS}>
-      <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
+      <h2
+        id="checkout-title-shipping"
+        className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6 ${
+          invalidTitle ? CHECKOUT_TITLE_INVALID_CLASS : ""
+        }`}
+      >
         {labels.shippingMethod}
       </h2>
       <ShippingMethodToggles
@@ -208,28 +217,32 @@ export function CheckoutFulfillmentSection({
         onShippingMethodChange={onShippingMethodChange}
       />
       {shippingMethod === "pickup" ? (
-        <CheckoutPickupBranchList
-          labels={labels}
-          pending={pending}
-          pickupStores={pickupStores}
-          pickupStoreId={pickupStoreId}
-          onPickupStoreChange={onPickupStoreChange}
-        />
+        <div id="checkout-field-pickup">
+          <CheckoutPickupBranchList
+            labels={labels}
+            pending={pending}
+            pickupStores={pickupStores}
+            pickupStoreId={pickupStoreId}
+            onPickupStoreChange={onPickupStoreChange}
+          />
+        </div>
       ) : null}
       {shippingMethod === "delivery" ? (
-        <DeliveryAddressPicker
-          locale={locale}
-          labels={labels}
-          pending={pending}
-          deliveryOptions={deliveryOptions}
-          deliveryRuleId={deliveryRuleId}
-          onDeliveryRuleChange={onDeliveryRuleChange}
-          canSaveAddresses={canSaveAddresses}
-          savedAddresses={savedAddresses}
-          selectedAddressId={selectedAddressId}
-          line1={line1}
-          onAddressSelect={onAddressSelect}
-        />
+        <div id="checkout-field-address">
+          <DeliveryAddressPicker
+            locale={locale}
+            labels={labels}
+            pending={pending}
+            deliveryOptions={deliveryOptions}
+            deliveryRuleId={deliveryRuleId}
+            onDeliveryRuleChange={onDeliveryRuleChange}
+            canSaveAddresses={canSaveAddresses}
+            savedAddresses={savedAddresses}
+            selectedAddressId={selectedAddressId}
+            line1={line1}
+            onAddressSelect={onAddressSelect}
+          />
+        </div>
       ) : null}
     </section>
   );
