@@ -62,6 +62,12 @@ export default async function ProfileBonusesPage({
         rows={rows}
         copy={copy}
         startShoppingLabel={dictionary.profile.startShopping}
+        adminDictionary={dictionary.admin}
+        reorderCopy={{
+          reorder: dictionary.profile.reorder,
+          reordering: dictionary.profile.reordering,
+          reorderUnavailable: dictionary.profile.reorderUnavailable,
+        }}
       />
 
       {totalPages > 1 ? (
