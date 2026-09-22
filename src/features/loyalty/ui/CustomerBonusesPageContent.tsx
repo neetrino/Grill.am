@@ -48,6 +48,9 @@ function isCredit(entryType: CustomerBonusLedgerRow["entryType"]): boolean {
   return entryType === "EARN" || entryType === "SPEND_REVERSAL";
 }
 
+const LEDGER_CREDIT_COLOR = "#16a34a";
+const LEDGER_DEBIT_COLOR = "#db0b20";
+
 function formatCoinsAmount(amount: number, locale: Locale): string {
   const safe = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
   return safe.toLocaleString(locale === "en" ? "en-US" : "ru-RU");
@@ -173,12 +176,12 @@ export function CustomerBonusesPageContent({
                     </div>
                   </div>
                   <p
-                    className={`shrink-0 text-sm font-bold tabular-nums sm:text-base ${
-                      credit ? "text-brand-red" : "text-gray-900"
-                    }`}
+                    className="shrink-0 text-sm font-bold tabular-nums sm:text-base"
+                    style={{
+                      color: credit ? LEDGER_CREDIT_COLOR : LEDGER_DEBIT_COLOR,
+                    }}
                   >
-                    {credit ? "+" : "−"}
-                    {formatCoinsAmount(row.amount, locale)}
+                    {`${credit ? "+" : "−"}${formatCoinsAmount(row.amount, locale)}`}
                   </p>
                 </li>
               );
