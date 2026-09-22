@@ -11,11 +11,11 @@ import {
   TicketPercent,
   Trash2,
   User,
-  Gift,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { ProfileMobileBonusCard } from "@/features/profile/ui/ProfileMobileBonusCard";
 import { ProfileMobileSheet } from "@/features/profile/ui/ProfileMobileSheet";
 import {
   PROFILE_CARD_CLASS,
@@ -33,6 +33,8 @@ type ProfileMobileMenuProps = {
   closeLabel: string;
   logoutAction: (formData: FormData) => void | Promise<void>;
   sheets: Partial<Record<ProfileNavKey, ReactNode>>;
+  /** Wallet balance shown on the Kamancha-style bonuses card. */
+  bonusBalanceAmount: number;
   /** Server-parsed `?sheet=` so the bonuses sheet opens on first paint. */
   initialSheet?: ProfileNavKey | null;
 };
@@ -64,6 +66,7 @@ export function ProfileMobileMenu({
   closeLabel,
   logoutAction,
   sheets,
+  bonusBalanceAmount,
   initialSheet = null,
 }: ProfileMobileMenuProps) {
   const router = useRouter();
@@ -112,11 +115,6 @@ export function ProfileMobileMenu({
       key: "promoCodes",
       label: dictionary.promoCodes.nav,
       icon: <TicketPercent />,
-    },
-    {
-      key: "bonuses",
-      label: dictionary.bonuses.nav,
-      icon: <Gift />,
     },
     {
       key: "personal",
@@ -176,6 +174,15 @@ export function ProfileMobileMenu({
         </div>
       </section>
 
+      <ProfileMobileBonusCard
+        locale={locale}
+        label={dictionary.bonuses.cardLabel}
+        balanceAmount={bonusBalanceAmount}
+        onOpenSheet={
+          sheets.bonuses != null ? () => setActiveSheet("bonuses") : undefined
+        }
+      />
+
       <nav
         className={`overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${PROFILE_CARD_CLASS}`}
         aria-label={dictionary.title}
@@ -220,8 +227,6 @@ export function ProfileMobileMenu({
                 href={`/${locale}/profile/${
                   row.key === "promoCodes"
                     ? "promo-codes"
-                    : row.key === "bonuses"
-                      ? "bonuses"
                     : row.key === "personal"
                       ? "personal-information"
                       : row.key === "deleteAccount"

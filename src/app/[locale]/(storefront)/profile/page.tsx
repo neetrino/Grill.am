@@ -120,6 +120,7 @@ export default async function ProfilePage({ params, searchParams }: ProfilePageP
         closeLabel={dictionary.profile.cancel}
         logoutAction={logoutWithLocale}
         initialSheet={initialSheet}
+        bonusBalanceAmount={bonusSummary.balanceAmount}
         sheets={{
           dashboard: <ProfileDashboardView {...dashboardProps} />,
           orders: (
