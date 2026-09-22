@@ -12,8 +12,9 @@ export function adminOrderStatusLabel(
 ): string {
   switch (status) {
     case "PENDING":
-    case "CONFIRMED":
       return labels.pending;
+    case "CONFIRMED":
+      return labels.confirmed;
     case "PROCESSING":
     case "SHIPPED":
       return labels.processing;

@@ -248,6 +248,7 @@
     "status": {
       "pending": "Սպասող",
       "processing": "Մշակվում է",
+      "confirmed": "Հաստատված",
       "completed": "Ավարտված",
       "cancelled": "Չեղարկված",
       "requiresReview": "Պահանջում է վերանայում"

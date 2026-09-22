@@ -805,7 +805,7 @@ export async function createOrderAction(
       }
 
       // Offline (COD): decrement stock now. Online: validate only; confirm later.
-      // Bonus earn is credited only when Paid (`CAPTURED`) and Completed (`DELIVERED`).
+      // Bonus earn is credited only when Paid (`CAPTURED`) and Completed (`DELIVERED`) or Confirmed (`CONFIRMED`).
       if (flowType === "offline") {
         for (const line of lineSnapshots) {
           await tx

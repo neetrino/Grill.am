@@ -1,13 +1,13 @@
 /** Status pill classes — green success / red danger / yellow pending / blue in-progress. */
 export function orderStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
-  if (normalized === "PENDING" || normalized === "CONFIRMED") {
+  if (normalized === "PENDING") {
     return "bg-yellow-100 text-yellow-800";
   }
   if (normalized === "PROCESSING" || normalized === "SHIPPED") {
     return "bg-brand-yellow/25 text-brand-ink";
   }
-  if (normalized === "DELIVERED") {
+  if (normalized === "DELIVERED" || normalized === "CONFIRMED") {
     return "bg-green-100 text-green-800";
   }
   if (normalized === "CANCELLED" || normalized === "REFUNDED") {

@@ -34,11 +34,13 @@ export async function getProfileDashboardStats(
         totalOrders: count(),
         pendingOrders: sql<number>`
           count(*) filter (
-            where ${orders.status}::text in ('PENDING', 'CONFIRMED', 'PROCESSING')
+            where ${orders.status}::text in ('PENDING', 'PROCESSING')
           )
         `.mapWith(Number),
         completedOrders: sql<number>`
-          count(*) filter (where ${orders.status}::text = 'DELIVERED')
+          count(*) filter (
+            where ${orders.status}::text in ('DELIVERED', 'CONFIRMED')
+          )
         `.mapWith(Number),
         totalSpent: sql<number>`
           coalesce(
