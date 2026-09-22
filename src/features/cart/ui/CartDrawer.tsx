@@ -176,6 +176,8 @@ export function CartDrawer({
                           item={item}
                           productHref={`/${locale}/products/${item.slug}`}
                           pending={false}
+                          locale={locale}
+                          bonusEarnTemplate={dictionary.product.bonusEarn}
                           removeLabel={labels.removeItem}
                           decreaseLabel={labels.decreaseQuantity}
                           increaseLabel={labels.increaseQuantity}
