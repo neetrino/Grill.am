@@ -332,6 +332,7 @@
       "pickupMethod": "Վերցնել մասնաճյուղից",
       "shippingAddress": "Առաքման հասցե",
       "method": "Եղանակ",
+      "address": "Հասցե",
       "amount": "Գումար",
       "customerPaysWith": "Հաճախորդը վճարում է",
       "prepareChange": "Պատրաստել մանրադրամ",
@@ -350,7 +351,7 @@
       "lineTotal": "Ընդամենը",
       "customizations": "Ավելացումներ և հեռացումներ",
       "bonusSpent": "Օգտագործված բոնուս",
-      "bonusEarned": "Ստացված բոնուս",
+      "bonusEarned": "Grill Coin",
       "grillCoinLabel": "Grill Coin",
       "customerReviewNotice": "Վճարումը ստացվել է, և պատվերը վերանայվում է։ Անհրաժեշտության դեպքում աջակցությունը կկապվի ձեզ հետ։",
       "paymentAttempt": "Փորձ {number} — {status}",
@@ -434,6 +435,7 @@
       "contact": "Կապ",
       "orders": "Պատվերներ",
       "roles": "Դերեր",
+      "bonuses": "Grill Coins",
       "status": "Կարգավիճակ",
       "created": "Ստեղծված",
       "empty": "Այս զտիչներին համապատասխանող օգտատերեր չկան։",
@@ -442,7 +444,9 @@
       "suspendNamed": "Կասեցնել {name}",
       "activateNamed": "Ակտիվացնել {name}",
       "sortOrdersAsc": "Սորտավորել պատվերների քանակով՝ աճման",
-      "sortOrdersDesc": "Սորտավորել պատվերների քանակով՝ նվազման"
+      "sortOrdersDesc": "Սորտավորել պատվերների քանակով՝ նվազման",
+      "sortBonusesAsc": "Սորտավորել Grill Coins՝ աճման",
+      "sortBonusesDesc": "Սորտավորել Grill Coins՝ նվազման"
     },
     "bulk": {
       "selectedCount": "Ընտրված է {count} օգտատեր",

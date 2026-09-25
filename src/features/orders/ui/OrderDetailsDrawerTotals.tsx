@@ -1,5 +1,6 @@
 "use client";
 
+import { HeaderCoinsIcon } from "@/components/layout/HeaderCoinsIcon";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
@@ -76,15 +77,37 @@ export function OrderDetailsDrawerTotals({
         ) : null}
 
         <div className="flex items-center justify-between gap-4">
-          <dt className="font-semibold text-emerald-800">
-            {drawer.bonusEarned}
+          <dt className="text-gray-600">
+            {dictionary.orders.list.paymentMethod}
           </dt>
-          <dd className="font-semibold tabular-nums text-emerald-700">
-            {formatGrillCoinAmount(detail.bonusEarnedAmount)}
-          </dd>
+          <dd className="font-medium text-gray-900">{detail.paymentMethod}</dd>
         </div>
 
-        <div className="flex items-center justify-between gap-4 pt-1">
+        {detail.cashChangeAmount != null && detail.cashChangeAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-gray-600">{drawer.prepareChange}</dt>
+            <dd className="font-semibold tabular-nums text-amber-800">
+              {formatOrderDrawerMoney(
+                detail.cashChangeAmount,
+                detail.baseCurrency,
+              )}
+            </dd>
+          </div>
+        ) : null}
+
+        {detail.bonusEarnedAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4">
+            <dt className="flex items-center gap-1.5 font-semibold text-gray-900">
+              <HeaderCoinsIcon className="size-5 shrink-0" />
+              {drawer.bonusEarned}
+            </dt>
+            <dd className="font-semibold tabular-nums text-emerald-700">
+              {formatGrillCoinAmount(detail.bonusEarnedAmount)}
+            </dd>
+          </div>
+        ) : null}
+
+        <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-2">
           <dt className="text-base font-bold text-gray-900">{drawer.total}</dt>
           <dd className="text-base font-bold tabular-nums text-gray-900">
             {formatOrderDrawerMoney(detail.totalAmount, detail.baseCurrency)}

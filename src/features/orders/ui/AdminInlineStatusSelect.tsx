@@ -44,6 +44,8 @@ type AdminInlineStatusSelectProps = {
   value: string;
   disabled?: boolean;
   onSuccess?: () => void;
+  /** `md` is slightly larger for the order sheet header. */
+  size?: "sm" | "md";
 };
 
 function subscribeNoop(): () => void {
@@ -57,6 +59,7 @@ export function AdminInlineStatusSelect({
   value,
   disabled = false,
   onSuccess,
+  size = "sm",
 }: AdminInlineStatusSelectProps) {
   const dictionary = useAdminDictionary();
   const { confirmDelete } = useConfirmDelete();
@@ -75,7 +78,9 @@ export function AdminInlineStatusSelect({
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
   const menuPosition = useDropdownPortalPosition(panelVisible, triggerRef, {
-    matchTriggerWidth: true,
+    matchTriggerWidth: size === "sm",
+    align: size === "md" ? "right" : "left",
+    panelWidthPx: size === "md" ? 200 : 0,
   });
 
   if (value !== syncedValue) {
@@ -235,6 +240,7 @@ export function AdminInlineStatusSelect({
             panelRef={panelRef}
             optionLabel={optionDisplayLabel}
             onSelect={selectStatus}
+            wide={size === "md"}
           />,
           getDropdownPortalRoot(),
         )
@@ -246,7 +252,9 @@ export function AdminInlineStatusSelect({
         ref={triggerRef}
         type="button"
         disabled={disabled || isPending}
-        className={`inline-flex items-center gap-1 rounded-[15px] px-2 py-1 text-xs font-medium uppercase transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${badgeClassName}`}
+        className={`inline-flex items-center gap-1 rounded-[15px] font-medium uppercase transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+          size === "md" ? "px-2.5 py-1 text-xs" : "px-2 py-1 text-xs"
+        } ${badgeClassName}`}
         aria-label={formatAdminMessage(dictionary.orders.changeStatusAria, {
           kind,
         })}

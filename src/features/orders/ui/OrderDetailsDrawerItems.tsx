@@ -12,6 +12,20 @@ type OrderDetailsDrawerItemsProps = {
   detail: AdminOrderDetailView;
 };
 
+/** Prefix bare addon labels with `+` (legacy snapshots may omit it). */
+function formatModifierLine(line: string): string {
+  const trimmed = line.trim();
+  if (
+    trimmed.startsWith("+") ||
+    trimmed.startsWith("−") ||
+    trimmed.startsWith("-") ||
+    trimmed.includes(":")
+  ) {
+    return trimmed;
+  }
+  return `+ ${trimmed}`;
+}
+
 /** Product list card — line items with modifiers and qty × price. */
 export function OrderDetailsDrawerItems({
   detail,
@@ -42,7 +56,7 @@ export function OrderDetailsDrawerItems({
               {item.modifierLines.length > 0 ? (
                 <ul className="mt-2 space-y-1 text-sm text-gray-600">
                   {item.modifierLines.map((lineLabel) => (
-                    <li key={lineLabel}>{lineLabel}</li>
+                    <li key={lineLabel}>{formatModifierLine(lineLabel)}</li>
                   ))}
                 </ul>
               ) : null}

@@ -18,6 +18,8 @@ function sampleDetail(
     contactName: "Sam <img>",
     contactEmail: "sam@example.com",
     contactPhone: "+37411111111",
+    userId: null,
+    userBonusBalanceAmount: null,
     customerNote: null,
     baseCurrency: "AMD",
     subtotalAmount: 3000,

@@ -124,12 +124,9 @@ function hashValue(value: string): string {
   return createHash("sha256").update(value).digest("hex");
 }
 
-function deliveryLabel(countryCode: string, city: string | null): string {
+function deliveryLabel(city: string | null): string {
   const cityPart = city?.trim();
-  if (cityPart) {
-    return `${cityPart}, ${countryCode}`;
-  }
-  return countryCode;
+  return cityPart ? `Delivery, ${cityPart}` : "Delivery";
 }
 
 export type CreateOrderResult =
@@ -760,7 +757,7 @@ export async function createOrderAction(
           input.shippingMethod === "pickup"
             ? "Store pickup"
             : delivery
-              ? deliveryLabel(delivery.countryCode, delivery.city)
+              ? deliveryLabel(delivery.city)
               : "Delivery",
         deliveryEstimateSnapshot:
           input.shippingMethod === "pickup"
