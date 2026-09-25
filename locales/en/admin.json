@@ -332,6 +332,7 @@
       "pickupMethod": "Store pickup",
       "shippingAddress": "Shipping Address",
       "method": "Method",
+      "address": "Address",
       "amount": "Amount",
       "customerPaysWith": "Customer pays with",
       "prepareChange": "Prepare change",
@@ -350,7 +351,7 @@
       "lineTotal": "Total",
       "customizations": "Additions & removals",
       "bonusSpent": "Bonus used",
-      "bonusEarned": "Received bonus",
+      "bonusEarned": "Grill Coin",
       "grillCoinLabel": "Grill Coin",
       "customerReviewNotice": "Payment was received. The order is under review — support will contact you if needed.",
       "paymentAttempt": "Attempt {number} — {status}",
@@ -434,6 +435,7 @@
       "contact": "Contact",
       "orders": "Orders",
       "roles": "Roles",
+      "bonuses": "Grill Coins",
       "status": "Status",
       "created": "Created",
       "empty": "No users match these filters.",
@@ -442,7 +444,9 @@
       "suspendNamed": "Suspend {name}",
       "activateNamed": "Activate {name}",
       "sortOrdersAsc": "Sort by order count, ascending",
-      "sortOrdersDesc": "Sort by order count, descending"
+      "sortOrdersDesc": "Sort by order count, descending",
+      "sortBonusesAsc": "Sort by Grill Coins, ascending",
+      "sortBonusesDesc": "Sort by Grill Coins, descending"
     },
     "bulk": {
       "selectedCount": "Selected {count} user(s)",

@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import type { AdminOrderDrawerControls } from "@/features/orders/ui/admin-order-drawer-controls";
+import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
+import { OrderDetailsDrawerCustomer } from "@/features/orders/ui/OrderDetailsDrawerCustomer";
 import { OrderDetailsDrawerItems } from "@/features/orders/ui/OrderDetailsDrawerItems";
 import { OrderDetailsDrawerReview } from "@/features/orders/ui/OrderDetailsDrawerReview";
 import { OrderDetailsDrawerShipping } from "@/features/orders/ui/OrderDetailsDrawerShipping";
@@ -57,7 +59,29 @@ export function OrderDetailsDrawer({
         )
       : undefined;
 
-  const headerActions =
+  const statusActions =
+    detail && !isLoading && !error && adminControls ? (
+      <>
+        <AdminInlineStatusSelect
+          locale={adminControls.locale}
+          orderNumber={detail.orderNumber}
+          kind="order"
+          value={detail.status}
+          onSuccess={adminControls.onStatusUpdated}
+          size="md"
+        />
+        <AdminInlineStatusSelect
+          locale={adminControls.locale}
+          orderNumber={detail.orderNumber}
+          kind="payment"
+          value={detail.paymentStatus}
+          onSuccess={adminControls.onStatusUpdated}
+          size="md"
+        />
+      </>
+    ) : null;
+
+  const reorderAction =
     reorder && detail && !isLoading && !error ? (
       <Button
         type="button"
@@ -68,6 +92,20 @@ export function OrderDetailsDrawer({
       >
         {reorder.isPending ? reorder.pendingLabel : reorder.label}
       </Button>
+    ) : null;
+
+  const headerActions =
+    statusActions || reorderAction ? (
+      <div
+        className={
+          statusActions
+            ? "flex flex-col items-end gap-1.5"
+            : "flex items-center"
+        }
+      >
+        {statusActions}
+        {reorderAction}
+      </div>
     ) : null;
 
   const stickyTotals =
@@ -104,6 +142,9 @@ export function OrderDetailsDrawer({
       {error ? <p className="py-8 text-sm text-red-700">{error}</p> : null}
       {!isLoading && !error && detail ? (
         <div className="space-y-3">
+          {!isCustomerSheet ? (
+            <OrderDetailsDrawerCustomer detail={detail} />
+          ) : null}
           <OrderDetailsDrawerSummary
             detail={detail}
             adminControls={adminControls}

@@ -332,6 +332,7 @@
       "pickupMethod": "Самовывоз",
       "shippingAddress": "Адрес доставки",
       "method": "Способ",
+      "address": "Адрес",
       "amount": "Сумма",
       "customerPaysWith": "Клиент платит",
       "prepareChange": "Подготовить сдачу",
@@ -350,7 +351,7 @@
       "lineTotal": "Итого",
       "customizations": "Добавки и исключения",
       "bonusSpent": "Списано бонусов",
-      "bonusEarned": "Полученный бонус",
+      "bonusEarned": "Grill Coin",
       "grillCoinLabel": "Grill Coin",
       "customerReviewNotice": "Оплата получена, заказ проверяется. При необходимости служба поддержки свяжется с вами.",
       "paymentAttempt": "Попытка {number} — {status}",
@@ -434,6 +435,7 @@
       "contact": "Контакты",
       "orders": "Заказы",
       "roles": "Роли",
+      "bonuses": "Grill Coins",
       "status": "Статус",
       "created": "Создан",
       "empty": "Нет пользователей по этим фильтрам.",
@@ -442,7 +444,9 @@
       "suspendNamed": "Приостановить {name}",
       "activateNamed": "Активировать {name}",
       "sortOrdersAsc": "Сортировать по количеству заказов по возрастанию",
-      "sortOrdersDesc": "Сортировать по количеству заказов по убыванию"
+      "sortOrdersDesc": "Сортировать по количеству заказов по убыванию",
+      "sortBonusesAsc": "Сортировать по Grill Coins по возрастанию",
+      "sortBonusesDesc": "Сортировать по Grill Coins по убыванию"
     },
     "bulk": {
       "selectedCount": "Выбрано пользователей: {count}",

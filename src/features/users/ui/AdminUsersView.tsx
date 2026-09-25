@@ -51,6 +51,8 @@ type AdminUsersViewProps = {
   dir: string;
   sortOrdersAscHref: string;
   sortOrdersDescHref: string;
+  sortBonusesAscHref: string;
+  sortBonusesDescHref: string;
 };
 
 function roleFilterHref(
@@ -86,6 +88,8 @@ export function AdminUsersView({
   dir,
   sortOrdersAscHref,
   sortOrdersDescHref,
+  sortBonusesAscHref,
+  sortBonusesDescHref,
 }: AdminUsersViewProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.users;
@@ -101,6 +105,9 @@ export function AdminUsersView({
   const ordersSortActive = sort === "orders";
   const ordersAscActive = ordersSortActive && dir === "asc";
   const ordersDescActive = ordersSortActive && dir === "desc";
+  const bonusesSortActive = sort === "bonuses";
+  const bonusesAscActive = bonusesSortActive && dir === "asc";
+  const bonusesDescActive = bonusesSortActive && dir === "desc";
 
   const allIds = users.map((user) => user.id);
   const allSelected =
@@ -194,41 +201,43 @@ export function AdminUsersView({
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
-      <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">
-          {formatAdminMessage(bulk.selectedCount, {
-            count: String(selected.size),
-          })}
-        </p>
-        <button
-          type="button"
-          disabled={isPending || selected.size === 0}
-          onClick={() =>
-            void (async () => {
-              const accepted = await confirmDelete({
-                title: common.confirmDeleteTitle,
-                message: formatAdminMessage(bulk.confirmDelete, {
-                  count: String(selected.size),
-                }),
-                confirmText: common.delete,
-                cancelText: common.cancel,
-              });
-              if (!accepted) return;
-
-              runAction(async () => {
-                const result = await bulkAnonymizeUsersAction(locale, {
-                  userIds: [...selected],
+      {selected.size > 0 ? (
+        <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-gray-700">
+            {formatAdminMessage(bulk.selectedCount, {
+              count: String(selected.size),
+            })}
+          </p>
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() =>
+              void (async () => {
+                const accepted = await confirmDelete({
+                  title: common.confirmDeleteTitle,
+                  message: formatAdminMessage(bulk.confirmDelete, {
+                    count: String(selected.size),
+                  }),
+                  confirmText: common.delete,
+                  cancelText: common.cancel,
                 });
-                if (!result.ok) throw new Error(result.error.message);
-                setSelected(new Set());
-              });
-            })()
-          }
-          className={ADMIN_BTN_PRIMARY_CLASS}
-        >
-          {bulk.deleteSelected}
-        </button>
-      </Card>
+                if (!accepted) return;
+
+                runAction(async () => {
+                  const result = await bulkAnonymizeUsersAction(locale, {
+                    userIds: [...selected],
+                  });
+                  if (!result.ok) throw new Error(result.error.message);
+                  setSelected(new Set());
+                });
+              })()
+            }
+            className={ADMIN_BTN_PRIMARY_CLASS}
+          >
+            {bulk.deleteSelected}
+          </button>
+        </Card>
+      ) : null}
 
       <Card className={ADMIN_TABLE_CARD}>
         {users.length === 0 ? (
@@ -286,7 +295,40 @@ export function AdminUsersView({
                       </span>
                     </span>
                   </th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{table.roles}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
+                    <span className="inline-flex items-center justify-center gap-1">
+                      <span>{table.bonuses}</span>
+                      <span
+                        className="inline-flex flex-col leading-none"
+                        aria-label={table.bonuses}
+                      >
+                        <Link
+                          href={sortBonusesAscHref}
+                          className={`px-0.5 text-[9px] transition-colors hover:text-gray-900 ${
+                            bonusesAscActive
+                              ? "text-gray-900"
+                              : "text-gray-300"
+                          }`}
+                          aria-label={table.sortBonusesAsc}
+                          aria-current={bonusesAscActive ? "true" : undefined}
+                        >
+                          ▲
+                        </Link>
+                        <Link
+                          href={sortBonusesDescHref}
+                          className={`-mt-0.5 px-0.5 text-[9px] transition-colors hover:text-gray-900 ${
+                            bonusesDescActive
+                              ? "text-gray-900"
+                              : "text-gray-300"
+                          }`}
+                          aria-label={table.sortBonusesDesc}
+                          aria-current={bonusesDescActive ? "true" : undefined}
+                        >
+                          ▼
+                        </Link>
+                      </span>
+                    </span>
+                  </th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{table.status}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{table.created}</th>
                 </tr>
@@ -323,6 +365,11 @@ export function AdminUsersView({
                           <p className="font-medium text-gray-900 group-hover:underline">
                             {name}
                           </p>
+                          <span
+                            className={`relative z-10 mt-1.5 inline-flex ${ADMIN_BADGE} uppercase ${adminUserRolePillClass(user.role)}`}
+                          >
+                            {adminUserRoleLabel(user.role, copy.roles)}
+                          </span>
                         </Link>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
@@ -337,10 +384,12 @@ export function AdminUsersView({
                         </span>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
-                        <span
-                          className={`${ADMIN_BADGE} uppercase ${adminUserRolePillClass(user.role)}`}
-                        >
-                          {adminUserRoleLabel(user.role, copy.roles)}
+                        <span className="font-medium tabular-nums text-gray-900">
+                          {Math.max(
+                            0,
+                            Math.floor(user.bonusBalanceAmount),
+                          ).toLocaleString("en-US")}{" "}
+                          ֏
                         </span>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>

@@ -33,6 +33,7 @@ export type AdminUserListItem = {
   role: string;
   status: string;
   orderCount: number;
+  bonusBalanceAmount: number;
   lastLoginAt: Date | null;
   createdAt: Date;
 };
@@ -120,7 +121,9 @@ export async function listAdminUsers(
   const orderBy =
     filters.sort === "orders"
       ? [direction(orderCountExpr), desc(users.createdAt)]
-      : [direction(users.createdAt)];
+      : filters.sort === "bonuses"
+        ? [direction(users.bonusBalanceAmount), desc(users.createdAt)]
+        : [direction(users.createdAt)];
 
   const [rows, [totalRow]] = await Promise.all([
     getDb()
@@ -134,6 +137,7 @@ export async function listAdminUsers(
         status: users.status,
         lastLoginAt: users.lastLoginAt,
         createdAt: users.createdAt,
+        bonusBalanceAmount: users.bonusBalanceAmount,
         orderCount: orderCountExpr.mapWith(Number),
       })
       .from(users)

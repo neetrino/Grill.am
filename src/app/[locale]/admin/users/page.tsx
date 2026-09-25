@@ -122,6 +122,16 @@ export default async function AdminUsersPage({
           dir: "desc",
           page: 1,
         })}
+        sortBonusesAscHref={usersHref({
+          sort: "bonuses",
+          dir: "asc",
+          page: 1,
+        })}
+        sortBonusesDescHref={usersHref({
+          sort: "bonuses",
+          dir: "desc",
+          page: 1,
+        })}
       />
 
       {totalPages > 1 ? (
