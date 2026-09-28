@@ -265,7 +265,7 @@ export function CheckoutForm({
     null;
   const [shippingMethod, setShippingMethod] = useState<
     "pickup" | "delivery" | null
-  >(null);
+  >(deliveryOptions.length > 0 ? "delivery" : null);
   const [deliveryRuleId, setDeliveryRuleId] = useState(defaultRuleId);
   const [line1, setLine1] = useState(defaultLine1);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(

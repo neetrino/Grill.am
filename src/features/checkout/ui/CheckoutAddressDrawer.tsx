@@ -170,7 +170,7 @@ export function CheckoutAddressList({
           aria-label={labels.title}
           onClick={() => setIsOpen(true)}
         >
-          <MapPin className="size-4 shrink-0 text-brand-red" aria-hidden />
+          <MapPin className="size-4 shrink-0 text-brand-green" aria-hidden />
           <span className="min-w-0 flex-1 truncate text-sm">
             {selectedLine1}
             {selectedCityLabel ? (
@@ -178,7 +178,7 @@ export function CheckoutAddressList({
             ) : null}
           </span>
           <span className="flex shrink-0 items-center gap-1.5">
-            <Check className="size-4 text-brand-red" aria-hidden />
+            <Check className="size-4 text-brand-green" aria-hidden />
             <ChevronDown className="size-4 text-gray-400" aria-hidden />
           </span>
         </button>
@@ -423,7 +423,7 @@ function ExpandedAddressPanel({
                 <span
                   className={`mr-2.5 size-[1.125rem] shrink-0 rounded-full border-[1.5px] ${
                     selected
-                      ? "border-brand-red bg-brand-red shadow-[inset_0_0_0_3px_#fff]"
+                      ? "border-brand-green bg-brand-green shadow-[inset_0_0_0_3px_#fff]"
                       : "border-gray-300 bg-white"
                   }`}
                   aria-hidden
@@ -456,7 +456,7 @@ function ExpandedAddressPanel({
                 </span>
                 {selected ? (
                   <span className="flex shrink-0 items-center gap-1.5">
-                    <Check className="size-4 text-brand-red" aria-hidden />
+                    <Check className="size-4 text-brand-green" aria-hidden />
                     <ChevronDown
                       className="size-4 rotate-180 text-gray-400"
                       aria-hidden

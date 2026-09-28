@@ -202,7 +202,7 @@ export function CheckoutOrderSummary({
                     checked={useBonus}
                     disabled={isSubmitting || !canUseBonus}
                     onChange={(event) => onUseBonusChange(event.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-brand-red focus:ring-brand-red/30 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="h-4 w-4 rounded border-gray-300 text-brand-green focus:ring-brand-green/30 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   <span className="text-sm font-medium text-gray-900">
                     {bonusTitle}

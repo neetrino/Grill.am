@@ -79,7 +79,7 @@ export function CheckoutPaymentMethods({
                       onChange(option.id);
                     }
                   }}
-                  className="mr-3 accent-brand-red self-center"
+                  className="mr-3 accent-brand-green self-center"
                   disabled={optionDisabled}
                   aria-describedby={`payment-desc-${option.id}`}
                   suppressHydrationWarning
