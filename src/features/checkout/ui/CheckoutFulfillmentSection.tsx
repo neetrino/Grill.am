@@ -166,7 +166,7 @@ function MethodToggle({
         <span className="flex items-center gap-2 font-medium text-gray-900">
           <Icon
             className={`size-5 shrink-0 ${
-              selected ? "text-brand-red" : "text-gray-500"
+              selected ? "text-brand-green" : "text-gray-500"
             }`}
             aria-hidden
           />

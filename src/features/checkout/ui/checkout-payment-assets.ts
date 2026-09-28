@@ -1,10 +1,11 @@
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import {
   CHECKOUT_CARD_BADGES,
+  CHECKOUT_CASH_ICON,
   FOOTER_PAYMENT_ASSETS,
 } from "@/lib/payment-assets";
 
-export { CHECKOUT_CARD_BADGES, FOOTER_PAYMENT_ASSETS };
+export { CHECKOUT_CARD_BADGES, CHECKOUT_CASH_ICON, FOOTER_PAYMENT_ASSETS };
 
 export function checkoutPaymentIconKind(
   methodId: CheckoutPaymentMethod,

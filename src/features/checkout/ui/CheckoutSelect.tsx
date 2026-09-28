@@ -117,12 +117,12 @@ export function CheckoutSelect({
   const triggerBorderClass = triggerClassName
     ? ""
     : disclosure.isOpen
-      ? "border-brand-red"
+      ? "border-brand-green"
       : "border-gray-200";
 
   const triggerToneClass = triggerClassName
     ? triggerClassName
-    : "rounded-[15px] border bg-white focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:bg-gray-50";
+    : "rounded-[15px] border bg-white focus-visible:border-brand-green/40 focus-visible:ring-2 focus-visible:ring-brand-green/15 disabled:bg-gray-50";
 
   const panel =
     canPortal && disclosure.isVisible && menuPosition

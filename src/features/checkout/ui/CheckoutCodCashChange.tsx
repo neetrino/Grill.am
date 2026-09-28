@@ -114,10 +114,10 @@ export function CheckoutCodCashChange({
             aria-checked={exactSelected}
             disabled={disabled}
             onClick={() => onChange(null)}
-            className={`block w-full rounded-[18px] border-2 p-0 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red disabled:opacity-60 ${
+            className={`block w-full rounded-[18px] border-2 p-0 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green disabled:opacity-60 ${
               exactSelected
-                ? "border-brand-red bg-brand-red/10"
-                : "border-gray-200 bg-white hover:border-brand-red/40"
+                ? "border-brand-green bg-brand-green/10"
+                : "border-gray-200 bg-white hover:border-brand-green/40"
             }`}
           >
             <span
@@ -138,10 +138,10 @@ export function CheckoutCodCashChange({
                 aria-checked={selected}
                 disabled={disabled}
                 onClick={() => onChange(amount)}
-                className={`block w-full rounded-[18px] border-2 bg-transparent p-0 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red disabled:opacity-60 ${
+                className={`block w-full rounded-[18px] border-2 bg-transparent p-0 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-green disabled:opacity-60 ${
                   selected
-                    ? "border-brand-red"
-                    : "border-gray-200 hover:border-brand-red/40"
+                    ? "border-brand-green"
+                    : "border-gray-200 hover:border-brand-green/40"
                 }`}
               >
                 <span
