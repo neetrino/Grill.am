@@ -23,7 +23,8 @@
     "storeHome": "Grill.am home",
     "closeMenu": "Close admin menu",
     "toggleProductSubpages": "Toggle product subpages",
-    "bonuses": "Bonuses"
+    "bonuses": "Bonuses",
+    "coinAnalytics": "Coin analytics"
   },
   "common": {
     "save": "Save",
@@ -1061,6 +1062,68 @@
       "invalidRange": "Start date for “{title}” must be on or before the end date.",
       "cleared": "Product bonus for “{title}” was cleared.",
       "saved": "Saved {amount}֏ bonus for “{title}”."
+    }
+  },
+  "coinAnalytics": {
+    "title": "Coin analytics",
+    "subtitle": "Two separate views: who holds coins right now, and how many coins moved in a time period. Order prices are never counted.",
+    "periods": {
+      "title": "Coin movement by period",
+      "hint": "These numbers are not wallet balances. They are total coins spent and earned across all users in that period.",
+      "today": "Today",
+      "week": "Last 7 days",
+      "month": "This month",
+      "quarter": "This quarter",
+      "spent": "Spent",
+      "earned": "Earned"
+    },
+    "period": {
+      "title": "Detailed range",
+      "label": "Period",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "downloadCsv": "Download CSV",
+      "invalidRange": "Invalid date range. Showing defaults.",
+      "last7": "Last 7 days",
+      "last30": "Last 30 days",
+      "last90": "Last 90 days",
+      "thisMonth": "This month",
+      "custom": "Custom range"
+    },
+    "metrics": {
+      "rangeTitle": "Selected range",
+      "spent": "Spent",
+      "earned": "Earned",
+      "netIssued": "Net issued",
+      "redemptionRate": "Redemption rate",
+      "redemptionEmpty": "—",
+      "averageSpend": "Avg spend / spender",
+      "averageEmpty": "—",
+      "outstanding": "Coins in wallets",
+      "vsPreviousHint": "Deltas compare to the previous period of equal length.",
+      "ledgerOnlyHint": "Figures come from the bonus ledger only — order totals are never included."
+    },
+    "trend": {
+      "title": "Movement chart",
+      "subtitle": "Spent and earned in the detailed range above — not current balances",
+      "chartAria": "Coins spent and earned trend chart",
+      "empty": "No coin activity in this range.",
+      "emptyShort": "—",
+      "peakDay": "Peak spend day",
+      "peakMonth": "Peak spend month"
+    },
+    "rankings": {
+      "usersTitle": "Wallets right now",
+      "usersSubtitle": "Current balance for each user. Spent = lifetime net spend. Spent + has = total coins that user has ever held.",
+      "searchPlaceholder": "Search by name, email, or phone",
+      "searchAria": "Search users by name, email, or phone",
+      "noSearchResults": "No users match that search.",
+      "totalInWallets": "Total in all wallets",
+      "hasAmount": "Has now",
+      "spentLifetime": "Spent ever",
+      "combinedAmount": "Spent + has",
+      "noBalances": "No coin activity yet."
     }
   }
 }
