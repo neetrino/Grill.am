@@ -18,10 +18,11 @@ describe("payment status transitions", () => {
     expect(canTransitionPaymentStatus("CAPTURED", "REFUNDED")).toBe(true);
   });
 
-  it("exposes Refunded and Cancelled in the admin payment list", () => {
+  it("exposes Authorized, Refunded and Cancelled in the admin payment list", () => {
     expect(ADMIN_PAYMENT_STATUS_OPTIONS.map((option) => option.value)).toEqual([
       "CAPTURED",
       "PENDING",
+      "AUTHORIZED",
       "FAILED",
       "REFUNDED",
       "CANCELLED",
