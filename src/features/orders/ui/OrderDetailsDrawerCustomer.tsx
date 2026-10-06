@@ -9,14 +9,33 @@ import {
 
 type OrderDetailsDrawerCustomerProps = {
   detail: AdminOrderDetailView;
+  /** Customer sheet shows only their own comment, with a first-person heading. */
+  audience?: "admin" | "customer";
 };
 
-/** Customer contact + optional note — first blocks in the admin order sheet. */
+/** Contact + note for admin; the customer's own comment on their order sheet. */
 export function OrderDetailsDrawerCustomer({
   detail,
+  audience = "admin",
 }: OrderDetailsDrawerCustomerProps) {
   const dictionary = useAdminDictionary();
   const drawer = dictionary.orders.drawer;
+  const note = detail.customerNote?.trim() ?? "";
+
+  const noteCard = note ? (
+    <section className={ORDER_DETAIL_CARD}>
+      <h3 className={ORDER_DETAIL_SECTION_TITLE}>
+        {audience === "customer" ? drawer.comment : drawer.customerNote}
+      </h3>
+      <p className="whitespace-pre-wrap text-sm font-medium text-gray-900">
+        {note}
+      </p>
+    </section>
+  ) : null;
+
+  if (audience === "customer") {
+    return noteCard;
+  }
 
   return (
     <>
@@ -41,15 +60,7 @@ export function OrderDetailsDrawerCustomer({
           ) : null}
         </dl>
       </section>
-
-      {detail.customerNote ? (
-        <section className={ORDER_DETAIL_CARD}>
-          <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.customerNote}</h3>
-          <p className="whitespace-pre-wrap text-sm font-medium text-gray-900">
-            {detail.customerNote}
-          </p>
-        </section>
-      ) : null}
+      {noteCard}
     </>
   );
 }

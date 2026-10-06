@@ -63,10 +63,11 @@ export function CoinAnalyticsUserRankings({
   const resolvedLocale: Locale = isLocale(locale) ? locale : defaultLocale;
   const router = useRouter();
   const [draft, setDraft] = useState(query);
-
-  useEffect(() => {
+  const [appliedQuery, setAppliedQuery] = useState(query);
+  if (query !== appliedQuery) {
+    setAppliedQuery(query);
     setDraft(query);
-  }, [query]);
+  }
 
   useEffect(() => {
     const next = draft.trim().slice(0, 80);

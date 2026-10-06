@@ -328,6 +328,7 @@
       "phone": "Phone Number",
       "email": "Email",
       "customerNote": "Customer comment",
+      "comment": "Comment",
       "shippingMethod": "Shipping Method",
       "pickupStore": "Pickup store",
       "pickupMethod": "Store pickup",

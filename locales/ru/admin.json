@@ -328,6 +328,7 @@
       "phone": "Телефон",
       "email": "Email",
       "customerNote": "Комментарий клиента",
+      "comment": "Комментарий",
       "shippingMethod": "Способ доставки",
       "pickupStore": "Самовывоз",
       "pickupMethod": "Самовывоз",
