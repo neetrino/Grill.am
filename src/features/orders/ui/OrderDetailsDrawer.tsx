@@ -149,6 +149,9 @@ export function OrderDetailsDrawer({
             detail={detail}
             adminControls={adminControls}
           />
+          {isCustomerSheet ? (
+            <OrderDetailsDrawerCustomer detail={detail} audience="customer" />
+          ) : null}
           {adminControls ? (
             <OrderDetailsDrawerReview
               detailStatus={detail.status}
