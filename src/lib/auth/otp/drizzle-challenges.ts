@@ -4,8 +4,8 @@ import { and, desc, eq, gt, isNull, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import { phoneOtpChallenges } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
 import type { OtpPurpose } from "@/lib/auth/otp/constants";
+import { replaceActiveChallengeSql } from "@/lib/auth/otp/replace-active-sql";
 import type {
   OtpChallengeRecord,
   OtpChallengeRepository,
@@ -14,8 +14,8 @@ import type {
 /**
  * Drizzle OTP store.
  * Successful consume is one conditional UPDATE so two callers cannot both win.
- * Neon HTTP cannot hold an interactive transaction on the pooled HTTP client;
- * issue uses the project's websocket transaction helper.
+ * Replacing the active challenge is one SQL statement on the HTTP client, so
+ * SMS OTP does not open a Neon WebSocket transaction.
  */
 export function createDrizzleOtpChallengeRepository(): OtpChallengeRepository {
   return {
@@ -43,19 +43,7 @@ async function replaceActiveChallenge(
   record: OtpChallengeRecord,
 ): Promise<"inserted" | "conflict"> {
   try {
-    await withTransaction(async (tx) => {
-      await tx
-        .update(phoneOtpChallenges)
-        .set({ consumedAt: record.createdAt })
-        .where(
-          and(
-            eq(phoneOtpChallenges.phone, record.phone),
-            eq(phoneOtpChallenges.purpose, record.purpose),
-            isNull(phoneOtpChallenges.consumedAt),
-          ),
-        );
-      await tx.insert(phoneOtpChallenges).values(record);
-    });
+    await getDb().execute(replaceActiveChallengeSql(record));
     return "inserted";
   } catch (error) {
     if (isUniqueViolation(error)) {

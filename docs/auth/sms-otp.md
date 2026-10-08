@@ -108,6 +108,8 @@ Do not prefix these with `NEXT_PUBLIC_`. Password login keeps working when they 
 
 Migration `0022_phone_otp.sql` adds `users.phone_verified_at` and `phone_otp_challenges`.
 
+Issuing a new code consumes the previous active challenge and inserts the next one in a single SQL statement on the Neon HTTP driver. That statement is atomic. Commerce transactions still use the WebSocket helper in `src/db/transaction.ts`. `ws` stays external to the Next.js server bundle.
+
 Migration `0023_phone_verified_unique.sql` adds a partial unique index on `users.phone` where `phone_verified_at` is set. It does not rewrite legacy phones and does not constrain unverified duplicates.
 
 `users.phone` stays nullable. Historical values may be null, duplicated, or not E.164. New registration and profile saves store E.164. Login matches legacy forms of the same number (`099…`, `374…`, `00…`) and refuses to sign in when more than one active user matches, or when the match is not a verified customer.

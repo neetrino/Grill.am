@@ -80,6 +80,10 @@ function buildImageRemotePatterns(): NonNullable<
 }
 
 const nextConfig: NextConfig = {
+  // Keep the Node `ws` package out of the server bundle. Webpack inlines it
+  // otherwise, and the bundled `bufferutil` binding throws `mask is not a function`
+  // when Neon opens a WebSocket transaction.
+  serverExternalPackages: ["ws"],
   // Allow LAN access in `next dev` (phone / other Mac via local IP).
   // Without this, Next blocks `/_next/*` (JS/CSS/HMR) and the UI looks blank.
   // Playwright E2E uses http://127.0.0.1:3100 — must be allowlisted too.
