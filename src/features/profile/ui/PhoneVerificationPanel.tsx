@@ -29,6 +29,7 @@ type PhoneVerificationCopy = {
   sent: string;
   success: string;
   invalidCode: string;
+  phoneTaken: string;
   rateLimited: string;
   missingPhone: string;
   genericError: string;
@@ -121,7 +122,10 @@ export function PhoneVerificationPanel({
             value={code}
             onChange={setCode}
             disabled={confirmPending}
-            invalid={confirmState.errorCode === "invalid_code"}
+            invalid={
+              confirmState.errorCode === "invalid_code" ||
+              confirmState.errorCode === "phone_taken"
+            }
             label={copy.codeLabel}
           />
           {confirmState.errorCode ? (
@@ -186,5 +190,6 @@ function confirmErrorText(
 ): string {
   if (code === "rate_limited") return copy.rateLimited;
   if (code === "invalid_code") return copy.invalidCode;
+  if (code === "phone_taken") return copy.phoneTaken;
   return copy.genericError;
 }

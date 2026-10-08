@@ -40,6 +40,7 @@ type PersonalInformationFormProps = {
     sent: string;
     success: string;
     invalidCode: string;
+    phoneTaken: string;
     rateLimited: string;
     missingPhone: string;
     genericError: string;

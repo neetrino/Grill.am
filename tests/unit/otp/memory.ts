@@ -112,10 +112,19 @@ export function createMemoryOtpUsers(
     async markPhoneVerified(userId, phoneE164, verifiedAt) {
       const user = users.find((item) => item.id === userId);
       if (!user || user.phone !== phoneE164 || user.status !== "ACTIVE") {
-        return false;
+        return "unchanged";
+      }
+      const taken = users.some(
+        (item) =>
+          item.id !== userId &&
+          item.phone === phoneE164 &&
+          item.phoneVerifiedAt !== null,
+      );
+      if (taken) {
+        return "phone_taken";
       }
       user.phoneVerifiedAt = verifiedAt;
-      return true;
+      return "verified";
     },
     async touchLastLogin() {
       return undefined;

@@ -2,12 +2,15 @@ import { normalizePhoneToE164 } from "@/lib/phone/normalize";
 
 import { sendChallenge, verifyChallenge } from "@/lib/auth/otp/challenge-ops";
 import type { OtpPurpose } from "@/lib/auth/otp/constants";
+import { isSmsLoginEligible } from "@/lib/auth/otp/eligibility";
 import { resolvePhoneUpdate } from "@/lib/auth/otp/phone-verification-state";
 import type {
   OtpFlowDeps,
   OtpLoginVerifyResult,
   OtpPhoneVerifyResult,
   OtpRequestResult,
+  OtpUserRecord,
+  OtpVerifyFailureCause,
 } from "@/lib/auth/otp/types";
 
 const CODE_PATTERN = /^\d{6}$/;
@@ -30,7 +33,10 @@ export async function requestLoginOtp(
   }
 
   const candidate = await deps.users.findLoginCandidate(phone);
-  if (candidate.kind !== "found") {
+  if (
+    candidate.kind !== "found" ||
+    !isSmsLoginEligible(candidate.user, phone)
+  ) {
     return { ok: true, code: "accepted" };
   }
 
@@ -69,12 +75,11 @@ export async function verifyLoginOtp(
   }
 
   const user = await deps.users.findById(verified.userId);
-  const currentPhone = user?.phone ? normalizePhoneToE164(user.phone) : null;
-  if (!user || user.status !== "ACTIVE" || currentPhone !== phone) {
+  if (!user || !isSmsLoginEligible(user, phone)) {
     return {
       ok: false,
       code: "invalid_code",
-      cause: user && user.status !== "ACTIVE" ? "inactive" : "phone_mismatch",
+      cause: loginDenialCause(user),
     };
   }
 
@@ -158,11 +163,29 @@ export async function verifyPhoneOtp(
     phone,
     deps.now(),
   );
-  if (!marked) {
+  if (marked === "phone_taken") {
+    return { ok: false, code: "phone_taken" };
+  }
+  if (marked !== "verified") {
     return { ok: false, code: "invalid_code", cause: "phone_mismatch" };
   }
 
   return { ok: true };
+}
+
+function loginDenialCause(
+  user: OtpUserRecord | null,
+): OtpVerifyFailureCause {
+  if (!user || user.status !== "ACTIVE") {
+    return user ? "inactive" : "phone_mismatch";
+  }
+  if (user.role !== "CUSTOMER") {
+    return "ineligible";
+  }
+  if (user.phoneVerifiedAt === null) {
+    return "unverified";
+  }
+  return "phone_mismatch";
 }
 
 async function allowSend(

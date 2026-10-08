@@ -12,6 +12,11 @@ export type RedisClient = {
   incr(key: string): Promise<number>;
   /** Sets a TTL in seconds. Returns 1 when the key exists. */
   expire(key: string, seconds: number): Promise<number>;
+  /**
+   * Deletes `key` only when its current value equals `token`.
+   * Returns 1 when this caller deleted the key, otherwise 0.
+   */
+  compareAndDelete(key: string, token: string): Promise<number>;
 };
 
 export type RedisAdapter = {

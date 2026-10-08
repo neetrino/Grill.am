@@ -4,6 +4,7 @@ import { and, eq, inArray, or, sql, type SQL } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
+import { isVerifiedPhoneOwnershipConflict } from "@/lib/auth/otp/verified-phone-conflict";
 import type { OtpUserRecord, OtpUserRepository } from "@/lib/auth/otp/types";
 import {
   normalizePhoneToE164,
@@ -19,7 +20,11 @@ const USER_COLUMNS = {
   phoneVerifiedAt: users.phoneVerifiedAt,
 };
 
-/** User lookups for OTP. Login never inserts a user. */
+/**
+ * User lookups for OTP. Login never inserts a user.
+ * SMS login eligibility (verified customer) is applied by the flow, not here,
+ * so an ineligible match stays indistinguishable from a missing account.
+ */
 export function createDrizzleOtpUserRepository(): OtpUserRepository {
   return {
     findLoginCandidate(phoneE164) {
@@ -39,18 +44,25 @@ export function createDrizzleOtpUserRepository(): OtpUserRepository {
         .where(eq(users.id, userId));
     },
     async markPhoneVerified(userId, phoneE164, verifiedAt) {
-      const [row] = await getDb()
-        .update(users)
-        .set({ phoneVerifiedAt: verifiedAt, updatedAt: verifiedAt })
-        .where(
-          and(
-            eq(users.id, userId),
-            eq(users.phone, phoneE164),
-            eq(users.status, "ACTIVE"),
-          ),
-        )
-        .returning({ id: users.id });
-      return Boolean(row);
+      try {
+        const [row] = await getDb()
+          .update(users)
+          .set({ phoneVerifiedAt: verifiedAt, updatedAt: verifiedAt })
+          .where(
+            and(
+              eq(users.id, userId),
+              eq(users.phone, phoneE164),
+              eq(users.status, "ACTIVE"),
+            ),
+          )
+          .returning({ id: users.id });
+        return row ? "verified" : "unchanged";
+      } catch (error) {
+        if (isVerifiedPhoneOwnershipConflict(error)) {
+          return "phone_taken";
+        }
+        throw error;
+      }
     },
     async touchLastLogin(userId, at) {
       await getDb()

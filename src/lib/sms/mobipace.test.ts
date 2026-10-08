@@ -107,6 +107,25 @@ describe("MOBIPACE provider", () => {
     });
   });
 
+  it("retries a busy account and then sends", async () => {
+    let sends = 0;
+    const fetchFn = fakeFetch(async (url) => {
+      if (url.endsWith("/authorize")) {
+        return { StatusCode: 101, SessionId: "busy-session" };
+      }
+      sends += 1;
+      return { StatusCode: sends < 3 ? 104 : 101 };
+    });
+    const provider = createMobipaceSmsProvider({
+      config,
+      redis: createMemoryRedisAdapter().getClient(),
+      fetchFn,
+    });
+
+    await provider.sendSms({ to: "+37499123456", text: "code 483921" });
+    expect(sends).toBe(3);
+  });
+
   it("serializes concurrent sends", async () => {
     let inFlight = 0;
     let maxInFlight = 0;

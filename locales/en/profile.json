@@ -129,6 +129,7 @@
     "sent": "A verification code has been sent.",
     "success": "Your phone number is verified.",
     "invalidCode": "That code is invalid or has expired.",
+    "phoneTaken": "This phone number is already verified on another account.",
     "rateLimited": "Please wait before requesting another code.",
     "missingPhone": "Save a phone number before verifying it.",
     "genericError": "We couldn't send the code. Please try again."

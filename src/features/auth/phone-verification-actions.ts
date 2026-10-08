@@ -16,7 +16,7 @@ export type PhoneVerificationRequestState = {
 
 export type PhoneVerificationConfirmState = {
   status: "idle" | "verified" | "error";
-  errorCode?: "invalid_code" | "rate_limited" | "generic";
+  errorCode?: "invalid_code" | "rate_limited" | "phone_taken" | "generic";
 };
 
 export async function requestPhoneVerificationAction(
@@ -80,7 +80,12 @@ export async function verifyPhoneOtpAction(
   if (!result.ok) {
     return {
       status: "error",
-      errorCode: result.code === "rate_limited" ? "rate_limited" : "invalid_code",
+      errorCode:
+        result.code === "rate_limited"
+          ? "rate_limited"
+          : result.code === "phone_taken"
+            ? "phone_taken"
+            : "invalid_code",
     };
   }
 

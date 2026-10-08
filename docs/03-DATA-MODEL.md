@@ -104,7 +104,8 @@ SMS one-time passwords for `LOGIN` and `VERIFY_PHONE`. See `docs/auth/sms-otp.md
 - Stores HMAC-SHA256 of the code, not the code.
 - One unconsumed row per phone and purpose (partial unique index).
 - `users.phone` stays nullable and non-unique so legacy nulls, duplicates, and non-E.164 values do not block the migration.
-- `users.phone_verified_at` is set only after a successful `VERIFY_PHONE` OTP and cleared when the canonical phone changes.
+- `users_verified_phone_uidx` allows one verified phone per account. Unverified duplicates remain.
+- `users.phone_verified_at` is set only after a successful `VERIFY_PHONE` OTP and cleared when the canonical phone changes. SMS login requires a verified customer phone.
 
 ### 4.3 Redis auth tokens — table չէ
 

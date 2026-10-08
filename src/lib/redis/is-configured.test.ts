@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { isUpstashRedisConfigured } from "@/lib/redis/is-configured";
+import {
+  isSharedRedisConfigured,
+  isUpstashRedisConfigured,
+} from "@/lib/redis/is-configured";
 
 describe("isUpstashRedisConfigured", () => {
   it("requires both url and token", () => {
@@ -15,5 +18,12 @@ describe("isUpstashRedisConfigured", () => {
         token: "token",
       }),
     ).toBe(true);
+    expect(
+      isSharedRedisConfigured({
+        url: "https://example.upstash.io",
+        token: "token",
+      }),
+    ).toBe(true);
+    expect(isSharedRedisConfigured({})).toBe(false);
   });
 });

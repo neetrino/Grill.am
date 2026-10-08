@@ -31,20 +31,25 @@ Unchanged. An active user with a matching password receives a session. Suspended
 
 ### SMS login
 
+SMS login is allowed only for a `CUSTOMER` who is `ACTIVE` and whose current canonical phone already has `phone_verified_at` set. `ADMIN` and `OPERATOR` keep password login. An unverified phone is not an authentication credential.
+
+Changing the canonical phone clears `phone_verified_at`. SMS login stays unavailable until `VERIFY_PHONE` succeeds for the new number.
+
 1. The visitor submits a phone number.
 2. The server normalizes it to E.164 (`+37499123456`).
 3. Send limits are enforced (phone, IP, and a 60-second resend cooldown).
-4. If exactly one active account matches that number, a 6-digit OTP is stored as an HMAC and sent by SMS.
-5. The public response is always: if an account exists for this phone number, a verification code has been sent.
-6. Unknown, inactive, or ambiguous numbers do not create users and do not reveal whether an account exists.
-7. Verification checks purpose `LOGIN`, expiry, attempt count, and the HMAC, then consumes the challenge with one conditional update.
-8. The user is loaded again. Only an `ACTIVE` user whose phone still matches receives `createSession()` and a `last_login_at` update.
+4. An OTP is sent only when exactly one account matches and that account is an active, verified customer.
+5. The public response stays generic for unknown, unverified, inactive, staff, and ambiguous numbers: if an account exists for this phone number, a verification code has been sent. No SMS is sent in those cases, and no account is created.
+6. Verification checks purpose `LOGIN`, expiry, attempt count, and the HMAC, then consumes the challenge with one conditional update.
+7. The user is loaded again. `createSession()` runs only when the user is still a `CUSTOMER`, still `ACTIVE`, `phone_verified_at` is still set, and the canonical phone still matches the challenge. `last_login_at` is updated in that same success path.
 
 ### Phone verification
 
 The signed-in user is taken from the server session. The client does not choose a user id.
 
 `VERIFY_PHONE` codes do not log a user in, and `LOGIN` codes do not mark a phone verified. Changing the canonical phone clears `phone_verified_at`.
+
+A partial unique index, `users_verified_phone_uidx`, allows only one account to hold a given verified phone. Unverified duplicates may remain. If a second account tries to verify the same number, the database rejects the write and the app returns a phone-taken error. The raw database error is not shown.
 
 ## OTP rules
 
@@ -59,7 +64,7 @@ The signed-in user is taken from the server session. The client does not choose 
 
 ## Rate limits
 
-Enforced in Redis (Upstash when configured, in-memory adapter otherwise). SMS send fails closed if the limiter cannot be updated.
+Enforced in Redis. Production SMS uses shared Upstash only. The in-memory adapter is for development and tests. If production has MOBIPACE and `OTP_SECRET` but no Upstash, SMS actions stay unavailable and password login still works. SMS send fails closed if the limiter cannot be updated.
 
 | Limit | Window |
 |---|---|
@@ -80,6 +85,8 @@ HTTP API 4.0:
 
 The provider caches `SessionId` in Redis for 15 minutes (the vendor session expires 20 minutes after the last request). Status `102` and `103` clear the session and authorize once more. Status `104` means the account is busy, so the call is retried briefly. A Redis lock serializes this app's MOBIPACE calls because the vendor accepts one request at a time per account.
 
+The lock is released with an atomic compare-and-delete (`EVAL`: delete only when the value is still this caller's token). A process whose lock expired cannot delete a newer owner's lock. The TTL is 120 seconds. That covers the worst vendor sequence inside the lock: two authorizations and five sends at a 12-second timeout each, plus the busy-retry delays, with margin. Production does not take this lock on the in-memory adapter.
+
 Recipients are sent as international digits without `+` or `00` (`37499123456`). That conversion stays inside `src/lib/sms`.
 
 Logs include status codes only. Credentials, session ids, and OTP codes are not logged. Provider errors are not shown to customers.
@@ -95,13 +102,15 @@ Logs include status codes only. Credentials, session ids, and OTP codes are not 
 
 Do not prefix these with `NEXT_PUBLIC_`. Password login keeps working when they are absent. SMS actions then return a generic error.
 
-`UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` should be set in production so limits and the MOBIPACE lock are shared across instances.
+`UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are required in production when SMS OTP is enabled. Without them, SMS stays unavailable. Password login does not use this Redis. Development and tests may use the in-memory adapter.
 
 ## Data
 
 Migration `0022_phone_otp.sql` adds `users.phone_verified_at` and `phone_otp_challenges`.
 
-It does not rewrite or uniquely constrain `users.phone`. Historical values may be null, duplicated, or not E.164. New registration and profile saves store E.164. Login matches legacy forms of the same number (`099…`, `374…`, `00…`) and refuses to sign in when more than one active user matches.
+Migration `0023_phone_verified_unique.sql` adds a partial unique index on `users.phone` where `phone_verified_at` is set. It does not rewrite legacy phones and does not constrain unverified duplicates.
+
+`users.phone` stays nullable. Historical values may be null, duplicated, or not E.164. New registration and profile saves store E.164. Login matches legacy forms of the same number (`099…`, `374…`, `00…`) and refuses to sign in when more than one active user matches, or when the match is not a verified customer.
 
 New purposes such as `CHANGE_PHONE` or `PASSWORD_RESET` can be added to the `phone_otp_purpose` enum without reusing `LOGIN` or `VERIFY_PHONE` codes.
 

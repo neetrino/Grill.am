@@ -66,6 +66,11 @@ export const users = pgTable(
   (table) => [
     uniqueIndex("users_email_uidx").on(table.email),
     index("users_phone_idx").on(table.phone),
+    uniqueIndex("users_verified_phone_uidx")
+      .on(table.phone)
+      .where(
+        sql`${table.phoneVerifiedAt} IS NOT NULL AND ${table.phone} IS NOT NULL`,
+      ),
     index("users_role_status_idx").on(table.role, table.status),
     index("users_created_at_idx").on(table.createdAt),
     check(

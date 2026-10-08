@@ -64,7 +64,7 @@ export type OtpUserRepository = {
     userId: string,
     phoneE164: string,
     verifiedAt: Date,
-  ): Promise<boolean>;
+  ): Promise<"verified" | "unchanged" | "phone_taken">;
   touchLastLogin(userId: string, at: Date): Promise<void>;
 };
 
@@ -95,7 +95,8 @@ export type OtpPublicFailure =
   | "invalid_code"
   | "rate_limited"
   | "unavailable"
-  | "phone_missing";
+  | "phone_missing"
+  | "phone_taken";
 
 export type OtpRequestResult =
   | { ok: true; code: "accepted" | "already_verified" }
@@ -111,7 +112,9 @@ export type OtpVerifyFailureCause =
   | "wrong_purpose"
   | "inactive"
   | "phone_mismatch"
-  | "invalid_phone";
+  | "invalid_phone"
+  | "unverified"
+  | "ineligible";
 
 export type OtpLoginVerifyResult =
   | { ok: true; userId: string; role: OtpUserRecord["role"] }

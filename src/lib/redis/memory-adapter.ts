@@ -84,6 +84,14 @@ export function createMemoryRedisAdapter(): RedisAdapter {
       store.set(key, entry);
       return 1;
     },
+    async compareAndDelete(key, token) {
+      const entry = readEntry(store, key);
+      if (!entry || entry.value !== token) {
+        return 0;
+      }
+      store.delete(key);
+      return 1;
+    },
   };
 
   return {

@@ -22,7 +22,7 @@ const now = new Date("2026-10-08T12:00:00.000Z");
 
 describe("SMS OTP flows", () => {
   it("accepts a valid login code once and creates a session", async () => {
-    const harness = createHarness([activeUser()]);
+    const harness = createHarness([verifiedUser()]);
     const requested = await requestLoginOtp(harness.deps, {
       phone: "099123456",
       ip: "203.0.113.10",
@@ -52,7 +52,7 @@ describe("SMS OTP flows", () => {
   });
 
   it("rejects an invalid code and locks the challenge after five attempts", async () => {
-    const harness = createHarness([activeUser()]);
+    const harness = createHarness([verifiedUser()]);
     await requestLoginOtp(harness.deps, { phone, ip: "203.0.113.10" });
 
     for (let attempt = 0; attempt < 5; attempt += 1) {
@@ -74,7 +74,7 @@ describe("SMS OTP flows", () => {
   });
 
   it("rejects expired and already consumed challenges", async () => {
-    const harness = createHarness([activeUser()]);
+    const harness = createHarness([verifiedUser()]);
     await requestLoginOtp(harness.deps, { phone, ip: "203.0.113.10" });
     const row = harness.challenges.rows[0];
     if (!row) {
@@ -101,7 +101,7 @@ describe("SMS OTP flows", () => {
   });
 
   it("does not accept a login code as phone verification", async () => {
-    const harness = createHarness([activeUser()]);
+    const harness = createHarness([verifiedUser()]);
     await requestLoginOtp(harness.deps, { phone, ip: "203.0.113.10" });
     const result = await verifyPhoneOtp(harness.deps, {
       userId: "user-1",
@@ -110,11 +110,11 @@ describe("SMS OTP flows", () => {
     });
     expect(result.ok).toBe(false);
     expect(activeRows(harness.challenges.rows, "LOGIN")).toHaveLength(1);
-    expect(harness.users.users[0]?.phoneVerifiedAt).toBeNull();
+    expect(harness.users.users[0]?.phoneVerifiedAt).toEqual(now);
   });
 
   it("does not let two concurrent consumes both succeed", async () => {
-    const harness = createHarness([activeUser()]);
+    const harness = createHarness([verifiedUser()]);
     await requestLoginOtp(harness.deps, { phone, ip: "203.0.113.10" });
     const [first, second] = await Promise.all([
       verifyLoginOtp(harness.deps, { phone, code: "483921", ip: "203.0.113.11" }),
@@ -127,7 +127,7 @@ describe("SMS OTP flows", () => {
 
   it("does not sign in a suspended user or reveal an unknown phone", async () => {
     const suspended = createHarness([
-      { ...activeUser(), status: "SUSPENDED" },
+      { ...verifiedUser(), status: "SUSPENDED" },
     ]);
     const hidden = await requestLoginOtp(suspended.deps, {
       phone,
@@ -145,7 +145,7 @@ describe("SMS OTP flows", () => {
     expect(unknown.sent).toHaveLength(0);
     expect(unknown.users.users).toHaveLength(0);
 
-    const active = createHarness([activeUser()]);
+    const active = createHarness([verifiedUser()]);
     await requestLoginOtp(active.deps, { phone, ip: "203.0.113.10" });
     const user = active.users.users[0];
     if (!user) {
@@ -162,7 +162,7 @@ describe("SMS OTP flows", () => {
   });
 
   it("does not create a session when SMS sending fails", async () => {
-    const harness = createHarness([activeUser()], {
+    const harness = createHarness([verifiedUser()], {
       async sendSms() {
         throw new SmsTransportError("send_failed");
       },
@@ -244,7 +244,7 @@ describe("SMS OTP flows", () => {
 
   it("stops a second send inside the resend cooldown before SMS", async () => {
     const redisGate = realGate();
-    const harness = createHarness([activeUser()], undefined, redisGate.gate);
+    const harness = createHarness([verifiedUser()], undefined, redisGate.gate);
     await requestLoginOtp(harness.deps, { phone, ip: "203.0.113.20" });
     const second = await requestLoginOtp(harness.deps, {
       phone,
@@ -263,6 +263,10 @@ function activeUser(): OtpUserRecord {
     phone,
     phoneVerifiedAt: null,
   };
+}
+
+function verifiedUser(): OtpUserRecord {
+  return { ...activeUser(), phoneVerifiedAt: now };
 }
 
 function createHarness(
