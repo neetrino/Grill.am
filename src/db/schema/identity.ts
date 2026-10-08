@@ -35,6 +35,14 @@ export const users = pgTable(
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
     phone: text("phone"),
+    /**
+     * Set only after a successful VERIFY_PHONE OTP.
+     * Null means the current phone value is not verified.
+     */
+    phoneVerifiedAt: timestamp("phone_verified_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
     role: userRoleEnum("role").notNull().default("CUSTOMER"),
     status: userStatusEnum("status").notNull().default("ACTIVE"),
     termsAcceptedAt: timestamp("terms_accepted_at", {
@@ -57,6 +65,7 @@ export const users = pgTable(
   },
   (table) => [
     uniqueIndex("users_email_uidx").on(table.email),
+    index("users_phone_idx").on(table.phone),
     index("users_role_status_idx").on(table.role, table.status),
     index("users_created_at_idx").on(table.createdAt),
     check(

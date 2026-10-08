@@ -5,23 +5,27 @@ type Entry = {
   expiresAt: number | null;
 };
 
+function readEntry(store: Map<string, Entry>, key: string): Entry | null {
+  const entry = store.get(key);
+  if (!entry) {
+    return null;
+  }
+
+  if (entry.expiresAt !== null && Date.now() >= entry.expiresAt) {
+    store.delete(key);
+    return null;
+  }
+
+  return entry;
+}
+
 /** In-memory Redis stand-in when Upstash REST credentials are absent. */
 export function createMemoryRedisAdapter(): RedisAdapter {
   const store = new Map<string, Entry>();
 
   const client: RedisClient = {
     async get(key) {
-      const entry = store.get(key);
-      if (!entry) {
-        return null;
-      }
-
-      if (entry.expiresAt !== null && Date.now() >= entry.expiresAt) {
-        store.delete(key);
-        return null;
-      }
-
-      return entry.value;
+      return readEntry(store, key)?.value ?? null;
     },
     async set(key, value, options) {
       if (options?.nx && store.has(key)) {
@@ -48,18 +52,37 @@ export function createMemoryRedisAdapter(): RedisAdapter {
       return store.delete(key) ? 1 : 0;
     },
     async getdel(key) {
-      const entry = store.get(key);
+      const entry = readEntry(store, key);
       if (!entry) {
-        return null;
-      }
-
-      if (entry.expiresAt !== null && Date.now() >= entry.expiresAt) {
-        store.delete(key);
         return null;
       }
 
       store.delete(key);
       return entry.value;
+    },
+    async incr(key) {
+      const entry = readEntry(store, key);
+      const current = entry ? Number(entry.value) : 0;
+      if (!Number.isInteger(current)) {
+        throw new Error("Redis value is not an integer");
+      }
+
+      const next = current + 1;
+      store.set(key, {
+        value: String(next),
+        expiresAt: entry?.expiresAt ?? null,
+      });
+      return next;
+    },
+    async expire(key, seconds) {
+      const entry = readEntry(store, key);
+      if (!entry) {
+        return 0;
+      }
+
+      entry.expiresAt = Date.now() + seconds * 1000;
+      store.set(key, entry);
+      return 1;
     },
   };
 

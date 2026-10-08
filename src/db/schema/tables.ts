@@ -5,6 +5,7 @@
 export const CANONICAL_TABLES = [
   "users",
   "sessions",
+  "phone_otp_challenges",
   "addresses",
   "media_assets",
   "store_settings",

@@ -22,6 +22,8 @@ export type UpstashRedisCommands = {
   ) => Promise<unknown>;
   del: (key: string) => Promise<number>;
   getdel: (key: string) => Promise<unknown>;
+  incr: (key: string) => Promise<number>;
+  expire: (key: string, seconds: number) => Promise<number>;
 };
 
 /**
@@ -56,6 +58,17 @@ function wrapCommands(redis: UpstashRedisCommands): RedisClient {
     async getdel(key) {
       return toStringOrNull(await redis.getdel(key));
     },
+    async incr(key) {
+      const value = await redis.incr(key);
+      if (typeof value !== "number" || !Number.isFinite(value)) {
+        throw new Error("Redis incr failed");
+      }
+      return value;
+    },
+    async expire(key, seconds) {
+      const value = await redis.expire(key, seconds);
+      return typeof value === "number" ? value : 0;
+    },
   };
 }
 
@@ -81,6 +94,8 @@ function createRestCommands(
     },
     del: (key) => redis.del(key),
     getdel: (key) => redis.getdel(key),
+    incr: (key) => redis.incr(key),
+    expire: (key, seconds) => redis.expire(key, seconds),
   };
 }
 

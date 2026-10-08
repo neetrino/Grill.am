@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { normalizePhoneToE164 } from "@/lib/phone/normalize";
+
 /** Stable marker — UI shows the full requirements list instead of one rule at a time. */
 export const PASSWORD_REQUIREMENTS_ERROR = "PASSWORD_REQUIREMENTS";
 
@@ -22,6 +24,23 @@ export const passwordSchema = z.string().superRefine((value, ctx) => {
   });
 });
 
+export const e164PhoneSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(40)
+  .transform((value, ctx) => {
+    const normalized = normalizePhoneToE164(value);
+    if (!normalized) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Enter a valid phone number.",
+      });
+      return z.NEVER;
+    }
+    return normalized;
+  });
+
 export const loginSchema = z.object({
   email: z.string().trim().email().transform((value) => value.toLowerCase()),
   password: z.string().min(1),
@@ -33,7 +52,7 @@ export const registerSchema = z
     firstName: z.string().trim().min(1).max(100),
     lastName: z.string().trim().min(1).max(100),
     email: z.string().trim().email().transform((value) => value.toLowerCase()),
-    phone: z.string().trim().min(5).max(40),
+    phone: e164PhoneSchema,
     password: passwordSchema,
     confirmPassword: z.string().min(1),
     acceptTerms: z.literal("on", {

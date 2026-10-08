@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AUTH_FROM_COINS } from "@/features/auth/guest-coins-login";
 import { loginAction } from "@/features/auth/login-action";
+import { SmsLoginForm } from "@/features/auth/ui/SmsLoginForm";
 import type { AuthActionState } from "@/features/auth/ui/auth-action-state";
 import {
   AuthAnimatedInput,
@@ -40,10 +42,45 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
     : `/${locale}/register`;
   const action = loginAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const [method, setMethod] = useState<"password" | "sms">("password");
   const values = state.values;
   const fieldErrors = state.fieldErrors;
 
   return (
+    <div className="flex flex-col gap-5">
+      <div
+        role="tablist"
+        aria-label={dictionary.loginSubtitle}
+        className="grid grid-cols-2 gap-1 rounded-[16px] bg-brand-cream/60 p-1"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={method === "password"}
+          className={loginTabClass(method === "password")}
+          onClick={() => setMethod("password")}
+        >
+          {dictionary.loginMethodPassword}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={method === "sms"}
+          className={loginTabClass(method === "sms")}
+          onClick={() => setMethod("sms")}
+        >
+          {dictionary.loginMethodSms}
+        </button>
+      </div>
+
+      {method === "sms" ? (
+        <SmsLoginForm
+          locale={locale}
+          dictionary={dictionary}
+          nextPath={nextPath}
+          registerHref={registerHref}
+        />
+      ) : (
     <form
       key={state.formKey ?? "login"}
       action={formAction}
@@ -153,5 +190,13 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         </p>
       </AuthMotionField>
     </form>
+      )}
+    </div>
   );
+}
+
+function loginTabClass(selected: boolean): string {
+  return selected
+    ? "h-10 rounded-[12px] bg-white text-sm font-black tracking-wide text-brand-ink shadow-sm"
+    : "h-10 rounded-[12px] text-sm font-bold text-brand-ink/55 transition hover:text-brand-ink";
 }

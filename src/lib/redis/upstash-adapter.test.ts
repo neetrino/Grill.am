@@ -30,6 +30,15 @@ function createFakeUpstash(): UpstashRedisCommands {
       store.delete(key);
       return value ?? null;
     },
+    async incr(key) {
+      const current = Number(store.get(key) ?? 0);
+      const next = current + 1;
+      store.set(key, next);
+      return next;
+    },
+    async expire() {
+      return 1;
+    },
   };
 }
 
