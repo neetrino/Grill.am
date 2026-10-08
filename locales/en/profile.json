@@ -115,6 +115,25 @@
     "submit": "Delete account",
     "deleting": "Deleting…"
   },
+  "phoneVerification": {
+    "verified": "Phone verified",
+    "unverified": "Phone not verified",
+    "hint": "Confirm the saved phone number with an SMS code. Changing the number requires verification again.",
+    "send": "Verify phone",
+    "sending": "Sending…",
+    "codeLabel": "Verification code",
+    "confirm": "Confirm",
+    "confirming": "Confirming…",
+    "resend": "Resend code",
+    "resendIn": "Resend in {seconds}s",
+    "sent": "A verification code has been sent.",
+    "success": "Your phone number is verified.",
+    "invalidCode": "That code is invalid or has expired.",
+    "phoneTaken": "This phone number is already verified on another account.",
+    "rateLimited": "Please wait before requesting another code.",
+    "missingPhone": "Save a phone number before verifying it.",
+    "genericError": "We couldn't send the code. Please try again."
+  },
   "bonuses": {
     "nav": "Bonuses",
     "cardLabel": "Grill Coin",

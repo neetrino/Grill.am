@@ -2,8 +2,8 @@
 
 **Database.** PostgreSQL (Neon)
 **ORM/migrations.** Drizzle ORM / Drizzle Kit
-**Կարգավիճակ.** Canonical 32-table schema migrated; idempotent seed available (`pnpm db:seed`)
-**Canonical table count.** 32
+**Կարգավիճակ.** Canonical 33-table schema migrated; idempotent seed available (`pnpm db:seed`)
+**Canonical table count.** 33
 **Վերջին թարմացում.** 2026-09-11
 
 ## 1. Սխեմայի նպատակը
@@ -29,7 +29,7 @@
 - Financial, stock և audit records-ը hard delete չեն ընդունում։
 - Flexible JSONB-ը միշտ Zod schema/version ունի և business-critical relational կապերը չի փոխարինում։
 
-## 3. Canonical 32-table inventory
+## 3. Canonical 33-table inventory
 
 | # | Table | Domain | Նշանակություն |
 |---:|---|---|---|
@@ -65,13 +65,15 @@
 | 30 | `contact_messages` | Support | Contact inbox |
 | 31 | `job_applications` | Careers | Job applications + CV object metadata |
 | 32 | `audit_logs` | Security | Immutable admin/security audit |
+| 33 | `phone_otp_challenges` | Identity | Single-use SMS OTP challenges (HMAC, purpose, attempts) |
 
 ### Count assumptions
 
 - Login-ը email/password է։ OAuth ավելացնելիս կարող է ավելանալ `accounts` table։
 - Product variants-ը launch scope-ում table չունի։ Variants ավելացնելիս առանձին schema migration է պահանջվում։
 - COD և online payment attempts-ը երկուսն էլ տեղավորվում են `payments`-ում։
-- Verification/reset tokens-ը PostgreSQL table չեն. դրանք Upstash Redis-ում hashed, expiring, atomic single-use records են։
+- Password-reset tokens stay in Upstash Redis as hashed, expiring, single-use records.
+- SMS OTP challenges live in `phone_otp_challenges` (see `docs/auth/sms-otp.md`). The plaintext code is not stored.
 
 ## 4. Identity և customer data
 
@@ -81,7 +83,7 @@
 |---|---|
 | Identity | `id`, normalized `email` UNIQUE, nullable verified timestamp |
 | Credentials | `password_hash` Argon2id, password-updated timestamp |
-| Profile | first/last name, normalized phone |
+| Profile | first/last name, phone, nullable `phone_verified_at` |
 | Authorization | role `ADMIN`/`CUSTOMER`, status `ACTIVE`/`SUSPENDED`/`ANONYMIZED` |
 | Consent | terms accepted timestamp/version |
 | Loyalty | `bonus_balance_amount` ≥ 0 (AMD minor units) |
@@ -94,6 +96,16 @@ Last active admin invariant-ը application transaction + row/advisory lock strat
 - Session token hash/identifier, `user_id`, expiry, last activity, created timestamp։
 - Index `(user_id, expires_at)` և unique session token։
 - Password reset/change, suspension և account anonymization-ը revoke են անում համապատասխան sessions-ը։
+
+### 4.2.1 `phone_otp_challenges`
+
+SMS one-time passwords for `LOGIN` and `VERIFY_PHONE`. See `docs/auth/sms-otp.md`.
+
+- Stores HMAC-SHA256 of the code, not the code.
+- One unconsumed row per phone and purpose (partial unique index).
+- `users.phone` stays nullable and non-unique so legacy nulls, duplicates, and non-E.164 values do not block the migration.
+- `users_verified_phone_uidx` allows one verified phone per account. Unverified duplicates remain.
+- `users.phone_verified_at` is set only after a successful `VERIFY_PHONE` OTP and cleared when the canonical phone changes. SMS login requires a verified customer phone.
 
 ### 4.3 Redis auth tokens — table չէ
 

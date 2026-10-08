@@ -11,31 +11,13 @@ import {
   readAuthFormValues,
   type AuthActionState,
 } from "@/features/auth/ui/auth-action-state";
-import { defaultPostLoginPath } from "@/lib/auth/role-paths";
+import { isPasswordLoginAllowed } from "@/lib/auth/password-login";
+import { resolveSafeNextPath } from "@/lib/auth/post-login-path";
 import { createSession } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
-import type { UserRole } from "@/features/users/domain/user-lifecycle";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
 const LOGIN_VALUE_KEYS = ["email", "password", "rememberMe"] as const;
-
-function resolveSafeNextPath(
-  locale: Locale,
-  role: UserRole,
-  raw: FormDataEntryValue | null,
-): string {
-  const fallback = defaultPostLoginPath(locale, role);
-
-  if (typeof raw !== "string" || !raw.startsWith("/") || raw.startsWith("//")) {
-    return fallback;
-  }
-
-  if (!raw.startsWith(`/${locale}/`)) {
-    return fallback;
-  }
-
-  return raw;
-}
 
 function loginErrorState(
   formData: FormData,
@@ -75,7 +57,14 @@ export async function loginAction(
     ? await verifyPassword(parsed.data.password, user.passwordHash)
     : false;
 
-  if (!user || !passwordMatches || user.status !== "ACTIVE") {
+  if (
+    !user ||
+    !isPasswordLoginAllowed({
+      userFound: true,
+      passwordMatches,
+      status: user.status,
+    })
+  ) {
     return loginErrorState(formData, "Invalid email or password.", {
       email: "Invalid",
       password: "Invalid",

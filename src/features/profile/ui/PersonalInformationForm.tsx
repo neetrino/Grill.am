@@ -13,6 +13,7 @@ import {
   PROFILE_BTN_SECONDARY_CLASS,
   PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS,
 } from "@/features/profile/ui/profile-ui";
+import { PhoneVerificationPanel } from "@/features/profile/ui/PhoneVerificationPanel";
 import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 
 const FIELD_CLASS =
@@ -24,6 +25,26 @@ type PersonalInformationFormProps = {
   lastName: string;
   email: string;
   phone: string;
+  phoneVerified: boolean;
+  verification: {
+    verified: string;
+    unverified: string;
+    hint: string;
+    send: string;
+    sending: string;
+    codeLabel: string;
+    confirm: string;
+    confirming: string;
+    resend: string;
+    resendIn: string;
+    sent: string;
+    success: string;
+    invalidCode: string;
+    phoneTaken: string;
+    rateLimited: string;
+    missingPhone: string;
+    genericError: string;
+  };
   labels: {
     title: string;
     firstName: string;
@@ -48,6 +69,8 @@ export function PersonalInformationForm({
   lastName,
   email,
   phone,
+  phoneVerified,
+  verification,
   labels,
 }: PersonalInformationFormProps) {
   const action = updateProfileAction.bind(null, locale);
@@ -189,6 +212,13 @@ export function PersonalInformationForm({
           </Button>
         </div>
       </form>
+      <PhoneVerificationPanel
+        key={`${phone}:${phoneVerified ? "verified" : "unverified"}`}
+        locale={locale}
+        phone={phone}
+        phoneVerified={phoneVerified}
+        copy={verification}
+      />
     </Card>
   );
 }
