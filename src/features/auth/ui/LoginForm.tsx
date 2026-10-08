@@ -42,7 +42,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
     : `/${locale}/register`;
   const action = loginAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
-  const [method, setMethod] = useState<"password" | "sms">("password");
+  const [method, setMethod] = useState<"password" | "sms">("sms");
   const values = state.values;
   const fieldErrors = state.fieldErrors;
 
@@ -56,20 +56,20 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         <button
           type="button"
           role="tab"
-          aria-selected={method === "password"}
-          className={loginTabClass(method === "password")}
-          onClick={() => setMethod("password")}
-        >
-          {dictionary.loginMethodPassword}
-        </button>
-        <button
-          type="button"
-          role="tab"
           aria-selected={method === "sms"}
           className={loginTabClass(method === "sms")}
           onClick={() => setMethod("sms")}
         >
           {dictionary.loginMethodSms}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={method === "password"}
+          className={loginTabClass(method === "password")}
+          onClick={() => setMethod("password")}
+        >
+          {dictionary.loginMethodPassword}
         </button>
       </div>
 
