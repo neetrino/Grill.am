@@ -27,7 +27,7 @@ describe("SMS login eligibility", () => {
     const unknown = createHarness([]);
 
     const sent = await requestLoginOtp(customer.deps, { phone, ip: "203.0.113.8" });
-    const hidden = await requestLoginOtp(unverified.deps, {
+    const blocked = await requestLoginOtp(unverified.deps, {
       phone,
       ip: "203.0.113.8",
     });
@@ -37,7 +37,7 @@ describe("SMS login eligibility", () => {
     });
 
     expect(sent).toEqual({ ok: true, code: "accepted" });
-    expect(hidden).toEqual({ ok: true, code: "accepted" });
+    expect(blocked).toEqual({ ok: false, code: "unavailable" });
     expect(signup).toEqual({ ok: true, code: "accepted" });
     expect(customer.sent).toHaveLength(1);
     expect(unverified.sent).toHaveLength(0);
@@ -66,7 +66,7 @@ describe("SMS login eligibility", () => {
         phone,
         ip: "203.0.113.8",
       });
-      expect(result).toEqual({ ok: true, code: "accepted" });
+      expect(result).toEqual({ ok: false, code: "unavailable" });
       expect(harness.sent).toHaveLength(0);
       const staff = harness.users.users[0];
       expect(staff).toBeDefined();

@@ -20,7 +20,7 @@ export type { OtpFlowDeps } from "@/lib/auth/otp/types";
 /**
  * Passwordless login / SMS signup step 1.
  * Verified customers and unknown phones receive a LOGIN code.
- * Known but ineligible numbers get the same accepted response without SMS.
+ * Transport failures and ineligible numbers return an error — never a fake "sent".
  */
 export async function requestLoginOtp(
   deps: OtpFlowDeps,
@@ -42,7 +42,7 @@ export async function requestLoginOtp(
       phone,
       purpose: "LOGIN",
       userId: candidate.user.id,
-      hideSendFailure: true,
+      hideSendFailure: false,
     });
   }
 
@@ -51,12 +51,13 @@ export async function requestLoginOtp(
       phone,
       purpose: "LOGIN",
       userId: null,
-      hideSendFailure: true,
+      hideSendFailure: false,
     });
   }
 
-  // held / ambiguous / ineligible found — same public response, no SMS.
-  return { ok: true, code: "accepted" };
+  // held / ambiguous / ineligible found — no SMS; release cooldown so retry is honest.
+  await deps.rateLimit.clearSendCooldown({ phone, purpose: "LOGIN" });
+  return { ok: false, code: "unavailable" };
 }
 
 /**
