@@ -3,9 +3,9 @@
 Grill.am supports two alternative sign-in methods. They are not combined into mandatory 2FA.
 
 - Password: existing email and password login.
-- SMS code: passwordless login for an existing account phone number.
+- SMS code: passwordless login for a verified customer phone, or signup for an unknown phone.
 
-Phone verification is a separate authenticated flow. A phone is verified only when `users.phone_verified_at` is set.
+Phone verification is a separate authenticated flow for signed-in users who change their number. A phone is verified when `users.phone_verified_at` is set.
 
 ## Architecture
 
@@ -13,7 +13,13 @@ Phone verification is a separate authenticated flow. A phone is verified only wh
 Login UI
   |-- Password --> existing login action --> createSession()
   |-- SMS code --> request OTP --> MOBIPACE
-                   verify OTP  --> createSession()
+                   verify OTP  --> createSession() (existing verified phone)
+
+Register UI
+  |-- Password --> existing register action --> createSession() --> /profile
+  |-- SMS code --> request OTP --> MOBIPACE
+                   verify OTP  --> create customer if unknown phone
+                                --> createSession() --> /profile/personal-information
 
 Profile
   request VERIFY_PHONE --> MOBIPACE --> verify OTP --> phone_verified_at
@@ -21,7 +27,7 @@ Profile
 
 Auth code calls `src/lib/sms` and never the MOBIPACE HTTP client directly. MOBIPACE is only the SMS transport.
 
-Password hashing, sessions, remember-me, roles, and post-login redirects stay on the existing session implementation. SMS login does not create an account.
+Password hashing, sessions, remember-me, roles, and post-login redirects stay on the existing session implementation. SMS signup creates a `CUSTOMER` with a verified phone and placeholder profile fields, then redirects to personal information.
 
 ## Flows
 
@@ -29,19 +35,19 @@ Password hashing, sessions, remember-me, roles, and post-login redirects stay on
 
 Unchanged. An active user with a matching password receives a session. Suspended and anonymized users do not.
 
-### SMS login
+### SMS login and signup
 
-SMS login is allowed only for a `CUSTOMER` who is `ACTIVE` and whose current canonical phone already has `phone_verified_at` set. `ADMIN` and `OPERATOR` keep password login. An unverified phone is not an authentication credential.
+SMS login is allowed for a `CUSTOMER` who is `ACTIVE` and whose current canonical phone already has `phone_verified_at` set. Unknown phones may receive a signup OTP. `ADMIN` and `OPERATOR` keep password login. An unverified phone on an existing account is not an authentication credential.
 
-Changing the canonical phone clears `phone_verified_at`. SMS login stays unavailable until `VERIFY_PHONE` succeeds for the new number.
+Changing the canonical phone clears `phone_verified_at`. SMS login stays unavailable for that account until `VERIFY_PHONE` succeeds for the new number.
 
 1. The visitor submits a phone number.
 2. The server normalizes it to E.164 (`+37499123456`).
 3. Send limits are enforced (phone, IP, and a 60-second resend cooldown).
-4. An OTP is sent only when exactly one account matches and that account is an active, verified customer.
-5. The public response stays generic for unknown, unverified, inactive, staff, and ambiguous numbers: if an account exists for this phone number, a verification code has been sent. No SMS is sent in those cases, and no account is created.
+4. An OTP is sent when exactly one account matches and that account is an active, verified customer, **or** when no active account matches (SMS signup challenge with `user_id` null).
+5. For unverified, inactive/held, staff, and ambiguous numbers the public response stays generic (`accepted`) and no SMS is sent. A phone held by a suspended account is not offered for signup.
 6. Verification checks purpose `LOGIN`, expiry, attempt count, and the HMAC, then consumes the challenge with one conditional update.
-7. The user is loaded again. `createSession()` runs only when the user is still a `CUSTOMER`, still `ACTIVE`, `phone_verified_at` is still set, and the canonical phone still matches the challenge. `last_login_at` is updated in that same success path.
+7. If the challenge belongs to an existing user, `createSession()` runs only when that user is still a verified active customer. If the challenge has no user, a new `CUSTOMER` is created with the verified phone, placeholder email/name, and a random unusable password hash, then `createSession()` runs and the client is redirected to `/[locale]/profile/personal-information`.
 
 ### Phone verification
 

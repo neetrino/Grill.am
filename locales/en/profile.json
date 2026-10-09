@@ -72,6 +72,11 @@
   "save": "Save",
   "saving": "Saving…",
   "cancel": "Cancel",
+  "personalForm": {
+    "saved": "Personal information saved.",
+    "validationError": "Please check the form fields and try again.",
+    "emailInUse": "That email is already in use."
+  },
   "comingSoon": "This section UI is ready. Backend wiring stays unchanged for now.",
   "addressBook": {
     "addNew": "Add New Address",

@@ -39,7 +39,11 @@ describe("SMS OTP flows", () => {
       code: "483921",
       ip: "203.0.113.10",
     });
-    expect(verified.ok).toBe(true);
+    expect(verified).toMatchObject({
+      ok: true,
+      isNewUser: false,
+      userId: "user-1",
+    });
     expect(harness.sessions).toEqual(["user-1"]);
 
     const replay = await verifyLoginOtp(harness.deps, {
@@ -49,6 +53,30 @@ describe("SMS OTP flows", () => {
     });
     expect(replay.ok).toBe(false);
     expect(harness.sessions).toEqual(["user-1"]);
+  });
+
+  it("registers an unknown phone after a valid LOGIN code", async () => {
+    const harness = createHarness([]);
+    const requested = await requestLoginOtp(harness.deps, {
+      phone,
+      ip: "203.0.113.10",
+    });
+    expect(requested).toEqual({ ok: true, code: "accepted" });
+    expect(harness.sent).toHaveLength(1);
+    expect(harness.challenges.rows[0]?.userId).toBeNull();
+
+    const verified = await verifyLoginOtp(harness.deps, {
+      phone,
+      code: "483921",
+      ip: "203.0.113.10",
+    });
+    expect(verified).toMatchObject({
+      ok: true,
+      isNewUser: true,
+      role: "CUSTOMER",
+    });
+    expect(harness.users.users).toHaveLength(1);
+    expect(harness.sessions).toHaveLength(1);
   });
 
   it("rejects an invalid code and locks the challenge after five attempts", async () => {
@@ -125,7 +153,7 @@ describe("SMS OTP flows", () => {
     expect(harness.sessions).toHaveLength(1);
   });
 
-  it("does not sign in a suspended user or reveal an unknown phone", async () => {
+  it("does not sign in a suspended user and does not free their phone for signup", async () => {
     const suspended = createHarness([
       { ...verifiedUser(), status: "SUSPENDED" },
     ]);
@@ -135,15 +163,6 @@ describe("SMS OTP flows", () => {
     });
     expect(hidden).toEqual({ ok: true, code: "accepted" });
     expect(suspended.sent).toHaveLength(0);
-
-    const unknown = createHarness([]);
-    const missing = await requestLoginOtp(unknown.deps, {
-      phone,
-      ip: "203.0.113.10",
-    });
-    expect(missing).toEqual(hidden);
-    expect(unknown.sent).toHaveLength(0);
-    expect(unknown.users.users).toHaveLength(0);
 
     const active = createHarness([verifiedUser()]);
     await requestLoginOtp(active.deps, { phone, ip: "203.0.113.10" });

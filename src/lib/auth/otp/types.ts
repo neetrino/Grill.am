@@ -51,6 +51,7 @@ export type OtpUserRepository = {
     phoneE164: string,
   ): Promise<
     | { kind: "none" }
+    | { kind: "held" }
     | { kind: "ambiguous" }
     | { kind: "found"; user: OtpUserRecord }
   >;
@@ -65,6 +66,17 @@ export type OtpUserRepository = {
     phoneE164: string,
     verifiedAt: Date,
   ): Promise<"verified" | "unchanged" | "phone_taken">;
+  /**
+   * Creates an ACTIVE CUSTOMER with a verified phone after SMS signup OTP.
+   * Uses a placeholder email/name until the customer edits their profile.
+   */
+  createVerifiedPhoneCustomer(input: {
+    id: string;
+    phoneE164: string;
+    now: Date;
+  }): Promise<
+    { kind: "created"; user: OtpUserRecord } | { kind: "phone_taken" }
+  >;
   touchLastLogin(userId: string, at: Date): Promise<void>;
 };
 
@@ -117,7 +129,13 @@ export type OtpVerifyFailureCause =
   | "ineligible";
 
 export type OtpLoginVerifyResult =
-  | { ok: true; userId: string; role: OtpUserRecord["role"] }
+  | {
+      ok: true;
+      userId: string;
+      role: OtpUserRecord["role"];
+      /** True when this verify created a new customer via SMS signup. */
+      isNewUser: boolean;
+    }
   | {
       ok: false;
       code: "invalid_code" | "rate_limited" | "unavailable";
