@@ -78,6 +78,10 @@ export async function verifyLoginOtpAction(
     };
   }
 
+  if (result.isNewUser) {
+    redirect(`/${locale}/profile/personal-information`);
+  }
+
   redirect(resolveSafeNextPath(locale, result.role, formData.get("next")));
 }
 

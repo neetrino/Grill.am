@@ -83,20 +83,24 @@ export function createMemoryOtpUsers(
   return {
     users,
     async findLoginCandidate(phoneE164) {
-      const active = users.filter(
+      const canonical = users.filter(
         (user) =>
-          user.status === "ACTIVE" &&
+          user.status !== "ANONYMIZED" &&
           user.phone !== null &&
           normalizePhoneToE164(user.phone) === phoneE164,
       );
+      const active = canonical.filter((user) => user.status === "ACTIVE");
       const match = active[0];
       if (active.length === 1 && match) {
         return { kind: "found", user: match };
       }
-      if (active.length === 0) {
-        return { kind: "none" };
+      if (active.length > 1) {
+        return { kind: "ambiguous" };
       }
-      return { kind: "ambiguous" };
+      if (canonical.length > 0) {
+        return { kind: "held" };
+      }
+      return { kind: "none" };
     },
     async findById(id) {
       return users.find((user) => user.id === id) ?? null;
@@ -125,6 +129,24 @@ export function createMemoryOtpUsers(
       }
       user.phoneVerifiedAt = verifiedAt;
       return "verified";
+    },
+    async createVerifiedPhoneCustomer(input) {
+      const taken = users.some(
+        (item) =>
+          item.phone === input.phoneE164 && item.phoneVerifiedAt !== null,
+      );
+      if (taken) {
+        return { kind: "phone_taken" };
+      }
+      const user: OtpUserRecord = {
+        id: input.id,
+        role: "CUSTOMER",
+        status: "ACTIVE",
+        phone: input.phoneE164,
+        phoneVerifiedAt: input.now,
+      };
+      users.push(user);
+      return { kind: "created", user };
     },
     async touchLastLogin() {
       return undefined;

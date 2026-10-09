@@ -25,7 +25,8 @@ export async function sendChallenge(
   input: {
     phone: string;
     purpose: OtpPurpose;
-    userId: string;
+    /** Null for SMS signup challenges before the customer row exists. */
+    userId: string | null;
     hideSendFailure: boolean;
   },
 ): Promise<OtpRequestResult> {
@@ -112,7 +113,7 @@ export async function verifyChallenge(
 
 function createChallengeRecord(
   deps: OtpFlowDeps,
-  input: { phone: string; purpose: OtpPurpose; userId: string },
+  input: { phone: string; purpose: OtpPurpose; userId: string | null },
 ): { record: OtpChallengeRecord; code: string } {
   const now = deps.now();
   const id = deps.createId();

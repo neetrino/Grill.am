@@ -17,7 +17,11 @@ const CODE_PATTERN = /^\d{6}$/;
 
 export type { OtpFlowDeps } from "@/lib/auth/otp/types";
 
-/** Passwordless login step 1. Unknown phones get the same accepted response. */
+/**
+ * Passwordless login / SMS signup step 1.
+ * Verified customers and unknown phones receive a LOGIN code.
+ * Known but ineligible numbers get the same accepted response without SMS.
+ */
 export async function requestLoginOtp(
   deps: OtpFlowDeps,
   input: { phone: string; ip: string },
@@ -33,22 +37,32 @@ export async function requestLoginOtp(
   }
 
   const candidate = await deps.users.findLoginCandidate(phone);
-  if (
-    candidate.kind !== "found" ||
-    !isSmsLoginEligible(candidate.user, phone)
-  ) {
-    return { ok: true, code: "accepted" };
+  if (candidate.kind === "found" && isSmsLoginEligible(candidate.user, phone)) {
+    return sendChallenge(deps, {
+      phone,
+      purpose: "LOGIN",
+      userId: candidate.user.id,
+      hideSendFailure: true,
+    });
   }
 
-  return sendChallenge(deps, {
-    phone,
-    purpose: "LOGIN",
-    userId: candidate.user.id,
-    hideSendFailure: true,
-  });
+  if (candidate.kind === "none") {
+    return sendChallenge(deps, {
+      phone,
+      purpose: "LOGIN",
+      userId: null,
+      hideSendFailure: true,
+    });
+  }
+
+  // held / ambiguous / ineligible found — same public response, no SMS.
+  return { ok: true, code: "accepted" };
 }
 
-/** Passwordless login step 2. Creates a session only after a consumed LOGIN OTP. */
+/**
+ * Passwordless login / SMS signup step 2.
+ * Existing verified customers sign in; unknown phones create a customer.
+ */
 export async function verifyLoginOtp(
   deps: OtpFlowDeps,
   input: { phone: string; code: string; ip: string },
@@ -68,24 +82,70 @@ export async function verifyLoginOtp(
     code: input.code,
     purpose: "LOGIN",
   });
-  if (!verified.ok || !verified.userId) {
-    return verified.ok
-      ? { ok: false, code: "invalid_code", cause: "missing" }
-      : verified;
+  if (!verified.ok) {
+    return verified;
   }
 
-  const user = await deps.users.findById(verified.userId);
-  if (!user || !isSmsLoginEligible(user, phone)) {
+  if (verified.userId) {
+    const user = await deps.users.findById(verified.userId);
+    if (!user || !isSmsLoginEligible(user, phone)) {
+      return {
+        ok: false,
+        code: "invalid_code",
+        cause: loginDenialCause(user),
+      };
+    }
+
+    await deps.users.touchLastLogin(user.id, deps.now());
+    await deps.onAuthenticated(user.id);
+    return { ok: true, userId: user.id, role: user.role, isNewUser: false };
+  }
+
+  return completeSmsSignup(deps, phone);
+}
+
+async function completeSmsSignup(
+  deps: OtpFlowDeps,
+  phone: string,
+): Promise<OtpLoginVerifyResult> {
+  const candidate = await deps.users.findLoginCandidate(phone);
+  if (candidate.kind === "found") {
+    if (!isSmsLoginEligible(candidate.user, phone)) {
+      return {
+        ok: false,
+        code: "invalid_code",
+        cause: loginDenialCause(candidate.user),
+      };
+    }
+    await deps.users.touchLastLogin(candidate.user.id, deps.now());
+    await deps.onAuthenticated(candidate.user.id);
     return {
-      ok: false,
-      code: "invalid_code",
-      cause: loginDenialCause(user),
+      ok: true,
+      userId: candidate.user.id,
+      role: candidate.user.role,
+      isNewUser: false,
     };
   }
+  if (candidate.kind === "ambiguous" || candidate.kind === "held") {
+    return { ok: false, code: "invalid_code", cause: "ineligible" };
+  }
 
-  await deps.users.touchLastLogin(user.id, deps.now());
-  await deps.onAuthenticated(user.id);
-  return { ok: true, userId: user.id, role: user.role };
+  const created = await deps.users.createVerifiedPhoneCustomer({
+    id: deps.createId(),
+    phoneE164: phone,
+    now: deps.now(),
+  });
+  if (created.kind === "phone_taken") {
+    return { ok: false, code: "invalid_code", cause: "ineligible" };
+  }
+
+  await deps.onAuthenticated(created.user.id);
+  return {
+    ok: true,
+    userId: created.user.id,
+    role: created.user.role,
+    isNewUser: true,
+  };
 }
 
 /** Authenticated user asks to prove the phone already stored on their account. */

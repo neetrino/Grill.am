@@ -72,6 +72,11 @@
   "save": "Сохранить",
   "saving": "Сохранение…",
   "cancel": "Отмена",
+  "personalForm": {
+    "saved": "Личные данные сохранены.",
+    "validationError": "Проверьте поля формы и попробуйте снова.",
+    "emailInUse": "Этот email уже используется."
+  },
   "comingSoon": "UI секции готов. Backend пока не меняем.",
   "addressBook": {
     "addNew": "Добавить адрес",
