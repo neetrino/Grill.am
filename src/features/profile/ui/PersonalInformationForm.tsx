@@ -15,6 +15,7 @@ import {
 } from "@/features/profile/ui/profile-ui";
 import { PhoneVerificationPanel } from "@/features/profile/ui/PhoneVerificationPanel";
 import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
+import { isSmsPlaceholderEmail } from "@/lib/auth/otp/sms-placeholder-user";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
@@ -75,14 +76,20 @@ export function PersonalInformationForm({
 }: PersonalInformationFormProps) {
   const action = updateProfileAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const visibleEmail = isSmsPlaceholderEmail(email) ? "" : email;
   const [values, setValues] = useState({
+    firstName,
+    lastName,
+    email: visibleEmail,
+    phone,
+  });
+  // Tracks the saved-profile props last synced into `values`.
+  const [synced, setSynced] = useState({
     firstName,
     lastName,
     email,
     phone,
   });
-  // Tracks the saved-profile props last synced into `values`.
-  const [synced, setSynced] = useState({ firstName, lastName, email, phone });
 
   // Adjust state during render when the saved profile changes (React
   // "adjusting state on prop change" pattern) instead of a synchronous
@@ -94,11 +101,21 @@ export function PersonalInformationForm({
     phone !== synced.phone
   ) {
     setSynced({ firstName, lastName, email, phone });
-    setValues({ firstName, lastName, email, phone });
+    setValues({
+      firstName,
+      lastName,
+      email: isSmsPlaceholderEmail(email) ? "" : email,
+      phone,
+    });
   }
 
   function resetToSaved(): void {
-    setValues({ firstName, lastName, email, phone });
+    setValues({
+      firstName,
+      lastName,
+      email: isSmsPlaceholderEmail(email) ? "" : email,
+      phone,
+    });
   }
 
   return (
@@ -154,7 +171,7 @@ export function PersonalInformationForm({
             <input
               name="email"
               type="email"
-              required
+              required={!isSmsPlaceholderEmail(email)}
               value={values.email}
               onChange={(event) =>
                 setValues((prev) => ({ ...prev, email: event.target.value }))

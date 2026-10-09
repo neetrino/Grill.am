@@ -10,6 +10,7 @@ import {
   type LoginOtpRequestState,
   type LoginOtpVerifyState,
 } from "@/features/auth/login-otp-actions";
+import { AuthTermsAgreement } from "@/features/auth/ui/AuthTermsAgreement";
 import { OtpCodeInput } from "@/features/auth/ui/OtpCodeInput";
 import {
   AUTH_BTN_PRIMARY_CLASS,
@@ -27,14 +28,17 @@ type SmsLoginFormProps = {
   locale: Locale;
   dictionary: Dictionary["auth"];
   nextPath: string | null;
-  registerHref: string;
+  /** Login keeps SMS sign-in; register is the entry for new phone signup. */
+  intent: "login" | "register";
+  alternateHref: string;
 };
 
 export function SmsLoginForm({
   locale,
   dictionary,
   nextPath,
-  registerHref,
+  intent,
+  alternateHref,
 }: SmsLoginFormProps) {
   const requestAction = requestLoginOtpAction.bind(null, locale);
   const verifyAction = verifyLoginOtpAction.bind(null, locale);
@@ -50,6 +54,7 @@ export function SmsLoginForm({
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [countdownKey, setCountdownKey] = useState<number | null>(null);
   const sent = requestState.status === "sent" && Boolean(requestState.phone);
+  const isRegister = intent === "register";
 
   if (sent && requestState.formKey !== countdownKey) {
     setCountdownKey(requestState.formKey);
@@ -69,20 +74,42 @@ export function SmsLoginForm({
 
   const requestError = requestErrorText(dictionary, requestState.errorCode);
   const verifyError = verifyErrorText(dictionary, verifyState.errorCode);
+  const submitLabel = isRegister
+    ? verifyPending
+      ? dictionary.smsRegistering
+      : dictionary.smsRegister
+    : verifyPending
+      ? dictionary.smsSigningIn
+      : dictionary.smsSignIn;
 
   return (
     <div className="flex flex-col gap-5">
       <p className="text-center text-sm leading-relaxed text-brand-ink/50">
-        {dictionary.loginSubtitle}
+        {isRegister ? dictionary.registerSubtitle : dictionary.loginSubtitle}
       </p>
 
       {sent ? (
-        <form action={submitVerify} className="flex flex-col gap-5">
-          <input type="hidden" name="phone" value={requestState.phone} />
+        <form
+          key={`sms-verify-${requestState.formKey}`}
+          action={submitVerify}
+          className="flex flex-col gap-5"
+        >
+          <input
+            type="hidden"
+            name="phone"
+            value={requestState.phone ?? ""}
+          />
           <input type="hidden" name="code" value={code} />
-          {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
+          {nextPath ? (
+            <input type="hidden" name="next" value={nextPath} />
+          ) : null}
           <p role="status" className="text-sm leading-relaxed text-brand-ink/70">
-            {dictionary.smsSent}
+            {isRegister
+              ? dictionary.smsRegisterSent.replace(
+                  "{phone}",
+                  requestState.phone ?? "",
+                )
+              : dictionary.smsSent}
           </p>
           <OtpCodeInput
             value={code}
@@ -108,7 +135,7 @@ export function SmsLoginForm({
             aria-busy={verifyPending}
             className={AUTH_BTN_PRIMARY_CLASS}
           >
-            {verifyPending ? dictionary.smsSigningIn : dictionary.smsSignIn}
+            {submitLabel}
           </button>
           <button
             type="submit"
@@ -122,7 +149,11 @@ export function SmsLoginForm({
           </button>
         </form>
       ) : (
-        <form action={submitRequest} className="flex flex-col gap-5">
+        <form
+          key="sms-request"
+          action={submitRequest}
+          className="flex flex-col gap-5"
+        >
           <input
             required
             name="phone"
@@ -137,6 +168,9 @@ export function SmsLoginForm({
               requestState.errorCode === "invalid_phone",
             )}
           />
+          {isRegister ? (
+            <AuthTermsAgreement locale={locale} dictionary={dictionary} />
+          ) : null}
           {requestError ? <Alert message={requestError} /> : null}
           <button
             type="submit"
@@ -150,9 +184,13 @@ export function SmsLoginForm({
       )}
 
       <p className="text-center text-sm text-brand-ink/60">
-        {dictionary.noAccount}{" "}
-        <AppLink href={registerHref} prefetchPolicy="intent" className={AUTH_LINK_CLASS}>
-          {dictionary.registerLink}
+        {isRegister ? dictionary.hasAccount : dictionary.noAccount}{" "}
+        <AppLink
+          href={alternateHref}
+          prefetchPolicy="intent"
+          className={AUTH_LINK_CLASS}
+        >
+          {isRegister ? dictionary.signInLink : dictionary.registerLink}
         </AppLink>
       </p>
     </div>

@@ -18,6 +18,7 @@ import {
   AUTH_CHECKBOX_CLASS,
   AUTH_LINK_CLASS,
   authFieldClassName,
+  authMethodTabClass,
 } from "@/features/auth/ui/auth-ui";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
 import type { Locale } from "@/lib/i18n/config";
@@ -57,7 +58,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
           type="button"
           role="tab"
           aria-selected={method === "sms"}
-          className={loginTabClass(method === "sms")}
+          className={authMethodTabClass(method === "sms")}
           onClick={() => setMethod("sms")}
         >
           {dictionary.loginMethodSms}
@@ -66,7 +67,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
           type="button"
           role="tab"
           aria-selected={method === "password"}
-          className={loginTabClass(method === "password")}
+          className={authMethodTabClass(method === "password")}
           onClick={() => setMethod("password")}
         >
           {dictionary.loginMethodPassword}
@@ -78,7 +79,8 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
           locale={locale}
           dictionary={dictionary}
           nextPath={nextPath}
-          registerHref={registerHref}
+          intent="login"
+          alternateHref={registerHref}
         />
       ) : (
     <form
@@ -193,10 +195,4 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
       )}
     </div>
   );
-}
-
-function loginTabClass(selected: boolean): string {
-  return selected
-    ? "h-10 rounded-[12px] bg-white text-sm font-black tracking-wide text-brand-ink shadow-sm"
-    : "h-10 rounded-[12px] text-sm font-bold text-brand-ink/55 transition hover:text-brand-ink";
 }

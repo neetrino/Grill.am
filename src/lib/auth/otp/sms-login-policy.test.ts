@@ -21,7 +21,7 @@ const phone = "+37499123456";
 const now = new Date("2026-10-08T12:00:00.000Z");
 
 describe("SMS login eligibility", () => {
-  it("sends a login code only for a verified customer", async () => {
+  it("sends a login code for verified customers and unknown phones", async () => {
     const customer = createHarness([verifiedUser()]);
     const unverified = createHarness([customerUser()]);
     const unknown = createHarness([]);
@@ -31,17 +31,19 @@ describe("SMS login eligibility", () => {
       phone,
       ip: "203.0.113.8",
     });
-    const missing = await requestLoginOtp(unknown.deps, {
+    const signup = await requestLoginOtp(unknown.deps, {
       phone,
       ip: "203.0.113.8",
     });
 
     expect(sent).toEqual({ ok: true, code: "accepted" });
-    expect(hidden).toEqual(missing);
+    expect(hidden).toEqual({ ok: true, code: "accepted" });
+    expect(signup).toEqual({ ok: true, code: "accepted" });
     expect(customer.sent).toHaveLength(1);
     expect(unverified.sent).toHaveLength(0);
-    expect(unknown.sent).toHaveLength(0);
+    expect(unknown.sent).toHaveLength(1);
     expect(unknown.users.users).toHaveLength(0);
+    expect(unknown.challenges.rows[0]?.userId).toBeNull();
   });
 
   it("does not authenticate an unverified customer who presents a login code", async () => {
@@ -57,18 +59,14 @@ describe("SMS login eligibility", () => {
     expect(harness.sessions).toEqual([]);
   });
 
-  it("keeps admin and operator SMS requests indistinguishable from an unknown phone", async () => {
-    const unknown = await requestLoginOtp(createHarness([]).deps, {
-      phone,
-      ip: "203.0.113.8",
-    });
+  it("does not send SMS to admin or operator numbers", async () => {
     for (const role of ["ADMIN", "OPERATOR"] as const) {
       const harness = createHarness([{ ...verifiedUser(), role }]);
       const result = await requestLoginOtp(harness.deps, {
         phone,
         ip: "203.0.113.8",
       });
-      expect(result).toEqual(unknown);
+      expect(result).toEqual({ ok: true, code: "accepted" });
       expect(harness.sent).toHaveLength(0);
       const staff = harness.users.users[0];
       expect(staff).toBeDefined();
@@ -76,6 +74,27 @@ describe("SMS login eligibility", () => {
         expect(isSmsLoginEligible(staff, phone)).toBe(false);
       }
     }
+  });
+
+  it("creates a verified customer after SMS signup OTP and marks them new", async () => {
+    const harness = createHarness([]);
+    await requestLoginOtp(harness.deps, { phone, ip: "203.0.113.8" });
+
+    const result = await verifyLoginOtp(harness.deps, {
+      phone,
+      code: "483921",
+      ip: "203.0.113.8",
+    });
+
+    expect(result).toMatchObject({
+      ok: true,
+      isNewUser: true,
+      role: "CUSTOMER",
+    });
+    expect(harness.users.users).toHaveLength(1);
+    expect(harness.users.users[0]?.phone).toBe(phone);
+    expect(harness.users.users[0]?.phoneVerifiedAt).toEqual(now);
+    expect(harness.sessions).toHaveLength(1);
   });
 
   it("drops SMS login when verification is cleared after the code was sent", async () => {
@@ -107,12 +126,14 @@ describe("SMS login eligibility", () => {
     await harness.deps.users.applyPhoneChange("user-1", update);
     expect(update.phoneVerifiedAt).toBeNull();
 
+    // Freed previous number may receive a signup OTP; no session is created here.
     const oldLogin = await requestLoginOtp(harness.deps, {
       phone,
       ip: "203.0.113.8",
     });
     expect(oldLogin).toEqual({ ok: true, code: "accepted" });
-    expect(harness.sent).toHaveLength(0);
+    expect(harness.sent).toHaveLength(1);
+    expect(harness.challenges.rows[0]?.userId).toBeNull();
 
     const requested = await requestPhoneVerification(harness.deps, {
       userId: "user-1",
@@ -131,7 +152,7 @@ describe("SMS login eligibility", () => {
       ip: "203.0.113.8",
     });
     expect(login).toEqual({ ok: true, code: "accepted" });
-    expect(harness.sent).toHaveLength(2);
+    expect(harness.sent).toHaveLength(3);
   });
 
   it("refuses to verify a phone another account already verified", async () => {

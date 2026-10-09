@@ -29,6 +29,7 @@ export type MobipaceConfig = {
 type MobipaceResult = {
   statusCode: number | null;
   sessionId: string | null;
+  messageCount: number | null;
 };
 
 /**
@@ -101,11 +102,21 @@ export function createMobipaceSmsProvider(deps: {
           });
           throw new SmsTransportError("send_failed");
         }
+        if (result.messageCount !== null && result.messageCount < 1) {
+          logger.warn("sms.mobipace.send_rejected", {
+            statusCode: result.statusCode,
+            messageCount: result.messageCount,
+          });
+          throw new SmsTransportError("send_failed");
+        }
 
         await deps.redis.set(SESSION_KEY, sessionId, {
           ex: SESSION_TTL_SECONDS,
         });
-        logger.info("sms.mobipace.sent", { statusCode: SUCCESS_CODE });
+        logger.info("sms.mobipace.sent", {
+          statusCode: SUCCESS_CODE,
+          messageCount: result.messageCount,
+        });
       });
     },
   };
@@ -207,18 +218,18 @@ async function postJson(
 
 function readResult(text: string): MobipaceResult {
   if (!text) {
-    return { statusCode: null, sessionId: null };
+    return { statusCode: null, sessionId: null, messageCount: null };
   }
 
   let payload: unknown;
   try {
     payload = JSON.parse(text);
   } catch {
-    return { statusCode: null, sessionId: null };
+    return { statusCode: null, sessionId: null, messageCount: null };
   }
 
   if (typeof payload !== "object" || payload === null) {
-    return { statusCode: null, sessionId: null };
+    return { statusCode: null, sessionId: null, messageCount: null };
   }
 
   const record = payload as Record<string, unknown>;
@@ -228,6 +239,8 @@ function readResult(text: string): MobipaceResult {
       typeof record.SessionId === "string" && record.SessionId.length > 0
         ? record.SessionId
         : null,
+    messageCount:
+      typeof record.MessageCount === "number" ? record.MessageCount : null,
   };
 }
 
