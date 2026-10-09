@@ -214,6 +214,7 @@ function requestErrorText(
 ): string | null {
   if (code === "invalid_phone") return dictionary.smsInvalidPhone;
   if (code === "rate_limited") return dictionary.smsRateLimited;
+  if (code === "unavailable") return dictionary.smsSendFailed;
   if (code === "generic") return dictionary.smsGenericError;
   return null;
 }

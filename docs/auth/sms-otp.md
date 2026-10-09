@@ -45,7 +45,7 @@ Changing the canonical phone clears `phone_verified_at`. SMS login stays unavail
 2. The server normalizes it to E.164 (`+37499123456`).
 3. Send limits are enforced (phone, IP, and a 60-second resend cooldown).
 4. An OTP is sent when exactly one account matches and that account is an active, verified customer, **or** when no active account matches (SMS signup challenge with `user_id` null).
-5. For unverified, inactive/held, staff, and ambiguous numbers the public response stays generic (`accepted`) and no SMS is sent. A phone held by a suspended account is not offered for signup.
+5. For unverified, inactive/held, staff, and ambiguous numbers no SMS is sent and the client receives `unavailable` (not a fake "sent"). MOBIPACE/transport failures also return `unavailable`. A phone held by a suspended account is not offered for signup.
 6. Verification checks purpose `LOGIN`, expiry, attempt count, and the HMAC, then consumes the challenge with one conditional update.
 7. If the challenge belongs to an existing user, `createSession()` runs only when that user is still a verified active customer. If the challenge has no user, a new `CUSTOMER` is created with the verified phone, placeholder email/name, and a random unusable password hash, then `createSession()` runs and the client is redirected to `/[locale]/profile/personal-information`.
 
@@ -95,7 +95,7 @@ The lock is released with an atomic compare-and-delete (`EVAL`: delete only when
 
 Recipients are sent as international digits without `+` or `00` (`37499123456`). That conversion stays inside `src/lib/sms`.
 
-Logs include status codes only. Credentials, session ids, and OTP codes are not logged. Provider errors are not shown to customers.
+Logs include status codes only. Credentials, session ids, and OTP codes are not logged. LOGIN/signup and VERIFY_PHONE send failures surface as a generic client error (`unavailable` / `smsSendFailed`); detailed provider codes stay in server logs only.
 
 ## Environment
 

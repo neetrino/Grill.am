@@ -12,7 +12,7 @@ import { normalizePhoneToE164 } from "@/lib/phone/normalize";
 
 export type LoginOtpRequestState = {
   status: "idle" | "sent" | "error";
-  errorCode?: "invalid_phone" | "rate_limited" | "generic";
+  errorCode?: "invalid_phone" | "rate_limited" | "unavailable" | "generic";
   phone?: string;
   formKey: number;
 };
@@ -39,7 +39,9 @@ export async function requestLoginOtpAction(
   });
   if (!result.ok) {
     return errorRequest(
-      result.code === "invalid_phone" || result.code === "rate_limited"
+      result.code === "invalid_phone" ||
+        result.code === "rate_limited" ||
+        result.code === "unavailable"
         ? result.code
         : "generic",
     );

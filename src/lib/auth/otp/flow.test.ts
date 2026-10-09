@@ -157,11 +157,11 @@ describe("SMS OTP flows", () => {
     const suspended = createHarness([
       { ...verifiedUser(), status: "SUSPENDED" },
     ]);
-    const hidden = await requestLoginOtp(suspended.deps, {
+    const blocked = await requestLoginOtp(suspended.deps, {
       phone,
       ip: "203.0.113.10",
     });
-    expect(hidden).toEqual({ ok: true, code: "accepted" });
+    expect(blocked).toEqual({ ok: false, code: "unavailable" });
     expect(suspended.sent).toHaveLength(0);
 
     const active = createHarness([verifiedUser()]);
@@ -190,7 +190,7 @@ describe("SMS OTP flows", () => {
       phone,
       ip: "203.0.113.10",
     });
-    expect(result).toEqual({ ok: true, code: "accepted" });
+    expect(result).toEqual({ ok: false, code: "unavailable" });
     expect(harness.sessions).toEqual([]);
     expect(harness.challenges.rows).toHaveLength(0);
   });
