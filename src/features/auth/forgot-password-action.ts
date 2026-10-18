@@ -7,9 +7,12 @@ import { getProviders } from "@/config/providers";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { forgotPasswordSchema } from "@/features/auth/schemas";
-import { escapeHtml } from "@/features/notifications/templates/email-template-primitives";
+import { renderPasswordResetEmail } from "@/features/notifications/templates/password-reset-email-template";
 import { getStoreIdentity } from "@/features/settings/application/queries";
-import { issuePasswordResetToken } from "@/lib/auth/password-reset-tokens";
+import {
+  issuePasswordResetToken,
+  PASSWORD_RESET_TTL_SECONDS,
+} from "@/lib/auth/password-reset-tokens";
 import { getEmailDelivery } from "@/lib/email/get-email-delivery";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import { logger } from "@/lib/observability/logger";
@@ -18,29 +21,6 @@ export type ForgotPasswordActionState = {
   error?: string;
   sent?: boolean;
 };
-
-function buildResetEmail(resetUrl: string, storeName: string) {
-  const text = [
-    `We received a request to reset your ${storeName} password.`,
-    "",
-    "Open this link to choose a new password (expires in 1 hour):",
-    resetUrl,
-    "",
-    "If you did not request this, you can ignore this email.",
-  ].join("\n");
-
-  const html = `
-    <p>We received a request to reset your ${escapeHtml(storeName)} password.</p>
-    <p><a href="${escapeHtml(resetUrl)}">Choose a new password</a> (link expires in 1 hour).</p>
-    <p>If you did not request this, you can ignore this email.</p>
-  `.trim();
-
-  return {
-    subject: `Reset your ${storeName} password`,
-    text,
-    html,
-  };
-}
 
 export async function forgotPasswordAction(
   localeInput: string,
@@ -76,7 +56,12 @@ export async function forgotPasswordAction(
       resetUrl.searchParams.set("token", rawToken);
 
       const identity = await getStoreIdentity();
-      const email = buildResetEmail(resetUrl.toString(), identity.name);
+      const email = renderPasswordResetEmail({
+        locale,
+        storeName: identity.name,
+        resetUrl: resetUrl.toString(),
+        ttlMinutes: PASSWORD_RESET_TTL_SECONDS / 60,
+      });
       const result = await getEmailDelivery().send({
         to: user.email,
         subject: email.subject,
