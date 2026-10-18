@@ -7,7 +7,10 @@ import { getProviders } from "@/config/providers";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { forgotPasswordSchema } from "@/features/auth/schemas";
+import { escapeHtml } from "@/features/notifications/templates/email-template-primitives";
+import { getStoreIdentity } from "@/features/settings/application/queries";
 import { issuePasswordResetToken } from "@/lib/auth/password-reset-tokens";
+import { getEmailDelivery } from "@/lib/email/get-email-delivery";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import { logger } from "@/lib/observability/logger";
 
@@ -16,9 +19,9 @@ export type ForgotPasswordActionState = {
   sent?: boolean;
 };
 
-function buildResetEmail(resetUrl: string) {
+function buildResetEmail(resetUrl: string, storeName: string) {
   const text = [
-    "We received a request to reset your White Shop password.",
+    `We received a request to reset your ${storeName} password.`,
     "",
     "Open this link to choose a new password (expires in 1 hour):",
     resetUrl,
@@ -27,13 +30,13 @@ function buildResetEmail(resetUrl: string) {
   ].join("\n");
 
   const html = `
-    <p>We received a request to reset your White Shop password.</p>
-    <p><a href="${resetUrl}">Choose a new password</a> (link expires in 1 hour).</p>
+    <p>We received a request to reset your ${escapeHtml(storeName)} password.</p>
+    <p><a href="${escapeHtml(resetUrl)}">Choose a new password</a> (link expires in 1 hour).</p>
     <p>If you did not request this, you can ignore this email.</p>
   `.trim();
 
   return {
-    subject: "Reset your White Shop password",
+    subject: `Reset your ${storeName} password`,
     text,
     html,
   };
@@ -72,13 +75,22 @@ export async function forgotPasswordAction(
       );
       resetUrl.searchParams.set("token", rawToken);
 
-      const email = buildResetEmail(resetUrl.toString());
-      await providers.email.send({
+      const identity = await getStoreIdentity();
+      const email = buildResetEmail(resetUrl.toString(), identity.name);
+      const result = await getEmailDelivery().send({
         to: user.email,
         subject: email.subject,
         text: email.text,
         html: email.html,
       });
+      // Still report `sent` on failure so the response does not reveal which emails have accounts.
+      if (!result.ok) {
+        logger.error("auth.forgot_password.email_failed", {
+          errorCode: result.errorCode,
+          safeMessage: result.safeMessage,
+          retryable: result.retryable,
+        });
+      }
     }
   } catch (error) {
     logger.error("auth.forgot_password_failed", {

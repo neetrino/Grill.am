@@ -2,8 +2,6 @@ import "server-only";
 
 import { getEnv } from "@/config/env";
 import { getStoreFxRates } from "@/features/settings/application/queries";
-import { createStubEmailAdapter } from "@/lib/email/stub-adapter";
-import type { EmailAdapter } from "@/lib/email/types";
 import { createStaticExchangeRateAdapter } from "@/lib/fx/static-adapter";
 import type { ExchangeRateAdapter } from "@/lib/fx/types";
 import { logger } from "@/lib/observability/logger";
@@ -23,7 +21,6 @@ import { createUpstashRedisAdapter } from "@/lib/redis/upstash-adapter";
 export type AppProviders = {
   redis: RedisAdapter;
   storage: ObjectStorageAdapter;
-  email: EmailAdapter;
   /**
    * @deprecated Prefer {@link getPaymentAdapter} with an explicit provider.
    * Kept as COD for legacy callers that do not select a method.
@@ -70,8 +67,8 @@ function createRedisAdapter(): RedisAdapter {
 }
 
 /**
- * Provider composition root. Real Upstash/R2/Resend adapters replace stubs
- * when credentials are present and feature wiring needs them.
+ * Provider composition root. Real Upstash/R2 adapters replace stubs
+ * when credentials are present. Email goes through `getEmailDelivery`.
  */
 export function getProviders(): AppProviders {
   if (cachedProviders) {
@@ -84,7 +81,6 @@ export function getProviders(): AppProviders {
   cachedProviders = {
     redis,
     storage: createStorageAdapter(),
-    email: createStubEmailAdapter(),
     payment: getPaymentAdapter("cod"),
     exchangeRates: createStaticExchangeRateAdapter({
       getRatesFromAmd: async () => {
