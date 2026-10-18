@@ -5,7 +5,7 @@ import {
   USER_STATUSES,
 } from "@/features/users/domain/user-lifecycle";
 
-export const ADMIN_USERS_SORT_VALUES = ["created", "orders"] as const;
+export const ADMIN_USERS_SORT_VALUES = ["created", "orders", "bonuses"] as const;
 export const ADMIN_USERS_SORT_DIRS = ["asc", "desc"] as const;
 
 export const adminUsersFilterSchema = z.object({

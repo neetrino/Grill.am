@@ -16,6 +16,7 @@ export type OrderStatus = (typeof ORDER_STATUSES)[number];
 export const ADMIN_ORDER_STATUS_OPTIONS = [
   { value: "PENDING", label: "Pending" },
   { value: "PROCESSING", label: "Processing" },
+  { value: "CONFIRMED", label: "Confirmed" },
   { value: "DELIVERED", label: "Completed" },
   { value: "CANCELLED", label: "Cancelled" },
   { value: "REQUIRES_REVIEW", label: "Requires review" },
@@ -23,28 +24,53 @@ export const ADMIN_ORDER_STATUS_OPTIONS = [
 
 /**
  * Allowed admin-driven fulfillment transitions.
- * Admin list allows free moves among Pending / Processing / Completed / Cancelled.
+ * Admin list allows free moves among Pending / Processing / Confirmed / Completed / Cancelled.
  */
 const TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
-  PENDING: ["PROCESSING", "DELIVERED", "CANCELLED", "CONFIRMED", "REQUIRES_REVIEW"],
-  CONFIRMED: ["PROCESSING", "DELIVERED", "CANCELLED", "PENDING", "REQUIRES_REVIEW"],
-  PROCESSING: ["PENDING", "DELIVERED", "CANCELLED", "SHIPPED", "REQUIRES_REVIEW"],
-  SHIPPED: ["DELIVERED", "CANCELLED", "PROCESSING"],
-  DELIVERED: ["PENDING", "PROCESSING", "CANCELLED", "REFUNDED"],
-  CANCELLED: ["PENDING", "PROCESSING", "DELIVERED"],
+  PENDING: [
+    "PROCESSING",
+    "CONFIRMED",
+    "DELIVERED",
+    "CANCELLED",
+    "REQUIRES_REVIEW",
+  ],
+  CONFIRMED: [
+    "PENDING",
+    "PROCESSING",
+    "DELIVERED",
+    "CANCELLED",
+    "REFUNDED",
+    "REQUIRES_REVIEW",
+  ],
+  PROCESSING: [
+    "PENDING",
+    "CONFIRMED",
+    "DELIVERED",
+    "CANCELLED",
+    "SHIPPED",
+    "REQUIRES_REVIEW",
+  ],
+  SHIPPED: ["DELIVERED", "CONFIRMED", "CANCELLED", "PROCESSING"],
+  DELIVERED: ["PENDING", "PROCESSING", "CONFIRMED", "CANCELLED", "REFUNDED"],
+  CANCELLED: ["PENDING", "PROCESSING", "CONFIRMED", "DELIVERED"],
   REFUNDED: ["PENDING"],
-  REQUIRES_REVIEW: ["PROCESSING", "PENDING", "CANCELLED", "DELIVERED"],
+  REQUIRES_REVIEW: [
+    "PROCESSING",
+    "PENDING",
+    "CONFIRMED",
+    "CANCELLED",
+    "DELIVERED",
+  ],
 };
 
 const STOCK_RESTORING_CANCEL_FROM: ReadonlySet<OrderStatus> = new Set([
   "PENDING",
-  "CONFIRMED",
   "PROCESSING",
 ]);
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   PENDING: "Pending",
-  CONFIRMED: "Pending",
+  CONFIRMED: "Confirmed",
   PROCESSING: "Processing",
   SHIPPED: "Processing",
   DELIVERED: "Completed",

@@ -1,5 +1,6 @@
 "use client";
 
+import { HeaderCoinsIcon } from "@/components/layout/HeaderCoinsIcon";
 import {
   CHECKOUT_ALERT_CLASS,
   CHECKOUT_ORDER_SUMMARY_WRAP_CLASS,
@@ -7,6 +8,17 @@ import {
   CHECKOUT_SECTION_CARD_CLASS,
   CHECKOUT_SECTION_TITLE_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
+import {
+  CheckoutGrillCoinProgress,
+  type CheckoutGrillCoinProgressCopy,
+} from "@/features/checkout/ui/CheckoutGrillCoinProgress";
+
+type CheckoutGrillCoinProgressView = {
+  productsHref: string;
+  targetFormatted: string;
+  progressRatio: number;
+  copy: CheckoutGrillCoinProgressCopy;
+};
 
 type CheckoutOrderSummaryProps = {
   title: string;
@@ -15,6 +27,21 @@ type CheckoutOrderSummaryProps = {
   couponApplyLabel: string;
   couponApplyingLabel: string;
   discountLabel: string;
+  bonusTitle: string;
+  bonusAvailableFormatted: string | null;
+  bonusMaxButtonLabel: string;
+  bonusAppliedLabel: string;
+  bonusLoginRequired: string | null;
+  grillCoinLabel: string | null;
+  grillCoinAmountFormatted: string | null;
+  grillCoinProgress: CheckoutGrillCoinProgressView | null;
+  useBonus: boolean;
+  canUseBonus: boolean;
+  bonusDraft: string;
+  onUseBonusChange: (next: boolean) => void;
+  onBonusDraftChange: (value: string) => void;
+  onBonusMaxClick: () => void;
+  bonusFormatted: string | null;
   subtotalLabel: string;
   shippingLabel: string;
   taxLabel: string;
@@ -31,7 +58,6 @@ type CheckoutOrderSummaryProps = {
   isApplyingCoupon: boolean;
   error: string | null;
   isSubmitting: boolean;
-  canPlaceOrder: boolean;
   placeOrderLabel: string;
   processingLabel: string;
 };
@@ -43,6 +69,21 @@ export function CheckoutOrderSummary({
   couponApplyLabel,
   couponApplyingLabel,
   discountLabel,
+  bonusTitle,
+  bonusAvailableFormatted,
+  bonusMaxButtonLabel,
+  bonusAppliedLabel,
+  bonusLoginRequired,
+  grillCoinLabel,
+  grillCoinAmountFormatted,
+  grillCoinProgress,
+  useBonus,
+  canUseBonus,
+  bonusDraft,
+  onUseBonusChange,
+  onBonusDraftChange,
+  onBonusMaxClick,
+  bonusFormatted,
   subtotalLabel,
   shippingLabel,
   taxLabel,
@@ -59,7 +100,6 @@ export function CheckoutOrderSummary({
   isApplyingCoupon,
   error,
   isSubmitting,
-  canPlaceOrder,
   placeOrderLabel,
   processingLabel,
 }: CheckoutOrderSummaryProps) {
@@ -76,40 +116,131 @@ export function CheckoutOrderSummary({
           {title}
         </h2>
 
-        <div className="mt-5 rounded-[15px] border border-gray-200 p-4">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-gray-700">{couponTitle}</p>
+        <div className="mt-5 rounded-[15px] border border-gray-200 p-4 lg:p-3.5">
+          {/* Mobile: title + apply on top, input below */}
+          <div className="lg:hidden">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-gray-700">{couponTitle}</p>
+              <button
+                type="button"
+                disabled={
+                  isSubmitting || isApplyingCoupon || !couponDraft.trim()
+                }
+                onClick={onApplyCoupon}
+                className="inline-flex h-8 shrink-0 items-center justify-center rounded-[15px] border border-gray-300 bg-white px-3 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
+              </button>
+            </div>
+            <input
+              type="text"
+              name="couponCodeDraft"
+              value={couponDraft}
+              onChange={(event) => onCouponDraftChange(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  onApplyCoupon();
+                }
+              }}
+              placeholder={couponPlaceholder}
+              autoComplete="off"
+              disabled={isSubmitting || isApplyingCoupon}
+              className="mt-3 h-11 w-full rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50"
+              suppressHydrationWarning
+            />
+          </div>
+
+          {/* Desktop: input + apply in one row */}
+          <div className="hidden items-center gap-2.5 lg:flex">
+            <input
+              type="text"
+              name="couponCodeDraftDesktop"
+              value={couponDraft}
+              onChange={(event) => onCouponDraftChange(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  onApplyCoupon();
+                }
+              }}
+              placeholder={couponTitle}
+              aria-label={couponTitle}
+              autoComplete="off"
+              disabled={isSubmitting || isApplyingCoupon}
+              className="h-10 min-w-0 flex-1 rounded-[15px] border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-500 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50"
+              suppressHydrationWarning
+            />
             <button
               type="button"
-              disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
+              disabled={
+                isSubmitting || isApplyingCoupon || !couponDraft.trim()
+              }
               onClick={onApplyCoupon}
-              className="inline-flex h-9 shrink-0 items-center justify-center rounded-[15px] border border-gray-300 bg-white px-4 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-10 shrink-0 items-center justify-center rounded-[15px] border border-gray-300 bg-gray-100 px-3 text-sm font-semibold whitespace-nowrap text-gray-800 transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
             </button>
           </div>
-          <input
-            type="text"
-            name="couponCodeDraft"
-            value={couponDraft}
-            onChange={(event) => onCouponDraftChange(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.preventDefault();
-                onApplyCoupon();
-              }
-            }}
-            placeholder={couponPlaceholder}
-            autoComplete="off"
-            disabled={isSubmitting || isApplyingCoupon}
-            className="mt-3 h-11 w-full rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50"
-            suppressHydrationWarning
-          />
+
           {couponError ? (
             <p className="mt-2 text-sm text-red-600" role="alert">
               {couponError}
             </p>
           ) : null}
+        </div>
+
+        <div className="mt-4 rounded-[15px] border border-gray-200 bg-gray-50 p-4">
+          {bonusLoginRequired ? (
+            <p className="text-sm text-gray-500">{bonusLoginRequired}</p>
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-3">
+                <label className="flex min-w-0 cursor-pointer items-center gap-2.5">
+                  <input
+                    type="checkbox"
+                    checked={useBonus}
+                    disabled={isSubmitting || !canUseBonus}
+                    onChange={(event) => onUseBonusChange(event.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-brand-green focus:ring-brand-green/30 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                  <span className="text-sm font-medium text-gray-900">
+                    {bonusTitle}
+                  </span>
+                </label>
+                {bonusAvailableFormatted ? (
+                  <span className="shrink-0 text-sm text-gray-600">
+                    {bonusAvailableFormatted}
+                  </span>
+                ) : null}
+              </div>
+
+              {useBonus ? (
+                <div className="mt-3 flex items-center gap-2">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    name="bonusSpendDraft"
+                    value={bonusDraft}
+                    onChange={(event) =>
+                      onBonusDraftChange(event.target.value)
+                    }
+                    disabled={isSubmitting || !canUseBonus}
+                    className="h-11 min-w-0 flex-1 rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-100"
+                    suppressHydrationWarning
+                  />
+                  <button
+                    type="button"
+                    disabled={isSubmitting || !canUseBonus}
+                    onClick={onBonusMaxClick}
+                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-[15px] border border-gray-300 bg-white px-4 text-sm font-semibold whitespace-nowrap text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {bonusMaxButtonLabel}
+                  </button>
+                </div>
+              ) : null}
+            </>
+          )}
         </div>
 
         <div className="mt-5 space-y-3 text-sm text-gray-600">
@@ -122,6 +253,14 @@ export function CheckoutOrderSummary({
               <span>{discountLabel}</span>
               <span className="font-medium text-emerald-700">
                 -{discountFormatted}
+              </span>
+            </div>
+          ) : null}
+          {bonusFormatted ? (
+            <div className="flex justify-between gap-3">
+              <span>{bonusAppliedLabel}</span>
+              <span className="font-medium text-emerald-700">
+                -{bonusFormatted}
               </span>
             </div>
           ) : null}
@@ -144,7 +283,24 @@ export function CheckoutOrderSummary({
             <span>{totalLabel}</span>
             <span>{totalFormatted}</span>
           </div>
+          {grillCoinLabel && grillCoinAmountFormatted ? (
+            <div className="mt-3 flex items-center justify-between gap-3 text-sm">
+              <span className="flex items-center gap-1.5 font-bold text-gray-900">
+                <HeaderCoinsIcon className="size-5 shrink-0" />
+                <span>{grillCoinLabel}</span>
+              </span>
+              <span className="font-semibold tabular-nums text-emerald-700">
+                {grillCoinAmountFormatted}
+              </span>
+            </div>
+          ) : null}
         </div>
+
+        {grillCoinProgress ? (
+          <div className="mt-3">
+            <CheckoutGrillCoinProgress {...grillCoinProgress} />
+          </div>
+        ) : null}
 
         {error ? (
           <div
@@ -157,7 +313,7 @@ export function CheckoutOrderSummary({
         <button
           type="submit"
           className={`${CHECKOUT_PRIMARY_BUTTON_CLASS} mt-6`}
-          disabled={isSubmitting || !canPlaceOrder}
+          disabled={isSubmitting}
         >
           {isSubmitting ? processingLabel : placeOrderLabel}
         </button>

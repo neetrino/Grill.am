@@ -5,14 +5,15 @@ import { FooterCornerShell } from "@/components/layout/FooterCornerShell";
 import { SiteCopyright } from "@/components/layout/SiteCopyright";
 import { StoreAddressDropdown } from "@/components/layout/StoreAddressDropdown";
 import { StorePhoneDropdown } from "@/components/layout/StorePhoneDropdown";
-import { FOOTER_PAYMENT_ASSETS } from "@/lib/payment-assets";
-import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import {
   FacebookIcon,
   InstagramIcon,
   WhatsAppIcon,
 } from "@/components/layout/SocialIcons";
+import { getStorefrontNavItems } from "@/components/layout/storefront-nav";
 import { AppLink } from "@/components/ui/AppLink";
+import { FOOTER_PAYMENT_ASSETS } from "@/lib/payment-assets";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -50,28 +51,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
     },
   ] as const;
 
-  const navLinks = [
-    {
-      href: `/${locale}/products`,
-      label: dictionary.footer.categories,
-    },
-    {
-      href: `/${locale}/products`,
-      label: dictionary.footer.promotions,
-    },
-    {
-      href: `/${locale}/products`,
-      label: dictionary.footer.bestsellers,
-    },
-    {
-      href: `/${locale}/about`,
-      label: dictionary.nav.about,
-    },
-    {
-      href: `/${locale}/contact`,
-      label: dictionary.nav.contact,
-    },
-  ] as const;
+  const navLinks = getStorefrontNavItems(locale, dictionary);
 
   const supportLinks = [
     {
@@ -142,14 +122,14 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 {dictionary.footer.quickLinks}
               </h4>
               <ul className="mt-[9px] space-y-3 text-sm text-white/50">
-                {navLinks.map(({ href, label }) => (
-                  <li key={label}>
+                {navLinks.map((item) => (
+                  <li key={item.id}>
                     <AppLink
-                      href={href}
+                      href={item.href}
                       prefetchPolicy="intent"
                       className="transition hover:text-white"
                     >
-                      {label}
+                      {item.label}
                     </AppLink>
                   </li>
                 ))}

@@ -9,6 +9,7 @@
   --accent-foreground: #ffffff;
   --brand-red: #db0b20;
   --brand-red-hot: #f52516;
+  --brand-green: #16a34a;
   --brand-yellow: #ffc12c;
   --brand-yellow-soft: #ffd163;
   --brand-cream: #f4ead3;
@@ -62,6 +63,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-brand-red: var(--brand-red);
   --color-brand-red-hot: var(--brand-red-hot);
+  --color-brand-green: var(--brand-green);
   --color-brand-yellow: var(--brand-yellow);
   --color-brand-yellow-soft: var(--brand-yellow-soft);
   --color-brand-cream: var(--brand-cream);
@@ -91,8 +93,9 @@ body {
     system-ui, sans-serif;
 }
 
+html.auth-page-active,
 body.auth-page-active {
-  background-color: var(--brand-ink);
+  background-color: #e3181d;
 }
 
 /* Photos: no drag / blue selection highlight; surrounding text stays copyable. */
@@ -237,6 +240,9 @@ select:not([data-dropdown-unstyled]):disabled,
   box-sizing: border-box;
   width: var(--calendar-width);
   max-width: calc(100vw - 2 * var(--calendar-viewport-padding));
+  max-height: var(--dropdown-max-height, none);
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 12px;
   border: 1px solid var(--dropdown-border);
   border-radius: var(--dropdown-radius);
@@ -316,6 +322,22 @@ select:not([data-dropdown-unstyled]):disabled,
   background: var(--brand-red);
   font-weight: 600;
   color: #ffffff;
+}
+
+.calendar-day--selected-soft,
+.calendar-day--selected-soft:hover {
+  background: color-mix(in srgb, var(--brand-red) 18%, white);
+  font-weight: 600;
+  color: var(--brand-red);
+}
+
+.calendar-range-panel {
+  --calendar-width: 300px;
+  --calendar-cell-size: 32px;
+  max-height: none;
+  overflow: visible;
+  overflow-x: visible;
+  overflow-y: visible;
 }
 
 /*
@@ -721,11 +743,44 @@ select:disabled {
   animation: toast-out 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+@keyframes checkout-field-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-4px);
+  }
+  30% {
+    transform: translateX(4px);
+  }
+  45% {
+    transform: translateX(-3px);
+  }
+  60% {
+    transform: translateX(3px);
+  }
+  75% {
+    transform: translateX(-1.5px);
+  }
+  90% {
+    transform: translateX(1.5px);
+  }
+}
+
+.animate-checkout-field-shake {
+  animation: checkout-field-shake 0.75s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-toast-in,
   .animate-toast-out {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .animate-checkout-field-shake {
+    animation: none;
   }
 }
 

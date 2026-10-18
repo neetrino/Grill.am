@@ -1,13 +1,15 @@
 "use client";
 
-import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
+import {
+  formatAdminMessage,
+  useAdminDictionary,
+} from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import {
   ORDER_DETAIL_CARD,
   ORDER_DETAIL_SECTION_TITLE,
   ORDER_DETAIL_STATUS_PILL,
 } from "@/features/orders/ui/order-detail-card-classes";
-import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
 import {
   adminOrderStatusLabel,
   adminPaymentStatusLabel,
@@ -19,7 +21,10 @@ type OrderDetailsDrawerSummaryProps = {
   adminControls?: AdminOrderDrawerControls;
 };
 
-/** Order status card — badges or admin status selects + payment attempts. */
+/**
+ * Customer sheet: status pills + notices.
+ * Admin sheet: notices only (status controls live in the header).
+ */
 export function OrderDetailsDrawerSummary({
   detail,
   adminControls,
@@ -28,29 +33,23 @@ export function OrderDetailsDrawerSummary({
   const drawer = dictionary.orders.drawer;
   const attempts = detail.paymentAttempts ?? [];
 
+  const showCustomerStatuses = !adminControls;
+  const showReviewNotice =
+    !adminControls &&
+    detail.status === "REQUIRES_REVIEW" &&
+    detail.paymentStatus === "CAPTURED";
+  const showAttempts = attempts.length > 1;
+
+  if (!showCustomerStatuses && !showReviewNotice && !showAttempts) {
+    return null;
+  }
+
   return (
     <section className={ORDER_DETAIL_CARD}>
-      <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.statusSection}</h3>
-      <div className="flex flex-wrap items-center gap-2">
-        {adminControls ? (
-          <>
-            <AdminInlineStatusSelect
-              locale={adminControls.locale}
-              orderNumber={detail.orderNumber}
-              kind="order"
-              value={detail.status}
-              onSuccess={adminControls.onStatusUpdated}
-            />
-            <AdminInlineStatusSelect
-              locale={adminControls.locale}
-              orderNumber={detail.orderNumber}
-              kind="payment"
-              value={detail.paymentStatus}
-              onSuccess={adminControls.onStatusUpdated}
-            />
-          </>
-        ) : (
-          <>
+      {showCustomerStatuses ? (
+        <>
+          <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.statusSection}</h3>
+          <div className="flex flex-wrap items-center gap-2">
             <span className={ORDER_DETAIL_STATUS_PILL}>
               {adminOrderStatusLabel(detail.status, dictionary.orders.status)}
             </span>
@@ -61,27 +60,33 @@ export function OrderDetailsDrawerSummary({
                 dictionary.orders.paymentStatus,
               )}
             </span>
-          </>
-        )}
-      </div>
-      <p className="mt-3 text-sm text-gray-600">
-        {detail.paymentMethod} ·{" "}
-        {detail.paymentAmount.toLocaleString("en-US")} {detail.baseCurrency}
-      </p>
-      {!adminControls &&
-      detail.status === "REQUIRES_REVIEW" &&
-      detail.paymentStatus === "CAPTURED" ? (
-        <p className="mt-2 text-sm text-amber-800" role="status">
-          Payment was received. The order is under review — support will
-          contact you if needed.
+          </div>
+        </>
+      ) : null}
+      {showReviewNotice ? (
+        <p
+          className={`text-sm text-amber-800 ${showCustomerStatuses ? "mt-2" : ""}`}
+          role="status"
+        >
+          {drawer.customerReviewNotice}
         </p>
       ) : null}
-      {attempts.length > 1 ? (
-        <ul className="mt-3 space-y-1 text-sm text-gray-600">
+      {showAttempts ? (
+        <ul
+          className={`space-y-1 text-sm text-gray-600 ${
+            showCustomerStatuses || showReviewNotice ? "mt-3" : ""
+          }`}
+        >
           {attempts.map((attempt) => (
             <li key={`${attempt.provider}-${attempt.attemptNumber}`}>
-              Attempt {attempt.attemptNumber} — {attempt.status}
-              {attempt.isLatest ? " (latest)" : ""}
+              {formatAdminMessage(drawer.paymentAttempt, {
+                number: String(attempt.attemptNumber),
+                status: adminPaymentStatusLabel(
+                  attempt.status,
+                  dictionary.orders.paymentStatus,
+                ),
+              })}
+              {attempt.isLatest ? drawer.paymentAttemptLatest : ""}
             </li>
           ))}
         </ul>

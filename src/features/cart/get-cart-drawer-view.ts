@@ -5,6 +5,8 @@ import { and, asc, eq, inArray, or } from "drizzle-orm";
 import { getCartWithItems } from "@/features/cart/cart";
 import { getDb } from "@/db/client";
 import { mediaAssets } from "@/db/schema";
+import { resolveActiveFlatBonusByProductId } from "@/features/loyalty/application/product-bonus-board";
+import { computeFlatBonusEarnAmount } from "@/features/loyalty/domain/loyalty-math";
 import {
   describeModifiers,
   parseCartModifiers,
@@ -36,6 +38,8 @@ export type CartDrawerItemView = {
   productId: string;
   /** Empty string for unmodified simple products. */
   selectionKey: string;
+  /** Flat bonus earn (AMD) for one unit; used for local qty recalculation. */
+  bonusEarnUnitAmount: number;
 };
 
 export type CartDrawerView = {
@@ -52,9 +56,13 @@ export type CartDrawerView = {
   adjustmentsAmount: number;
   shippingAmount: number;
   totalAmount: number;
+  /** Projected Grill Coin earn for cart lines (AMD integer). */
+  bonusEarnAmount: number;
   subtotalFormatted: string;
   shippingFormatted: string;
   totalFormatted: string;
+  /** `+N` when earn > 0; empty otherwise. */
+  bonusEarnFormatted: string;
 };
 
 async function loadPrimaryProductImages(
@@ -106,8 +114,9 @@ export async function getCartDrawerView(
   currency: Currency,
 ): Promise<CartDrawerView> {
   const { items: rows } = await getCartWithItems();
-  const [images, quote, prices] = await Promise.all([
-    loadPrimaryProductImages(rows.map(({ product }) => product.id)),
+  const productIds = rows.map(({ product }) => product.id);
+  const [images, quote, prices, bonusByProductId] = await Promise.all([
+    loadPrimaryProductImages(productIds),
     getCheckoutRateSnapshot(currency),
     resolveProductPrices(
       rows.map(({ product }) => ({
@@ -116,6 +125,7 @@ export async function getCartDrawerView(
         compareAtAmount: product.compareAtAmount,
       })),
     ),
+    resolveActiveFlatBonusByProductId(productIds),
   ]);
 
   const items: CartDrawerItemView[] = [];
@@ -139,6 +149,10 @@ export async function getCartDrawerView(
       currency,
     );
     const lineTotalAmount = unitPriceAmount * item.quantity;
+    const bonusEarnUnitAmount = Math.max(
+      0,
+      Math.floor(bonusByProductId.get(product.id) ?? 0),
+    );
 
     items.push({
       id: item.id,
@@ -161,6 +175,7 @@ export async function getCartDrawerView(
         locale,
       ),
       modifierLines: describeModifiers(customization, modifiers, locale),
+      bonusEarnUnitAmount,
     });
     subtotalAmount += lineTotalAmount;
   }
@@ -168,6 +183,19 @@ export async function getCartDrawerView(
   const shippingAmount = 0;
   const adjustmentsAmount = 0;
   const totalAmount = subtotalAmount + adjustmentsAmount;
+  const bonusEarnAmount = computeFlatBonusEarnAmount(
+    items.map((item) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+    })),
+    new Map(
+      items.map((item) => [item.productId, item.bonusEarnUnitAmount] as const),
+    ),
+  );
+  const bonusEarnFormatted =
+    bonusEarnAmount > 0
+      ? `+${bonusEarnAmount.toLocaleString(locale === "en" ? "en-US" : "ru-RU")}`
+      : "";
 
   return {
     locale,
@@ -178,8 +206,10 @@ export async function getCartDrawerView(
     adjustmentsAmount,
     shippingAmount,
     totalAmount,
+    bonusEarnAmount,
     subtotalFormatted: formatMoneyAmount(subtotalAmount, currency, locale),
     shippingFormatted: formatMoneyAmount(shippingAmount, currency, locale),
     totalFormatted: formatMoneyAmount(totalAmount, currency, locale),
+    bonusEarnFormatted,
   };
 }

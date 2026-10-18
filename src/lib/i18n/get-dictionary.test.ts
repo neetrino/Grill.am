@@ -23,6 +23,10 @@ describe("getDictionary", () => {
     expect(getDictionary("hy").nav.shop).toBe("Մասնաճյուղեր");
     expect(getDictionary("hy").stores.titleLead).toBe("Մեր");
     expect(getDictionary("hy").admin.menu.products).toBe("Ապրանքներ");
+    expect(getDictionary("hy").profile.ordersList.allStatuses).toBe(
+      "Բոլոր կարգավիճակները",
+    );
+    expect(getDictionary("hy").admin.orders.status.pending).toBe("Սպասող");
     expect(getDictionary("ru").nav.home).toBe("Главная");
     expect(getDictionary("ru").nav.shop).toBe("Филиалы");
     expect(getDictionary("ru").admin.menu.products).toBe("Товары");

@@ -12,6 +12,8 @@ import {
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { invalidateAnalyticsCache } from "@/features/analytics/application/queries";
+import { syncOrderBonusEarn } from "@/features/loyalty/application/ledger";
 import {
   canTransitionOrderStatus,
   isOrderStatus,
@@ -135,6 +137,8 @@ export async function bulkChangeOrderStatusAction(
           correlationId: createId(),
         });
 
+        await syncOrderBonusEarn(tx, existing.id);
+
         return true;
       });
 
@@ -149,5 +153,6 @@ export async function bulkChangeOrderStatusAction(
   }
 
   revalidatePath(`/${locale}/admin/orders`);
+  await invalidateAnalyticsCache();
   return ok({ updated, skipped });
 }

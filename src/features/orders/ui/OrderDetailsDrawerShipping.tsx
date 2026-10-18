@@ -1,24 +1,19 @@
 "use client";
 
-import { MapPin } from "lucide-react";
-
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import {
   ORDER_DETAIL_CARD,
   ORDER_DETAIL_SECTION_TITLE,
 } from "@/features/orders/ui/order-detail-card-classes";
-import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 
 type OrderDetailsDrawerShippingProps = {
   detail: AdminOrderDetailView;
-  /** When true, only the delivery-method card is shown (customer sheet). */
+  /** When true, only the delivery-method lines are shown (customer sheet). */
   compact?: boolean;
 };
 
-/**
- * Delivery method card; optionally expands with address + payment for admin.
- */
+/** Shipping card — pickup store, or delivery method + address in one block. */
 export function OrderDetailsDrawerShipping({
   detail,
   compact = false,
@@ -27,121 +22,39 @@ export function OrderDetailsDrawerShipping({
   const drawer = dictionary.orders.drawer;
   const methodLabel = detail.isPickup
     ? drawer.pickupMethod
-    : (detail.deliveryLabel ?? detail.shippingMethod);
+    : (detail.deliveryLabel ?? detail.shippingMethod).replace(
+        /^Delivery\b/u,
+        drawer.delivery,
+      );
 
   return (
-    <>
-      <section className={ORDER_DETAIL_CARD}>
-        <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.shippingMethod}</h3>
-        <p className="text-sm text-gray-700">
-          <span className="text-gray-500">{drawer.method}: </span>
-          <span className="font-medium text-gray-900">{methodLabel}</span>
-        </p>
+    <section className={ORDER_DETAIL_CARD}>
+      <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.shippingMethod}</h3>
+      <dl className="space-y-2 text-sm">
+        <div className="flex flex-wrap items-baseline gap-x-1">
+          <dt className="text-gray-500">{drawer.method}:</dt>
+          <dd className="font-medium text-gray-900">{methodLabel}</dd>
+        </div>
         {detail.isPickup ? (
-          <p className="mt-2 text-sm text-gray-600">
-            {drawer.pickupStore}: {detail.addressLine || detail.storeName}
-          </p>
+          <div className="flex flex-wrap items-baseline gap-x-1">
+            <dt className="text-gray-500">{drawer.pickupStore}:</dt>
+            <dd className="font-medium text-gray-900">
+              {detail.addressLine || detail.storeName}
+            </dd>
+          </div>
         ) : null}
-      </section>
-
-      {compact ? null : (
-        <>
-          <section className={ORDER_DETAIL_CARD}>
-            <h3 className={ORDER_DETAIL_SECTION_TITLE}>
-              {drawer.shippingAddress}
-            </h3>
-            <div className="flex items-start gap-2 text-sm">
-              <MapPin
-                className="mt-0.5 h-4 w-4 shrink-0 text-gray-400"
-                aria-hidden
-              />
-              <p className="font-medium text-gray-900">{detail.addressLine}</p>
+        {!detail.isPickup && !compact ? (
+          <>
+            <div className="flex flex-wrap items-baseline gap-x-1">
+              <dt className="text-gray-500">{drawer.address}:</dt>
+              <dd className="font-medium text-gray-900">{detail.addressLine}</dd>
             </div>
             {detail.addressHint ? (
-              <p className="mt-2 text-xs text-gray-500">{detail.addressHint}</p>
+              <p className="text-xs text-gray-500">{detail.addressHint}</p>
             ) : null}
-          </section>
-
-          <section className={ORDER_DETAIL_CARD}>
-            <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.payment}</h3>
-            <dl className="space-y-3 text-sm">
-              <div className="flex flex-wrap items-center gap-x-2">
-                <dt className="text-gray-500">{drawer.method}:</dt>
-                <dd className="font-medium text-gray-900">
-                  {detail.paymentMethod}
-                </dd>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-2">
-                <dt className="text-gray-500">{drawer.amount}:</dt>
-                <dd className="font-medium text-gray-900">
-                  {formatOrderDrawerMoney(
-                    detail.paymentAmount,
-                    detail.baseCurrency,
-                  )}
-                </dd>
-              </div>
-              {detail.cashTenderedAmount != null ? (
-                <>
-                  <div className="flex flex-wrap items-center gap-x-2">
-                    <dt className="text-gray-500">{drawer.customerPaysWith}:</dt>
-                    <dd className="font-medium text-gray-900">
-                      {formatOrderDrawerMoney(
-                        detail.cashTenderedAmount,
-                        detail.baseCurrency,
-                      )}
-                    </dd>
-                  </div>
-                  {detail.cashChangeAmount != null &&
-                  detail.cashChangeAmount > 0 ? (
-                    <div className="flex flex-wrap items-center gap-x-2">
-                      <dt className="text-gray-500">{drawer.prepareChange}:</dt>
-                      <dd className="font-semibold text-amber-800">
-                        {formatOrderDrawerMoney(
-                          detail.cashChangeAmount,
-                          detail.baseCurrency,
-                        )}
-                      </dd>
-                    </div>
-                  ) : null}
-                </>
-              ) : null}
-            </dl>
-          </section>
-
-          <section className={ORDER_DETAIL_CARD}>
-            <h3 className={ORDER_DETAIL_SECTION_TITLE}>{drawer.customer}</h3>
-            <dl className="space-y-3 text-sm">
-              <div className="flex flex-wrap items-center gap-x-2">
-                <dt className="text-gray-500">{drawer.name}:</dt>
-                <dd className="font-medium text-gray-900">{detail.contactName}</dd>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-2">
-                <dt className="text-gray-500">{drawer.phone}:</dt>
-                <dd className="font-medium text-gray-900">
-                  {detail.contactPhone}
-                </dd>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-2">
-                <dt className="text-gray-500">{drawer.email}:</dt>
-                <dd className="font-medium text-gray-900">
-                  {detail.contactEmail}
-                </dd>
-              </div>
-            </dl>
-          </section>
-
-          {detail.customerNote ? (
-            <section className={ORDER_DETAIL_CARD}>
-              <h3 className={ORDER_DETAIL_SECTION_TITLE}>
-                {drawer.customerNote}
-              </h3>
-              <p className="whitespace-pre-wrap text-sm font-medium text-gray-900">
-                {detail.customerNote}
-              </p>
-            </section>
-          ) : null}
-        </>
-      )}
-    </>
+          </>
+        ) : null}
+      </dl>
+    </section>
   );
 }

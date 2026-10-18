@@ -14,6 +14,12 @@ export type CheckoutCardBadge = {
   src: string;
 };
 
+/**
+ * Cash-on-delivery icon shown on checkout.
+ * Served from `public/` so it is available before the file is copied to R2.
+ */
+export const CHECKOUT_CASH_ICON = "/assets/payments/checkout/cash.png";
+
 /** Card-rail badges for ArCa / bank-card payment option. */
 export const CHECKOUT_CARD_BADGES: readonly CheckoutCardBadge[] = [
   { alt: "Visa", src: FOOTER_PAYMENT_ASSETS.visa },

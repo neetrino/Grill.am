@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { auditLogs, orderEvents, orders } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { syncOrderBonusEarn } from "@/features/loyalty/application/ledger";
 import {
   canTransitionOrderStatus,
   isOrderStatus,
@@ -145,6 +146,8 @@ export async function resolvePaymentReviewAction(
         correlationId,
         context: { orderNumber, resolutionType },
       });
+
+      await syncOrderBonusEarn(tx, locked.id);
 
       return {
         orderNumber: locked.orderNumber,

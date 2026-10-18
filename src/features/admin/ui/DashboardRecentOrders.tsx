@@ -12,9 +12,10 @@ import {
 } from "@/features/admin/ui/admin-ui";
 import {
   ADMIN_BADGE,
-  paymentStatusBadgeClass,
+  orderStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import { adminOrderStatusLabel } from "@/features/orders/ui/admin-order-status-labels";
 import { useAdminOrderDrawer } from "@/features/orders/ui/useAdminOrderDrawer";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -60,9 +61,9 @@ function DashboardRecentOrderButton({
               #{order.orderNumber}
             </p>
             <span
-              className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.status)}`}
+              className={`${ADMIN_BADGE} uppercase ${orderStatusBadgeClass(order.status)}`}
             >
-              {order.status}
+              {adminOrderStatusLabel(order.status, dictionary.orders.status)}
             </span>
           </div>
           <p className="truncate text-[11px] text-gray-500">

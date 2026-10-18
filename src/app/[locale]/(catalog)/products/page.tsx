@@ -14,6 +14,8 @@ import { CatalogListingView } from "@/features/products/ui/CatalogListingView";
 import { MobileCatalogCategoryChips } from "@/features/products/ui/MobileCatalogCategoryChips";
 import { MobileCatalogPriceFilters } from "@/features/products/ui/MobileCatalogPriceFilters";
 import { ProductCard } from "@/features/products/ui/ProductCard";
+import { formatProductCoinsEarnLabel } from "@/features/products/ui/format-product-coins-earn-label";
+import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { currencySymbols, defaultCurrency } from "@/lib/money/currency";
@@ -68,6 +70,13 @@ export default async function ProductsPage({
       compareAtFormatted: compareAt?.formatted ?? null,
     };
   });
+
+  const bonusEarnByProductId = await resolveProductCardBonusEarnByProductId(
+    catalog.products.map((product) => ({
+      id: product.id,
+      priceAmount: product.priceAmount,
+    })),
+  );
 
   const selectedCategory =
     filters.category.length > 0
@@ -225,6 +234,11 @@ export default async function ProductsPage({
                 addToCartLabel={dictionary.product.addToCart}
                 requiresConfiguration={product.requiresConfiguration}
                 hitLabel={product.isFeatured ? dictionary.product.hit : null}
+                bonusEarnLabel={formatProductCoinsEarnLabel(
+                  dictionary.product.bonusEarn,
+                  bonusEarnByProductId.get(product.id) ?? 0,
+                  rawLocale,
+                )}
               />
             ))}
           </CatalogListingView>

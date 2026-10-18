@@ -3,6 +3,12 @@ import { z } from "zod";
 import { isCheckoutDeliveryCity } from "@/features/checkout/domain/checkout-delivery-cities";
 
 export const addressFormSchema = z.object({
+  label: z
+    .string()
+    .trim()
+    .max(80)
+    .optional()
+    .transform((value) => (value && value.length > 0 ? value : null)),
   line1: z.string().trim().min(1).max(200),
   city: z
     .string()

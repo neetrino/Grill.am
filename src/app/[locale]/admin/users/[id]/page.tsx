@@ -1,9 +1,8 @@
 import {
   CalendarDays,
   CircleCheckBig,
-  LogIn,
+  Gift,
   Mail,
-  MailCheck,
   Phone,
   Shield,
 } from "lucide-react";
@@ -15,54 +14,26 @@ import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
   getEligibleUserStatuses,
   isUserRole,
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
+import { AdminUserBonusSection } from "@/features/users/ui/AdminUserBonusSection";
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
-import {
-  adminUserRoleLabel,
-  adminUserStatusLabel,
-} from "@/features/users/ui/admin-user-labels";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
-import {
-  formatAppDateTimeMinutes,
-  formatAppDisplayDate,
-} from "@/lib/datetime/app-timezone";
+import { formatAppDisplayDate } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type AdminUserDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
 
 const FIELD_ICON_CLASS = "h-4 w-4";
-
-function userStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "ACTIVE") return "bg-green-100 text-green-800";
-  if (normalized === "PENDING" || normalized === "INVITED") {
-    return "bg-yellow-100 text-yellow-800";
-  }
-  if (
-    normalized === "SUSPENDED" ||
-    normalized === "BANNED" ||
-    normalized === "ANONYMIZED"
-  ) {
-    return "bg-red-100 text-red-800";
-  }
-  return "bg-gray-100 text-gray-800";
-}
-
-function userRoleBadgeClass(role: string): string {
-  return role.toUpperCase() === "ADMIN"
-    ? "bg-brand-red/10 text-brand-red"
-    : "bg-gray-100 text-gray-800";
-}
 
 export default async function AdminUserDetailPage({
   params,
@@ -82,7 +53,7 @@ export default async function AdminUserDetailPage({
     notFound();
   }
 
-  const { user, recentOrders } = detail;
+  const { user, recentOrders, bonus } = detail;
   const role = isUserRole(user.role) ? user.role : null;
   const status = isUserStatus(user.status) ? user.status : null;
   const eligibleStatuses = status ? getEligibleUserStatuses(status) : [];
@@ -110,21 +81,31 @@ export default async function AdminUserDetailPage({
             icon={<Shield className={FIELD_ICON_CLASS} />}
             label={detailCopy.role}
           >
-            <span
-              className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}
-            >
-              {adminUserRoleLabel(user.role, copy.roles)}
-            </span>
+            {role ? (
+              <UpdateUserRoleForm
+                locale={locale}
+                userId={user.id}
+                currentRole={role}
+                disabled={isAnonymized}
+              />
+            ) : (
+              <p className="text-sm text-red-700">{common.unknownRole}</p>
+            )}
           </AdminDetailField>
           <AdminDetailField
             icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
             label={detailCopy.status}
           >
-            <span
-              className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
-            >
-              {adminUserStatusLabel(user.status, copy.statuses)}
-            </span>
+            {status ? (
+              <UpdateUserStatusForm
+                locale={locale}
+                userId={user.id}
+                currentStatus={status}
+                eligibleStatuses={eligibleStatuses}
+              />
+            ) : (
+              <p className="text-sm text-red-700">{common.unknownStatus}</p>
+            )}
           </AdminDetailField>
           <AdminDetailField
             icon={<Mail className={FIELD_ICON_CLASS} />}
@@ -139,52 +120,29 @@ export default async function AdminUserDetailPage({
             {user.phone ?? common.dash}
           </AdminDetailField>
           <AdminDetailField
-            icon={<MailCheck className={FIELD_ICON_CLASS} />}
-            label={detailCopy.emailVerified}
-          >
-            {user.emailVerifiedAt
-              ? formatAppDisplayDate(user.emailVerifiedAt)
-              : common.no}
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<LogIn className={FIELD_ICON_CLASS} />}
-            label={detailCopy.lastLogin}
-          >
-            {user.lastLoginAt
-              ? formatAppDateTimeMinutes(user.lastLoginAt)
-              : common.never}
-          </AdminDetailField>
-          <AdminDetailField
             icon={<CalendarDays className={FIELD_ICON_CLASS} />}
             label={detailCopy.created}
           >
             {formatAppDisplayDate(user.createdAt)}
           </AdminDetailField>
+          <AdminDetailField
+            icon={<Gift className={FIELD_ICON_CLASS} />}
+            label={detailCopy.bonusBalance}
+          >
+            <span className="font-semibold tabular-nums text-gray-900">
+              {formatMoneyAmount(bonus.balanceAmount, "AMD", locale)}
+            </span>
+          </AdminDetailField>
         </div>
       </Card>
 
-      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-stretch">
-        {role ? (
-          <UpdateUserRoleForm
-            locale={locale}
-            userId={user.id}
-            currentRole={role}
-            disabled={isAnonymized}
-          />
-        ) : (
-          <p className="text-sm text-red-700">{common.unknownRole}</p>
-        )}
-        {status ? (
-          <UpdateUserStatusForm
-            locale={locale}
-            userId={user.id}
-            currentStatus={status}
-            eligibleStatuses={eligibleStatuses}
-          />
-        ) : (
-          <p className="text-sm text-red-700">{common.unknownStatus}</p>
-        )}
-      </div>
+      <AdminUserBonusSection
+        locale={locale}
+        balanceAmount={bonus.balanceAmount}
+        totalEarnedAmount={bonus.totalEarnedAmount}
+        totalSpentAmount={bonus.totalSpentAmount}
+        ledger={bonus.ledger}
+      />
 
       <AdminUserRecentOrders locale={locale} orders={recentOrders} />
     </section>

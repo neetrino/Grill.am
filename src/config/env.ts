@@ -60,6 +60,16 @@ const envSchema = z.object({
     return parseCrispWebsiteId(emptied) ?? emptied;
   }, z.string().uuid().optional()),
   AUTH_SECRET: optionalNonEmptyString(),
+  /**
+   * Server-only HMAC secret for SMS OTP codes.
+   * Generate with: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+   * Required for SMS login and phone verification. Password login does not use it.
+   */
+  OTP_SECRET: z.preprocess(emptyToUndefined, z.string().min(32).optional()),
+  /** MOBIPACE HTTP API 4.0 account. Required only when SMS OTP is used. */
+  MOBIPACE_USERNAME: optionalNonEmptyString(),
+  MOBIPACE_PASSWORD: optionalNonEmptyString(),
+  MOBIPACE_SMS_SENDER: optionalNonEmptyString(),
   DATABASE_URL: optionalNonEmptyString(),
   UPSTASH_REDIS_REST_URL: optionalUrl(),
   UPSTASH_REDIS_REST_TOKEN: optionalNonEmptyString(),
@@ -167,6 +177,10 @@ export function getEnv(): AppEnv {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_CRISP_WEBSITE_ID: process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID,
     AUTH_SECRET: process.env.AUTH_SECRET,
+    OTP_SECRET: process.env.OTP_SECRET,
+    MOBIPACE_USERNAME: process.env.MOBIPACE_USERNAME,
+    MOBIPACE_PASSWORD: process.env.MOBIPACE_PASSWORD,
+    MOBIPACE_SMS_SENDER: process.env.MOBIPACE_SMS_SENDER,
     DATABASE_URL: process.env.DATABASE_URL,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,

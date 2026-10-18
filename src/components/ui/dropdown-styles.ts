@@ -28,7 +28,91 @@ export const DROPDOWN_PANEL_CLOSED_CLASS =
 
 export const DROPDOWN_OPTION_CLASS = "dropdown-option";
 
+/** Option with a leading icon: row layout instead of the default block. */
+export const DROPDOWN_OPTION_ROW_CLASS = "dropdown-option--row";
+
 export const DROPDOWN_OPTION_SELECTED_CLASS = "dropdown-option--selected";
+
+export type DropdownPlacement = "bottom" | "top";
+
+export type ResolveDropdownPlacementInput = {
+  /** `"auto"` flips the panel above the trigger when it overflows below. */
+  placement: DropdownPlacement | "auto";
+  /** Expected panel height (usually its max height, since panels scroll). */
+  panelHeightPx: number;
+  triggerTop: number;
+  triggerBottom: number;
+  viewportHeight: number;
+  gapPx: number;
+  paddingPx: number;
+  /**
+   * When false, keep the panel's natural height (no max-height shrink/scroll)
+   * and only clamp its `top` into the viewport.
+   */
+  shrinkToFit?: boolean;
+};
+
+/** Picks the side an `auto` panel opens to, based on free viewport space. */
+function resolveDropdownPlacement({
+  placement,
+  panelHeightPx,
+  triggerTop,
+  triggerBottom,
+  viewportHeight,
+  gapPx,
+  paddingPx,
+}: ResolveDropdownPlacementInput): DropdownPlacement {
+  if (placement !== "auto") {
+    return placement;
+  }
+
+  const spaceBelow = viewportHeight - triggerBottom - gapPx - paddingPx;
+  const spaceAbove = triggerTop - gapPx - paddingPx;
+  return spaceBelow < panelHeightPx && spaceAbove > spaceBelow
+    ? "top"
+    : "bottom";
+}
+
+/**
+ * Viewport-relative vertical offsets for a fixed panel. The panel is flipped
+ * above the trigger when it would not fit below, then clamped so it stays
+ * inside the viewport. Optionally shrinks with max-height when space is tight.
+ */
+export function dropdownVerticalPosition(
+  input: ResolveDropdownPlacementInput,
+): { top?: number; bottom?: number; maxHeight?: string } {
+  const {
+    panelHeightPx,
+    triggerTop,
+    triggerBottom,
+    viewportHeight,
+    gapPx,
+    paddingPx,
+    shrinkToFit = true,
+  } = input;
+
+  const usableHeight = Math.max(120, viewportHeight - paddingPx * 2);
+  const height =
+    shrinkToFit === false
+      ? panelHeightPx
+      : Math.min(panelHeightPx, usableHeight);
+  const placement = resolveDropdownPlacement(input);
+
+  let top =
+    placement === "top"
+      ? triggerTop - gapPx - height
+      : triggerBottom + gapPx;
+
+  const maxTop = viewportHeight - paddingPx - height;
+  top = Math.min(Math.max(top, paddingPx), Math.max(paddingPx, maxTop));
+
+  return {
+    top,
+    ...(shrinkToFit !== false && height < panelHeightPx
+      ? { maxHeight: `${height}px` }
+      : {}),
+  };
+}
 
 export type DropdownPortalPosition = {
   /** Distance from viewport top (mutually exclusive with `bottom`). */

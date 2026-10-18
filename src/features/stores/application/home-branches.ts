@@ -26,18 +26,26 @@ export function fallbackStorefrontBranches(
   });
 }
 
-/** Maps CMS/fallback branches to home-page cards. */
+/**
+ * Maps CMS/fallback branches to home-page cards. Branches without a photo are
+ * pushed to the end; within each group the admin sort order is preserved.
+ */
 export function toHomeBranchItems(
   locale: Locale,
   branches: readonly StorefrontBranch[],
   fallbackPhone: string,
 ): HomeBranchItem[] {
-  return branches.map((branch) => ({
-    id: branch.slug,
-    href: buildStoresPageHref(locale, branch.slug),
-    title: branch.title,
-    address: branch.address,
-    phone: branch.phone ?? fallbackPhone,
-    imageUrl: branch.imageUrl,
-  }));
+  return branches
+    .map((branch) => ({
+      id: branch.slug,
+      href: buildStoresPageHref(locale, branch.slug),
+      title: branch.title,
+      address: branch.address,
+      phone: branch.phone ?? fallbackPhone,
+      imageUrl: branch.imageUrl,
+    }))
+    .sort(
+      (first, second) =>
+        Number(Boolean(second.imageUrl)) - Number(Boolean(first.imageUrl)),
+    );
 }

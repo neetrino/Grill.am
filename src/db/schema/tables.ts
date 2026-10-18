@@ -5,6 +5,7 @@
 export const CANONICAL_TABLES = [
   "users",
   "sessions",
+  "phone_otp_challenges",
   "addresses",
   "media_assets",
   "store_settings",
@@ -28,6 +29,9 @@ export const CANONICAL_TABLES = [
   "order_items",
   "order_events",
   "payments",
+  "bonus_ledger",
+  "product_bonus_rules",
+  "category_bonus_rules",
   "reviews",
   "contact_messages",
   "job_applications",

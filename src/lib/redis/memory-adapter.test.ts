@@ -21,4 +21,15 @@ describe("memory redis adapter", () => {
     await expect(redis.getdel("token")).resolves.toBeNull();
     await expect(redis.get("token")).resolves.toBeNull();
   });
+
+  it("compareAndDelete removes only the matching token", async () => {
+    const redis = createMemoryRedisAdapter().getClient();
+
+    await redis.set("lock", "owner-b", { ex: 120 });
+    await expect(redis.compareAndDelete("lock", "owner-a")).resolves.toBe(0);
+    await redis.set("lock", "owner-c", { ex: 120 });
+    await expect(redis.compareAndDelete("lock", "owner-b")).resolves.toBe(0);
+    await expect(redis.get("lock")).resolves.toBe("owner-c");
+    await expect(redis.compareAndDelete("lock", "owner-c")).resolves.toBe(1);
+  });
 });

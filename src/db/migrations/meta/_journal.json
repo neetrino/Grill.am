@@ -120,6 +120,48 @@
       "when": 1786090000000,
       "tag": "0017_store_locations",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1786100000000,
+      "tag": "0018_loyalty_bonuses",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1786110000000,
+      "tag": "0019_product_bonus_rules",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1786120000000,
+      "tag": "0020_category_bonus_rules",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1786130000000,
+      "tag": "0021_bonus_earn_repeatable",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1786140000000,
+      "tag": "0022_phone_otp",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1786150000000,
+      "tag": "0023_phone_verified_unique",
+      "breakpoints": true
     }
   ]
 }

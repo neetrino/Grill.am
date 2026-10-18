@@ -116,6 +116,7 @@ function itemFromDisplay(
       display.locale,
     ),
     modifierLines: display.modifierLines,
+    bonusEarnUnitAmount: 0,
   };
 }
 

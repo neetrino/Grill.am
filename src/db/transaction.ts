@@ -9,6 +9,12 @@ import ws from "ws";
 import { requireDatabaseUrl } from "@/config/env";
 import { isLocalDatabaseUrl } from "@/db/is-local-database-url";
 import * as schema from "@/db/schema";
+import { logger } from "@/lib/observability/logger";
+
+type TransactionPool = {
+  end(): Promise<void>;
+  on(event: "error", listener: (error: Error) => void): unknown;
+};
 
 neonConfig.webSocketConstructor = ws;
 
@@ -27,21 +33,42 @@ export async function withTransaction<T>(
 
   if (isLocalDatabaseUrl(connectionString)) {
     const pool = new PgPool({ connectionString });
+    watchPool(pool);
     const db = drizzlePg({ client: pool, schema });
     try {
       return await db.transaction(async (tx) =>
         operation(tx as unknown as DatabaseTransaction),
       );
     } finally {
-      await pool.end();
+      await closePool(pool);
     }
   }
 
   const pool = new NeonPool({ connectionString });
+  watchPool(pool);
   const db = drizzle({ client: pool, schema });
   try {
     return await db.transaction(operation);
   } finally {
+    await closePool(pool);
+  }
+}
+
+function watchPool(pool: TransactionPool): void {
+  pool.on("error", (error) => {
+    logger.warn("db.transaction_pool_error", {
+      name: error instanceof Error ? error.name : "Error",
+    });
+  });
+}
+
+/** Close the pool without hiding the transaction result or throwing during cleanup. */
+async function closePool(pool: TransactionPool): Promise<void> {
+  try {
     await pool.end();
+  } catch (error) {
+    logger.warn("db.transaction_pool_close_failed", {
+      name: error instanceof Error ? error.name : "Error",
+    });
   }
 }

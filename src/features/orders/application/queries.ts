@@ -7,7 +7,6 @@ import {
   eq,
   gte,
   ilike,
-  inArray,
   lte,
   or,
   sql,
@@ -23,14 +22,16 @@ import {
   products,
   users,
 } from "@/db/schema";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
-import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
 import { analyticsPeriodUtcBounds } from "@/features/analytics/domain/date-range";
-import { getStoreRevenue } from "@/features/settings/application/queries";
+import {
+  includedAmountSql,
+  sumIncludedRevenueSql,
+} from "@/features/analytics/application/revenue-amount-sql";
 import {
   latestPaymentMethodSelect,
   orderItemsCountSelect,
 } from "@/features/orders/application/order-list-selects";
+import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
 import {
   appDayEndUtc,
   appDayStartUtc,
@@ -296,9 +297,7 @@ export async function getAdminDashboardMetrics(input: {
   from: string;
   to: string;
 }): Promise<DashboardMetrics> {
-  const revenue = await getStoreRevenue();
   const bounds = periodBounds(input.from, input.to);
-  const revenueStatuses = revenue.statuses as OrderStatus[];
 
   const [
     [usersRow],
@@ -326,9 +325,10 @@ export async function getAdminDashboardMetrics(input: {
       ),
     getDb()
       .select({
-        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(
-          Number,
-        ),
+        value: sumIncludedRevenueSql({
+          amount: orders.totalAmount,
+          orderStatus: orders.status,
+        }),
       })
       .from(orders)
       .where(
@@ -336,14 +336,14 @@ export async function getAdminDashboardMetrics(input: {
           eq(orders.isArchived, false),
           gte(orders.placedAt, bounds.start),
           lte(orders.placedAt, bounds.end),
-          inArray(orders.status, revenueStatuses),
         ),
       ),
     getDb()
       .select({
-        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(
-          Number,
-        ),
+        value: sumIncludedRevenueSql({
+          amount: orders.totalAmount,
+          orderStatus: orders.status,
+        }),
       })
       .from(orders)
       .where(
@@ -351,7 +351,6 @@ export async function getAdminDashboardMetrics(input: {
           eq(orders.isArchived, false),
           gte(orders.placedAt, bounds.previousStart),
           lte(orders.placedAt, bounds.previousEnd),
-          inArray(orders.status, revenueStatuses),
         ),
       ),
     getDb()
@@ -376,9 +375,10 @@ export async function getAdminDashboardMetrics(input: {
       .select({
         productId: orderItems.productId,
         title: orderItems.productTitleSnapshot,
-        quantity: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(
-          Number,
-        ),
+        quantity: sql<number>`coalesce(sum(${includedAmountSql({
+          amount: orderItems.quantity,
+          orderStatus: orders.status,
+        })}), 0)`.mapWith(Number),
       })
       .from(orderItems)
       .innerJoin(orders, eq(orderItems.orderId, orders.id))
@@ -387,11 +387,17 @@ export async function getAdminDashboardMetrics(input: {
           eq(orders.isArchived, false),
           gte(orders.placedAt, bounds.start),
           lte(orders.placedAt, bounds.end),
-          inArray(orders.status, revenueStatuses),
         ),
       )
       .groupBy(orderItems.productId, orderItems.productTitleSnapshot)
-      .orderBy(desc(sql`sum(${orderItems.quantity})`))
+      .orderBy(
+        desc(
+          sql`sum(${includedAmountSql({
+            amount: orderItems.quantity,
+            orderStatus: orders.status,
+          })})`,
+        ),
+      )
       .limit(5),
   ]);
 

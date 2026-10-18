@@ -32,7 +32,7 @@ export function FooterCornerShell({ children }: FooterCornerShellProps) {
     <div
       className={`mt-auto hidden lg:block ${
         isAuthPage
-          ? "storefront-bleed bg-transparent"
+          ? "storefront-bleed relative z-[1] bg-transparent"
           : grayCorners
             ? "bg-[#f2f0f0]"
             : "bg-white"

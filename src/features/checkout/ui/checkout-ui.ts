@@ -7,10 +7,20 @@ export const CHECKOUT_SECTION_CARD_CLASS =
   "rounded-3xl border border-gray-200 bg-white px-5 py-6 shadow-sm sm:px-6 sm:py-7";
 
 export const CHECKOUT_SECTION_TITLE_CLASS =
-  "text-lg font-bold tracking-tight text-gray-900";
+  "text-lg font-bold tracking-tight text-gray-900 transition-colors duration-300";
 
 export const CHECKOUT_FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 bg-white px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15 disabled:bg-gray-50";
+
+/** Invalid feedback: title turns red and shakes briefly. */
+export const CHECKOUT_TITLE_INVALID_CLASS =
+  "animate-checkout-field-shake !text-brand-red";
+
+/** @deprecated Alias for stale HMR bundles — use CHECKOUT_TITLE_INVALID_CLASS. */
+export const CHECKOUT_BLOCK_INVALID_CLASS = CHECKOUT_TITLE_INVALID_CLASS;
+
+/** How long invalid title red + shake stay visible before clearing. */
+export const CHECKOUT_INVALID_FEEDBACK_MS = 1000;
 
 export const CHECKOUT_OPTION_BASE_CLASS =
   "flex cursor-pointer items-center rounded-[15px] border-2 p-4 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none";
@@ -32,22 +42,22 @@ export const CHECKOUT_PICKUP_BRANCH_LIST_CLASS =
 export const CHECKOUT_PICKUP_BRANCH_ROW_CLASS =
   "flex cursor-pointer items-center px-3 py-2 outline-none transition-colors [-webkit-tap-highlight-color:transparent] focus-within:bg-gray-50";
 
-export const CHECKOUT_PICKUP_BRANCH_ROW_SELECTED_CLASS = "bg-brand-red/10";
+export const CHECKOUT_PICKUP_BRANCH_ROW_SELECTED_CLASS = "bg-brand-green/10";
 
 export const CHECKOUT_PICKUP_BRANCH_ROW_DEFAULT_CLASS = "hover:bg-gray-50";
 
 export const CHECKOUT_PICKUP_TRIGGER_CLASS =
-  "flex h-11 w-full items-center gap-3 rounded-[15px] border border-gray-200 bg-white px-3 text-left text-gray-900 outline-none transition hover:bg-gray-50 focus-visible:border-brand-red/40 focus-visible:ring-2 focus-visible:ring-brand-red/15 disabled:bg-gray-50";
+  "flex h-11 w-full items-center gap-3 rounded-[15px] border border-gray-200 bg-white px-3 text-left text-gray-900 outline-none transition hover:bg-gray-50 focus-visible:border-brand-green/40 focus-visible:ring-2 focus-visible:ring-brand-green/15 disabled:bg-gray-50";
 
 export const CHECKOUT_OPTION_SELECTED_CLASS =
-  "border-brand-red bg-brand-red/10";
+  "border-brand-green bg-brand-green/10";
 
 export const CHECKOUT_OPTION_DEFAULT_CLASS =
   "border-gray-200 hover:bg-gray-50/80";
 
 /** Custom radio — Grill circle, not the browser control. */
 export const CHECKOUT_RADIO_CLASS =
-  "size-[1.125rem] shrink-0 appearance-none rounded-full border-[1.5px] border-gray-300 bg-white transition checked:border-brand-red checked:bg-brand-red checked:shadow-[inset_0_0_0_3px_#fff] focus-visible:ring-2 focus-visible:ring-brand-red/25 disabled:opacity-50";
+  "size-[1.125rem] shrink-0 appearance-none rounded-full border-[1.5px] border-gray-300 bg-white transition checked:border-brand-green checked:bg-brand-green checked:shadow-[inset_0_0_0_3px_#fff] focus-visible:ring-2 focus-visible:ring-brand-green/25 disabled:opacity-50";
 
 export const CHECKOUT_ALERT_CLASS = "rounded-[15px]";
 

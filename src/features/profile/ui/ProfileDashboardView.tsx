@@ -14,6 +14,7 @@ import type { AdminOrderDetailView } from "@/features/orders/application/order-d
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
 import { reorderCustomerOrderAction } from "@/features/orders/application/reorder-order";
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import { adminOrderStatusLabel } from "@/features/orders/ui/admin-order-status-labels";
 import type {
   ProfileDashboardStats,
   ProfileRecentOrder,
@@ -177,7 +178,10 @@ export function ProfileDashboardView({
                   <li key={order.id} className="min-w-0">
                     <ProfileRecentOrderCard
                       orderNumber={order.orderNumber}
-                      status={order.status}
+                      status={adminOrderStatusLabel(
+                        order.status,
+                        adminDictionary.orders.status,
+                      )}
                       totalLabel={formatMoneyAmount(
                         order.totalAmount,
                         "AMD",

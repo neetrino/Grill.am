@@ -9,6 +9,7 @@ import {
   meetsStorefrontMinimumOrder,
   parseEnabledCurrencies,
   parseFxRates,
+  parseLoyalty,
   parseMaintenance,
   parseMinimumOrder,
   parseRevenueStatuses,
@@ -19,9 +20,15 @@ import {
 describe("store settings parsers", () => {
   it("defaults revenue statuses safely", () => {
     expect(parseRevenueStatuses(null)).toEqual(DEFAULT_REVENUE_STATUSES);
+    expect(DEFAULT_REVENUE_STATUSES).not.toContain("CANCELLED");
     expect(parseRevenueStatuses({ statuses: ["DELIVERED", "CANCELLED"] })).toEqual([
       "DELIVERED",
     ]);
+    expect(
+      parseRevenueStatuses({
+        statuses: ["PENDING", "PROCESSING", "DELIVERED", "REFUNDED", "CANCELLED"],
+      }),
+    ).toEqual(["PENDING", "PROCESSING", "DELIVERED", "REFUNDED"]);
   });
 
   it("parses maintenance and stacking flags", () => {
@@ -86,5 +93,36 @@ describe("store settings parsers", () => {
     expect(resolveEnabledDisplayCurrency("USD", ["AMD", "RUB"])).toBe("AMD");
     expect(resolveEnabledDisplayCurrency("RUB", ["USD"])).toBe("USD");
     expect(resolveEnabledDisplayCurrency("USD", ["AMD", "USD"])).toBe("USD");
+  });
+
+  it("parses loyalty settings", () => {
+    expect(parseLoyalty(null)).toEqual({
+      earnPercent: 0,
+      earnMinOrderAmount: null,
+    });
+    expect(
+      parseLoyalty({ earnPercent: 5, earnMinOrderAmount: 2_000 }),
+    ).toEqual({
+      earnPercent: 5,
+      earnMinOrderAmount: 2_000,
+    });
+    expect(
+      parseLoyalty({ earnPercent: 5, redeemMinOrderAmount: 3_000 }),
+    ).toEqual({
+      earnPercent: 5,
+      earnMinOrderAmount: 3_000,
+    });
+    expect(
+      parseLoyalty({ earnPercent: 101, earnMinOrderAmount: -1 }),
+    ).toEqual({
+      earnPercent: 0,
+      earnMinOrderAmount: null,
+    });
+    expect(
+      parseLoyalty({ earnPercent: 5, maxRedeemPercent: 20 }),
+    ).toEqual({
+      earnPercent: 5,
+      earnMinOrderAmount: null,
+    });
   });
 });

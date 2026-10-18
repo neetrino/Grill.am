@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Minus, Plus, ShoppingBasket, Trash2 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { HeaderCoinsIcon } from "@/components/layout/HeaderCoinsIcon";
 import { useCartItemCount } from "@/features/cart/cart-client-sync";
 import { CartEmptyState } from "@/features/cart/ui/CartEmptyState";
 import {
@@ -136,27 +137,24 @@ export function CatalogCartSidebar({
       </div>
 
       <div className="border-t border-[#f3f4f6] px-5 pt-[21px] pb-8">
-        <dl className="space-y-0 text-sm">
+        <dl className="text-sm">
           <div className="flex items-center justify-between leading-5">
-            <dt className="text-[#4a5565]">{labels.subtotal}</dt>
-            <dd className="font-medium tabular-nums text-[#101828]">
-              {view?.subtotalFormatted ?? "—"}
+            <dt className="font-bold text-[#101828]">{labels.total}</dt>
+            <dd className="font-bold tabular-nums text-brand-red">
+              {view?.totalFormatted ?? "—"}
             </dd>
           </div>
-          <div className="flex items-center justify-between pt-2.5 leading-5">
-            <dt className="text-[#4a5565]">{labels.shipping}</dt>
-            <dd className="font-medium tabular-nums text-[#101828]">
-              {view?.shippingFormatted ?? "—"}
-            </dd>
-          </div>
-          <div className="mt-2.5 border-t border-[#f3f4f6] pt-3.5">
-            <div className="flex items-center justify-between leading-5">
-              <dt className="font-bold text-[#101828]">{labels.total}</dt>
-              <dd className="font-bold tabular-nums text-brand-red">
-                {view?.totalFormatted ?? "—"}
+          {view && view.bonusEarnAmount > 0 ? (
+            <div className="mt-2.5 flex items-center justify-between leading-5">
+              <dt className="flex items-center gap-1.5 text-[#4a5565]">
+                <HeaderCoinsIcon className="size-5 shrink-0" />
+                <span>{labels.grillCoin}</span>
+              </dt>
+              <dd className="font-semibold tabular-nums text-emerald-700">
+                {view.bonusEarnFormatted}
               </dd>
             </div>
-          </div>
+          ) : null}
         </dl>
 
         <AppLink

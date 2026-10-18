@@ -22,7 +22,19 @@ export type UpstashRedisCommands = {
   ) => Promise<unknown>;
   del: (key: string) => Promise<number>;
   getdel: (key: string) => Promise<unknown>;
+  incr: (key: string) => Promise<number>;
+  expire: (key: string, seconds: number) => Promise<number>;
+  eval: (script: string, keys: string[], args: string[]) => Promise<unknown>;
 };
+
+/** Deletes a key only when its value still equals the caller's token. */
+export const COMPARE_AND_DELETE_SCRIPT = `
+if redis.call("get", KEYS[1]) == ARGV[1] then
+  return redis.call("del", KEYS[1])
+else
+  return 0
+end
+`;
 
 /**
  * Upstash REST may JSON-decode values. Callers expect strings
@@ -56,6 +68,21 @@ function wrapCommands(redis: UpstashRedisCommands): RedisClient {
     async getdel(key) {
       return toStringOrNull(await redis.getdel(key));
     },
+    async incr(key) {
+      const value = await redis.incr(key);
+      if (typeof value !== "number" || !Number.isFinite(value)) {
+        throw new Error("Redis incr failed");
+      }
+      return value;
+    },
+    async expire(key, seconds) {
+      const value = await redis.expire(key, seconds);
+      return typeof value === "number" ? value : 0;
+    },
+    async compareAndDelete(key, token) {
+      const value = await redis.eval(COMPARE_AND_DELETE_SCRIPT, [key], [token]);
+      return value === 1 || value === "1" ? 1 : 0;
+    },
   };
 }
 
@@ -81,6 +108,9 @@ function createRestCommands(
     },
     del: (key) => redis.del(key),
     getdel: (key) => redis.getdel(key),
+    incr: (key) => redis.incr(key),
+    expire: (key, seconds) => redis.expire(key, seconds),
+    eval: (script, keys, args) => redis.eval(script, keys, args),
   };
 }
 

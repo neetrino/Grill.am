@@ -38,7 +38,9 @@
     "searchPlaceholder": "Որոնել ապրանքներ…",
     "searchHint": "Սկսեք գրել ապրանքի անունը",
     "searchNoResults": "Ապրանքներ չեն գտնվել",
-    "searchViewAll": "Տեսնել բոլոր արդյունքները"
+    "searchViewAll": "Տեսնել բոլոր արդյունքները",
+    "coins": "Coins",
+    "coinsAria": "Բոնուսի մնացորդ, բացել իմ բոնուսները"
   },
   "footer": {
     "shop": "Խանութներ",
@@ -50,9 +52,6 @@
     "hoursWeekdays": "09:00 – 22:00",
     "hoursWeekendLabel": "Շաբ – Կիր",
     "hoursWeekend": "10:00 – 23:00",
-    "categories": "Կատեգորիաներ",
-    "promotions": "Ակցիաներ",
-    "bestsellers": "Ամենավաճառվողներ",
     "faq": "Վերադարձի և փոխհատուցման քաղաքականություն",
     "legal": "Իրավական",
     "privacyPolicy": "Գաղտնիության քաղաքականություն",

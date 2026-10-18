@@ -9,6 +9,7 @@ import { getDropdownPortalRoot } from "@/components/ui/dropdown-portal-root";
 import { AppLink } from "@/components/ui/AppLink";
 import {
   DROPDOWN_OPTION_CLASS,
+  DROPDOWN_OPTION_ROW_CLASS,
   DROPDOWN_OPTION_SELECTED_CLASS,
   DROPDOWN_PANEL_PORTAL_CLASS,
   dropdownPanelStateClass,
@@ -36,7 +37,6 @@ type NavCategoriesDropdownProps = {
 const CLOSE_DELAY_MS = 120;
 const NAV_MENU_GAP_PX = 8;
 const NAV_MENU_MIN_WIDTH_PX = 280;
-const DROPDOWN_OPTION_ROW_CLASS = "dropdown-option--row";
 
 function menuOptionClass(active: boolean): string {
   return `${DROPDOWN_OPTION_CLASS} ${DROPDOWN_OPTION_ROW_CLASS} group font-medium hover:text-brand-red ${

@@ -25,16 +25,6 @@ function payments(): Map<string, StoredIdramPayment> {
   return g[GLOBAL_KEY];
 }
 
-export function getStoredIdramPayment(
-  billNo: string,
-): StoredIdramPayment | undefined {
-  return payments().get(billNo);
-}
-
-export function clearStoredIdramPayments(): void {
-  payments().clear();
-}
-
 /**
  * Local stand-in for iDram GetPayment. Accepts the merchant POST form.
  * Does not auto-confirm — E2E tests call RESULT_URL with a real checksum.

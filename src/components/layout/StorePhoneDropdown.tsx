@@ -8,12 +8,14 @@ import { ChevronDown, Phone } from "lucide-react";
 import { WhatsAppIcon } from "@/components/layout/SocialIcons";
 import {
   DROPDOWN_ANIMATION_MS,
+  DROPDOWN_MAX_HEIGHT_PX,
   DROPDOWN_PANEL_PORTAL_CLASS,
   DROPDOWN_OPTION_CLASS,
   dropdownPanelStateClass,
   dropdownPortalStyle,
+  dropdownVerticalPosition,
 } from "@/components/ui/dropdown-styles";
-import { phoneDigits, telHref, whatsappHref } from "@/lib/phone";
+import { buildPhoneMenuItems, telHref, whatsappHref } from "@/lib/phone";
 
 type StorePhoneDropdownProps = {
   phones: readonly string[];
@@ -24,18 +26,16 @@ type StorePhoneDropdownProps = {
 };
 
 type MenuPosition = {
-  top: number;
+  top?: number;
+  bottom?: number;
   left: number;
   minWidth: number;
   maxWidth: number;
 };
 
-type PhoneMenuItem = {
-  phone: string;
-  channel: "phone" | "whatsapp";
-};
-
 const VIEWPORT_PADDING = 16;
+const MENU_GAP_PX = 8;
+const FOOTER_MENU_MAX_HEIGHT_PX = 140;
 const SCROLLBAR_HIDDEN_CLASS =
   "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
@@ -46,7 +46,7 @@ const FOOTER_STYLES = {
   link: "leading-5 text-white/60 transition hover:text-white",
   chevron: "mt-0.5 shrink-0 text-[#9C9FA1] transition hover:text-white",
   chevronIcon: "h-[18px] w-[18px]",
-  menu: `fixed z-[400] max-h-[140px] origin-top space-y-1 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-2 py-2 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${SCROLLBAR_HIDDEN_CLASS}`,
+  menu: `fixed z-[400] space-y-1 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-2 py-2 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${SCROLLBAR_HIDDEN_CLASS}`,
   item: "flex items-center gap-2 rounded-lg px-2.5 py-1.5 leading-5 break-words transition hover:bg-white/10 hover:text-white",
   menuIcon: "size-4 shrink-0 text-brand-yellow",
 } as const;
@@ -76,32 +76,6 @@ const LIGHT_VARIANT_STYLES = {
   },
 } as const;
 
-/** Builds dropdown rows: WhatsApp numbers first, then remaining call-only phones. */
-function buildPhoneMenuItems(
-  phones: readonly string[],
-  whatsappPhones: readonly string[],
-): PhoneMenuItem[] {
-  const [, ...rest] = phones;
-  const seen = new Set<string>();
-  const items: PhoneMenuItem[] = [];
-
-  for (const phone of whatsappPhones) {
-    const key = phoneDigits(phone);
-    if (!key || seen.has(key)) continue;
-    seen.add(key);
-    items.push({ phone, channel: "whatsapp" });
-  }
-
-  for (const phone of rest) {
-    const key = phoneDigits(phone);
-    if (!key || seen.has(key)) continue;
-    seen.add(key);
-    items.push({ phone, channel: "phone" });
-  }
-
-  return items;
-}
-
 export function StorePhoneDropdown({
   phones,
   whatsappPhones = [],
@@ -118,8 +92,9 @@ export function StorePhoneDropdown({
   const menuRef = useRef<HTMLUListElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [primary] = phones;
+  // The primary number is the trigger link, so it only reappears as WhatsApp.
   const menuItems = useMemo(
-    () => buildPhoneMenuItems(phones, whatsappPhones),
+    () => buildPhoneMenuItems(phones.slice(1), whatsappPhones),
     [phones, whatsappPhones],
   );
   const isFooter = variant === "footer";
@@ -174,6 +149,17 @@ export function StorePhoneDropdown({
         return;
       }
       const rect = anchor.getBoundingClientRect();
+      const vertical = dropdownVerticalPosition({
+        placement: "auto",
+        panelHeightPx: isFooter
+          ? FOOTER_MENU_MAX_HEIGHT_PX
+          : DROPDOWN_MAX_HEIGHT_PX,
+        triggerTop: rect.top,
+        triggerBottom: rect.bottom,
+        viewportHeight: window.innerHeight,
+        gapPx: MENU_GAP_PX,
+        paddingPx: VIEWPORT_PADDING,
+      });
 
       if (isFooter) {
         const maxWidth = Math.min(360, window.innerWidth - VIEWPORT_PADDING * 2);
@@ -183,12 +169,7 @@ export function StorePhoneDropdown({
           Math.min(rect.left, window.innerWidth - minWidth - VIEWPORT_PADDING),
         );
 
-        setMenuPosition({
-          top: rect.bottom + 8,
-          left,
-          minWidth,
-          maxWidth,
-        });
+        setMenuPosition({ ...vertical, left, minWidth, maxWidth });
         return;
       }
 
@@ -200,12 +181,7 @@ export function StorePhoneDropdown({
         Math.min(preferredLeft, window.innerWidth - minWidth - VIEWPORT_PADDING),
       );
 
-      setMenuPosition({
-        top: rect.bottom + 8,
-        left,
-        minWidth,
-        maxWidth,
-      });
+      setMenuPosition({ ...vertical, left, minWidth, maxWidth });
     };
 
     updatePosition();
@@ -250,9 +226,10 @@ export function StorePhoneDropdown({
     return null;
   }
 
+  const opensUpward = menuPosition?.bottom != null;
   const visibilityClass = visible
     ? "translate-y-0 opacity-100"
-    : "pointer-events-none -translate-y-1 opacity-0";
+    : `pointer-events-none opacity-0 ${opensUpward ? "translate-y-1" : "-translate-y-1"}`;
 
   const menu =
     mounted && showChevron && menuPosition
@@ -261,12 +238,16 @@ export function StorePhoneDropdown({
             <ul
               ref={menuRef}
               id={listId}
-              className={`${FOOTER_STYLES.menu} ${visibilityClass}`}
+              className={`${FOOTER_STYLES.menu} ${
+                opensUpward ? "origin-bottom" : "origin-top"
+              } ${visibilityClass}`}
               style={{
                 top: menuPosition.top,
+                bottom: menuPosition.bottom,
                 left: menuPosition.left,
                 minWidth: menuPosition.minWidth,
                 maxWidth: menuPosition.maxWidth,
+                maxHeight: FOOTER_MENU_MAX_HEIGHT_PX,
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
               }}

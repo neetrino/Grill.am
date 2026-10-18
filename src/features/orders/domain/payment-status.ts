@@ -14,6 +14,7 @@ export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 export const ADMIN_PAYMENT_STATUS_OPTIONS = [
   { value: "CAPTURED", label: "Paid" },
   { value: "PENDING", label: "pending" },
+  { value: "AUTHORIZED", label: "Authorized" },
   { value: "FAILED", label: "Failed" },
   { value: "REFUNDED", label: "Refunded" },
   { value: "CANCELLED", label: "Cancelled" },
@@ -21,7 +22,7 @@ export const ADMIN_PAYMENT_STATUS_OPTIONS = [
 
 /**
  * Admin-driven payment transitions (COD and manual corrections).
- * Admin list allows free moves among Paid / pending / Failed.
+ * Admin list allows free moves among Paid / pending / Authorized / Failed.
  */
 const TRANSITIONS: Record<PaymentStatus, readonly PaymentStatus[]> = {
   PENDING: ["CAPTURED", "FAILED", "AUTHORIZED", "CANCELLED"],
@@ -34,7 +35,7 @@ const TRANSITIONS: Record<PaymentStatus, readonly PaymentStatus[]> = {
 
 const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   PENDING: "pending",
-  AUTHORIZED: "pending",
+  AUTHORIZED: "Authorized",
   CAPTURED: "Paid",
   FAILED: "Failed",
   REFUNDED: "Refunded",

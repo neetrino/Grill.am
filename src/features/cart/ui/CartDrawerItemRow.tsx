@@ -5,11 +5,16 @@ import { Minus, Plus, X } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import type { CartDrawerItemView } from "@/features/cart/get-cart-drawer-view";
+import { ProductCoinsEarnPill } from "@/features/products/ui/ProductCoinsEarnPill";
+import { formatProductCoinsEarnLabel } from "@/features/products/ui/format-product-coins-earn-label";
+import type { Locale } from "@/lib/i18n/config";
 
 type CartDrawerItemRowProps = {
   item: CartDrawerItemView;
   productHref: string;
   pending: boolean;
+  locale: Locale;
+  bonusEarnTemplate: string;
   removeLabel: string;
   decreaseLabel: string;
   increaseLabel: string;
@@ -24,6 +29,8 @@ export function CartDrawerItemRow({
   item,
   productHref,
   pending,
+  locale,
+  bonusEarnTemplate,
   removeLabel,
   decreaseLabel,
   increaseLabel,
@@ -31,6 +38,12 @@ export function CartDrawerItemRow({
   onChangeQuantity,
   onNavigate,
 }: CartDrawerItemRowProps) {
+  const bonusEarnLabel = formatProductCoinsEarnLabel(
+    bonusEarnTemplate,
+    item.bonusEarnUnitAmount * item.quantity,
+    locale,
+  );
+
   return (
     <article className="rounded-[20px] border border-gray-200 bg-white p-3 shadow-sm">
       <div className="flex items-stretch gap-3">
@@ -92,7 +105,12 @@ export function CartDrawerItemRow({
             </button>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between gap-2">
+            {bonusEarnLabel ? (
+              <ProductCoinsEarnPill label={bonusEarnLabel} compactOnMobile />
+            ) : (
+              <span />
+            )}
             <div className="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-gray-50 px-0.5 py-0.5">
               <button
                 type="button"

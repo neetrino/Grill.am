@@ -4,6 +4,11 @@ import { type ReactNode } from "react";
 
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import { CUSTOMER_NOTE_MAX_LENGTH } from "@/features/checkout/domain/customer-note";
+import type {
+  CheckoutAddressChoice,
+  CheckoutAddressDrawerLabels,
+} from "@/features/checkout/ui/CheckoutAddressDrawer";
+import type { CheckoutInvalidField } from "@/features/checkout/ui/checkout-field-validation";
 import { CheckoutFulfillmentSection } from "@/features/checkout/ui/CheckoutFulfillmentSection";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
 import {
@@ -11,9 +16,12 @@ import {
   CHECKOUT_FIELD_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
   CHECKOUT_SECTION_TITLE_CLASS,
+  CHECKOUT_TITLE_INVALID_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
+import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 import type { StorePickupOption } from "@/features/stores/yandex-map-embed";
+import type { Locale } from "@/lib/i18n/config";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -39,6 +47,8 @@ type CheckoutDetailsLabels = {
   deliveryDescription: string;
   pickupBranch: string;
   selectPickupBranch: string;
+  selectAddress: string;
+  addressBook: CheckoutAddressDrawerLabels;
 };
 
 type PaymentOption = {
@@ -50,8 +60,11 @@ type PaymentOption = {
 };
 
 type CheckoutDetailsSectionsProps = {
+  locale: Locale;
   labels: CheckoutDetailsLabels;
   pending: boolean;
+  invalidFields: Partial<Record<CheckoutInvalidField, true>>;
+  onClearInvalidField: (field: CheckoutInvalidField) => void;
   shippingMethod: "pickup" | "delivery" | null;
   onShippingMethodChange: (method: "pickup" | "delivery") => void;
   deliveryOptions: CheckoutDeliveryOption[];
@@ -60,7 +73,7 @@ type CheckoutDetailsSectionsProps = {
   pickupStores: StorePickupOption[];
   pickupStoreId: string;
   onPickupStoreChange: (storeId: string) => void;
-  paymentMethod: CheckoutPaymentMethod;
+  paymentMethod: CheckoutPaymentMethod | null;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
   paymentOptions: PaymentOption[];
   cashOnDeliveryExtra?: ReactNode;
@@ -68,12 +81,19 @@ type CheckoutDetailsSectionsProps = {
   defaultLastName: string;
   defaultEmail: string;
   defaultPhone: string;
-  defaultLine1: string;
+  canSaveAddresses: boolean;
+  savedAddresses: CustomerAddressListItem[];
+  selectedAddressId: string | null;
+  line1: string;
+  onAddressSelect: (address: CheckoutAddressChoice) => void;
 };
 
 export function CheckoutDetailsSections({
+  locale,
   labels,
   pending,
+  invalidFields,
+  onClearInvalidField,
   shippingMethod,
   onShippingMethodChange,
   deliveryOptions,
@@ -90,12 +110,33 @@ export function CheckoutDetailsSections({
   defaultLastName,
   defaultEmail,
   defaultPhone,
-  defaultLine1,
+  canSaveAddresses,
+  savedAddresses,
+  selectedAddressId,
+  line1,
+  onAddressSelect,
 }: CheckoutDetailsSectionsProps) {
+  const contactInvalid = Boolean(
+    invalidFields.firstName ||
+      invalidFields.lastName ||
+      invalidFields.contactPhone ||
+      invalidFields.contactEmail,
+  );
+  const shippingInvalid = Boolean(
+    invalidFields.shipping ||
+      invalidFields.pickup ||
+      invalidFields.address,
+  );
+
   return (
     <div className={`${CHECKOUT_DETAILS_WRAP_CLASS} flex flex-col gap-4`}>
       <section className={CHECKOUT_SECTION_CARD_CLASS}>
-        <h2 className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6`}>
+        <h2
+          id="checkout-title-contact"
+          className={`${CHECKOUT_SECTION_TITLE_CLASS} mb-6 ${
+            contactInvalid ? CHECKOUT_TITLE_INVALID_CLASS : ""
+          }`}
+        >
           {labels.contactInformation}
         </h2>
         <div
@@ -106,24 +147,27 @@ export function CheckoutDetailsSections({
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.firstName}
               <input
+                id="checkout-field-firstName"
                 name="firstName"
                 required
                 defaultValue={defaultFirstName}
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="given-name"
+                onChange={() => onClearInvalidField("firstName")}
                 suppressHydrationWarning
               />
             </label>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.lastName}
               <input
+                id="checkout-field-lastName"
                 name="lastName"
-                required
                 defaultValue={defaultLastName}
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="family-name"
+                onChange={() => onClearInvalidField("lastName")}
                 suppressHydrationWarning
               />
             </label>
@@ -132,18 +176,21 @@ export function CheckoutDetailsSections({
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.email}
               <input
+                id="checkout-field-contactEmail"
                 name="contactEmail"
                 type="email"
                 defaultValue={defaultEmail}
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="email"
+                onChange={() => onClearInvalidField("contactEmail")}
                 suppressHydrationWarning
               />
             </label>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.phone}
               <input
+                id="checkout-field-contactPhone"
                 name="contactPhone"
                 type="tel"
                 required
@@ -152,6 +199,7 @@ export function CheckoutDetailsSections({
                 disabled={pending}
                 className={CHECKOUT_FIELD_CLASS}
                 autoComplete="tel"
+                onChange={() => onClearInvalidField("contactPhone")}
                 suppressHydrationWarning
               />
             </label>
@@ -160,8 +208,10 @@ export function CheckoutDetailsSections({
       </section>
 
       <CheckoutFulfillmentSection
+        locale={locale}
         labels={labels}
         pending={pending}
+        invalidTitle={shippingInvalid}
         shippingMethod={shippingMethod}
         onShippingMethodChange={onShippingMethodChange}
         deliveryOptions={deliveryOptions}
@@ -170,7 +220,11 @@ export function CheckoutDetailsSections({
         pickupStores={pickupStores}
         pickupStoreId={pickupStoreId}
         onPickupStoreChange={onPickupStoreChange}
-        defaultLine1={defaultLine1}
+        canSaveAddresses={canSaveAddresses}
+        savedAddresses={savedAddresses}
+        selectedAddressId={selectedAddressId}
+        line1={line1}
+        onAddressSelect={onAddressSelect}
       />
 
       <CheckoutPaymentMethods
@@ -179,6 +233,7 @@ export function CheckoutDetailsSections({
         value={paymentMethod}
         onChange={onPaymentMethodChange}
         disabled={pending}
+        invalid={Boolean(invalidFields.payment)}
         cashOnDeliveryExtra={cashOnDeliveryExtra}
       />
 

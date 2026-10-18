@@ -40,6 +40,15 @@
     "selectShippingMethod": "Select take away or delivery",
     "selectDeliveryLocation": "Select delivery location"
   },
+  "addresses": {
+    "title": "Delivery addresses",
+    "selectAddress": "Select address",
+    "selectAddressRequired": "Select a delivery address",
+    "addAddress": "Add address",
+    "noAddresses": "No addresses yet. Add one below.",
+    "newBadge": "New",
+    "loginToSave": "Sign in to save addresses to your profile. This address will still be used for this order."
+  },
   "deliveryCities": {
     "yerevan": "Yerevan",
     "aragatsotn": "Aragatsotn",
@@ -54,6 +63,7 @@
     "vayotsDzor": "Vayots Dzor"
   },
   "payment": {
+    "selectPaymentMethod": "Select a payment method",
     "cashOnDelivery": "Cash on Delivery",
     "cashOnDeliveryDescription": "Pay when receiving the order.",
     "cashOnPickup": "Cash payment",
@@ -99,6 +109,8 @@
   "errors": {
     "cartEmpty": "Cart is empty",
     "minimumOrder": "Minimum order is {amount}. Add more items to continue.",
+    "fillRequired": "Please fill in the highlighted field",
+    "invalidEmail": "Enter a valid email address",
     "paymentMethodDisabled": "This payment method is not available.",
     "onlineProviderPending": "Online payment integration is not enabled yet. Please choose cash on delivery."
   },
@@ -153,5 +165,18 @@
     "idramProviderUnavailable": "iDram payment is temporarily unavailable. Please try again shortly.",
     "providerUnavailable": "Card payment is temporarily unavailable. Please try again shortly.",
     "verificationUnavailable": "Unable to verify payment right now. Please try again shortly."
+  },
+  "bonus": {
+    "title": "Loyalty points",
+    "available": "Available: {amount}",
+    "maxButton": "Maximum",
+    "applied": "Bonus",
+    "loginRequired": "Sign in to use bonus",
+    "earnHint": "This order will earn about {amount} in bonus after payment is marked Paid.",
+    "minOrderHint": "Bonus earn is available from {amount} merchandise total.",
+    "grillCoinLabel": "Grill Coin",
+    "progressTitle": "Grill Coin earn starts from {amount}",
+    "progressHint": "Add another {amount} to receive Grill Coins",
+    "progressCta": "Add products and get Grill Coins"
   }
 }

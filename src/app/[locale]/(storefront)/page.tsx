@@ -14,6 +14,8 @@ import {
 } from "@/features/home/ui/lazy-home-sections";
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
 import { getFeaturedProducts } from "@/features/products/queries";
+import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
+import { formatProductCoinsEarnLabel } from "@/features/products/ui/format-product-coins-earn-label";
 import {
   fallbackStorefrontBranches,
   toHomeBranchItems,
@@ -47,6 +49,7 @@ type PricedCard = {
   inWishlist: boolean;
   requiresConfiguration: boolean;
   hitLabel: string | null;
+  bonusEarnLabel: string | null;
 };
 
 export default async function HomePage({ params }: HomePageProps) {
@@ -78,9 +81,15 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const wishlistProductIds = featuredProducts.map((product) => product.id);
 
-  const [wishlistIds, formatPrice] = await Promise.all([
+  const [wishlistIds, formatPrice, bonusEarnByProductId] = await Promise.all([
     getWishlistProductIds(wishlistProductIds),
     createDisplayPriceFormatter(locale, currency),
+    resolveProductCardBonusEarnByProductId(
+      featuredProducts.map((product) => ({
+        id: product.id,
+        priceAmount: product.priceAmount,
+      })),
+    ),
   ]);
 
   function toCards(products: typeof featuredProducts): PricedCard[] {
@@ -90,6 +99,7 @@ export default async function HomePage({ params }: HomePageProps) {
         product.compareAtAmount != null
           ? formatPrice(product.compareAtAmount)
           : null;
+      const bonusEarnAmount = bonusEarnByProductId.get(product.id) ?? 0;
 
       return {
         id: product.id,
@@ -105,6 +115,11 @@ export default async function HomePage({ params }: HomePageProps) {
         inWishlist: wishlistIds.has(product.id),
         requiresConfiguration: product.requiresConfiguration,
         hitLabel: product.isFeatured ? dictionary.product.hit : null,
+        bonusEarnLabel: formatProductCoinsEarnLabel(
+          dictionary.product.bonusEarn,
+          bonusEarnAmount,
+          locale,
+        ),
       };
     });
   }

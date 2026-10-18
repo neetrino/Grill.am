@@ -24,6 +24,7 @@ describe("order status transitions", () => {
     expect(getEligibleOrderStatuses("CANCELLED")).toEqual([
       "PENDING",
       "PROCESSING",
+      "CONFIRMED",
       "DELIVERED",
     ]);
   });
@@ -35,10 +36,16 @@ describe("order status transitions", () => {
     expect(canTransitionOrderStatus("PENDING", "REQUIRES_REVIEW")).toBe(true);
   });
 
+  it("allows Confirmed like Completed for admin moves", () => {
+    expect(canTransitionOrderStatus("PROCESSING", "CONFIRMED")).toBe(true);
+    expect(canTransitionOrderStatus("CONFIRMED", "CANCELLED")).toBe(true);
+    expect(canTransitionOrderStatus("DELIVERED", "CONFIRMED")).toBe(true);
+  });
+
   it("restores stock only when cancelling before shipment", () => {
     expect(shouldRestoreStockOnCancel("PENDING")).toBe(true);
-    expect(shouldRestoreStockOnCancel("CONFIRMED")).toBe(true);
     expect(shouldRestoreStockOnCancel("PROCESSING")).toBe(true);
+    expect(shouldRestoreStockOnCancel("CONFIRMED")).toBe(false);
     expect(shouldRestoreStockOnCancel("SHIPPED")).toBe(false);
     expect(shouldRestoreStockOnCancel("DELIVERED")).toBe(false);
   });

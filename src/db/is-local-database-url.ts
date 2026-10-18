@@ -1,6 +1,10 @@
 /**
- * True when the URL targets a local Postgres (CI / docker), not Neon or remote.
- * Used to pick the `pg` TCP driver instead of Neon WebSocket/HTTP.
+ * True when the URL targets a local Postgres (CI / docker).
+ * Localhost uses node-postgres. Every other host uses the Neon serverless
+ * driver (HTTP for queries, WebSocket for `withTransaction`).
+ * This is not a general remote-Postgres switch: a non-Neon remote URL is
+ * still treated as Neon. Production Grill.am uses Neon, so no extra
+ * DATABASE_PROVIDER setting is required.
  */
 export function isLocalDatabaseUrl(connectionString: string): boolean {
   try {

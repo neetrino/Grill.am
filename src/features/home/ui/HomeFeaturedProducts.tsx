@@ -25,6 +25,7 @@ type FeaturedItem = {
   inWishlist?: boolean;
   requiresConfiguration?: boolean;
   hitLabel?: string | null;
+  bonusEarnLabel?: string | null;
 };
 
 const MOBILE_FEATURED_COUNT = 4;
@@ -88,6 +89,7 @@ function FeaturedGridCard({
       addToCartLabel={addToCartLabel}
       requiresConfiguration={product.requiresConfiguration ?? false}
       hitLabel={product.hitLabel}
+      bonusEarnLabel={product.bonusEarnLabel}
       variant={variant}
     />
   );

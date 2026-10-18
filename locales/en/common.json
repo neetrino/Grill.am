@@ -38,7 +38,9 @@
     "searchPlaceholder": "Search products…",
     "searchHint": "Start typing a product name",
     "searchNoResults": "No products found",
-    "searchViewAll": "View all results"
+    "searchViewAll": "View all results",
+    "coins": "Coins",
+    "coinsAria": "Bonus balance, open my bonuses"
   },
   "footer": {
     "shop": "Stores",
@@ -50,9 +52,6 @@
     "hoursWeekdays": "09:00 – 22:00",
     "hoursWeekendLabel": "Sat – Sun",
     "hoursWeekend": "10:00 – 23:00",
-    "categories": "Categories",
-    "promotions": "Promotions",
-    "bestsellers": "Bestsellers",
     "faq": "Return and Refund Policy",
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",

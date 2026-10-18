@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { ChevronDown, MapPin } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { dropdownVerticalPosition } from "@/components/ui/dropdown-styles";
 import {
   buildStoresPageHref,
   GRILL_STORE_LOCATIONS,
@@ -21,7 +22,8 @@ type StoreAddressDropdownProps = {
 };
 
 type MenuPosition = {
-  top: number;
+  top?: number;
+  bottom?: number;
   left?: number;
   right?: number;
   minWidth: number;
@@ -30,7 +32,10 @@ type MenuPosition = {
 
 const MENU_TRANSITION_MS = 200;
 const VIEWPORT_PADDING = 16;
+const HEADER_MENU_GAP_PX = 10;
+const FOOTER_MENU_GAP_PX = 8;
 const HEADER_MENU_MAX_HEIGHT_PX = 220;
+const FOOTER_MENU_MAX_HEIGHT_PX = 140;
 const HEADER_MENU_MAX_WIDTH_PX = 320;
 const SCROLLBAR_HIDDEN_CLASS =
   "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
@@ -50,7 +55,7 @@ const FOOTER_STYLES = {
   text: "leading-5 text-white/60",
   chevron: "mt-0.5 shrink-0 text-[#9C9FA1] transition hover:text-white",
   chevronIcon: "h-[18px] w-[18px]",
-  menu: `fixed z-[400] max-h-[140px] origin-top space-y-1 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-2 py-2 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${SCROLLBAR_HIDDEN_CLASS}`,
+  menu: `fixed z-[400] space-y-1 overflow-y-auto rounded-[14px] border border-white/10 bg-black px-2 py-2 text-sm text-white/60 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${SCROLLBAR_HIDDEN_CLASS}`,
   item: "block rounded-lg px-2.5 py-1.5 leading-5 break-words transition hover:bg-white/10 hover:text-white",
 } as const;
 
@@ -127,6 +132,17 @@ export function StoreAddressDropdown({
         return;
       }
       const rect = anchor.getBoundingClientRect();
+      const vertical = dropdownVerticalPosition({
+        placement: "auto",
+        panelHeightPx: isHeader
+          ? HEADER_MENU_MAX_HEIGHT_PX
+          : FOOTER_MENU_MAX_HEIGHT_PX,
+        triggerTop: rect.top,
+        triggerBottom: rect.bottom,
+        viewportHeight: window.innerHeight,
+        gapPx: isHeader ? HEADER_MENU_GAP_PX : FOOTER_MENU_GAP_PX,
+        paddingPx: VIEWPORT_PADDING,
+      });
 
       if (isHeader) {
         const maxWidth = Math.min(
@@ -135,7 +151,7 @@ export function StoreAddressDropdown({
         );
 
         setMenuPosition({
-          top: rect.bottom + 10,
+          ...vertical,
           right: Math.max(
             VIEWPORT_PADDING,
             window.innerWidth - rect.right,
@@ -153,12 +169,7 @@ export function StoreAddressDropdown({
         Math.min(rect.left, window.innerWidth - minWidth - VIEWPORT_PADDING),
       );
 
-      setMenuPosition({
-        top: rect.bottom + 8,
-        left,
-        minWidth,
-        maxWidth,
-      });
+      setMenuPosition({ ...vertical, left, minWidth, maxWidth });
     };
 
     updatePosition();
@@ -205,9 +216,10 @@ export function StoreAddressDropdown({
     return null;
   }
 
+  const opensUpward = menuPosition?.bottom != null;
   const visibilityClass = visible
     ? "translate-y-0 opacity-100"
-    : "pointer-events-none -translate-y-1 opacity-0";
+    : `pointer-events-none opacity-0 ${opensUpward ? "translate-y-1" : "-translate-y-1"}`;
 
   const menu =
     mounted && showChevron && menuPosition
@@ -216,9 +228,12 @@ export function StoreAddressDropdown({
             <div
               ref={setMenuRef}
               id={listId}
-              className={`fixed z-[400] w-max origin-top-right transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${visibilityClass}`}
+              className={`fixed z-[400] w-max transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${
+                opensUpward ? "origin-bottom-right" : "origin-top-right"
+              } ${visibilityClass}`}
               style={{
                 top: menuPosition.top,
+                bottom: menuPosition.bottom,
                 right: menuPosition.right,
                 maxWidth: menuPosition.maxWidth,
               }}
@@ -276,12 +291,16 @@ export function StoreAddressDropdown({
             <ul
               ref={setMenuRef}
               id={listId}
-              className={`${FOOTER_STYLES.menu} ${visibilityClass}`}
+              className={`${FOOTER_STYLES.menu} ${
+                opensUpward ? "origin-bottom" : "origin-top"
+              } ${visibilityClass}`}
               style={{
                 top: menuPosition.top,
+                bottom: menuPosition.bottom,
                 left: menuPosition.left,
                 minWidth: menuPosition.minWidth,
                 maxWidth: menuPosition.maxWidth,
+                maxHeight: FOOTER_MENU_MAX_HEIGHT_PX,
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
               }}

@@ -7,6 +7,7 @@ import { addresses } from "@/db/schema";
 
 export type CustomerAddressListItem = {
   id: string;
+  label: string | null;
   line1: string;
   line2: string | null;
   city: string;
@@ -27,6 +28,7 @@ export async function listCustomerAddresses(
   return getDb()
     .select({
       id: addresses.id,
+      label: addresses.label,
       line1: addresses.line1,
       line2: addresses.line2,
       city: addresses.city,
@@ -55,6 +57,7 @@ export async function getDefaultShippingAddress(
 ): Promise<CustomerAddressListItem | null> {
   const selectFields = {
     id: addresses.id,
+    label: addresses.label,
     line1: addresses.line1,
     line2: addresses.line2,
     city: addresses.city,

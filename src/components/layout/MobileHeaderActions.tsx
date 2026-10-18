@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { useEffect, useId, useState, type ReactNode } from "react";
 
+import { MobileHeaderPhoneDropdown } from "@/components/layout/MobileHeaderPhoneDropdown";
 import {
   MobileNavPanel,
   type MobileNavPanelProps,
@@ -72,6 +73,13 @@ export function MobileHeaderActions({
 
   return (
     <div className="flex items-center gap-[11px]">
+      <MobileHeaderPhoneDropdown
+        phones={dictionary.contact.storePhones}
+        whatsappPhones={dictionary.contact.storeWhatsAppPhones}
+        label={dictionary.contact.callTitle}
+        triggerClassName={`${actionButtonClassName} lg:hidden`}
+      />
+
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}

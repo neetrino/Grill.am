@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { useAdminDictionary } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import type { AdminOrderDrawerControls } from "@/features/orders/ui/admin-order-drawer-controls";
+import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
+import { OrderDetailsDrawerCustomer } from "@/features/orders/ui/OrderDetailsDrawerCustomer";
 import { OrderDetailsDrawerItems } from "@/features/orders/ui/OrderDetailsDrawerItems";
 import { OrderDetailsDrawerReview } from "@/features/orders/ui/OrderDetailsDrawerReview";
 import { OrderDetailsDrawerShipping } from "@/features/orders/ui/OrderDetailsDrawerShipping";
@@ -57,7 +59,29 @@ export function OrderDetailsDrawer({
         )
       : undefined;
 
-  const headerActions =
+  const statusActions =
+    detail && !isLoading && !error && adminControls ? (
+      <>
+        <AdminInlineStatusSelect
+          locale={adminControls.locale}
+          orderNumber={detail.orderNumber}
+          kind="order"
+          value={detail.status}
+          onSuccess={adminControls.onStatusUpdated}
+          size="md"
+        />
+        <AdminInlineStatusSelect
+          locale={adminControls.locale}
+          orderNumber={detail.orderNumber}
+          kind="payment"
+          value={detail.paymentStatus}
+          onSuccess={adminControls.onStatusUpdated}
+          size="md"
+        />
+      </>
+    ) : null;
+
+  const reorderAction =
     reorder && detail && !isLoading && !error ? (
       <Button
         type="button"
@@ -70,6 +94,27 @@ export function OrderDetailsDrawer({
       </Button>
     ) : null;
 
+  const headerActions =
+    statusActions || reorderAction ? (
+      <div
+        className={
+          statusActions
+            ? "flex flex-col items-end gap-1.5"
+            : "flex items-center"
+        }
+      >
+        {statusActions}
+        {reorderAction}
+      </div>
+    ) : null;
+
+  const stickyTotals =
+    !isLoading && !error && detail ? (
+      <div className="border-t border-gray-200 bg-white px-5 pt-4 pb-[max(16px,env(safe-area-inset-bottom))] lg:px-4">
+        <OrderDetailsDrawerTotals detail={detail} />
+      </div>
+    ) : null;
+
   return (
     <SideSheet
       open={open}
@@ -78,8 +123,9 @@ export function OrderDetailsDrawer({
       subtitle={subtitle}
       closeLabel={common.close}
       headerActions={headerActions}
-      desktopWidthPercent={40}
-      mobileMaxWidthClassName="max-w-2xl"
+      footer={stickyTotals}
+      desktopWidthPercent={28}
+      mobileMaxWidthClassName="max-w-md"
       panelClassName="!bg-brand-surface"
       headerClassName="!border-0 !bg-brand-surface"
       bodyClassName="!bg-brand-surface"
@@ -96,10 +142,16 @@ export function OrderDetailsDrawer({
       {error ? <p className="py-8 text-sm text-red-700">{error}</p> : null}
       {!isLoading && !error && detail ? (
         <div className="space-y-3">
+          {!isCustomerSheet ? (
+            <OrderDetailsDrawerCustomer detail={detail} />
+          ) : null}
           <OrderDetailsDrawerSummary
             detail={detail}
             adminControls={adminControls}
           />
+          {isCustomerSheet ? (
+            <OrderDetailsDrawerCustomer detail={detail} audience="customer" />
+          ) : null}
           {adminControls ? (
             <OrderDetailsDrawerReview
               detailStatus={detail.status}
@@ -109,7 +161,6 @@ export function OrderDetailsDrawer({
             />
           ) : null}
           <OrderDetailsDrawerItems detail={detail} />
-          <OrderDetailsDrawerTotals detail={detail} />
           <OrderDetailsDrawerShipping
             detail={detail}
             compact={isCustomerSheet}

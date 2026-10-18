@@ -21,6 +21,7 @@ export const STORE_SETTING_KEYS = [
   "store.fxRates",
   "store.enabledCurrencies",
   "store.minimumOrder",
+  "store.loyalty",
 ] as const;
 
 export type StoreSettingKey = (typeof STORE_SETTING_KEYS)[number];
@@ -75,6 +76,24 @@ export type StoreMinimumOrder = {
   amount: number | null;
 };
 
+/**
+ * Loyalty / bonus program rates.
+ * `earnPercent` is retained for settings compatibility but unused — earn comes
+ * from product/category flat rules only.
+ * `earnMinOrderAmount` — merchandise net floor required before flat bonuses
+ *   are earned; null disables the floor. Bonus spend has no order minimum
+ *   (only wallet balance and payable total).
+ */
+export type StoreLoyalty = {
+  earnPercent: number;
+  earnMinOrderAmount: number | null;
+};
+
+export const DEFAULT_STORE_LOYALTY: StoreLoyalty = {
+  earnPercent: 0,
+  earnMinOrderAmount: null,
+};
+
 export const DEFAULT_FX_RATES: StoreFxRates = {
   usd: DEFAULT_RATES_FROM_AMD.USD,
   rub: DEFAULT_RATES_FROM_AMD.RUB,
@@ -98,11 +117,15 @@ function isPositiveRateString(value: unknown): value is string {
   }
 }
 
+/** All fulfillment statuses count toward revenue except cancelled. */
 export const DEFAULT_REVENUE_STATUSES: OrderStatus[] = [
+  "PENDING",
   "CONFIRMED",
   "PROCESSING",
   "SHIPPED",
   "DELIVERED",
+  "REFUNDED",
+  "REQUIRES_REVIEW",
 ];
 
 export function isStoreSettingKey(value: string): value is StoreSettingKey {
@@ -123,9 +146,7 @@ export function parseRevenueStatuses(value: unknown): OrderStatus[] {
     (item): item is OrderStatus =>
       typeof item === "string" &&
       (ORDER_STATUSES as readonly string[]).includes(item) &&
-      item !== "CANCELLED" &&
-      item !== "REFUNDED" &&
-      item !== "PENDING",
+      item !== "CANCELLED",
   );
 
   return parsed.length > 0 ? parsed : [...DEFAULT_REVENUE_STATUSES];
@@ -267,6 +288,55 @@ export function parseMinimumOrder(value: unknown): StoreMinimumOrder {
   }
 
   return { amount };
+}
+
+function parsePercentField(raw: unknown): number | null {
+  if (raw === null || raw === undefined || raw === "") {
+    return null;
+  }
+  const value = typeof raw === "number" ? raw : Number(raw);
+  if (!Number.isInteger(value) || value < 0 || value > 100) {
+    return null;
+  }
+  return value;
+}
+
+function parseEarnMinOrderAmount(raw: unknown): number | null {
+  if (raw === null || raw === undefined || raw === "") {
+    return null;
+  }
+  const value = typeof raw === "number" ? raw : Number(raw);
+  if (!Number.isInteger(value) || value <= 0 || value > 100_000_000) {
+    return null;
+  }
+  return value;
+}
+
+export function parseLoyalty(value: unknown): StoreLoyalty {
+  if (!value || typeof value !== "object") {
+    return { ...DEFAULT_STORE_LOYALTY };
+  }
+
+  const record = value as Record<string, unknown>;
+  // Prefer earnMinOrderAmount; fall back to legacy redeemMinOrderAmount key.
+  const earnMin =
+    parseEarnMinOrderAmount(record.earnMinOrderAmount) ??
+    parseEarnMinOrderAmount(record.redeemMinOrderAmount);
+  return {
+    earnPercent: parsePercentField(record.earnPercent) ?? 0,
+    earnMinOrderAmount: earnMin,
+  };
+}
+
+/** True when merchandise net meets the loyalty earn floor (or none is set). */
+export function meetsLoyaltyEarnMinOrder(
+  merchandiseNet: number,
+  earnMinOrderAmount: number | null,
+): boolean {
+  if (earnMinOrderAmount == null || earnMinOrderAmount <= 0) {
+    return true;
+  }
+  return merchandiseNet >= earnMinOrderAmount;
 }
 
 /** Returns true when cart subtotal meets (or exceeds) the configured minimum. */

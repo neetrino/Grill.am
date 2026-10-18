@@ -1,0 +1,68 @@
+.fallingLayer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.coin {
+  position: absolute;
+  top: 0;
+  left: var(--coin-left);
+  width: var(--coin-size);
+  animation: auth-coin-fall var(--coin-duration) linear infinite;
+  animation-delay: var(--coin-delay);
+}
+
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.staticLayer {
+  display: none;
+  position: absolute;
+  inset: 0;
+}
+
+.staticArt {
+  position: absolute;
+  top: 16%;
+}
+
+@keyframes auth-coin-fall {
+  0% {
+    transform: translate3d(0, -18%, 0) rotate(var(--coin-spin-start));
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  86% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate3d(var(--coin-sway), 110vh, 0)
+      rotate(var(--coin-spin-end));
+    opacity: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .coin:nth-child(n + 8) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fallingLayer {
+    display: none;
+  }
+
+  .staticLayer {
+    display: block;
+  }
+}

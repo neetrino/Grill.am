@@ -6,6 +6,6 @@ export const ORDER_DETAIL_CARD =
 export const ORDER_DETAIL_SECTION_TITLE =
   "mb-4 text-base font-semibold text-brand-red";
 
-/** Cream status pills used in the order status card. */
+/** Cream status pills used in the customer order status card. */
 export const ORDER_DETAIL_STATUS_PILL =
   "inline-flex items-center rounded-full bg-[#f7edd8] px-3.5 py-1.5 text-sm font-medium text-[#6b4a2e]";

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { getUserBonusBalance } from "@/features/loyalty/application/queries";
 import { ProfileContentScroller } from "@/features/profile/ui/ProfileContentScroller";
 import { ProfileMobileBackLink } from "@/features/profile/ui/ProfileMobileBackLink";
 import { ProfileSidebar } from "@/features/profile/ui/ProfileSidebar";
@@ -35,6 +36,7 @@ export default async function ProfileLayout({
 
   const user = await requireUser(rawLocale);
   const dictionary = getDictionary(rawLocale);
+  const bonusBalanceAmount = await getUserBonusBalance(user.id);
 
   return (
     <div
@@ -53,6 +55,7 @@ export default async function ProfileLayout({
             locale={rawLocale}
             user={user}
             dictionary={dictionary.profile}
+            bonusBalanceAmount={bonusBalanceAmount}
           />
         </div>
         <ProfileContentScroller>

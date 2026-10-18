@@ -165,7 +165,7 @@ export function SideSheet({
           <header
             className={`shrink-0 border-b border-gray-100 px-6 py-4 lg:px-5 ${headerClassName}`}
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <h2
                   id="side-sheet-title"
@@ -178,7 +178,7 @@ export function SideSheet({
                 ) : null}
               </div>
               {headerActions ? (
-                <div className="shrink-0 self-start">{headerActions}</div>
+                <div className="shrink-0">{headerActions}</div>
               ) : null}
             </div>
           </header>

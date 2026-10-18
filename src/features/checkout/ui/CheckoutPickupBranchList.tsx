@@ -103,7 +103,7 @@ function CollapsedPickupBranch({
       >
         <span className="min-w-0 flex-1 truncate text-sm">{store.label}</span>
         <span className="flex shrink-0 items-center gap-1.5">
-          <Check className="size-4 text-brand-red" aria-hidden />
+          <Check className="size-4 text-brand-green" aria-hidden />
           <ChevronDown className="size-4 text-gray-400" aria-hidden />
         </span>
       </button>
@@ -165,7 +165,7 @@ function ExpandedPickupBranchList({
               </span>
               {selected ? (
                 <span className="flex shrink-0 items-center gap-1.5">
-                  <Check className="size-4 text-brand-red" aria-hidden />
+                  <Check className="size-4 text-brand-green" aria-hidden />
                   <ChevronDown
                     className="size-4 rotate-180 text-gray-400"
                     aria-hidden

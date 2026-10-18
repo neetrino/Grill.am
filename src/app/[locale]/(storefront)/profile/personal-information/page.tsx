@@ -28,6 +28,8 @@ export default async function PersonalInformationPage({
         lastName={user.lastName}
         email={user.email}
         phone={user.phone ?? ""}
+        phoneVerified={user.phoneVerifiedAt !== null}
+        verification={dictionary.profile.phoneVerification}
         labels={{
           title: dictionary.profile.personal,
           firstName: dictionary.auth.firstName,

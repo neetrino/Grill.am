@@ -60,6 +60,7 @@ function moneyLine(input: {
     unitPriceFormatted: formatMoneyAmount(unitPriceAmount, "AMD", "hy"),
     lineTotalFormatted: formatMoneyAmount(lineTotalAmount, "AMD", "hy"),
     modifierLines: [],
+    bonusEarnUnitAmount: 0,
   };
 }
 
@@ -77,9 +78,11 @@ function serverView(items: CartDrawerItemView[]): CartDrawerView {
     adjustmentsAmount: 0,
     shippingAmount: 0,
     totalAmount: subtotalAmount,
+    bonusEarnAmount: 0,
     subtotalFormatted: "",
     shippingFormatted: formatMoneyAmount(0, "AMD", "hy"),
     totalFormatted: "",
+    bonusEarnFormatted: "",
   });
 }
 

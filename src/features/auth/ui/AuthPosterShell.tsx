@@ -1,215 +1,130 @@
 "use client";
 
-import gsap from "gsap";
-import { getImageProps } from "next/image";
 import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
-import {
-  AUTH_BACKGROUND_IMAGE,
-  AUTH_BACKGROUND_IMAGE_MOBILE,
-} from "@/features/auth/content/auth-assets";
-import { AuthPageBackdrop } from "@/features/auth/ui/AuthPageBackdrop";
+import { AuthFireDecor } from "@/features/auth/ui/AuthFireDecor";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+const AUTH_STAGE_ROOT = "[data-auth-stage-root]";
 
-const AUTH_BG_IMAGE_CLASS =
-  "absolute inset-0 h-full w-full object-cover object-center brightness-[1.06] contrast-[1.05] saturate-[1.1]";
+function subscribeNoop(): () => void {
+  return () => undefined;
+}
 
-function AuthBackgroundArt() {
-  const common = {
-    alt: "",
-    priority: true,
-    sizes: "100vw",
-    quality: 82,
-  } as const;
+function getAuthStageRoot(): HTMLElement | null {
+  return document.querySelector<HTMLElement>(AUTH_STAGE_ROOT);
+}
 
-  const {
-    props: { srcSet: mobileSrcSet },
-  } = getImageProps({
-    ...common,
-    src: AUTH_BACKGROUND_IMAGE_MOBILE,
-    width: 1024,
-    height: 1536,
-  });
-  const {
-    props: { srcSet: desktopSrcSet, ...desktopRest },
-  } = getImageProps({
-    ...common,
-    src: AUTH_BACKGROUND_IMAGE,
-    width: 1920,
-    height: 1080,
-  });
-
-  return (
-    <picture className="absolute inset-0 block h-full w-full">
-      <source media="(max-width: 1023px)" srcSet={mobileSrcSet} sizes="100vw" />
-      <source media="(min-width: 1024px)" srcSet={desktopSrcSet} sizes="100vw" />
-      <img
-        {...desktopRest}
-        alt=""
-        className={AUTH_BG_IMAGE_CLASS}
-        suppressHydrationWarning
-      />
-    </picture>
-  );
+function useAuthStageRoot(): HTMLElement | null {
+  return useSyncExternalStore(subscribeNoop, getAuthStageRoot, () => null);
 }
 
 type AuthPosterShellProps = {
   mode: "login" | "register";
-  /** Form card heading. */
   formLead: string;
   formAccent: string;
+  subtitle?: string;
+  /** Falling coin rain on the fire stage (guest coins login). */
+  showCoins?: boolean;
+  /** Left-side coins explainer (guest coins login). */
+  aside?: ReactNode;
   children: ReactNode;
 };
 
 /**
- * Shared Poster Gate stage for login + register.
- * Backdrop is portaled to `body` for true full-viewport coverage.
+ * Red fire stage for login + register — Figma login page.
  */
 export function AuthPosterShell({
   mode,
   formLead,
   formAccent,
+  subtitle,
+  showCoins = false,
+  aside = null,
   children,
 }: AuthPosterShellProps) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const backdropRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    const root = rootRef.current;
-    const backdrop = backdropRef.current;
-    if (!root || !backdrop || reduceMotion) {
-      return;
-    }
-
-    const cardCtx = gsap.context(() => {
-      const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      timeline
-        .fromTo(
-          root.querySelector("[data-poster-stage]"),
-          { opacity: 0 },
-          { opacity: 1, duration: 0.55 },
-        )
-        .fromTo(
-          root.querySelector("[data-poster-card]"),
-          { y: 28, opacity: 0, rotate: 1.2, filter: "blur(10px)" },
-          {
-            y: 0,
-            opacity: 1,
-            rotate: 0,
-            filter: "blur(0px)",
-            duration: 0.9,
-            ease: "power4.out",
-          },
-          "-=0.2",
-        );
-    }, root);
-
-    const backdropCtx = gsap.context(() => {
-      gsap.fromTo(
-        backdrop.querySelector("[data-poster-bg]"),
-        { scale: 1.12, opacity: 0.4 },
-        { scale: 1.04, opacity: 1, duration: 1.35, ease: "power2.out" },
-      );
-
-      gsap.to(backdrop.querySelector("[data-poster-bg]"), {
-        scale: 1.08,
-        duration: 22,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-        delay: 1.5,
-      });
-
-      gsap.to(backdrop.querySelectorAll("[data-poster-glow]"), {
-        y: -12,
-        opacity: 0.55,
-        duration: 4.5,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-        stagger: 0.8,
-      });
-    }, backdrop);
-
-    return () => {
-      cardCtx.revert();
-      backdropCtx.revert();
-    };
-  }, [mode, reduceMotion]);
+  const stageRoot = useAuthStageRoot();
+  const hasAside = aside != null;
+  const stageMaxWidth = hasAside
+    ? "max-w-[420px] lg:max-w-[920px]"
+    : mode === "register"
+      ? "max-w-[560px]"
+      : "max-w-[420px]";
 
   return (
     <>
-      <AuthPageBackdrop ref={backdropRef}>
-        <div data-poster-bg className="absolute inset-0 will-change-transform">
-          <AuthBackgroundArt />
-        </div>
-        <div className="absolute inset-0 bg-brand-ink/10" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_42%,rgba(7,16,20,0.62)_100%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-ink/20 via-transparent to-brand-ink/35" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-brand-red/10 via-transparent to-brand-yellow/12" />
-        <div
-          data-poster-glow
-          className="absolute -top-20 left-[12%] size-56 rounded-full bg-brand-red/12 blur-3xl"
-        />
-        <div
-          data-poster-glow
-          className="absolute right-[10%] -bottom-16 size-48 rounded-full bg-brand-yellow/10 blur-3xl"
-        />
-        <div
-          className="absolute inset-0 opacity-[0.1]"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(255,193,44,0.14) 0.5px, transparent 0.5px)",
-            backgroundSize: "3px 3px",
-          }}
-        />
-      </AuthPageBackdrop>
+      {stageRoot
+        ? createPortal(
+            <AuthFireDecor showCoins={showCoins} />,
+            stageRoot,
+          )
+        : null}
 
-      <div
-        ref={rootRef}
-        className="storefront-bleed relative z-[2] -mt-10 -mb-28 min-h-dvh lg:mb-0 lg:min-h-0"
-      >
-        <section
+      <section className="storefront-bleed relative z-[1] -mt-10 -mb-28 lg:-mb-10">
+        <div
           data-poster-stage
-          className="relative flex min-h-dvh items-center justify-center px-5 py-8 pb-28 sm:px-8 lg:block lg:min-h-0 lg:px-10 lg:pt-[calc(var(--storefront-header-offset,5rem)+1.5rem)] lg:pb-4"
+          className="relative mx-auto flex w-full max-w-[1440px] flex-col px-5 pt-16 pb-28 max-lg:min-h-[calc(100dvh-var(--storefront-header-offset,9.5rem))] sm:px-8 sm:pt-20 lg:px-10 lg:pt-24 lg:pb-16"
         >
+          <motion.header
+            className="relative text-center"
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE }}
+          >
+            <h1 className="font-sans text-[clamp(2rem,5vw,3.75rem)] leading-[0.98] font-black tracking-[-0.02em] uppercase">
+              <span className="text-[#171717]">{formLead}</span>{" "}
+              <span className="text-white">{formAccent}</span>
+            </h1>
+            {subtitle ? (
+              <p className="mt-3 text-base font-medium text-white/90">
+                {subtitle}
+              </p>
+            ) : null}
+          </motion.header>
+
           <div
-            className={`relative mx-auto w-full lg:-translate-y-16 ${
-              mode === "register" ? "max-w-[560px]" : "max-w-[420px]"
+            className={`relative mx-auto w-full ${stageMaxWidth} ${
+              hasAside
+                ? "mt-14 grid items-stretch gap-5 lg:mt-16 lg:grid-cols-2 lg:gap-6"
+                : mode === "register"
+                  ? "mt-6"
+                  : "mt-14 lg:mt-16"
             }`}
           >
+            {hasAside ? (
+              <motion.div
+                data-poster-card
+                className="relative min-h-0 max-lg:hidden"
+                initial={
+                  reduceMotion
+                    ? false
+                    : { opacity: 0, y: 16, filter: "blur(8px)" }
+                }
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.85, delay: 0.08, ease: EASE }}
+              >
+                {aside}
+              </motion.div>
+            ) : null}
             <motion.div
               data-poster-card
-              className="relative overflow-hidden rounded-[22px] bg-white/95 p-6 shadow-[0_28px_90px_rgba(7,16,20,0.32)] backdrop-blur-xl sm:p-8"
+              className="relative overflow-hidden rounded-[22px] bg-white p-6 shadow-[0_28px_90px_rgba(7,16,20,0.32)] sm:p-8"
               initial={
                 reduceMotion
                   ? false
-                  : { opacity: 0, y: 16, filter: "blur(8px)", rotate: 0.6 }
+                  : { opacity: 0, y: 18, filter: "blur(8px)" }
               }
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)", rotate: 0 }}
-              transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.7, delay: 0.08, ease: EASE }}
             >
-              <motion.div
-                className="relative mb-7"
-                initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.28, ease: EASE }}
-              >
-                <h1 className="font-auth-display text-[1.65rem] leading-[1.15] font-extrabold tracking-[-0.03em] text-brand-ink sm:text-[1.85rem]">
-                  <span className="text-brand-red">{formLead}</span>{" "}
-                  <span className="text-brand-ink">{formAccent}</span>
-                </h1>
-              </motion.div>
-
-              <div className="relative">{children}</div>
+              {children}
             </motion.div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </>
   );
 }

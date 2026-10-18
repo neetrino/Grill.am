@@ -22,7 +22,9 @@
     "brandName": "Grill.am",
     "storeHome": "Grill.am home",
     "closeMenu": "Close admin menu",
-    "toggleProductSubpages": "Toggle product subpages"
+    "toggleProductSubpages": "Toggle product subpages",
+    "bonuses": "Bonuses",
+    "coinAnalytics": "Coin analytics"
   },
   "common": {
     "save": "Save",
@@ -247,6 +249,7 @@
     "status": {
       "pending": "Pending",
       "processing": "Processing",
+      "confirmed": "Confirmed",
       "completed": "Completed",
       "cancelled": "Cancelled",
       "requiresReview": "Requires review"
@@ -325,11 +328,13 @@
       "phone": "Phone Number",
       "email": "Email",
       "customerNote": "Customer comment",
+      "comment": "Comment",
       "shippingMethod": "Shipping Method",
       "pickupStore": "Pickup store",
       "pickupMethod": "Store pickup",
       "shippingAddress": "Shipping Address",
       "method": "Method",
+      "address": "Address",
       "amount": "Amount",
       "customerPaysWith": "Customer pays with",
       "prepareChange": "Prepare change",
@@ -346,7 +351,13 @@
       "qty": "Qty",
       "price": "Price",
       "lineTotal": "Total",
-      "customizations": "Additions & removals"
+      "customizations": "Additions & removals",
+      "bonusSpent": "Bonus used",
+      "bonusEarned": "Grill Coin",
+      "grillCoinLabel": "Grill Coin",
+      "customerReviewNotice": "Payment was received. The order is under review — support will contact you if needed.",
+      "paymentAttempt": "Attempt {number} — {status}",
+      "paymentAttemptLatest": " (latest)"
     },
     "detail": {
       "customer": "Customer",
@@ -426,6 +437,7 @@
       "contact": "Contact",
       "orders": "Orders",
       "roles": "Roles",
+      "bonuses": "Grill Coins",
       "status": "Status",
       "created": "Created",
       "empty": "No users match these filters.",
@@ -434,7 +446,9 @@
       "suspendNamed": "Suspend {name}",
       "activateNamed": "Activate {name}",
       "sortOrdersAsc": "Sort by order count, ascending",
-      "sortOrdersDesc": "Sort by order count, descending"
+      "sortOrdersDesc": "Sort by order count, descending",
+      "sortBonusesAsc": "Sort by Grill Coins, ascending",
+      "sortBonusesDesc": "Sort by Grill Coins, descending"
     },
     "bulk": {
       "selectedCount": "Selected {count} user(s)",
@@ -450,7 +464,23 @@
       "lastLogin": "Last login",
       "created": "Created",
       "recentOrders": "Recent orders",
-      "noOrders": "No orders."
+      "noOrders": "No orders.",
+      "bonusBalance": "Available balance",
+      "bonusesTitle": "Bonuses",
+      "bonusTotalEarned": "Total accumulated",
+      "bonusTotalSpent": "Total used",
+      "bonusFromOrders": "Earned from orders",
+      "noBonusFromOrders": "No bonus earned from orders yet.",
+      "bonusHistory": "Bonus history",
+      "noBonusHistory": "No bonus activity yet.",
+      "bonusNoOrder": "No order",
+      "bonusOrderLabel": "Order: {orderNumber}",
+      "entryEarn": "Accumulation",
+      "entrySpend": "Redemption",
+      "entrySpendReversal": "Restored",
+      "entryEarnReversal": "Revoked",
+      "orderBonusEarned": "Earned {amount}",
+      "orderBonusSpent": "Used {amount}"
     },
     "forms": {
       "role": "Role",
@@ -983,6 +1013,118 @@
       "peakDay": "Best day",
       "ordersCount": "{count} orders",
       "revenue": "revenue"
+    }
+  },
+  "bonuses": {
+    "title": "Bonuses",
+    "subtitle": "Set flat bonuses for categories or individual products.",
+    "formTitle": "Bonus earn threshold",
+    "formSubtitle": "Bonuses are earned from product or category rules. Spend is always allowed up to the wallet balance. Here you set the minimum merchandise total required to earn.",
+    "earnMinOrderLabel": "Min. order to earn",
+    "earnMinOrderHint": "Customers earn product/category bonuses only when merchandise (after coupon) reaches this amount. Leave empty for no minimum. Bonus spend has no order minimum.",
+    "earnMinOrderPlaceholder": "e.g. 2000",
+    "invalidMinOrder": "Enter a whole AMD amount from 1, or leave empty.",
+    "saved": "Bonus settings saved.",
+    "tabsAria": "Bonus target",
+    "tabCategories": "Categories",
+    "tabProducts": "Products",
+    "categories": {
+      "title": "Category bonuses",
+      "subtitle": "Set how many AMD the customer earns per unit for products in each category, and the optional date range. Product rules override category rules.",
+      "searchPlaceholder": "Search categories...",
+      "searchAria": "Search categories",
+      "clearSearch": "Clear",
+      "empty": "No categories found",
+      "bonusFor": "Bonus for {title}",
+      "amountPlaceholder": "0",
+      "periodLabel": "Date range",
+      "startsOn": "From",
+      "endsOn": "To",
+      "clearRow": "Clear",
+      "invalidAmount": "Invalid bonus for “{title}”. Enter a positive whole number.",
+      "invalidRange": "Start date for “{title}” must be on or before the end date.",
+      "cleared": "Category bonus for “{title}” was cleared.",
+      "saved": "Saved {amount}֏ bonus for category “{title}”."
+    },
+    "products": {
+      "title": "Product bonuses",
+      "subtitle": "Set how many AMD the customer earns per unit of each product, and the optional date range.",
+      "searchPlaceholder": "Search by name or slug...",
+      "searchAria": "Search products",
+      "clearSearch": "Clear",
+      "empty": "No products found",
+      "bonusFor": "Bonus for {title}",
+      "amountPlaceholder": "0",
+      "periodLabel": "Date range",
+      "startsOn": "From",
+      "endsOn": "To",
+      "clearRow": "Clear",
+      "invalidAmount": "Invalid bonus for “{title}”. Enter a positive whole number.",
+      "invalidRange": "Start date for “{title}” must be on or before the end date.",
+      "cleared": "Product bonus for “{title}” was cleared.",
+      "saved": "Saved {amount}֏ bonus for “{title}”."
+    }
+  },
+  "coinAnalytics": {
+    "title": "Coin analytics",
+    "subtitle": "Two separate views: who holds coins right now, and how many coins moved in a time period. Order prices are never counted.",
+    "periods": {
+      "title": "Coin movement by period",
+      "hint": "These numbers are not wallet balances. They are total coins spent and earned across all users in that period.",
+      "today": "Today",
+      "week": "Last 7 days",
+      "month": "This month",
+      "quarter": "This quarter",
+      "spent": "Spent",
+      "earned": "Earned"
+    },
+    "period": {
+      "title": "Detailed range",
+      "label": "Period",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "downloadCsv": "Download CSV",
+      "invalidRange": "Invalid date range. Showing defaults.",
+      "last7": "Last 7 days",
+      "last30": "Last 30 days",
+      "last90": "Last 90 days",
+      "thisMonth": "This month",
+      "custom": "Custom range"
+    },
+    "metrics": {
+      "rangeTitle": "Selected range",
+      "spent": "Spent",
+      "earned": "Earned",
+      "netIssued": "Net issued",
+      "redemptionRate": "Redemption rate",
+      "redemptionEmpty": "—",
+      "averageSpend": "Avg spend / spender",
+      "averageEmpty": "—",
+      "outstanding": "Coins in wallets",
+      "vsPreviousHint": "Deltas compare to the previous period of equal length.",
+      "ledgerOnlyHint": "Figures come from the bonus ledger only — order totals are never included."
+    },
+    "trend": {
+      "title": "Movement chart",
+      "subtitle": "Spent and earned in the detailed range above — not current balances",
+      "chartAria": "Coins spent and earned trend chart",
+      "empty": "No coin activity in this range.",
+      "emptyShort": "—",
+      "peakDay": "Peak spend day",
+      "peakMonth": "Peak spend month"
+    },
+    "rankings": {
+      "usersTitle": "Wallets right now",
+      "usersSubtitle": "Current balance for each user. Spent = lifetime net spend. Spent + has = total coins that user has ever held.",
+      "searchPlaceholder": "Search by name, email, or phone",
+      "searchAria": "Search users by name, email, or phone",
+      "noSearchResults": "No users match that search.",
+      "totalInWallets": "Total in all wallets",
+      "hasAmount": "Has now",
+      "spentLifetime": "Spent ever",
+      "combinedAmount": "Spent + has",
+      "noBalances": "No coin activity yet."
     }
   }
 }

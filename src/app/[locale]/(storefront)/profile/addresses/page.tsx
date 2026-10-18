@@ -46,6 +46,8 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
         noAddresses: copy.noAddresses,
         formAddTitle: copy.formAddTitle,
         formEditTitle: copy.formEditTitle,
+        label: copy.label,
+        labelPlaceholder: copy.labelPlaceholder,
         line1: copy.line1,
         city: copy.city,
         selectCity: dictionary.checkout.form.selectLocation,

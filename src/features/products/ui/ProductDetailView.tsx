@@ -18,6 +18,7 @@ type ProductDetailViewProps = {
   product: ProductDetail;
   priceFormatted: string;
   compareAtFormatted: string | null;
+  bonusEarnLabel?: string | null;
   isSignedIn: boolean;
   inWishlist: boolean;
   ratingAverage: number | null;
@@ -35,6 +36,7 @@ export function ProductDetailView({
   product,
   priceFormatted,
   compareAtFormatted,
+  bonusEarnLabel = null,
   isSignedIn,
   inWishlist,
   ratingAverage,
@@ -114,6 +116,7 @@ export function ProductDetailView({
               compareAtAmount={product.compareAtAmount}
               initialPriceFormatted={priceFormatted}
               initialCompareAtFormatted={compareAtFormatted}
+              bonusEarnLabel={bonusEarnLabel}
               shortDescription={product.translation.shortDescription}
               description={product.translation.description}
               imageUrl={product.images[0]?.url ?? product.imageUrl}

@@ -40,6 +40,9 @@ type CustomerOrdersViewProps = {
     | "viewDetails"
     | "noOrders"
     | "startShopping"
+    | "status"
+    | "total"
+    | "ordersList"
   >;
   /**
    * `responsive` — cards below `lg`, table from `lg` up (orders page).
@@ -118,6 +121,7 @@ export function CustomerOrdersView({
       locale={locale as Locale}
       orders={orders}
       labels={cardLabels}
+      statusLabels={dictionary.orders.status}
       onOpenOrder={openOrder}
     />
   );
@@ -130,7 +134,16 @@ export function CustomerOrdersView({
         <>
           <div className="lg:hidden">{cards}</div>
           <div className="hidden lg:block">
-            <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} />
+            <CustomerOrdersTable
+              orders={orders}
+              onOpenOrder={openOrder}
+              copy={profileCopy.ordersList}
+              statusLabels={dictionary.orders.status}
+              paymentLabels={dictionary.orders.paymentStatus}
+              orderNumberLabel={profileCopy.orderNumber}
+              statusLabel={profileCopy.status}
+              totalLabel={profileCopy.total}
+            />
           </div>
         </>
       )}

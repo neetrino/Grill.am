@@ -4,6 +4,7 @@ import { Zap } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
+import { ProductCoinsEarnPill } from "@/features/products/ui/ProductCoinsEarnPill";
 import { ProductHitBadge } from "@/features/products/ui/ProductHitBadge";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
@@ -33,6 +34,8 @@ type FeaturedProductCardProps = {
   addToCartLabel?: string;
   requiresConfiguration?: boolean;
   hitLabel?: string | null;
+  /** Localized bonus earn line. */
+  bonusEarnLabel?: string | null;
   tone: "red" | "light";
 };
 
@@ -62,6 +65,7 @@ export function FeaturedProductCard({
   addToCartLabel,
   requiresConfiguration = false,
   hitLabel = null,
+  bonusEarnLabel = null,
   tone,
 }: FeaturedProductCardProps) {
   const resolvedImageUrl = imageUrl?.trim() || null;
@@ -166,7 +170,7 @@ export function FeaturedProductCard({
         </div>
 
         <div className="flex items-center justify-between gap-2">
-          <div className="min-w-0">
+          <div className="flex min-w-0 flex-col gap-1">
             <p
               className={`text-base leading-4 font-extrabold ${
                 isRed ? "text-white" : "text-[#0d0d0d]"
@@ -182,6 +186,12 @@ export function FeaturedProductCard({
               >
                 {compareAtFormatted}
               </p>
+            ) : null}
+            {bonusEarnLabel ? (
+              <ProductCoinsEarnPill
+                label={bonusEarnLabel}
+                compactOnMobile
+              />
             ) : null}
           </div>
 

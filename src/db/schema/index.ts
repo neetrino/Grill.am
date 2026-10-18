@@ -15,6 +15,8 @@ export {
   sessions,
   users,
 } from "@/db/schema/identity";
+export { phoneOtpChallenges } from "@/db/schema/otp";
+export { bonusLedger, categoryBonusRules, productBonusRules } from "@/db/schema/loyalty";
 export {
   blogPosts,
   heroSlides,

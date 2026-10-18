@@ -14,6 +14,13 @@ export type CalendarLabels = {
   clear: string;
   placeholder: string;
   time: string;
+  rangeStart: string;
+  rangeEnd: string;
+  apply: string;
+  hour: string;
+  minute: string;
+  timeSection: string;
+  rangePlaceholder: string;
 };
 
 const MONTH_NAMES: Record<Locale, readonly string[]> = {
@@ -76,6 +83,13 @@ const CALENDAR_LABELS: Record<Locale, CalendarLabels> = {
     clear: "Մաքրել",
     placeholder: "Ընտրեք ամսաթիվը",
     time: "Ժամ",
+    rangeStart: "Սկիզբ",
+    rangeEnd: "Ավարտ",
+    apply: "Կիրառել",
+    hour: "ժամ",
+    minute: "րոպե",
+    timeSection: "ԺԱՄ",
+    rangePlaceholder: "Նշել ժամանակահատված",
   },
   en: {
     previousMonth: "Previous month",
@@ -84,6 +98,13 @@ const CALENDAR_LABELS: Record<Locale, CalendarLabels> = {
     clear: "Clear",
     placeholder: "Select date",
     time: "Time",
+    rangeStart: "Start",
+    rangeEnd: "End",
+    apply: "Apply",
+    hour: "hour",
+    minute: "minute",
+    timeSection: "TIME",
+    rangePlaceholder: "Set date range",
   },
   ru: {
     previousMonth: "Предыдущий месяц",
@@ -92,6 +113,13 @@ const CALENDAR_LABELS: Record<Locale, CalendarLabels> = {
     clear: "Очистить",
     placeholder: "Выберите дату",
     time: "Время",
+    rangeStart: "Начало",
+    rangeEnd: "Конец",
+    apply: "Применить",
+    hour: "час",
+    minute: "минута",
+    timeSection: "ВРЕМЯ",
+    rangePlaceholder: "Указать период",
   },
 };
 

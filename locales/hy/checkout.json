@@ -40,6 +40,15 @@
     "selectShippingMethod": "Ընտրեք Take Away կամ առաքում",
     "selectDeliveryLocation": "Ընտրեք առաքման վայրը"
   },
+  "addresses": {
+    "title": "Առաքման հասցեներ",
+    "selectAddress": "Ընտրեք հասցեն",
+    "selectAddressRequired": "Ընտրեք առաքման հասցե",
+    "addAddress": "Ավելացնել հասցե",
+    "noAddresses": "Հասցեներ դեռ չկան։ Ավելացրեք ներքևում։",
+    "newBadge": "Նոր",
+    "loginToSave": "Մուտք գործեք՝ հասցեն պրոֆիլում պահելու համար։ Այս պատվերի համար հասցեն կօգտագործվի։"
+  },
   "deliveryCities": {
     "yerevan": "Երևան",
     "aragatsotn": "Արագածոտն",
@@ -54,6 +63,7 @@
     "vayotsDzor": "Վայոց Ձոր"
   },
   "payment": {
+    "selectPaymentMethod": "Ընտրեք վճարման եղանակը",
     "cashOnDelivery": "Կանխիկ առաքման պահին",
     "cashOnDeliveryDescription": "Վճարեք պատվերը ստանալիս",
     "cashOnPickup": "Կանխիկ վճարում",
@@ -99,6 +109,8 @@
   "errors": {
     "cartEmpty": "Զամբյուղը դատարկ է",
     "minimumOrder": "Նվազագույն պատվերը {amount} է։ Ավելացրեք ապրանքներ՝ շարունակելու համար։",
+    "fillRequired": "Լրացրեք նշված դաշտը",
+    "invalidEmail": "Մուտքագրեք ճիշտ էլ․ փոստ",
     "paymentMethodDisabled": "Այս վճարման եղանակը հասանելի չէ։",
     "onlineProviderPending": "Առցանց վճարումը դեռ միացված չէ։ Խնդրում ենք ընտրել կանխիկ առաքման պահին։"
   },
@@ -153,5 +165,18 @@
     "idramProviderUnavailable": "iDram վճարումը ժամանակավորապես անհասանելի է։ Փորձեք մի փոքր ուշ։",
     "providerUnavailable": "Քարտով վճարումը ժամանակավորապես անհասանելի է։ Փորձեք մի փոքր ուշ։",
     "verificationUnavailable": "Հիմա հնարավոր չէ ստուգել վճարումը։ Փորձեք մի փոքր ուշ։"
+  },
+  "bonus": {
+    "title": "Կուտակային միավորներ",
+    "available": "Հասանելի՝ {amount}",
+    "maxButton": "Առավելագույնը",
+    "applied": "Բոնուս",
+    "loginRequired": "Մուտք գործեք՝ բոնուս օգտագործելու համար",
+    "earnHint": "Վճարումը Paid դառնալուց հետո այս պատվերից կստանաք մոտ {amount} բոնուս։",
+    "minOrderHint": "Բոնուսի հավաքումը հասանելի է ապրանքների {amount} գումարից։",
+    "grillCoinLabel": "Grill Coin",
+    "progressTitle": "Grill Coin-ի հավաքումը հասանելի է {amount} գումարից",
+    "progressHint": "Ավելացրեք ևս {amount}, որպեսզի ստանաք Grill Coin-ներ",
+    "progressCta": "Ավելացրեք ապրանքներ և ստացեք Grill Coin-ներ"
   }
 }

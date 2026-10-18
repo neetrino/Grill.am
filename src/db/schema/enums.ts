@@ -132,3 +132,21 @@ export const jobApplicationStatusEnum = pgEnum("job_application_status", [
   "READ",
   "ARCHIVED",
 ]);
+
+/**
+ * Why a phone OTP was issued.
+ * LOGIN and VERIFY_PHONE are not interchangeable.
+ * CHANGE_PHONE and PASSWORD_RESET can be added as new enum values later.
+ */
+export const phoneOtpPurposeEnum = pgEnum("phone_otp_purpose", [
+  "LOGIN",
+  "VERIFY_PHONE",
+]);
+
+/** Loyalty wallet ledger entry kinds (amounts are always positive). */
+export const bonusLedgerEntryTypeEnum = pgEnum("bonus_ledger_entry_type", [
+  "EARN",
+  "SPEND",
+  "SPEND_REVERSAL",
+  "EARN_REVERSAL",
+]);

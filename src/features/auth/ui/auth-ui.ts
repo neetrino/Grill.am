@@ -27,3 +27,10 @@ export function authFieldClassName(invalid: boolean, password = false): string {
   const base = password ? AUTH_PASSWORD_FIELD_CLASS : AUTH_FIELD_CLASS;
   return invalid ? `${base} ${AUTH_FIELD_INVALID_CLASS}` : base;
 }
+
+/** Segmented control tab for password vs SMS on login/register. */
+export function authMethodTabClass(selected: boolean): string {
+  return selected
+    ? "h-10 rounded-[12px] bg-white text-sm font-black tracking-wide text-brand-ink shadow-sm"
+    : "h-10 rounded-[12px] text-sm font-bold text-brand-ink/55 transition hover:text-brand-ink";
+}

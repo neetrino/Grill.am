@@ -291,7 +291,7 @@ export function describeModifiers(
   for (const addonId of modifiers.addonIds) {
     const addon = customization.addons.find((item) => item.id === addonId);
     if (addon) {
-      lines.push(resolveLocaleLabel(addon.label, locale));
+      lines.push(`+ ${resolveLocaleLabel(addon.label, locale)}`);
     }
   }
 

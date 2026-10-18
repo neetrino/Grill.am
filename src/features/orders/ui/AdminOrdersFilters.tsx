@@ -19,6 +19,7 @@ import type { AdminDictionary } from "@/lib/i18n/get-dictionary";
 const ORDER_STATUS_FILTERS = [
   { statusKey: "pending", value: "PENDING" },
   { statusKey: "processing", value: "PROCESSING" },
+  { statusKey: "confirmed", value: "CONFIRMED" },
   { statusKey: "completed", value: "DELIVERED" },
   { statusKey: "cancelled", value: "CANCELLED" },
   { statusKey: "requiresReview", value: "REQUIRES_REVIEW" },

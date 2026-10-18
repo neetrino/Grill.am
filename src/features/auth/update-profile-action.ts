@@ -6,8 +6,12 @@ import { z } from "zod";
 
 import { getDb } from "@/db/client";
 import { addresses, users } from "@/db/schema";
+import { e164PhoneSchema } from "@/features/auth/schemas";
+import { resolvePhoneUpdate } from "@/lib/auth/otp/phone-verification-state";
+import { isSmsPlaceholderEmail } from "@/lib/auth/otp/sms-placeholder-user";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale, type Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 const profileSchema = z.object({
   firstName: z.string().trim().min(1).max(100),
@@ -17,7 +21,7 @@ const profileSchema = z.object({
     .trim()
     .email()
     .transform((value) => value.toLowerCase()),
-  phone: z.string().trim().min(5).max(40),
+  phone: e164PhoneSchema,
 });
 
 export type UpdateProfileActionState = {
@@ -38,16 +42,23 @@ export async function updateProfileAction(
     return { error: "Invalid locale." };
   }
 
+  const copy = getDictionary(locale).profile.personalForm;
   const user = await requireUser(locale as Locale);
+  const emailRaw = String(formData.get("email") ?? "").trim();
+  // SMS-signup users may leave email blank; keep the synthetic placeholder.
+  const emailValue =
+    emailRaw.length === 0 && isSmsPlaceholderEmail(user.email)
+      ? user.email
+      : emailRaw;
   const parsed = profileSchema.safeParse({
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
-    email: formData.get("email"),
+    email: emailValue,
     phone: formData.get("phone"),
   });
 
   if (!parsed.success) {
-    return { error: "Please check the form fields and try again." };
+    return { error: copy.validationError };
   }
 
   if (parsed.data.email !== user.email) {
@@ -60,9 +71,15 @@ export async function updateProfileAction(
       .limit(1);
 
     if (existing) {
-      return { error: "That email is already in use." };
+      return { error: copy.emailInUse };
     }
   }
+
+  const phoneUpdate = resolvePhoneUpdate({
+    previousPhone: user.phone,
+    previousVerifiedAt: user.phoneVerifiedAt,
+    nextPhone: parsed.data.phone,
+  });
 
   await getDb()
     .update(users)
@@ -70,7 +87,8 @@ export async function updateProfileAction(
       firstName: parsed.data.firstName,
       lastName: parsed.data.lastName,
       email: parsed.data.email,
-      phone: parsed.data.phone,
+      phone: phoneUpdate.phone,
+      phoneVerifiedAt: phoneUpdate.phoneVerifiedAt,
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
@@ -81,7 +99,7 @@ export async function updateProfileAction(
     .set({
       recipientFirstName: parsed.data.firstName,
       recipientLastName: parsed.data.lastName,
-      phone: parsed.data.phone,
+      phone: phoneUpdate.phone,
       updatedAt: new Date(),
     })
     .where(and(eq(addresses.userId, user.id), isNull(addresses.archivedAt)));
@@ -91,5 +109,5 @@ export async function updateProfileAction(
   revalidatePath(`/${locale}/profile/addresses`);
   revalidatePath(`/${locale}/checkout`);
 
-  return { success: "Personal information saved." };
+  return { success: copy.saved };
 }

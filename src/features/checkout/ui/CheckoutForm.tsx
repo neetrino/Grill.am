@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useRef, useState, useTransition, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type FormEvent,
+} from "react";
 
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
@@ -12,15 +19,26 @@ import {
   type CodCashDenomination,
 } from "@/features/checkout/domain/cod-cash-change";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import type {
+  CheckoutAddressChoice,
+  CheckoutAddressDrawerLabels,
+} from "@/features/checkout/ui/CheckoutAddressDrawer";
 import { CheckoutCodCashChange } from "@/features/checkout/ui/CheckoutCodCashChange";
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
+import {
+  isCheckoutEmailValid,
+  scrollToCheckoutField,
+  type CheckoutInvalidField,
+} from "@/features/checkout/ui/checkout-field-validation";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
 import { IdramAutoSubmitForm } from "@/features/checkout/ui/IdramAutoSubmitForm";
 import {
   CHECKOUT_ALERT_CLASS,
+  CHECKOUT_INVALID_FEEDBACK_MS,
   CHECKOUT_PRIMARY_BUTTON_CLASS,
   CHECKOUT_SECTION_CARD_CLASS,
+  CHECKOUT_TITLE_INVALID_CLASS,
 } from "@/features/checkout/ui/checkout-ui";
 import {
   CHECKOUT_DELIVERY_CITY_PRIMARY,
@@ -28,7 +46,15 @@ import {
   resolveCheckoutDeliveryCity,
 } from "@/features/checkout/domain/checkout-delivery-cities";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
+import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 import { meetsStorefrontMinimumOrder } from "@/features/settings/domain/store-settings";
+import {
+  applyEarnMinOrderGate,
+  clampBonusSpendAmount,
+  computeMaxBonusRedeemAmount,
+  computeOrderTotalWithBonus,
+  merchandiseNetAmount,
+} from "@/features/loyalty/domain/loyalty-math";
 import type { StorePickupOption } from "@/features/stores/yandex-map-embed";
 import { createId } from "@/lib/id";
 import type { Locale } from "@/lib/i18n/config";
@@ -66,8 +92,12 @@ type CheckoutLabels = {
   deliveryDescription: string;
   pickupBranch: string;
   selectPickupBranch: string;
+  selectAddress: string;
+  selectAddressRequired: string;
+  addressBook: CheckoutAddressDrawerLabels;
   enterCity: string;
   selectShippingMethod: string;
+  selectPaymentMethod: string;
   selectDeliveryLocation: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
@@ -89,6 +119,16 @@ type CheckoutLabels = {
   couponApply: string;
   couponApplying: string;
   discount: string;
+  bonusTitle: string;
+  bonusAvailable: string;
+  bonusMaxButton: string;
+  bonusApplied: string;
+  bonusLoginRequired: string;
+  bonusMinOrderHint: string;
+  grillCoinLabel: string;
+  grillCoinProgressTitle: string;
+  grillCoinProgressHint: string;
+  grillCoinProgressCta: string;
   subtotal: string;
   shipping: string;
   pickup: string;
@@ -100,6 +140,8 @@ type CheckoutLabels = {
   goToShop: string;
   cartEmpty: string;
   minimumOrder: string;
+  fillRequired: string;
+  invalidEmail: string;
   idramRedirecting: string;
   idramSubmitFallback: string;
   arcaRedirecting: string;
@@ -118,6 +160,10 @@ type CheckoutFormProps = {
   defaultLine1: string;
   /** City from the customer's default (Հիմնական) address when available. */
   defaultCity: string;
+  /** Saved address book when logged in; empty for guests. */
+  savedAddresses: CustomerAddressListItem[];
+  /** Whether the shopper can persist addresses to their profile. */
+  canSaveAddresses: boolean;
   subtotalAmount: number;
   minimumOrderAmount: number | null;
   deliveryOptions: CheckoutDeliveryOption[];
@@ -128,6 +174,21 @@ type CheckoutFormProps = {
     cash_on_delivery: boolean;
     arca: boolean;
     idram: boolean;
+  };
+  /** Null for guests or when loyalty is unavailable. */
+  bonusWallet: {
+    balanceAmount: number;
+    earnMinOrderAmount: number | null;
+    /** Flat product/category-rule earn for current cart (AMD). */
+    productBonusEarnAmount: number;
+  } | null;
+  /**
+   * Earn floor + projected cart earn for the Grill Coin progress card
+   * (shown to guests and signed-in users below the min).
+   */
+  grillCoinEarnPreview: {
+    earnMinOrderAmount: number | null;
+    productBonusEarnAmount: number;
   };
 };
 
@@ -181,12 +242,16 @@ export function CheckoutForm({
   defaultPhone,
   defaultLine1,
   defaultCity,
+  savedAddresses,
+  canSaveAddresses,
   subtotalAmount,
   minimumOrderAmount,
   deliveryOptions,
   pickupStores,
   hasItems,
   paymentAvailability,
+  bonusWallet,
+  grillCoinEarnPreview,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => createId(), []);
@@ -194,21 +259,34 @@ export function CheckoutForm({
     deliveryOptions,
     defaultCity,
   );
+  const defaultAddressId =
+    savedAddresses.find((address) => address.isDefaultShipping)?.id ??
+    savedAddresses.find((address) => address.line1 === defaultLine1)?.id ??
+    null;
   const [shippingMethod, setShippingMethod] = useState<
     "pickup" | "delivery" | null
-  >(null);
+  >(deliveryOptions.length > 0 ? "delivery" : null);
   const [deliveryRuleId, setDeliveryRuleId] = useState(defaultRuleId);
+  const [line1, setLine1] = useState(defaultLine1);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
+    defaultAddressId,
+  );
   const [pickupStoreId, setPickupStoreId] = useState("");
   const [paymentMethod, setPaymentMethod] =
-    useState<CheckoutPaymentMethod>("cash_on_delivery");
+    useState<CheckoutPaymentMethod | null>(null);
   const [cashTenderedAmount, setCashTenderedAmount] =
     useState<CodCashDenomination | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [invalidFields, setInvalidFields] = useState<
+    Partial<Record<CheckoutInvalidField, true>>
+  >({});
   const [couponDraft, setCouponDraft] = useState("");
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(
     null,
   );
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [useBonus, setUseBonus] = useState(false);
+  const [bonusDraft, setBonusDraft] = useState("");
   const [couponError, setCouponError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [applyingCoupon, startApplyCoupon] = useTransition();
@@ -218,6 +296,17 @@ export function CheckoutForm({
   } | null>(null);
   const [redirecting, setRedirecting] = useState(false);
   const submitLockRef = useRef(false);
+  const invalidFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  useEffect(() => {
+    return () => {
+      if (invalidFeedbackTimeoutRef.current) {
+        clearTimeout(invalidFeedbackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const selectedDelivery = deliveryOptions.find(
     (option) => option.id === deliveryRuleId,
@@ -283,6 +372,7 @@ export function CheckoutForm({
 
   function onPaymentMethodChange(method: CheckoutPaymentMethod): void {
     setPaymentMethod(method);
+    clearInvalidField("payment");
     if (method !== "cash_on_delivery") {
       setCashTenderedAmount(null);
     }
@@ -295,8 +385,88 @@ export function CheckoutForm({
   const quotedDelivery = quoteDeliveryAmount(selectedDelivery, subtotalAmount);
   const shippingAmount =
     shippingMethod === "delivery" ? quotedDelivery : 0;
-  const totalAmount =
-    Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
+  const merchandiseNet = merchandiseNetAmount(subtotalAmount, discountAmount);
+  const maxBonusRedeem =
+    bonusWallet == null
+      ? 0
+      : computeMaxBonusRedeemAmount({
+          merchandiseNet,
+          deliveryAmount: shippingAmount,
+          balanceAmount: bonusWallet.balanceAmount,
+        });
+  const parsedBonusDraft = Number.parseInt(bonusDraft.replace(/\s/g, ""), 10);
+  const requestedBonusSpend =
+    useBonus && Number.isInteger(parsedBonusDraft) && parsedBonusDraft > 0
+      ? parsedBonusDraft
+      : 0;
+  const bonusSpentAmount = clampBonusSpendAmount(
+    requestedBonusSpend,
+    maxBonusRedeem,
+  );
+  const rawProjectedEarn = grillCoinEarnPreview.productBonusEarnAmount;
+  const projectedEarn = applyEarnMinOrderGate(
+    rawProjectedEarn,
+    merchandiseNet,
+    grillCoinEarnPreview.earnMinOrderAmount,
+  );
+  const earnMinOrderAmount = grillCoinEarnPreview.earnMinOrderAmount;
+  const showGrillCoinProgress =
+    earnMinOrderAmount != null &&
+    earnMinOrderAmount > 0 &&
+    rawProjectedEarn > 0 &&
+    merchandiseNet < earnMinOrderAmount;
+  const remainingToEarnMin = showGrillCoinProgress
+    ? Math.max(0, earnMinOrderAmount - merchandiseNet)
+    : 0;
+  const totalAmount = computeOrderTotalWithBonus({
+    merchandiseNet,
+    deliveryAmount: shippingAmount,
+    bonusSpentAmount,
+  });
+
+  if (useBonus && maxBonusRedeem <= 0) {
+    setUseBonus(false);
+    setBonusDraft("");
+  } else if (useBonus && bonusDraft.trim() !== "") {
+    const parsed = Number.parseInt(bonusDraft.replace(/\s/g, ""), 10);
+    if (Number.isInteger(parsed) && parsed > maxBonusRedeem) {
+      setBonusDraft(String(maxBonusRedeem));
+    }
+  }
+
+  function onUseBonusChange(next: boolean): void {
+    setUseBonus(next);
+    if (!next) {
+      setBonusDraft("");
+      return;
+    }
+    if (maxBonusRedeem > 0 && bonusDraft.trim() === "") {
+      setBonusDraft(String(maxBonusRedeem));
+    }
+  }
+
+  function onBonusDraftChange(value: string): void {
+    const digitsOnly = value.replace(/[^\d]/g, "");
+    if (digitsOnly === "") {
+      setBonusDraft("");
+      return;
+    }
+    const next = Number.parseInt(digitsOnly, 10);
+    if (!Number.isInteger(next) || next < 0) {
+      return;
+    }
+    setBonusDraft(String(Math.min(next, Math.max(0, maxBonusRedeem))));
+  }
+
+  function onBonusMaxClick(): void {
+    if (maxBonusRedeem <= 0) {
+      setBonusDraft("");
+      return;
+    }
+    setUseBonus(true);
+    setBonusDraft(String(maxBonusRedeem));
+  }
+
   const meetsMinimum =
     shippingMethod == null
       ? true
@@ -391,25 +561,89 @@ export function CheckoutForm({
     );
   }
 
+  function clearInvalidField(field: CheckoutInvalidField): void {
+    setInvalidFields((prev) => {
+      if (!prev[field]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function markInvalidAndScroll(fields: CheckoutInvalidField[]): void {
+    const next: Partial<Record<CheckoutInvalidField, true>> = {};
+    for (const field of fields) {
+      next[field] = true;
+    }
+    if (invalidFeedbackTimeoutRef.current) {
+      clearTimeout(invalidFeedbackTimeoutRef.current);
+      invalidFeedbackTimeoutRef.current = null;
+    }
+    // Drop classes first so a repeat submit restarts the red + shake.
+    setInvalidFields({});
+    setError(null);
+    requestAnimationFrame(() => {
+      setInvalidFields(next);
+      const first = fields[0];
+      if (first) {
+        scrollToCheckoutField(first);
+      }
+      invalidFeedbackTimeoutRef.current = setTimeout(() => {
+        setInvalidFields({});
+        invalidFeedbackTimeoutRef.current = null;
+      }, CHECKOUT_INVALID_FEEDBACK_MS);
+    });
+  }
+
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    if (shippingMethod == null) {
-      setError(labels.selectShippingMethod);
-      return;
-    }
-    if (!meetsMinimum) {
-      setError(minimumOrderMessage);
-      return;
-    }
-    if (shippingMethod === "pickup" && !pickupStoreId) {
-      setError(labels.selectPickupBranch);
-      return;
-    }
     if (pending || submitLockRef.current || redirecting) {
       return;
     }
+
     const data = new FormData(event.currentTarget);
+    const firstName = String(data.get("firstName") ?? "").trim();
+    const lastName = String(data.get("lastName") ?? "").trim();
+    const contactEmail = String(data.get("contactEmail") ?? "").trim();
+    const contactPhone = String(data.get("contactPhone") ?? "").trim();
+
+    const missing: CheckoutInvalidField[] = [];
+    if (!firstName) {
+      missing.push("firstName");
+    }
+    if (contactPhone.length < 5) {
+      missing.push("contactPhone");
+    }
+    if (!isCheckoutEmailValid(contactEmail)) {
+      missing.push("contactEmail");
+    }
+    if (shippingMethod == null) {
+      missing.push("shipping");
+    } else if (shippingMethod === "pickup" && !pickupStoreId) {
+      missing.push("pickup");
+    } else if (shippingMethod === "delivery" && !line1.trim()) {
+      missing.push("address");
+    }
+    if (paymentMethod == null) {
+      missing.push("payment");
+    }
+    if (!meetsMinimum) {
+      missing.push("minimum");
+    }
+
+    if (missing.length > 0) {
+      markInvalidAndScroll(missing);
+      return;
+    }
+
+    if (shippingMethod == null || paymentMethod == null) {
+      return;
+    }
+
     setError(null);
+    setInvalidFields({});
     submitLockRef.current = true;
 
     startTransition(async () => {
@@ -417,10 +651,10 @@ export function CheckoutForm({
         const result = await createOrderAction({
           locale,
           idempotencyKey,
-          firstName: String(data.get("firstName") ?? ""),
-          lastName: String(data.get("lastName") ?? ""),
-          contactEmail: String(data.get("contactEmail") ?? ""),
-          contactPhone: String(data.get("contactPhone") ?? ""),
+          firstName,
+          lastName,
+          contactEmail,
+          contactPhone,
           shippingMethod,
           paymentMethod,
           cashTenderedAmount:
@@ -438,11 +672,10 @@ export function CheckoutForm({
           city:
             shippingMethod === "delivery" ? selectedDelivery?.city : undefined,
           line1:
-            shippingMethod === "delivery"
-              ? String(data.get("line1") ?? "")
-              : undefined,
+            shippingMethod === "delivery" ? line1.trim() : undefined,
           customerNote: String(data.get("customerNote") ?? "") || undefined,
           couponCode: appliedCouponCode ?? undefined,
+          bonusSpendAmount: bonusSpentAmount > 0 ? bonusSpentAmount : undefined,
         });
 
         if (!result.ok) {
@@ -545,8 +778,11 @@ export function CheckoutForm({
 
         {minimumOrderMessage ? (
           <div
+            id="checkout-field-minimum"
             role="alert"
-            className={`mb-6 flex flex-col gap-3 border border-red-200 bg-red-50 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${CHECKOUT_ALERT_CLASS}`}
+            className={`mb-6 flex flex-col gap-3 border border-red-200 bg-red-50 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${CHECKOUT_ALERT_CLASS} ${
+              invalidFields.minimum ? CHECKOUT_TITLE_INVALID_CLASS : ""
+            }`}
           >
             <p className="text-sm text-red-600">{minimumOrderMessage}</p>
             <Link
@@ -558,19 +794,30 @@ export function CheckoutForm({
           </div>
         ) : null}
 
-        <form onSubmit={onSubmit} suppressHydrationWarning>
+        <form onSubmit={onSubmit} noValidate suppressHydrationWarning>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_400px]">
             <CheckoutDetailsSections
+              locale={locale}
               labels={labels}
               pending={pending}
+              invalidFields={invalidFields}
+              onClearInvalidField={clearInvalidField}
               shippingMethod={shippingMethod}
-              onShippingMethodChange={setShippingMethod}
+              onShippingMethodChange={(method) => {
+                setShippingMethod(method);
+                clearInvalidField("shipping");
+                clearInvalidField("pickup");
+                clearInvalidField("address");
+              }}
               deliveryOptions={deliveryOptions}
               deliveryRuleId={deliveryRuleId}
               onDeliveryRuleChange={setDeliveryRuleId}
               pickupStores={pickupStores}
               pickupStoreId={pickupStoreId}
-              onPickupStoreChange={setPickupStoreId}
+              onPickupStoreChange={(storeId) => {
+                setPickupStoreId(storeId);
+                clearInvalidField("pickup");
+              }}
               paymentMethod={paymentMethod}
               onPaymentMethodChange={onPaymentMethodChange}
               paymentOptions={paymentOptions}
@@ -592,7 +839,15 @@ export function CheckoutForm({
               defaultLastName={defaultLastName}
               defaultEmail={defaultEmail}
               defaultPhone={defaultPhone}
-              defaultLine1={defaultLine1}
+              canSaveAddresses={canSaveAddresses}
+              savedAddresses={savedAddresses}
+              selectedAddressId={selectedAddressId}
+              line1={line1}
+              onAddressSelect={(address: CheckoutAddressChoice) => {
+                setSelectedAddressId(address.id);
+                setLine1(address.line1);
+                clearInvalidField("address");
+              }}
             />
 
             <CheckoutOrderSummary
@@ -602,6 +857,59 @@ export function CheckoutForm({
               couponApplyLabel={labels.couponApply}
               couponApplyingLabel={labels.couponApplying}
               discountLabel={labels.discount}
+              bonusTitle={labels.bonusTitle}
+              bonusAvailableFormatted={
+                bonusWallet
+                  ? labels.bonusAvailable.replace(
+                      "{amount}",
+                      formatMoney(bonusWallet.balanceAmount),
+                    )
+                  : null
+              }
+              bonusMaxButtonLabel={labels.bonusMaxButton}
+              bonusAppliedLabel={labels.bonusApplied}
+              bonusLoginRequired={
+                bonusWallet == null ? labels.bonusLoginRequired : null
+              }
+              grillCoinLabel={
+                projectedEarn > 0 ? labels.grillCoinLabel : null
+              }
+              grillCoinAmountFormatted={
+                projectedEarn > 0
+                  ? `+${Math.floor(projectedEarn).toLocaleString(
+                      locale === "en" ? "en-US" : "ru-RU",
+                    )}`
+                  : null
+              }
+              grillCoinProgress={
+                showGrillCoinProgress
+                  ? {
+                      productsHref,
+                      targetFormatted: formatMoney(earnMinOrderAmount),
+                      progressRatio: merchandiseNet / earnMinOrderAmount,
+                      copy: {
+                        title: labels.grillCoinProgressTitle.replace(
+                          "{amount}",
+                          formatMoney(earnMinOrderAmount),
+                        ),
+                        hint: labels.grillCoinProgressHint.replace(
+                          "{amount}",
+                          formatMoney(remainingToEarnMin),
+                        ),
+                        cta: labels.grillCoinProgressCta,
+                      },
+                    }
+                  : null
+              }
+              useBonus={useBonus}
+              canUseBonus={maxBonusRedeem > 0}
+              bonusDraft={bonusDraft}
+              onUseBonusChange={onUseBonusChange}
+              onBonusDraftChange={onBonusDraftChange}
+              onBonusMaxClick={onBonusMaxClick}
+              bonusFormatted={
+                bonusSpentAmount > 0 ? formatMoney(bonusSpentAmount) : null
+              }
               subtotalLabel={labels.subtotal}
               shippingLabel={shippingLabel}
               taxLabel={labels.tax}
@@ -620,7 +928,6 @@ export function CheckoutForm({
               isApplyingCoupon={applyingCoupon}
               error={error}
               isSubmitting={pending}
-              canPlaceOrder={shippingMethod != null && meetsMinimum}
               placeOrderLabel={labels.placeOrder}
               processingLabel={labels.processing}
             />

@@ -6,7 +6,15 @@ import { revalidatePath } from "next/cache";
 import { getDb } from "@/db/client";
 import { auditLogs, orderEvents, orders, payments } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
-import { planAdminPaymentStatusChange } from "@/features/orders/domain/admin-payment-status-plan";
+import {
+  restoreBonusSpendAfterRefund,
+  reverseBonusSpendForOrder,
+  syncOrderBonusEarn,
+} from "@/features/loyalty/application/ledger";
+import {
+  assertAdminPaymentTransition,
+  planAdminPaymentStatusChange,
+} from "@/features/orders/domain/admin-payment-status-plan";
 import {
   canTransitionPaymentStatus,
   isPaymentStatus,
@@ -33,6 +41,7 @@ export type ChangePaymentStatusData = {
  * Admin payment transition: updates order + latest payment row,
  * appends payment history event and audit log.
  * Refunded on ARCA captured attempts goes through the bank.
+ * Paid cash may move between Cancelled and Paid; captured card funds may not.
  */
 export async function changePaymentStatusAction(
   locale: string,
@@ -75,18 +84,22 @@ export async function changePaymentStatusAction(
       }
 
       const fromStatus = locked.paymentStatus;
+      const [latestPayment] = await tx
+        .select()
+        .from(payments)
+        .where(eq(payments.orderId, locked.id))
+        .orderBy(desc(payments.attemptNumber))
+        .limit(1);
 
       if (fromStatus === toStatus) {
         throw new Error("SAME_STATUS");
       }
 
-      if (fromStatus === "CAPTURED" && toStatus === "CANCELLED") {
-        throw new Error("CAPTURED_USE_REFUND");
-      }
-
-      if (!canTransitionPaymentStatus(fromStatus, toStatus)) {
-        throw new Error("INVALID_TRANSITION");
-      }
+      assertAdminPaymentTransition({
+        fromStatus,
+        toStatus,
+        provider: latestPayment?.provider ?? null,
+      });
 
       const now = new Date();
       const correlationId = createId();
@@ -95,13 +108,6 @@ export async function changePaymentStatusAction(
         .update(orders)
         .set({ paymentStatus: toStatus, updatedAt: now })
         .where(eq(orders.id, locked.id));
-
-      const [latestPayment] = await tx
-        .select()
-        .from(payments)
-        .where(eq(payments.orderId, locked.id))
-        .orderBy(desc(payments.attemptNumber))
-        .limit(1);
 
       if (latestPayment) {
         const timestampPatch = paymentLifecycleTimestampPatch(
@@ -158,6 +164,17 @@ export async function changePaymentStatusAction(
         correlationId,
         context: { orderNumber, note: note ?? null },
       });
+
+      await syncOrderBonusEarn(tx, locked.id);
+      if (
+        toStatus === "FAILED" ||
+        toStatus === "CANCELLED"
+      ) {
+        await reverseBonusSpendForOrder(tx, locked.id);
+      }
+      if (toStatus === "REFUNDED") {
+        await restoreBonusSpendAfterRefund(tx, locked.id);
+      }
 
       return { orderNumber, fromStatus, toStatus };
     });

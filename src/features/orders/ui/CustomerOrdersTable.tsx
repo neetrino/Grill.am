@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/Card";
+import { formatAdminMessage } from "@/features/admin/ui/format-admin-message";
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
@@ -20,10 +21,12 @@ import {
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import {
-  formatOrderDrawerMoney,
-  formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
+  adminOrderStatusLabel,
+  adminPaymentStatusLabel,
+} from "@/features/orders/ui/admin-order-status-labels";
+import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import { formatAppDateTimeMinutes } from "@/lib/datetime/app-timezone";
+import type { AdminDictionary, ProfileDictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerOrderRow = {
   id: string;
@@ -38,11 +41,23 @@ type CustomerOrderRow = {
 type CustomerOrdersTableProps = {
   orders: CustomerOrderRow[];
   onOpenOrder: (orderNumber: string) => void;
+  copy: ProfileDictionary["ordersList"];
+  statusLabels: AdminDictionary["orders"]["status"];
+  paymentLabels: AdminDictionary["orders"]["paymentStatus"];
+  orderNumberLabel: string;
+  statusLabel: string;
+  totalLabel: string;
 };
 
 export function CustomerOrdersTable({
   orders,
   onOpenOrder,
+  copy,
+  statusLabels,
+  paymentLabels,
+  orderNumberLabel,
+  statusLabel,
+  totalLabel,
 }: CustomerOrdersTableProps) {
   return (
     <Card className={`${ADMIN_TABLE_CARD} !rounded-[15px] shadow-none`}>
@@ -50,11 +65,11 @@ export function CustomerOrdersTable({
         <table className={ADMIN_TABLE}>
           <thead className={`${ADMIN_TABLE_THEAD} !rounded-t-[15px]`}>
             <tr>
-              <th className={ADMIN_TABLE_TH}>Order</th>
-              <th className={ADMIN_TABLE_TH_CENTER}>Status</th>
-              <th className={ADMIN_TABLE_TH_CENTER}>Payment</th>
-              <th className={ADMIN_TABLE_TH_CENTER}>Total</th>
-              <th className={ADMIN_TABLE_TH}>Placed</th>
+              <th className={ADMIN_TABLE_TH}>{orderNumberLabel}</th>
+              <th className={ADMIN_TABLE_TH_CENTER}>{statusLabel}</th>
+              <th className={ADMIN_TABLE_TH_CENTER}>{copy.payment}</th>
+              <th className={ADMIN_TABLE_TH_CENTER}>{totalLabel}</th>
+              <th className={ADMIN_TABLE_TH}>{copy.placed}</th>
             </tr>
           </thead>
           <tbody className={ADMIN_TABLE_TBODY}>
@@ -64,7 +79,9 @@ export function CustomerOrdersTable({
                 className={`${ADMIN_TABLE_ROW} cursor-pointer`}
                 tabIndex={0}
                 role="button"
-                aria-label={`Open order ${order.orderNumber}`}
+                aria-label={formatAdminMessage(copy.openOrder, {
+                  orderNumber: order.orderNumber,
+                })}
                 onClick={() => onOpenOrder(order.orderNumber)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
@@ -80,14 +97,14 @@ export function CustomerOrdersTable({
                   <span
                     className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
                   >
-                    {formatOrderStatusLabel(order.status)}
+                    {adminOrderStatusLabel(order.status, statusLabels)}
                   </span>
                 </td>
                 <td className={`${ADMIN_TABLE_TD} text-center`}>
                   <span
                     className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
                   >
-                    {formatOrderStatusLabel(order.paymentStatus)}
+                    {adminPaymentStatusLabel(order.paymentStatus, paymentLabels)}
                   </span>
                 </td>
                 <td className={`${ADMIN_TABLE_TD} text-center`}>
@@ -110,12 +127,14 @@ export function CustomerOrdersTable({
       </div>
       {orders.length === 0 ? (
         <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-          No orders match these filters.
+          {copy.empty}
         </p>
       ) : (
         <div className={`${ADMIN_TABLE_FOOTER_ROUNDED_B} !rounded-b-[15px]`}>
           <p className="text-sm text-gray-600">
-            {orders.length} order{orders.length === 1 ? "" : "s"} on this page
+            {formatAdminMessage(copy.pageCount, {
+              count: String(orders.length),
+            })}
           </p>
         </div>
       )}

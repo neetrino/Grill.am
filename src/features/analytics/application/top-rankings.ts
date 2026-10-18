@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, countDistinct, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, countDistinct, desc, eq, gte, lte, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -10,7 +10,10 @@ import {
   productCategories,
   type TranslationsJson,
 } from "@/db/schema";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
+import {
+  includedAmountSql,
+  sumIncludedRevenueSql,
+} from "@/features/analytics/application/revenue-amount-sql";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
@@ -47,7 +50,6 @@ function categoryTitle(translations: TranslationsJson, locale: Locale): string {
 export async function queryTopSellingProducts(input: {
   start: Date;
   end: Date;
-  revenueStatuses: OrderStatus[];
   limit?: number;
 }): Promise<AnalyticsTopProduct[]> {
   const limit = input.limit ?? 5;
@@ -57,13 +59,15 @@ export async function queryTopSellingProducts(input: {
       title: orderItems.productTitleSnapshot,
       sku: orderItems.productSkuSnapshot,
       imageKey: orderItems.productImageKeySnapshot,
-      quantitySold: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(
-        Number,
-      ),
+      quantitySold: sql<number>`coalesce(sum(${includedAmountSql({
+        amount: orderItems.quantity,
+        orderStatus: orders.status,
+      })}), 0)`.mapWith(Number),
       orderCount: countDistinct(orderItems.orderId),
-      revenueAmount: sql<number>`coalesce(sum(${orderItems.lineTotalAmount}), 0)`.mapWith(
-        Number,
-      ),
+      revenueAmount: sumIncludedRevenueSql({
+        amount: orderItems.lineTotalAmount,
+        orderStatus: orders.status,
+      }),
       unitPriceAmount: sql<number>`coalesce(max(${orderItems.unitBaseAmount}), 0)`.mapWith(
         Number,
       ),
@@ -75,7 +79,6 @@ export async function queryTopSellingProducts(input: {
         eq(orders.isArchived, false),
         gte(orders.placedAt, input.start),
         lte(orders.placedAt, input.end),
-        inArray(orders.status, input.revenueStatuses),
       ),
     )
     .groupBy(
@@ -84,7 +87,14 @@ export async function queryTopSellingProducts(input: {
       orderItems.productSkuSnapshot,
       orderItems.productImageKeySnapshot,
     )
-    .orderBy(desc(sql`sum(${orderItems.quantity})`))
+    .orderBy(
+      desc(
+        sql`sum(${includedAmountSql({
+          amount: orderItems.quantity,
+          orderStatus: orders.status,
+        })})`,
+      ),
+    )
     .limit(limit);
 
   return rows.map((row) => ({
@@ -103,7 +113,6 @@ export async function queryTopSellingProducts(input: {
 export async function queryTopCategories(input: {
   start: Date;
   end: Date;
-  revenueStatuses: OrderStatus[];
   locale: Locale;
   limit?: number;
 }): Promise<AnalyticsTopCategory[]> {
@@ -112,13 +121,15 @@ export async function queryTopCategories(input: {
     .select({
       categoryId: categories.id,
       translations: categories.translations,
-      itemCount: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(
-        Number,
-      ),
+      itemCount: sql<number>`coalesce(sum(${includedAmountSql({
+        amount: orderItems.quantity,
+        orderStatus: orders.status,
+      })}), 0)`.mapWith(Number),
       orderCount: countDistinct(orders.id),
-      revenueAmount: sql<number>`coalesce(sum(${orderItems.lineTotalAmount}), 0)`.mapWith(
-        Number,
-      ),
+      revenueAmount: sumIncludedRevenueSql({
+        amount: orderItems.lineTotalAmount,
+        orderStatus: orders.status,
+      }),
     })
     .from(orderItems)
     .innerJoin(orders, eq(orderItems.orderId, orders.id))
@@ -132,11 +143,17 @@ export async function queryTopCategories(input: {
         eq(orders.isArchived, false),
         gte(orders.placedAt, input.start),
         lte(orders.placedAt, input.end),
-        inArray(orders.status, input.revenueStatuses),
       ),
     )
     .groupBy(categories.id, categories.translations)
-    .orderBy(desc(sql`sum(${orderItems.lineTotalAmount})`))
+    .orderBy(
+      desc(
+        sumIncludedRevenueSql({
+          amount: orderItems.lineTotalAmount,
+          orderStatus: orders.status,
+        }),
+      ),
+    )
     .limit(limit);
 
   return rows.map((row) => ({

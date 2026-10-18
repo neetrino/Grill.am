@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/features/products/ui/ProductCard";
+import { formatProductCoinsEarnLabel } from "@/features/products/ui/format-product-coins-earn-label";
+import { resolveProductCardBonusEarnByProductId } from "@/features/loyalty/application/product-card-bonus";
 import { listWishlistProducts } from "@/features/wishlist/queries";
 import { WishlistEmptyState } from "@/features/wishlist/ui/WishlistEmptyState";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -50,17 +52,24 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
           {title}
           <WishlistEmptyState
             title={dictionary.wishlist.signInTitle}
-            hint={dictionary.wishlist.signInPrompt}
-            actionLabel={dictionary.header.login}
-            actionHref={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
-            actionIcon="login"
+            titleSecondLine={dictionary.wishlist.signInTitleAccent}
+            actionLabel={dictionary.wishlist.browseCatalog}
+            actionHref={`/${rawLocale}/products`}
           />
         </div>
       </section>
     );
   }
 
-  const formatPrice = await createDisplayPriceFormatter(rawLocale, currency);
+  const [formatPrice, bonusEarnByProductId] = await Promise.all([
+    createDisplayPriceFormatter(rawLocale, currency),
+    resolveProductCardBonusEarnByProductId(
+      products.map((product) => ({
+        id: product.id,
+        priceAmount: product.priceAmount,
+      })),
+    ),
+  ]);
   const priced = products.map((product) => {
     const price = formatPrice(product.priceAmount);
     const compareAt =
@@ -118,6 +127,11 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   hitLabel={
                     product.isFeatured ? dictionary.product.hit : null
                   }
+                  bonusEarnLabel={formatProductCoinsEarnLabel(
+                    dictionary.product.bonusEarn,
+                    bonusEarnByProductId.get(product.id) ?? 0,
+                    rawLocale,
+                  )}
                 />
               ),
             )}

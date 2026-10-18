@@ -26,6 +26,8 @@ type AdminInlineStatusMenuProps = {
   panelRef: RefObject<HTMLUListElement | null>;
   optionLabel: (value: string) => string;
   onSelect: (value: string) => void;
+  /** Wider content-sized panel (order sheet header). */
+  wide?: boolean;
 };
 
 const OPTIONS = {
@@ -44,6 +46,7 @@ export function AdminInlineStatusMenu({
   panelRef,
   optionLabel,
   onSelect,
+  wide = false,
 }: AdminInlineStatusMenuProps) {
   const options = OPTIONS[kind];
 
@@ -52,10 +55,13 @@ export function AdminInlineStatusMenu({
       ref={panelRef}
       id={menuId}
       role="listbox"
-      className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-1 ${dropdownPanelStateClass(panelExpanded)}`}
+      className={`${DROPDOWN_PANEL_PORTAL_CLASS} overflow-hidden py-1 ${
+        wide ? "min-w-[12.5rem]" : ""
+      } ${dropdownPanelStateClass(panelExpanded)}`}
       style={dropdownPortalStyle({
         ...menuPosition,
         maxHeight: "none",
+        ...(wide ? { minWidth: Math.max(menuPosition.minWidth ?? 0, 200) } : {}),
       })}
     >
       {options.map((option) => {
