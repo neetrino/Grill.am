@@ -34,9 +34,21 @@ test.describe("payment E2E matrix", () => {
   test("health endpoint is up", async ({ request, baseURL }) => {
     const response = await request.get(`${baseURL}/api/health`);
     expect(response.ok()).toBeTruthy();
-    const json = (await response.json()) as { ok: boolean; database: string };
-    expect(json.ok).toBe(true);
-    expect(json.database).toBe("up");
+    expect(response.headers()["cache-control"]).toBe("no-store");
+    const json = (await response.json()) as {
+      status: string;
+      service: string;
+      timestamp: string;
+    };
+    expect(json.status).toBe("ok");
+    expect(json.service).toBe("grill");
+    expect(json.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+
+    const deep = await request.get(`${baseURL}/api/health/deep`);
+    expect(deep.ok()).toBeTruthy();
+    const deepJson = (await deep.json()) as { status: string; database: string };
+    expect(deepJson.status).toBe("ok");
+    expect(deepJson.database).toBe("ok");
   });
 
   test("e2e control surfaces are available in mock mode", async ({

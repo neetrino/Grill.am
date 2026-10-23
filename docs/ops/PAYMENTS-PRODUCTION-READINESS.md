@@ -19,7 +19,8 @@ Never put secrets in `NEXT_PUBLIC_*` or docs.
 
 - [ ] Migrations `0010`–`0013` applied on the target environment
 - [ ] Code deployed with feature flags **off**
-- [ ] `/api/health` green
+- [ ] `/api/health` returns `200` with `status: "ok"` (no database)
+- [ ] `/api/health/deep` returns `200` with `database: "ok"` when a dependency check is required
 - [ ] E2E/mock routes return 404 outside `E2E_PROVIDER_MODE=mock` / non-production
 - [ ] `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:integration`, `pnpm test:e2e -- --workers=1 --retries=0`, `pnpm build`, `pnpm db:check` green
 - [ ] `pnpm payments:readiness` shows missing env **names** only (no secrets)
