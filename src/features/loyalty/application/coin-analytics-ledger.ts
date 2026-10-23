@@ -12,7 +12,7 @@ export type CoinAnalyticsTopUser = {
   userId: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email: string | null;
   phone: string | null;
   /** Current wallet — unspent coins. */
   balanceAmount: number;
@@ -49,7 +49,7 @@ function toWalletUser(input: {
   userId: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email: string | null;
   phone: string | null;
   balanceAmount: number;
   spentAmount: number;

@@ -174,6 +174,7 @@
 - Customer-ը խմբագրում է first name, last name, email և phone։
 - Email փոփոխությունը կարող է պահանջել re-verification և unique check։
 - Password change-ը պահանջում է current password և revoke policy։
+- Եթե password hash չկա, signed-in customer-ը կարող է սահմանել գաղտնաբառ առանց current password-ի։ Action-ը կրկին կարդում է hash-ը և մերժում է, եթե այն արդեն կա։ Այլ session-ները revoke են արվում, ընթացիկ session-ը մնում է։
 
 ### 8.4 Addresses
 

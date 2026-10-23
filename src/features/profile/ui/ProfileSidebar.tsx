@@ -12,6 +12,7 @@ import {
   PROFILE_SIDEBAR_ICON_TONE,
 } from "@/features/profile/ui/profile-ui";
 import { logoutAction } from "@/features/auth/logout-action";
+import { realInboxEmail } from "@/lib/auth/otp/sms-placeholder-user";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { SessionUser } from "@/lib/auth/session";
@@ -30,7 +31,7 @@ function ProfileContactRow({
   iconPlain = false,
 }: {
   icon: ReactNode;
-  value: string;
+  value: string | null;
   valueClassName?: string;
   /** Skip the gray chip — for art that is already circular (coin). */
   iconPlain?: boolean;
@@ -63,6 +64,7 @@ export function ProfileSidebar({
 }: ProfileSidebarProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
   const initials = `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}`.toUpperCase();
+  const inboxEmail = realInboxEmail(user.email);
   const asideRef = useRef<HTMLElement>(null);
   const navScrollRef = useRef<HTMLDivElement>(null);
 
@@ -123,10 +125,12 @@ export function ProfileSidebar({
         </div>
 
         <div className="mt-5 flex flex-col gap-2">
-          <ProfileContactRow
-            icon={<Mail className="h-4 w-4" aria-hidden />}
-            value={user.email}
-          />
+          {inboxEmail !== null ? (
+            <ProfileContactRow
+              icon={<Mail className="h-4 w-4" aria-hidden />}
+              value={inboxEmail}
+            />
+          ) : null}
           {user.phone ? (
             <ProfileContactRow
               icon={<Phone className="h-4 w-4" aria-hidden />}

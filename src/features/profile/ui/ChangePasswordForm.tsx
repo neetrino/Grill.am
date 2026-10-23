@@ -8,16 +8,25 @@ import {
   changePasswordAction,
   type ChangePasswordActionState,
 } from "@/features/auth/change-password-action";
+import {
+  setPasswordAction,
+  type SetPasswordActionState,
+} from "@/features/auth/set-password-action";
 import { PROFILE_BTN_PRIMARY_CLASS, PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS } from "@/features/profile/ui/profile-ui";
 import { ProfilePageTitle } from "@/features/profile/ui/ProfilePageTitle";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
+type PasswordFormState = ChangePasswordActionState | SetPasswordActionState;
+
 type ChangePasswordFormProps = {
   locale: string;
+  /** True when a password hash already exists. The hash itself stays on the server. */
+  hasPassword: boolean;
   labels: {
     title: string;
+    setTitle: string;
     currentPassword: string;
     newPassword: string;
     confirmPassword: string;
@@ -26,6 +35,8 @@ type ChangePasswordFormProps = {
     confirmPasswordPlaceholder: string;
     change: string;
     changing: string;
+    set: string;
+    setting: string;
   };
 };
 
@@ -35,10 +46,16 @@ const emptyForm = {
   confirmPassword: "",
 };
 
-const initialState: ChangePasswordActionState = {};
+const initialState: PasswordFormState = {};
 
-export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) {
-  const action = changePasswordAction.bind(null, locale);
+export function ChangePasswordForm({
+  locale,
+  hasPassword,
+  labels,
+}: ChangePasswordFormProps) {
+  const action = (
+    hasPassword ? changePasswordAction : setPasswordAction
+  ).bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [values, setValues] = useState(emptyForm);
   // Tracks the `state.success` value last synced into `values`.
@@ -54,34 +71,46 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
     }
   }
 
+  let submitLabel = labels.set;
+  if (hasPassword) {
+    submitLabel = labels.change;
+  }
+  if (isPending) {
+    submitLabel = hasPassword ? labels.changing : labels.setting;
+  }
+
   return (
     <Card className={`rounded-[15px] border-0 p-5 shadow-none ring-1 ring-gray-100/80 sm:p-7 lg:p-8 ${PROFILE_MOBILE_FORM_SECTION_FRAMELESS_CLASS}`}>
       <div className="mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6">
-        <ProfilePageTitle size="section">{labels.title}</ProfilePageTitle>
+        <ProfilePageTitle size="section">
+          {hasPassword ? labels.title : labels.setTitle}
+        </ProfilePageTitle>
       </div>
 
       <form
         action={formAction}
         className="max-w-sm space-y-5"
       >
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-          {labels.currentPassword}
-          <input
-            name="currentPassword"
-            type="password"
-            required
-            value={values.currentPassword}
-            onChange={(event) =>
-              setValues((prev) => ({
-                ...prev,
-                currentPassword: event.target.value,
-              }))
-            }
-            placeholder={labels.currentPasswordPlaceholder}
-            className={FIELD_CLASS}
-            autoComplete="current-password"
-          />
-        </label>
+        {hasPassword ? (
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            {labels.currentPassword}
+            <input
+              name="currentPassword"
+              type="password"
+              required
+              value={values.currentPassword}
+              onChange={(event) =>
+                setValues((prev) => ({
+                  ...prev,
+                  currentPassword: event.target.value,
+                }))
+              }
+              placeholder={labels.currentPasswordPlaceholder}
+              className={FIELD_CLASS}
+              autoComplete="current-password"
+            />
+          </label>
+        ) : null}
 
         <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
           {labels.newPassword}
@@ -139,7 +168,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
             className={`${PROFILE_BTN_PRIMARY_CLASS} w-full sm:w-auto`}
             disabled={isPending}
           >
-            {isPending ? labels.changing : labels.change}
+            {submitLabel}
           </Button>
         </div>
       </form>

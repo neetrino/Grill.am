@@ -1,14 +1,10 @@
 import "server-only";
 
-import { randomBytes } from "node:crypto";
-
 import { and, eq, inArray, or, sql, type SQL } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
-import { hashPassword } from "@/lib/auth/password";
 import { isVerifiedPhoneOwnershipConflict } from "@/lib/auth/otp/verified-phone-conflict";
-import { smsPlaceholderEmail } from "@/lib/auth/otp/sms-placeholder-user";
 import type { OtpUserRecord, OtpUserRepository } from "@/lib/auth/otp/types";
 import {
   normalizePhoneToE164,
@@ -69,16 +65,13 @@ export function createDrizzleOtpUserRepository(): OtpUserRepository {
       }
     },
     async createVerifiedPhoneCustomer(input) {
-      const passwordHash = await hashPassword(
-        randomBytes(32).toString("base64url"),
-      );
       try {
         const [row] = await getDb()
           .insert(users)
           .values({
             id: input.id,
-            email: smsPlaceholderEmail(input.phoneE164),
-            passwordHash,
+            email: null,
+            passwordHash: null,
             passwordUpdatedAt: input.now,
             firstName: "",
             lastName: "",

@@ -11,7 +11,10 @@ import {
   readAuthFormValues,
   type AuthActionState,
 } from "@/features/auth/ui/auth-action-state";
-import { isPasswordLoginAllowed } from "@/lib/auth/password-login";
+import {
+  isPasswordLoginAllowed,
+  mayCheckStoredPassword,
+} from "@/lib/auth/password-login";
 import { resolveSafeNextPath } from "@/lib/auth/post-login-path";
 import { createSession } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
@@ -53,9 +56,14 @@ export async function loginAction(
     .from(users)
     .where(eq(users.email, parsed.data.email))
     .limit(1);
-  const passwordMatches = user
-    ? await verifyPassword(parsed.data.password, user.passwordHash)
-    : false;
+  const credential =
+    user === undefined
+      ? null
+      : { email: user.email, passwordHash: user.passwordHash };
+  const passwordMatches =
+    credential !== null && mayCheckStoredPassword(credential)
+      ? await verifyPassword(parsed.data.password, credential.passwordHash)
+      : false;
 
   if (
     !user ||

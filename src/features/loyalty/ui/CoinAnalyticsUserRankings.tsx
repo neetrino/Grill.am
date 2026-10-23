@@ -12,6 +12,7 @@ import {
 } from "@/features/admin/ui/admin-ui";
 import type { CoinAnalyticsTopUser } from "@/features/loyalty/application/coin-analytics-queries";
 import { formatCoinAmount } from "@/features/loyalty/domain/coin-analytics";
+import { realInboxEmail } from "@/lib/auth/otp/sms-placeholder-user";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
 const SEARCH_DEBOUNCE_MS = 300;
@@ -59,7 +60,8 @@ export function CoinAnalyticsUserRankings({
   to,
   query,
 }: CoinAnalyticsUserRankingsProps) {
-  const copy = useAdminDictionary().coinAnalytics.rankings;
+  const dictionary = useAdminDictionary();
+  const copy = dictionary.coinAnalytics.rankings;
   const resolvedLocale: Locale = isLocale(locale) ? locale : defaultLocale;
   const router = useRouter();
   const [draft, setDraft] = useState(query);
@@ -140,7 +142,9 @@ export function CoinAnalyticsUserRankings({
                 <p className="truncate text-sm font-medium text-gray-900">
                   {row.firstName} {row.lastName}
                 </p>
-                <p className="truncate text-[11px] text-gray-500">{row.email}</p>
+                <p className="truncate text-[11px] text-gray-500">
+                  {realInboxEmail(row.email) ?? dictionary.common.dash}
+                </p>
                 {row.phone ? (
                   <p className="truncate text-[11px] text-gray-500">
                     {row.phone}

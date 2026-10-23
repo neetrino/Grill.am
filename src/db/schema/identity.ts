@@ -22,12 +22,12 @@ export const users = pgTable(
   "users",
   {
     id: idColumn(),
-    email: text("email").notNull(),
+    email: text("email"),
     emailVerifiedAt: timestamp("email_verified_at", {
       withTimezone: true,
       mode: "date",
     }),
-    passwordHash: text("password_hash").notNull(),
+    passwordHash: text("password_hash"),
     passwordUpdatedAt: timestamp("password_updated_at", {
       withTimezone: true,
       mode: "date",

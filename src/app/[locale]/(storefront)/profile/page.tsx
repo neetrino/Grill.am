@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { loadHasPassword } from "@/features/auth/load-has-password";
 import { logoutAction } from "@/features/auth/logout-action";
 import {
   CHECKOUT_DELIVERY_CITY_I18N_KEYS,
@@ -54,6 +55,7 @@ export default async function ProfilePage({ params, searchParams }: ProfilePageP
     customerOrders,
     bonusSummary,
     bonusLedger,
+    hasPassword,
   ] =
     await Promise.all([
       getProfileDashboard(user.id),
@@ -71,6 +73,7 @@ export default async function ProfilePage({ params, searchParams }: ProfilePageP
       }),
       getCustomerBonusSummary(user.id),
       listCustomerBonusLedger(user.id, 1),
+      loadHasPassword(user.id),
     ]);
 
   const logoutWithLocale = logoutAction.bind(null, locale);
@@ -217,8 +220,10 @@ export default async function ProfilePage({ params, searchParams }: ProfilePageP
           password: (
             <ChangePasswordForm
               locale={locale}
+              hasPassword={hasPassword}
               labels={{
                 title: dictionary.profile.password,
+                setTitle: passwordCopy.setTitle,
                 currentPassword: passwordCopy.currentPassword,
                 newPassword: passwordCopy.newPassword,
                 confirmPassword: passwordCopy.confirmPassword,
@@ -229,6 +234,8 @@ export default async function ProfilePage({ params, searchParams }: ProfilePageP
                   passwordCopy.confirmPasswordPlaceholder,
                 change: passwordCopy.change,
                 changing: passwordCopy.changing,
+                set: passwordCopy.set,
+                setting: passwordCopy.setting,
               }}
             />
           ),

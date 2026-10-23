@@ -6,9 +6,9 @@ import { z } from "zod";
 
 import { getDb } from "@/db/client";
 import { addresses, users } from "@/db/schema";
+import { resolveProfileEmailUpdate } from "@/features/auth/resolve-profile-email";
 import { e164PhoneSchema } from "@/features/auth/schemas";
 import { resolvePhoneUpdate } from "@/lib/auth/otp/phone-verification-state";
-import { isSmsPlaceholderEmail } from "@/lib/auth/otp/sms-placeholder-user";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -16,11 +16,6 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 const profileSchema = z.object({
   firstName: z.string().trim().min(1).max(100),
   lastName: z.string().trim().min(1).max(100),
-  email: z
-    .string()
-    .trim()
-    .email()
-    .transform((value) => value.toLowerCase()),
   phone: e164PhoneSchema,
 });
 
@@ -44,29 +39,26 @@ export async function updateProfileAction(
 
   const copy = getDictionary(locale).profile.personalForm;
   const user = await requireUser(locale as Locale);
-  const emailRaw = String(formData.get("email") ?? "").trim();
-  // SMS-signup users may leave email blank; keep the synthetic placeholder.
-  const emailValue =
-    emailRaw.length === 0 && isSmsPlaceholderEmail(user.email)
-      ? user.email
-      : emailRaw;
+  const emailUpdate = resolveProfileEmailUpdate(
+    user.email,
+    String(formData.get("email") ?? ""),
+  );
   const parsed = profileSchema.safeParse({
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
-    email: emailValue,
     phone: formData.get("phone"),
   });
 
-  if (!parsed.success) {
+  if (!emailUpdate.ok || !parsed.success) {
     return { error: copy.validationError };
   }
 
-  if (parsed.data.email !== user.email) {
+  if (emailUpdate.email !== null && emailUpdate.email !== user.email) {
     const [existing] = await getDb()
       .select({ id: users.id })
       .from(users)
       .where(
-        and(eq(users.email, parsed.data.email), ne(users.id, user.id)),
+        and(eq(users.email, emailUpdate.email), ne(users.id, user.id)),
       )
       .limit(1);
 
@@ -86,7 +78,7 @@ export async function updateProfileAction(
     .set({
       firstName: parsed.data.firstName,
       lastName: parsed.data.lastName,
-      email: parsed.data.email,
+      email: emailUpdate.email,
       phone: phoneUpdate.phone,
       phoneVerifiedAt: phoneUpdate.phoneVerifiedAt,
       updatedAt: new Date(),

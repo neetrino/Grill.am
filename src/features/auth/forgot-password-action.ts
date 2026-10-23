@@ -9,6 +9,7 @@ import { users } from "@/db/schema";
 import { forgotPasswordSchema } from "@/features/auth/schemas";
 import { renderPasswordResetEmail } from "@/features/notifications/templates/password-reset-email-template";
 import { getStoreIdentity } from "@/features/settings/application/queries";
+import { passwordResetRecipient } from "@/lib/auth/password-login";
 import {
   issuePasswordResetToken,
   PASSWORD_RESET_TTL_SECONDS,
@@ -43,7 +44,15 @@ export async function forgotPasswordAction(
       .where(eq(users.email, parsed.data.email))
       .limit(1);
 
-    if (user && user.status === "ACTIVE") {
+    const recipient =
+      user === undefined
+        ? null
+        : passwordResetRecipient({
+            email: user.email,
+            status: user.status,
+          });
+
+    if (user !== undefined && recipient !== null) {
       const providers = getProviders();
       const rawToken = await issuePasswordResetToken(
         providers.redis.getClient(),
@@ -63,7 +72,7 @@ export async function forgotPasswordAction(
         ttlMinutes: PASSWORD_RESET_TTL_SECONDS / 60,
       });
       const result = await getEmailDelivery().send({
-        to: user.email,
+        to: recipient,
         subject: email.subject,
         text: email.text,
         html: email.html,

@@ -27,13 +27,15 @@ Profile
 
 Auth code calls `src/lib/sms` and never the MOBIPACE HTTP client directly. MOBIPACE is only the SMS transport.
 
-Password hashing, sessions, remember-me, roles, and post-login redirects stay on the existing session implementation. SMS signup creates a `CUSTOMER` with a verified phone and placeholder profile fields, then redirects to personal information.
+Password hashing, sessions, remember-me, roles, and post-login redirects stay on the existing session implementation. SMS signup creates a `CUSTOMER` with a verified phone and no email or password, then redirects to personal information.
 
 ## Flows
 
 ### Password login
 
-Unchanged. An active user with a matching password receives a session. Suspended and anonymized users do not.
+An active user receives a session when the address is a real inbox, a password hash is stored, and the password matches. A null email, an SMS placeholder, and a missing hash all fail with the same invalid-credentials response. The password is verified only when both the inbox and the hash are present. Suspended and anonymized users do not receive a session.
+
+Password reset is sent only when the account is active and the address is a real inbox. The message goes to that inbox. Unknown addresses and placeholders get the same success response and no message.
 
 ### SMS login and signup
 
@@ -47,7 +49,7 @@ Changing the canonical phone clears `phone_verified_at`. SMS login stays unavail
 4. An OTP is sent when exactly one account matches and that account is an active, verified customer, **or** when no active account matches (SMS signup challenge with `user_id` null).
 5. For unverified, inactive/held, staff, and ambiguous numbers no SMS is sent and the client receives `unavailable` (not a fake "sent"). MOBIPACE/transport failures also return `unavailable`. A phone held by a suspended account is not offered for signup.
 6. Verification checks purpose `LOGIN`, expiry, attempt count, and the HMAC, then consumes the challenge with one conditional update.
-7. If the challenge belongs to an existing user, `createSession()` runs only when that user is still a verified active customer. If the challenge has no user, a new `CUSTOMER` is created with the verified phone, placeholder email/name, and a random unusable password hash, then `createSession()` runs and the client is redirected to `/[locale]/profile/personal-information`.
+7. If the challenge belongs to an existing user, `createSession()` runs only when that user is still a verified active customer. If the challenge has no user, a new `CUSTOMER` is created with the verified phone, a null email, a null password hash, and an empty first and last name, then `createSession()` runs and the client is redirected to `/[locale]/profile/personal-information`.
 
 ### Phone verification
 
@@ -117,6 +119,8 @@ Migration `0022_phone_otp.sql` adds `users.phone_verified_at` and `phone_otp_cha
 Issuing a new code consumes the previous active challenge and inserts the next one in a single SQL statement on the Neon HTTP driver. That statement is atomic. Commerce transactions still use the WebSocket helper in `src/db/transaction.ts`. `ws` stays external to the Next.js server bundle.
 
 Migration `0023_phone_verified_unique.sql` adds a partial unique index on `users.phone` where `phone_verified_at` is set. It does not rewrite legacy phones and does not constrain unverified duplicates.
+
+Migration `0024_users_optional_credentials` clears existing `sms.{digits}@phone.local` rows (`email` and `password_hash` set to NULL) and makes those columns nullable.
 
 `users.phone` stays nullable. Historical values may be null, duplicated, or not E.164. New registration and profile saves store E.164. Login matches legacy forms of the same number (`099…`, `374…`, `00…`) and refuses to sign in when more than one active user matches, or when the match is not a verified customer.
 

@@ -35,7 +35,7 @@ export type AdminPromotionListItem = {
 
 export type CouponUserOption = {
   id: string;
-  email: string;
+  email: string | null;
   firstName: string;
   lastName: string;
   phone: string | null;

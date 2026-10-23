@@ -15,7 +15,7 @@ const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
 export type SessionUser = {
   id: string;
-  email: string;
+  email: string | null;
   firstName: string;
   lastName: string;
   phone: string | null;

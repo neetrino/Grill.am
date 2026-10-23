@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { loginSchema, registerSchema } from "@/features/auth/schemas";
-import { isPasswordLoginAllowed } from "@/lib/auth/password-login";
+import {
+  isPasswordLoginAllowed,
+  mayCheckStoredPassword,
+  passwordResetRecipient,
+} from "@/lib/auth/password-login";
 import { resolveSafeNextPath } from "@/lib/auth/post-login-path";
 
 describe("password login", () => {
@@ -27,6 +31,45 @@ describe("password login", () => {
         status: null,
       }),
     ).toBe(false);
+  });
+
+  it("checks a password only for a real inbox that has a hash", () => {
+    expect(
+      mayCheckStoredPassword({
+        email: "ada@grill.am",
+        passwordHash: "stored-hash",
+      }),
+    ).toBe(true);
+    expect(
+      mayCheckStoredPassword({ email: null, passwordHash: "stored-hash" }),
+    ).toBe(false);
+    expect(
+      mayCheckStoredPassword({
+        email: "sms.37499123456@phone.local",
+        passwordHash: "stored-hash",
+      }),
+    ).toBe(false);
+    expect(
+      mayCheckStoredPassword({ email: "ada@grill.am", passwordHash: null }),
+    ).toBe(false);
+  });
+
+  it("does not treat a placeholder as a reset recipient", () => {
+    expect(
+      passwordResetRecipient({
+        email: "sms.37499123456@phone.local",
+        status: "ACTIVE",
+      }),
+    ).toBeNull();
+    expect(
+      passwordResetRecipient({ email: null, status: "ACTIVE" }),
+    ).toBeNull();
+    expect(
+      passwordResetRecipient({
+        email: "ada@grill.am",
+        status: "ACTIVE",
+      }),
+    ).toBe("ada@grill.am");
   });
 
   it("still accepts email and password login input", () => {

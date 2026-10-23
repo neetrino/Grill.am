@@ -67,8 +67,8 @@ export type OtpUserRepository = {
     verifiedAt: Date,
   ): Promise<"verified" | "unchanged" | "phone_taken">;
   /**
-   * Creates an ACTIVE CUSTOMER with a verified phone after SMS signup OTP.
-   * Uses a placeholder email/name until the customer edits their profile.
+   * SMS signup creates an ACTIVE CUSTOMER with a verified phone, a null email,
+   * and a null password hash.
    */
   createVerifiedPhoneCustomer(input: {
     id: string;

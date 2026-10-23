@@ -107,7 +107,10 @@
     "newPasswordPlaceholder": "Введите новый пароль",
     "confirmPasswordPlaceholder": "Повторите новый пароль",
     "change": "Сменить пароль",
-    "changing": "Смена…"
+    "changing": "Смена…",
+    "setTitle": "Установить пароль",
+    "set": "Установить пароль",
+    "setting": "Установка…"
   },
   "deleteAccountForm": {
     "description": "Удаление аккаунта необратимо. Вы сразу потеряете доступ к профилю.",
