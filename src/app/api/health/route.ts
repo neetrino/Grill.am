@@ -1,33 +1,22 @@
 import { NextResponse } from "next/server";
 
-import { getDb } from "@/db/client";
-import { sql } from "drizzle-orm";
+import { HEALTH_SERVICE_NAME } from "./constants";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Internal health probe for Playwright webServer / ops.
- * Exposes no secrets.
+ * Lightweight runtime probe for frequent uptime checks.
+ * Must not touch the database or any external dependency.
  */
-export async function GET(): Promise<NextResponse> {
-  let database: "up" | "down" = "down";
-  try {
-    await getDb().execute(sql`select 1`);
-    database = "up";
-  } catch {
-    database = "down";
-  }
-
-  const ok = database === "up";
+export function GET(): NextResponse {
   return NextResponse.json(
     {
-      ok,
-      service: "white-shop",
-      database,
-      time: new Date().toISOString(),
+      status: "ok",
+      service: HEALTH_SERVICE_NAME,
+      timestamp: new Date().toISOString(),
     },
     {
-      status: ok ? 200 : 503,
+      status: 200,
       headers: {
         "Cache-Control": "no-store",
       },

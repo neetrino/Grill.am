@@ -32,7 +32,7 @@ export default defineConfig({
     ? undefined
     : {
         command: `pnpm exec tsx tests/e2e/start-web-server.ts`,
-        url: `${BASE_URL}/api/health`,
+        url: `${BASE_URL}/api/health/deep`,
         reuseExistingServer: !process.env.CI && process.env.E2E_REUSE_SERVER === "true",
         timeout: 180_000,
         stdout: "pipe",

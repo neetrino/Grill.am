@@ -19,7 +19,7 @@ pnpm test:e2e:install
 pnpm test:e2e
 ```
 
-Playwright webServer starts Next on port **3100**, waits for `/api/health`.
+Playwright webServer starts Next on port **3100**, waits for `/api/health/deep` so the suite does not start before the database answers. Frequent uptime checks use `/api/health`, which does not touch the database.
 
 Reuse a running server only with `E2E_REUSE_SERVER=true` (never in CI).
 
@@ -48,4 +48,4 @@ pnpm test:e2e
 pnpm test:e2e:headed
 ```
 
-Port **3100**, health: `/api/health`.
+Port **3100**. Runtime probe: `/api/health`. Database probe used by the webServer wait: `/api/health/deep`.
