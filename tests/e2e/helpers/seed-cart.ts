@@ -159,9 +159,16 @@ export async function fillCheckoutContact(
     page.locator('input[name="shippingMethod"][value="pickup"]'),
   ).toBeChecked();
 
-  const firstBranch = page.locator('input[name="pickupStoreId"]').first();
+  const firstBranch = page
+    .locator('input[name="pickupStoreId"][type="radio"]')
+    .first();
   await expect(firstBranch).toBeVisible();
-  await firstBranch.check();
+  await firstBranch.click();
+  // Selecting a branch collapses the list to a hidden input; `.check()`
+  // re-queries the same name and then fails on that hidden field.
+  await expect(
+    page.locator('input[name="pickupStoreId"][type="hidden"]'),
+  ).toHaveValue(/.+/);
 }
 
 export async function selectCod(page: Page): Promise<void> {

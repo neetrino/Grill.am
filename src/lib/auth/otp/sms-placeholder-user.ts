@@ -12,7 +12,6 @@ export function smsPlaceholderEmail(phoneE164: string): string {
 export function isSmsPlaceholderEmail(email: string): boolean {
   return /^sms\.\d+@phone\.local$/i.test(email.trim());
 }
-
 /**
  * Stored account address when it is a real inbox.
  * Null and SMS placeholders are not inboxes.

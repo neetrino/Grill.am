@@ -18,7 +18,6 @@ describe("sms placeholder user email", () => {
     expect(isSmsPlaceholderEmail("admin@grill.am")).toBe(false);
     expect(isSmsPlaceholderEmail("sms.not-digits@phone.local")).toBe(false);
   });
-
   it("treats only a non-placeholder address as a real inbox", () => {
     expect(realInboxEmail(null)).toBeNull();
     expect(realInboxEmail("sms.37499123456@phone.local")).toBeNull();
