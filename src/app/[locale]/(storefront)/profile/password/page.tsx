@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { loadHasPassword } from "@/features/auth/load-has-password";
 import { ChangePasswordForm } from "@/features/profile/ui/ChangePasswordForm";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
@@ -15,7 +16,8 @@ export default async function PasswordPage({ params }: PasswordPageProps) {
     notFound();
   }
 
-  await requireUser(locale);
+  const user = await requireUser(locale);
+  const hasPassword = await loadHasPassword(user.id);
   const dictionary = getDictionary(locale);
   const copy = dictionary.profile.passwordForm;
 
@@ -23,8 +25,10 @@ export default async function PasswordPage({ params }: PasswordPageProps) {
     <section>
       <ChangePasswordForm
         locale={locale}
+        hasPassword={hasPassword}
         labels={{
           title: dictionary.profile.password,
+          setTitle: copy.setTitle,
           currentPassword: copy.currentPassword,
           newPassword: copy.newPassword,
           confirmPassword: copy.confirmPassword,
@@ -33,6 +37,8 @@ export default async function PasswordPage({ params }: PasswordPageProps) {
           confirmPasswordPlaceholder: copy.confirmPasswordPlaceholder,
           change: copy.change,
           changing: copy.changing,
+          set: copy.set,
+          setting: copy.setting,
         }}
       />
     </section>

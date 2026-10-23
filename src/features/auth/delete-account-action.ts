@@ -81,10 +81,10 @@ export async function deleteAccountAction(
     return { error: "This account cannot be deleted." };
   }
 
-  const passwordMatches = await verifyPassword(
-    parsed.data.password,
-    row.passwordHash,
-  );
+  const passwordMatches =
+    row.passwordHash === null
+      ? false
+      : await verifyPassword(parsed.data.password, row.passwordHash);
   if (!passwordMatches) {
     return { error: "Current password is incorrect." };
   }

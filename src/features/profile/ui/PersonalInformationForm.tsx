@@ -20,11 +20,19 @@ import { isSmsPlaceholderEmail } from "@/lib/auth/otp/sms-placeholder-user";
 const FIELD_CLASS =
   "h-11 w-full rounded-[15px] border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-brand-red/40 focus:ring-2 focus:ring-brand-red/15";
 
+/** Cleared SMS rows and remaining placeholders are not real inboxes. */
+function visibleProfileEmail(email: string | null): string {
+  if (email === null || isSmsPlaceholderEmail(email)) {
+    return "";
+  }
+  return email;
+}
+
 type PersonalInformationFormProps = {
   locale: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email: string | null;
   phone: string;
   phoneVerified: boolean;
   verification: {
@@ -76,7 +84,8 @@ export function PersonalInformationForm({
 }: PersonalInformationFormProps) {
   const action = updateProfileAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
-  const visibleEmail = isSmsPlaceholderEmail(email) ? "" : email;
+  const visibleEmail = visibleProfileEmail(email);
+  const emailOptional = visibleEmail.length === 0;
   const [values, setValues] = useState({
     firstName,
     lastName,
@@ -104,7 +113,7 @@ export function PersonalInformationForm({
     setValues({
       firstName,
       lastName,
-      email: isSmsPlaceholderEmail(email) ? "" : email,
+      email: visibleProfileEmail(email),
       phone,
     });
   }
@@ -113,7 +122,7 @@ export function PersonalInformationForm({
     setValues({
       firstName,
       lastName,
-      email: isSmsPlaceholderEmail(email) ? "" : email,
+      email: visibleProfileEmail(email),
       phone,
     });
   }
@@ -171,7 +180,7 @@ export function PersonalInformationForm({
             <input
               name="email"
               type="email"
-              required={!isSmsPlaceholderEmail(email)}
+              required={!emailOptional}
               value={values.email}
               onChange={(event) =>
                 setValues((prev) => ({ ...prev, email: event.target.value }))

@@ -9,6 +9,7 @@ import {
   useAdminDictionary,
 } from "@/features/admin/ui/AdminDictionaryProvider";
 import type { CouponUserOption } from "@/features/promotions/application/queries";
+import { realInboxEmail } from "@/lib/auth/otp/sms-placeholder-user";
 
 type CouponUserPickerProps = {
   users: CouponUserOption[];
@@ -17,9 +18,9 @@ type CouponUserPickerProps = {
   onChange: (ids: string[]) => void;
 };
 
-function userLabel(user: CouponUserOption): string {
+function userLabel(user: CouponUserOption, emptyLabel: string): string {
   const name = `${user.firstName} ${user.lastName}`.trim();
-  return name || user.email;
+  return name || realInboxEmail(user.email) || user.phone || emptyLabel;
 }
 
 export function CouponUserPicker({
@@ -30,6 +31,7 @@ export function CouponUserPicker({
 }: CouponUserPickerProps) {
   const dictionary = useAdminDictionary();
   const copy = dictionary.coupons.drawer;
+  const emptyLabel = dictionary.common.dash;
   const listId = useId();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -49,7 +51,7 @@ export function CouponUserPicker({
     }
     return users.filter((user) => {
       const haystack =
-        `${user.firstName} ${user.lastName} ${user.email} ${user.phone ?? ""}`.toLowerCase();
+        `${user.firstName} ${user.lastName} ${realInboxEmail(user.email) ?? ""} ${user.phone ?? ""}`.toLowerCase();
       return haystack.includes(normalized);
     });
   }, [query, users]);
@@ -113,10 +115,10 @@ export function CouponUserPicker({
                   />
                   <span className="min-w-0">
                     <span className="block truncate font-medium text-gray-900">
-                      {userLabel(user)}
+                      {userLabel(user, emptyLabel)}
                     </span>
                     <span className="block truncate text-xs text-gray-500">
-                      {user.email}
+                      {realInboxEmail(user.email) ?? emptyLabel}
                     </span>
                   </span>
                 </label>

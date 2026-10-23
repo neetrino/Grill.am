@@ -26,7 +26,7 @@ const BONUS_HISTORY_PAGE_SIZE = 40;
 
 export type AdminUserListItem = {
   id: string;
-  email: string;
+  email: string | null;
   phone: string | null;
   firstName: string;
   lastName: string;
@@ -41,7 +41,7 @@ export type AdminUserListItem = {
 export type AdminUserDetail = {
   user: {
     id: string;
-    email: string;
+    email: string | null;
     firstName: string;
     lastName: string;
     phone: string | null;

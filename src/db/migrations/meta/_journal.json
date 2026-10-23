@@ -162,6 +162,13 @@
       "when": 1786150000000,
       "tag": "0023_phone_verified_unique",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1786160000000,
+      "tag": "0024_users_optional_credentials",
+      "breakpoints": true
     }
   ]
 }

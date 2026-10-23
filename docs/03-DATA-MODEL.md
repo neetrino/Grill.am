@@ -81,13 +81,15 @@
 
 | Column group | Պարտադիր fields/constraints |
 |---|---|
-| Identity | `id`, normalized `email` UNIQUE, nullable verified timestamp |
-| Credentials | `password_hash` Argon2id, password-updated timestamp |
+| Identity | `id`, nullable normalized `email` (unique only among non-null values via `users_email_uidx`), nullable verified timestamp |
+| Credentials | nullable `password_hash` Argon2id; `password_updated_at` stays required |
 | Profile | first/last name, phone, nullable `phone_verified_at` |
 | Authorization | role `ADMIN`/`CUSTOMER`, status `ACTIVE`/`SUSPENDED`/`ANONYMIZED` |
 | Consent | terms accepted timestamp/version |
 | Loyalty | `bonus_balance_amount` ≥ 0 (AMD minor units) |
 | Lifecycle | last login, created/updated/anonymized timestamps |
+
+`email` and `password_hash` are nullable credentials. PostgreSQL unique indexes allow multiple NULLs, so `users_email_uidx` is unchanged.
 
 Last active admin invariant-ը application transaction + row/advisory lock strategy ունի։ Concurrent demotion/suspension-ը չի կարող համակարգը թողնել առանց active admin-ի։
 

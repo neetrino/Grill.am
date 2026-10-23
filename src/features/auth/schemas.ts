@@ -75,6 +75,17 @@ export const changePasswordSchema = z
     path: ["confirmPassword"],
   });
 
+/** First password for an account that does not have one yet. */
+export const setPasswordSchema = z
+  .object({
+    newPassword: passwordSchema,
+    confirmPassword: z.string().min(1),
+  })
+  .refine((value) => value.newPassword === value.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+  });
+
 export const forgotPasswordSchema = z.object({
   email: z.string().trim().email().transform((value) => value.toLowerCase()),
 });

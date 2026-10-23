@@ -59,10 +59,10 @@ export async function changePasswordAction(
     return { error: "Unable to change password." };
   }
 
-  const currentMatches = await verifyPassword(
-    parsed.data.currentPassword,
-    row.passwordHash,
-  );
+  const currentMatches =
+    row.passwordHash === null
+      ? false
+      : await verifyPassword(parsed.data.currentPassword, row.passwordHash);
   if (!currentMatches) {
     return { error: "Current password is incorrect." };
   }

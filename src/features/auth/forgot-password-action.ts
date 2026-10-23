@@ -7,6 +7,7 @@ import { getProviders } from "@/config/providers";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { forgotPasswordSchema } from "@/features/auth/schemas";
+import { passwordResetRecipient } from "@/lib/auth/password-login";
 import { issuePasswordResetToken } from "@/lib/auth/password-reset-tokens";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import { logger } from "@/lib/observability/logger";
@@ -60,7 +61,15 @@ export async function forgotPasswordAction(
       .where(eq(users.email, parsed.data.email))
       .limit(1);
 
-    if (user && user.status === "ACTIVE") {
+    const recipient =
+      user === undefined
+        ? null
+        : passwordResetRecipient({
+            email: user.email,
+            status: user.status,
+          });
+
+    if (user !== undefined && recipient !== null) {
       const providers = getProviders();
       const rawToken = await issuePasswordResetToken(
         providers.redis.getClient(),
@@ -74,7 +83,7 @@ export async function forgotPasswordAction(
 
       const email = buildResetEmail(resetUrl.toString());
       await providers.email.send({
-        to: user.email,
+        to: recipient,
         subject: email.subject,
         text: email.text,
         html: email.html,

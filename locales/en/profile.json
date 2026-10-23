@@ -107,7 +107,10 @@
     "newPasswordPlaceholder": "Enter new password",
     "confirmPasswordPlaceholder": "Confirm new password",
     "change": "Change password",
-    "changing": "Changing…"
+    "changing": "Changing…",
+    "setTitle": "Set password",
+    "set": "Set password",
+    "setting": "Setting…"
   },
   "deleteAccountForm": {
     "description": "Deleting your account is permanent. You will lose access to your profile immediately.",

@@ -40,6 +40,7 @@ import {
   adminUserRoleLabel,
   adminUserRolePillClass,
 } from "@/features/users/ui/admin-user-labels";
+import { realInboxEmail } from "@/lib/auth/otp/sms-placeholder-user";
 
 type AdminUsersViewProps = {
   locale: string;
@@ -73,9 +74,9 @@ function roleFilterHref(
     : `/${locale}/admin/users`;
 }
 
-function displayName(user: AdminUserListItem): string {
+function displayName(user: AdminUserListItem, emptyLabel: string): string {
   const name = `${user.firstName} ${user.lastName}`.trim();
-  return name || user.email;
+  return name || realInboxEmail(user.email) || user.phone || emptyLabel;
 }
 
 export function AdminUsersView({
@@ -338,7 +339,7 @@ export function AdminUsersView({
                   const isActive = user.status === "ACTIVE";
                   const canToggle =
                     user.status === "ACTIVE" || user.status === "SUSPENDED";
-                  const name = displayName(user);
+                  const name = displayName(user, common.dash);
 
                   return (
                     <tr
@@ -373,7 +374,9 @@ export function AdminUsersView({
                         </Link>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
-                        <p className="text-sm text-gray-600">{user.email}</p>
+                        <p className="text-sm text-gray-600">
+                          {realInboxEmail(user.email) ?? common.dash}
+                        </p>
                         <p className="text-sm text-gray-500">
                           {user.phone ?? common.dash}
                         </p>

@@ -22,6 +22,7 @@ import {
   PROFILE_ICON_TONE,
   type ProfileNavKey,
 } from "@/features/profile/ui/profile-ui";
+import { realInboxEmail } from "@/lib/auth/otp/sms-placeholder-user";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { SessionUser } from "@/lib/auth/session";
@@ -99,6 +100,7 @@ export function ProfileMobileMenu({
   const initials =
     `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}`.toUpperCase();
   const displayName = `${user.firstName} ${user.lastName}`.trim();
+  const inboxEmail = realInboxEmail(user.email);
 
   const rows: MenuRow[] = [
     {
@@ -167,9 +169,11 @@ export function ProfileMobileMenu({
             <p className="truncate text-xl leading-tight font-bold text-gray-900">
               {displayName}
             </p>
-            <p className="truncate text-sm leading-snug text-gray-500">
-              {user.email}
-            </p>
+            {inboxEmail !== null ? (
+              <p className="truncate text-sm leading-snug text-gray-500">
+                {inboxEmail}
+              </p>
+            ) : null}
           </div>
         </div>
       </section>

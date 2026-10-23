@@ -24,6 +24,7 @@ import { AdminUserBonusSection } from "@/features/users/ui/AdminUserBonusSection
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
+import { realInboxEmail } from "@/lib/auth/otp/sms-placeholder-user";
 import { formatAppDisplayDate } from "@/lib/datetime/app-timezone";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -111,7 +112,7 @@ export default async function AdminUserDetailPage({
             icon={<Mail className={FIELD_ICON_CLASS} />}
             label={detailCopy.email}
           >
-            {user.email}
+            {realInboxEmail(user.email) ?? common.dash}
           </AdminDetailField>
           <AdminDetailField
             icon={<Phone className={FIELD_ICON_CLASS} />}

@@ -107,7 +107,10 @@
     "newPasswordPlaceholder": "Մուտքագրեք նոր գաղտնաբառը",
     "confirmPasswordPlaceholder": "Կրկնեք նոր գաղտնաբառը",
     "change": "Փոխել գաղտնաբառը",
-    "changing": "Փոխվում է…"
+    "changing": "Փոխվում է…",
+    "setTitle": "Սահմանել գաղտնաբառը",
+    "set": "Սահմանել գաղտնաբառը",
+    "setting": "Սահմանվում է…"
   },
   "deleteAccountForm": {
     "description": "Հաշվի ջնջումը վերջնական է։ Դուք անմիջապես կկորցնեք մուտքը դեպի պրոֆիլ։",
